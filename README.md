@@ -9,6 +9,7 @@ Stripe (Payment Link) + PostHog (analytics).
 project/
   index.html                              # /            — waitlist landing
   swipe.html                              # /<slug>      — per-client sales page (catch-all rewrite)
+  portal/                                 # /portal      — member portal (Feed, Library, Hub)
   clients/                                # source-of-truth JSON per client; imported to Supabase
   config/
     offer.json                            # earlyPrice, laterPrice (spots come from RPC)
@@ -16,6 +17,10 @@ project/
   supabase/
     migrations/                           # schema + RLS + RPCs
     functions/stripe-webhook/             # Deno edge function
+    functions/invite-member/              # Hub invite pop-up (JWT required)
+    seed/                                 # portal test fixture on RPR + cleanup
+  tests/portal/                           # portal walkthrough (Playwright) + invite-member test
+  docs/portal-walkthrough/                # screenshots + results of the walkthrough
   scripts/import-client.mjs               # push a client JSON into Supabase
   validate-feeds.js                       # build-time schema check for /clients/*.json
   netlify.toml                            # build, redirects, CSP + security headers
@@ -152,6 +157,31 @@ netlify deploy --prod --dir=.
    - `members` has one row for that user with `role='owner'`.
    - `stripe_events` has the `checkout.session.completed` id.
 7. Restore the production Stripe link, re-import, redeploy.
+
+## Portal (Session B)
+
+`/portal` is a static page (`portal/`) on the same Supabase project. Members
+read through RLS; the only new database objects are three functions in
+`migrations/20260926000005_portal_rpcs.sql` (no table or column changes):
+
+- `portal_decide(card_id, action)`: upserts the member's decision and appends a
+  `swipe_events` row with source `portal`. RLS gives members no direct write
+  on `decisions`.
+- `portal_set_live(article_id, live)`: toggles delivered/live and sets `live_at`.
+- `portal_can_write(company_id)`: false once a canceled subscription has ended.
+  The portal is read-only Library at that point.
+
+Deploy the invite function (JWT verification stays on):
+
+```bash
+supabase functions deploy invite-member
+```
+
+`hub_unlocked` is set by hand for now:
+`update companies set hub_unlocked = true where slug = '…';`
+
+Walkthrough, screenshots and how to rerun the tests:
+[`docs/portal-walkthrough/`](docs/portal-walkthrough/README.md).
 
 ## Data model notes for Session B (portal)
 

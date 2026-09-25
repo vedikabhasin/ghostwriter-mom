@@ -13,6 +13,13 @@
 # Netlify serves existing files (index.html, /assets/*, etc.) first, so this
 # rule only fires for unknown paths.
 # -----------------------------------------------------------------------------
+# Member portal. Must come before the /:slug catch-all.
+[[redirects]]
+  from   = "/portal"
+  to     = "/portal/index.html"
+  status = 200
+  force  = true
+
 [[redirects]]
   from   = "/:slug"
   to     = "/swipe.html?slug=:slug"

@@ -33,3 +33,6 @@ uploads/
 # Build output (nothing built today, but keep it clean)
 dist/
 build/
+
+# Portal test cache (bundled supabase-js)
+tests/portal/.cache/
