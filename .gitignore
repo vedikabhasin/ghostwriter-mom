@@ -1,0 +1,35 @@
+# macOS
+.DS_Store
+
+# Node
+node_modules/
+npm-debug.log*
+.npm/
+
+# Netlify CLI local state (site link, cached toml, function build artifacts).
+# The root netlify.toml IS committed; nothing under .netlify/ should be.
+.netlify/
+
+# Local editor / tool caches
+.vscode/
+.idea/
+*.swp
+.claude/
+
+# Supabase local dev artifacts (keep migrations + functions; skip runtime junk)
+supabase/.branches/
+supabase/.temp/
+supabase/config.toml.local
+
+# Env files — never commit anything with real secrets
+.env
+.env.*
+!.env.example
+
+# Ad-hoc dumps
+screenshots/
+uploads/
+
+# Build output (nothing built today, but keep it clean)
+dist/
+build/

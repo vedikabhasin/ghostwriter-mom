@@ -1,0 +1,7 @@
+{
+  "_comment": "Runtime config exposed to the swipe.html client at boot. Anon key + URL are safe to publish (RLS gates every table). Replace REPLACE_ME values and re-deploy. When values are still REPLACE_ME the adapter falls back to /clients/*.json.",
+  "supabaseUrl": "REPLACE_ME",
+  "supabaseAnonKey": "REPLACE_ME",
+  "posthogKey": "REPLACE_ME",
+  "posthogHost": "https://us.i.posthog.com"
+}

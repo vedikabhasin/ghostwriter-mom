@@ -11,6 +11,12 @@
 <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16.png">
 <link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png">
+<!-- PostHog stub. Queues capture()/register()/identify() calls until the real
+     library loads via the injected script tag; posthog.init() at the bottom of
+     the main script kicks that off once /config/runtime.json has been read. -->
+<script>
+!function(t,e){var o,n,p,r;e.__SV||(window.posthog=e,e._i=[],e.init=function(i,s,a){function g(t,e){var o=e.split(".");2==o.length&&(t=t[o[0]],e=o[1]),t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}}(p=t.createElement("script")).type="text/javascript",p.crossOrigin="anonymous",p.async=!0,p.src=s.api_host.replace(".i.posthog.com","-assets.i.posthog.com")+"/static/array.js",(r=t.getElementsByTagName("script")[0]).parentNode.insertBefore(p,r);var u=e;for(void 0!==a?u=e[a]=[]:a="posthog",u.people=u.people||[],u.toString=function(t){var e="posthog";return"posthog"!==a&&(e+="."+a),t||(e+=" (stub)"),e},u.people.toString=function(){return u.toString(1)+".people (stub)"},o="init capture register register_once register_for_session unregister unregister_for_session getFeatureFlag getFeatureFlagPayload isFeatureEnabled reloadFeatureFlags updateEarlyAccessFeatureEnrollment getEarlyAccessFeatures on onFeatureFlags onSessionId getSurveys getActiveMatchingSurveys renderSurvey canRenderSurvey identify setPersonProperties group resetGroups setPersonPropertiesForFlags resetPersonPropertiesForFlags setGroupPropertiesForFlags resetGroupPropertiesForFlags reset get_distinct_id getGroups get_session_id get_session_replay_url alias set_config startSessionRecording stopSessionRecording sessionRecordingStarted captureException loadToolbar get_property getSessionProperty createPersonProfile opt_in_capturing opt_out_capturing has_opted_in_capturing has_opted_out_capturing clear_opt_in_out_capturing debug getPageViewId".split(" "),n=0;n<o.length;n++)g(u,o[n]);e._i.push([i,s,a])},e.__SV=1)}(document,window.posthog||[]);
+</script>
 <style>
 /* -----------------------------------------------------------------------------
    Ghostwriter Mom swipe feed. Same tokens as the main site. One idea per
@@ -769,9 +775,17 @@ body.dir-save  .ctl-save{
    Container is tall enough to fully hold the animation range
    (top card wiggles at y=0, back state translates to y=18) plus a small
    safety pad so nothing kisses the "Next drop:" line beneath it. Border
-   radius matches the real feed card's --radius-card. */
+   radius matches the real feed card's --radius-card.
+   The transform:translateZ(0) on the container forces its own compositing
+   layer so iOS Safari doesn't downgrade the child animation when it lives
+   under an ancestor with backdrop-filter (the portal-dashboard has one).
+   translate3d + will-change on the cards keep the loop running smoothly
+   under low-power mode too. */
 .pd-feed-stack{
   position:relative; height:112px; width:96px; margin:0 auto 6px;
+  transform:translateZ(0);
+  -webkit-transform:translateZ(0);
+  isolation:isolate;
 }
 .pd-feed-stack .m{
   position:absolute; top:6px; left:0;
@@ -779,31 +793,34 @@ body.dir-save  .ctl-save{
   border-radius:var(--radius-card);
   border:1px solid rgba(14,14,14,0.08);
   box-shadow:0 8px 18px -8px rgba(14,14,14,0.3);
+  will-change:transform, opacity;
+  -webkit-backface-visibility:hidden;
+          backface-visibility:hidden;
 }
 .pd-feed-stack .m:nth-child(1){background:var(--f-pillar);  animation:stack-cycle 6s var(--ease) 0s     infinite;}
 .pd-feed-stack .m:nth-child(2){background:var(--f-insight); animation:stack-cycle-left 6s var(--ease) -2s infinite;}
 .pd-feed-stack .m:nth-child(3){background:var(--f-post);    animation:stack-cycle 6s var(--ease) -4s    infinite;}
 @keyframes stack-cycle{
-  0%,4%   { transform:translate(0,0) rotate(0deg);           opacity:1;   z-index:3; }
-  8%      { transform:translate(1px,-1px) rotate(-2deg);     opacity:1;   z-index:3; }
-  14%     { transform:translate(-2px,1px) rotate(2deg);      opacity:1;   z-index:3; }
-  20%     { transform:translate(0,0) rotate(0deg);           opacity:1;   z-index:3; }
-  30%     { transform:translate(120px,-14px) rotate(20deg);  opacity:0;   z-index:3; }
-  30.01%  { transform:translate(0,18px) rotate(2deg);        opacity:0;   z-index:1; }
-  55%     { transform:translate(0,18px) rotate(2deg);        opacity:0.75;z-index:1; }
-  70%     { transform:translate(0,8px)  rotate(1deg);        opacity:0.9; z-index:2; }
-  100%    { transform:translate(0,0)    rotate(0deg);        opacity:1;   z-index:3; }
+  0%,4%   { transform:translate3d(0,0,0) rotate(0deg);           opacity:1;   z-index:3; }
+  8%      { transform:translate3d(1px,-1px,0) rotate(-2deg);     opacity:1;   z-index:3; }
+  14%     { transform:translate3d(-2px,1px,0) rotate(2deg);      opacity:1;   z-index:3; }
+  20%     { transform:translate3d(0,0,0) rotate(0deg);           opacity:1;   z-index:3; }
+  30%     { transform:translate3d(120px,-14px,0) rotate(20deg);  opacity:0;   z-index:3; }
+  30.01%  { transform:translate3d(0,18px,0) rotate(2deg);        opacity:0;   z-index:1; }
+  55%     { transform:translate3d(0,18px,0) rotate(2deg);        opacity:0.75;z-index:1; }
+  70%     { transform:translate3d(0,8px,0)  rotate(1deg);        opacity:0.9; z-index:2; }
+  100%    { transform:translate3d(0,0,0)    rotate(0deg);        opacity:1;   z-index:3; }
 }
 @keyframes stack-cycle-left{
-  0%,4%   { transform:translate(0,0) rotate(0deg);           opacity:1;   z-index:3; }
-  8%      { transform:translate(-1px,-1px) rotate(2deg);     opacity:1;   z-index:3; }
-  14%     { transform:translate(2px,1px) rotate(-2deg);      opacity:1;   z-index:3; }
-  20%     { transform:translate(0,0) rotate(0deg);           opacity:1;   z-index:3; }
-  30%     { transform:translate(-120px,-14px) rotate(-20deg);opacity:0;   z-index:3; }
-  30.01%  { transform:translate(0,18px) rotate(-2deg);       opacity:0;   z-index:1; }
-  55%     { transform:translate(0,18px) rotate(-2deg);       opacity:0.75;z-index:1; }
-  70%     { transform:translate(0,8px)  rotate(-1deg);       opacity:0.9; z-index:2; }
-  100%    { transform:translate(0,0)    rotate(0deg);        opacity:1;   z-index:3; }
+  0%,4%   { transform:translate3d(0,0,0) rotate(0deg);           opacity:1;   z-index:3; }
+  8%      { transform:translate3d(-1px,-1px,0) rotate(2deg);     opacity:1;   z-index:3; }
+  14%     { transform:translate3d(2px,1px,0) rotate(-2deg);      opacity:1;   z-index:3; }
+  20%     { transform:translate3d(0,0,0) rotate(0deg);           opacity:1;   z-index:3; }
+  30%     { transform:translate3d(-120px,-14px,0) rotate(-20deg);opacity:0;   z-index:3; }
+  30.01%  { transform:translate3d(0,18px,0) rotate(-2deg);       opacity:0;   z-index:1; }
+  55%     { transform:translate3d(0,18px,0) rotate(-2deg);       opacity:0.75;z-index:1; }
+  70%     { transform:translate3d(0,8px,0)  rotate(-1deg);       opacity:0.9; z-index:2; }
+  100%    { transform:translate3d(0,0,0)    rotate(0deg);        opacity:1;   z-index:3; }
 }
 
 /* Signals row inside dashboard */
@@ -922,57 +939,6 @@ body.dir-save  .ctl-save{
 .waitlist-ack.on{display:block;}
 
 /* -----------------------------------------------------------------------------
-   POST-PAYMENT SCREEN — free article + one small referral row
-   ----------------------------------------------------------------------------- */
-.paid-title{
-  font-family:var(--font-display); font-weight:800;
-  font-size:clamp(30px, 8vw, 40px); letter-spacing:-0.02em; margin:12px 0 8px;
-  color:var(--ink); line-height:1.05;
-}
-.paid-copy{font-size:15px; line-height:1.55; color:var(--ink); margin:0;}
-.paid-copy strong{font-weight:700;}
-.paid-fine{font-family:var(--font-mono); font-size:11px; letter-spacing:0.08em; text-transform:uppercase; color:#4a4a4a; margin:6px 0 0;}
-
-.referral-block{
-  background:rgba(255,255,255,0.75);
-  border:1px solid rgba(14,14,14,0.1);
-  border-radius:16px;
-  padding:14px;
-  display:flex; flex-direction:column; gap:8px;
-  margin-top:12px;
-}
-.referral-copy{
-  font-family:var(--font-body); font-size:14px; line-height:1.5; color:var(--ink); margin:0;
-}
-.referral-field{
-  display:flex; align-items:center; gap:6px;
-  background:#fff; border:1px solid rgba(14,14,14,0.14);
-  border-radius:12px; padding:4px 4px 4px 12px;
-}
-.referral-field input{
-  flex:1; border:none; outline:none; background:transparent;
-  font-family:var(--font-body); font-size:14px; color:var(--ink);
-  padding:10px 6px; min-height:40px; min-width:0;
-}
-.referral-field input:focus-visible{outline:2px solid var(--accent); outline-offset:-2px; border-radius:8px;}
-.referral-send{
-  border:none; background:var(--ink-pill); color:#fff;
-  font-family:var(--font-body); font-weight:600; font-size:13px;
-  padding:8px 16px; border-radius:999px; cursor:pointer; min-height:36px;
-  transition:filter 200ms var(--ease);
-}
-.referral-send:hover:not(:disabled){filter:brightness(1.1);}
-.referral-send:disabled{opacity:0.55; cursor:default;}
-.referral-err{
-  font-family:var(--font-mono); font-size:11.5px; color:#8a1a1a; min-height:14px; margin:0;
-}
-.referral-ack{
-  font-family:var(--font-body); font-size:13.5px; color:var(--ink); margin:2px 0 0;
-  display:none;
-}
-.referral-ack.on{display:block;}
-
-/* -----------------------------------------------------------------------------
    HISTORY
    ----------------------------------------------------------------------------- */
 .hist-tabs{
@@ -1066,11 +1032,18 @@ body.dir-save  .ctl-save{
   }
   .ghost-hand{animation:none !important;}
   .btn-glow-host:hover .btn-glow{animation:none !important;}
-  /* Fanned static stack when animation is off. */
-  .pd-feed-stack .m{animation:none !important;}
-  .pd-feed-stack .m:nth-child(1){transform:translate(-14px,0) rotate(-8deg); z-index:3;}
-  .pd-feed-stack .m:nth-child(2){transform:translate(0,8px)   rotate(0deg);  z-index:2;}
-  .pd-feed-stack .m:nth-child(3){transform:translate(14px,0)  rotate(8deg);  z-index:1;}
+  /* The portal-preview mini-shuffle is a small ambient loop (96x74 area) and
+     carries the meaning "your feed keeps arriving." Keep it alive even under
+     Reduce Motion so the meaning survives; the big screen-level exits above
+     are still suppressed. */
+  .pd-feed-stack .m{
+    animation-duration:6s !important;
+    animation-iteration-count:infinite !important;
+  }
+  .signal-dot, .pd-signal-row .dot{
+    animation-duration:1.8s !important;
+    animation-iteration-count:infinite !important;
+  }
 }
 </style>
 </head>
@@ -1078,19 +1051,12 @@ body.dir-save  .ctl-save{
 
 <!-- -----------------------------------------------------------------------------
      Netlify Forms declaration
-     - swipes: per-card gestures + navigation events + source_opened.
-     - approvals: fires when a client picks + approves their free article.
+     - approvals:       fires alongside submit_approval RPC so Vedika still
+                        gets a Netlify email notification until Resend ships.
      - portal-interest: waitlist opt-ins when spots are gone.
-     - referrals: post-payment referral URL.
+     Swipes and referrals used to live here but were replaced by the log_swipe
+     RPC and Stripe's own confirmation page respectively.
      ----------------------------------------------------------------------------- -->
-<form name="swipes" data-netlify="true" netlify-honeypot="bot-field" hidden aria-hidden="true">
-  <input type="text" name="slug">
-  <input type="text" name="cardId">
-  <input type="text" name="action">
-  <input type="text" name="timestamp">
-  <input type="text" name="url">
-  <input type="text" name="bot-field">
-</form>
 <form name="approvals" data-netlify="true" netlify-honeypot="bot-field" hidden aria-hidden="true">
   <input type="text"  name="slug">
   <input type="text"  name="companyName">
@@ -1106,12 +1072,6 @@ body.dir-save  .ctl-save{
   <input type="email" name="email">
   <input type="text"  name="timestamp">
   <input type="text"  name="bot-field">
-</form>
-<form name="referrals" data-netlify="true" netlify-honeypot="bot-field" hidden aria-hidden="true">
-  <input type="text" name="slug">
-  <input type="url"  name="referredUrl">
-  <input type="text" name="timestamp">
-  <input type="text" name="bot-field">
 </form>
 
 <div class="bg-tint format" id="tint-format" aria-hidden="true"></div>
@@ -1265,28 +1225,6 @@ body.dir-save  .ctl-save{
     <button type="button" class="btn-ghost" data-action="show-history" style="align-self:center;">See what you swiped</button>
   </section>
 
-  <!-- POST-PAYMENT — free-article delivery + referral row -->
-  <section class="screen" id="screen-paid">
-    <h2 class="paid-title">You're in.</h2>
-    <p class="paid-copy" id="paid-line"></p>
-    <p class="paid-fine">If a receipt from Stripe doesn't hit your inbox in a few minutes, peek in spam.</p>
-
-    <div class="referral-block">
-      <p class="referral-copy">Know a founder who'd want their own feed? Send me their site.</p>
-      <label class="referral-field" for="ref-input">
-        <input type="url" id="ref-input" name="referredUrl"
-               placeholder="https://theircompany.com"
-               inputmode="url" autocomplete="url" required>
-        <button type="button" class="referral-send" id="ref-send" data-action="referral-send">Send</button>
-      </label>
-      <p class="referral-err" id="ref-err">&nbsp;</p>
-      <p class="referral-ack" id="ref-ack">Thanks. I'll build them a feed.</p>
-    </div>
-
-    <div style="flex:1;"></div>
-    <button type="button" class="btn-ghost" data-action="show-history" style="align-self:center;">See what you swiped</button>
-  </section>
-
   <!-- HISTORY -->
   <section class="screen" id="screen-history">
     <p class="dir-eyebrow">Your history</p>
@@ -1296,7 +1234,10 @@ body.dir-save  .ctl-save{
     </div>
     <ol class="history-list" id="history-list" role="tabpanel"></ol>
     <div class="src-view" id="history-sources" role="tabpanel" hidden></div>
-    <button type="button" class="btn btn-secondary" data-action="close-history">Back</button>
+    <div style="display:flex; justify-content:space-between; gap:12px; align-items:center;">
+      <button type="button" class="btn btn-secondary" data-action="close-history" style="flex:1;">Back</button>
+      <button type="button" class="btn-ghost" data-action="start-over">Start over</button>
+    </div>
   </section>
 
   <!-- ERROR -->
@@ -1367,7 +1308,7 @@ body.dir-save  .ctl-save{
 
   // -- Config ----------------------------------------------------------------
   var STORAGE_PREFIX  = 'gwm-swipe-';
-  var PAID_SLUG_KEY   = 'gwm-swipe-pending-slug';
+  var LEGACY_PAID_SLUG_KEY = 'gwm-swipe-pending-slug'; // cleared on load; obsolete
   var SWIPE_THRESHOLD = 90;
   var SUPER_THRESHOLD = 100;
   var SAVE_THRESHOLD  = 100;
@@ -1375,7 +1316,11 @@ body.dir-save  .ctl-save{
   var ONBOARDING_MAX  = 3;
   var CHIP_LIMIT      = 3;
   var DAY_MS          = 24 * 60 * 60 * 1000;
-  var DEFAULT_OFFER   = { spotsTotal: 10, spotsTaken: 0, earlyPrice: 19, laterPrice: 49 };
+  // spotsTotal is fixed at 10 by product spec. spotsLeft is fetched live from
+  // the spots_left() RPC when the confirmation screen renders; if the RPC
+  // isn't reachable we optimistically show "10 early-client spots".
+  var SPOTS_TOTAL     = 10;
+  var DEFAULT_OFFER   = { earlyPrice: 19, laterPrice: 49 };
   var TINT_MAP_FORMAT = {
     pillar:  'rgba(183,156,255,0.30)',
     insight: 'rgba(140,200,255,0.30)',
@@ -1412,36 +1357,167 @@ body.dir-save  .ctl-save{
     return '';
   }
   var SLUG        = resolveSlug();
-  var PAID_RETURN = new URLSearchParams(location.search).get('paid') === '1';
   var FRESH       = new URLSearchParams(location.search).get('fresh') === '1';
 
+  // -- Runtime config: Supabase + PostHog credentials, loaded from
+  //    /config/runtime.json at boot. If the values are still placeholders
+  //    (REPLACE_ME) or the file is missing, the adapter transparently falls
+  //    back to the legacy /clients/*.json path so the site still functions
+  //    while you're wiring things up.
+  var runtime = { supabaseUrl: '', supabaseAnonKey: '', posthogKey: '', posthogHost: 'https://us.i.posthog.com' };
+  var supabase = null;
+
+  // -- PostHog (only initialized once runtime.json loads).
+  var ph = { capture: function(){}, register: function(){}, identify: function(){}, reset: function(){} };
+  function initPosthog(){
+    if(!runtime.posthogKey || runtime.posthogKey === 'REPLACE_ME' || !window.posthog) return;
+    try{
+      window.posthog.init(runtime.posthogKey, {
+        api_host: runtime.posthogHost || 'https://us.i.posthog.com',
+        person_profiles: 'identified_only',
+        disable_session_recording: true,
+        capture_pageview: true,
+        autocapture: false
+      });
+      window.posthog.register({ slug: SLUG });
+      ph = window.posthog;
+    }catch(e){ /* ignore init failure */ }
+  }
+  function initSupabase(){
+    if(!runtime.supabaseUrl || runtime.supabaseUrl === 'REPLACE_ME') return null;
+    if(!runtime.supabaseAnonKey || runtime.supabaseAnonKey === 'REPLACE_ME') return null;
+    if(!window.__gwmSupabase || !window.__gwmSupabase.createClient) return null;
+    try{
+      return window.__gwmSupabase.createClient(runtime.supabaseUrl, runtime.supabaseAnonKey, {
+        auth: { persistSession: false, autoRefreshToken: false }
+      });
+    }catch(e){ return null; }
+  }
+  function loadRuntimeConfig(){
+    return fetch('/config/runtime.json', { cache: 'no-cache' })
+      .then(function(r){ return r.ok ? r.json() : {}; })
+      .catch(function(){ return {}; })
+      .then(function(cfg){
+        runtime = Object.assign(runtime, cfg || {});
+        initPosthog();
+        // Dynamically import supabase-js only if the URL is real. Failure is
+        // non-fatal — the adapter falls back to /clients/*.json.
+        if(!runtime.supabaseUrl || runtime.supabaseUrl === 'REPLACE_ME'){
+          return null;
+        }
+        return import('https://esm.sh/@supabase/supabase-js@2.45.0')
+          .then(function(mod){
+            window.__gwmSupabase = { createClient: mod.createClient };
+            supabase = initSupabase();
+          })
+          .catch(function(err){
+            console.warn('[swipe] supabase-js load failed, using JSON fallback:', err && err.message);
+          });
+      });
+  }
+
   // -- Data adapter ---------------------------------------------------------
+  // getFeed calls the get_feed RPC when Supabase is configured, falling back
+  // to the /clients/*.json path so the site keeps working while the backend
+  // is being wired up. logSwipe calls log_swipe when available (no-op fallback
+  // otherwise). All Netlify form posts still fire so email notifications work
+  // until Resend replaces them.
   var dataAdapter = {
     getFeed: function(slug){
-      return fetch('/clients/' + encodeURIComponent(slug) + '.json', { cache: 'no-cache' })
-        .then(function(r){ if(!r.ok) throw new Error('feed not found'); return r.json(); })
-        .then(function(data){ validateFeed(data); return data; });
+      if(supabase){
+        return supabase.rpc('get_feed', { p_slug: slug }).then(function(res){
+          if(res.error) throw res.error;
+          if(!res.data) throw new Error('feed not found');
+          return adaptSupabaseFeed(res.data);
+        }).catch(function(err){
+          console.warn('[swipe] get_feed RPC failed, falling back to JSON:', err && err.message);
+          return getFeedFromJson(slug);
+        });
+      }
+      return getFeedFromJson(slug);
     },
-    // Global offer config. Missing/malformed falls back to defaults so the
-    // page still renders. Prices + spots are read from here only.
+    logSwipe: function(cardKey, action){
+      // Normalize action names to the RPC vocabulary.
+      var mapped = action === 'super' ? 'fasttrack' : action;
+      if(supabase && ['like','pass','save','fasttrack'].indexOf(mapped) !== -1){
+        supabase.rpc('log_swipe', { p_slug: SLUG, p_card_key: cardKey, p_action: mapped })
+          .then(function(res){ if(res.error) console.warn('[swipe] log_swipe RPC error:', res.error.message); });
+      }
+    },
+    submitApproval: function(freeCardKey, directionCardKeys, email){
+      if(supabase){
+        return supabase.rpc('submit_approval', {
+          p_slug: SLUG,
+          p_free_card_key: freeCardKey,
+          p_direction_card_keys: directionCardKeys,
+          p_email: email || ''
+        }).then(function(res){
+          if(res.error) console.warn('[swipe] submit_approval RPC error:', res.error.message);
+          return res.data || null;
+        });
+      }
+      return Promise.resolve(null);
+    },
+    getSpotsLeft: function(){
+      if(supabase){
+        return supabase.rpc('spots_left').then(function(res){
+          if(res.error){ console.warn('[swipe] spots_left RPC error:', res.error.message); return null; }
+          return typeof res.data === 'number' ? res.data : null;
+        }).catch(function(){ return null; });
+      }
+      return Promise.resolve(null);
+    },
+    // Prices come from /config/offer.json; spots come from the RPC above.
     getOffer: function(){
       return fetch('/config/offer.json', { cache: 'no-cache' })
         .then(function(r){ if(!r.ok) throw new Error('no offer'); return r.json(); })
         .then(function(o){
           return {
-            spotsTotal: Number.isFinite(o.spotsTotal) ? o.spotsTotal : DEFAULT_OFFER.spotsTotal,
-            spotsTaken: Number.isFinite(o.spotsTaken) ? o.spotsTaken : DEFAULT_OFFER.spotsTaken,
             earlyPrice: Number.isFinite(o.earlyPrice) ? o.earlyPrice : DEFAULT_OFFER.earlyPrice,
             laterPrice: Number.isFinite(o.laterPrice) ? o.laterPrice : DEFAULT_OFFER.laterPrice
           };
         })
-        .catch(function(){ return Object.assign({}, DEFAULT_OFFER); });
+        .catch(function(){ return { earlyPrice: DEFAULT_OFFER.earlyPrice, laterPrice: DEFAULT_OFFER.laterPrice }; });
     },
-    postSwipes:         function(f){ return postForm('swipes', f); },
     postApproval:       function(f){ return postForm('approvals', f); },
-    postPortalInterest: function(f){ return postForm('portal-interest', f); },
-    postReferral:       function(f){ return postForm('referrals', f); }
+    postPortalInterest: function(f){ return postForm('portal-interest', f); }
   };
+  function getFeedFromJson(slug){
+    return fetch('/clients/' + encodeURIComponent(slug) + '.json', { cache: 'no-cache' })
+      .then(function(r){ if(!r.ok) throw new Error('feed not found'); return r.json(); })
+      .then(function(data){ validateFeed(data); return data; });
+  }
+  // Convert get_feed RPC output (snake_case, id-based) into the same shape the
+  // renderer expects from client JSON (camelCase-ish, card.id === card_key).
+  // stripeLink19 lives outside Supabase for now — kept in client JSON.
+  function adaptSupabaseFeed(rpc){
+    var feed = {
+      slug:             rpc.slug,
+      companyName:      rpc.name,
+      contactFirstName: rpc.contact_first_name || '',
+      emailKnown:       !!rpc.email_known,
+      directionShape:   rpc.direction_shape || {},
+      offerText:        rpc.offer_text || '',
+      signal:           rpc.signal || null,
+      cards: (rpc.cards || []).map(function(c){
+        return {
+          id:       c.card_key,
+          format:   c.format,
+          title:    c.title,
+          angle:    c.angle,
+          evidence: c.evidence,
+          tags:     Array.isArray(c.tags) ? c.tags : [],
+          sources:  Array.isArray(c.sources) ? c.sources : []
+        };
+      }),
+      // Fill in stripeLink19 from the JSON copy (Stripe Payment Link is not
+      // in the DB yet).
+      stripeLink19: null
+    };
+    return getFeedFromJson(rpc.slug)
+      .then(function(json){ feed.stripeLink19 = json.stripeLink19; return feed; })
+      .catch(function(){ return feed; });
+  }
   function postForm(name, fields){
     try{
       var payload = Object.assign({ 'form-name': name, 'bot-field': '' }, fields || {});
@@ -1491,8 +1567,9 @@ body.dir-save  .ctl-save{
   }
 
   // -- State ---------------------------------------------------------------
-  var client = null;
-  var offer  = Object.assign({}, DEFAULT_OFFER);
+  var client    = null;
+  var offer     = Object.assign({}, DEFAULT_OFFER);
+  var spotsLeft = SPOTS_TOTAL;  // updated live from spots_left() RPC when the confirmation renders
   var state = {
     screen:'loading', cardIndex:0,
     liked:[], passed:[], saved:[], superLiked:null,
@@ -1500,7 +1577,7 @@ body.dir-save  .ctl-save{
     onboardingDone:{ h:false, d:false, u:false },
     approved:false, approvedAtIso:'', deliverByIso:'',
     freePickCardId:'',
-    emailProvided:'', waitlistJoined:false, referralSent:false
+    emailProvided:'', waitlistJoined:false
   };
   function storageKey(){ return STORAGE_PREFIX + SLUG; }
   function loadState(){
@@ -1514,7 +1591,6 @@ body.dir-save  .ctl-save{
         state.saved      = s.saved      || [];
         state.superLiked = s.superLiked || null;
         state.events     = s.events     || [];
-        state.paid       = !!s.paid;
         state.onboardingDone = s.onboardingDone || { h:false, d:false, u:false };
         state.approved       = !!s.approved;
         state.approvedAtIso  = s.approvedAtIso || '';
@@ -1522,7 +1598,6 @@ body.dir-save  .ctl-save{
         state.freePickCardId = s.freePickCardId || '';
         state.emailProvided  = s.emailProvided || '';
         state.waitlistJoined = !!s.waitlistJoined;
-        state.referralSent   = !!s.referralSent;
       }
     }catch(e){}
   }
@@ -1560,6 +1635,9 @@ body.dir-save  .ctl-save{
     if(id === 'direction')    logEvent('', 'direction_viewed');
     if(id === 'confirmation') logEvent('', 'confirmation_viewed');
   }
+  // Local history + PostHog capture. Per-card swipe rows now flow to Supabase
+  // through dataAdapter.logSwipe (called from doAction) instead of a Netlify
+  // form — we no longer post the "swipes" form here.
   function logEvent(cardId, action, extra){
     var ts = new Date().toISOString();
     var prev = state.events[state.events.length - 1];
@@ -1572,9 +1650,28 @@ body.dir-save  .ctl-save{
     if(extra && extra.url) evt.url = extra.url;
     state.events.push(evt);
     saveState();
-    dataAdapter.postSwipes({
-      slug: SLUG, cardId: cardId || '', action: action, timestamp: ts, url: extraUrl || ''
-    });
+
+    // PostHog event mapping. Register slug is done once at init, so we don't
+    // repeat it on every capture.
+    try{
+      var props = {};
+      if(cardId) props.card_key = cardId;
+      if(extraUrl) props.url = extraUrl;
+      switch(action){
+        case 'like': case 'pass': case 'save': case 'super':
+          props.action = action === 'super' ? 'fasttrack' : action;
+          ph.capture('swipe', Object.assign({}, props));
+          break;
+        case 'source_opened':      ph.capture('source_opened',      props); break;
+        case 'direction_viewed':   ph.capture('direction_viewed',   props); break;
+        case 'confirmation_viewed':ph.capture('confirmation_viewed',props); break;
+        case 'free_pick':          ph.capture('free_pick',          props); break;
+        case 'approved':           ph.capture('approved',           props); break;
+        case 'unlock_clicked':     ph.capture('unlock_clicked',     props); break;
+        case 'waitlist_joined':    ph.capture('waitlist_joined',    props); break;
+        case 'checkout_clicked':   ph.capture('unlock_clicked',     props); break;
+      }
+    }catch(_){}
   }
 
   function setFormatTint(format){
@@ -1600,7 +1697,7 @@ body.dir-save  .ctl-save{
     // again and lose whatever state the user just built up.
     if(FRESH){
       try{ localStorage.removeItem(STORAGE_PREFIX + SLUG); }catch(_){}
-      try{ localStorage.removeItem(PAID_SLUG_KEY); }catch(_){}
+      try{ localStorage.removeItem(LEGACY_PAID_SLUG_KEY); }catch(_){}
       try{
         var u = new URL(location.href);
         u.searchParams.delete('fresh');
@@ -1609,7 +1706,14 @@ body.dir-save  .ctl-save{
     }
     show('loading');
     loadState();
-    Promise.all([ dataAdapter.getFeed(SLUG), dataAdapter.getOffer() ])
+    // Load Supabase + PostHog config first so the adapter can hit the RPCs on
+    // the first getFeed. If the config is unset the adapter transparently
+    // falls back to /clients/*.json — the page still renders.
+    loadRuntimeConfig()
+      .then(function(){
+        ph.capture('feed_started');
+        return Promise.all([ dataAdapter.getFeed(SLUG), dataAdapter.getOffer() ]);
+      })
       .then(function(pair){
         client = pair[0]; offer = pair[1];
         onClientReady();
@@ -1629,18 +1733,11 @@ body.dir-save  .ctl-save{
     $all('[data-slot="price-early"]').forEach(function(el){ el.textContent = '$' + offer.earlyPrice; });
     $all('[data-slot="price-later"]').forEach(function(el){ el.textContent = '$' + offer.laterPrice; });
 
-    // Routing on return. Pre-compute lastDirection so post-approval screens
-    // can name the free article + siblings even on a cold reload.
-    if(state.approved || PAID_RETURN || state.paid){
-      lastDirection = computeDirection();
-    }
-    if(PAID_RETURN || state.paid){
-      state.paid = true; saveState();
-      renderPaidScreen();
-      show('paid');
-      return;
-    }
+    // Routing on return. Pre-compute lastDirection so the confirmation screen
+    // can name the free article + siblings even on a cold reload. Stripe's own
+    // hosted page handles post-payment now; ?paid=1 is no longer meaningful.
     if(state.approved){
+      lastDirection = computeDirection();
       renderConfirmation();
       show('confirmation');
       return;
@@ -1893,6 +1990,7 @@ body.dir-save  .ctl-save{
     var brief = { id: card.id, format: String(card.format||'post').toLowerCase(), title: String(card.title||'') };
     haptic(action === 'super' ? 18 : 8);
     logEvent(card.id, action);
+    dataAdapter.logSwipe(card.id, action);   // Supabase RPC (best-effort, no await)
     if(action === 'like')  state.liked.push(brief);
     if(action === 'pass')  state.passed.push(brief);
     if(action === 'save')  state.saved.push(brief);
@@ -2178,6 +2276,14 @@ body.dir-save  .ctl-save{
     if(email && !state.emailProvided) state.emailProvided = String(email).trim();
     saveState();
     logEvent('', 'approved');
+
+    // Persist the approval in Supabase (writes the approval row + creates the
+    // articles). Best-effort; the Netlify form post below is the fallback path
+    // for email notifications until Resend replaces it.
+    var freeKey = state.freePickCardId;
+    var directionKeys = lastDirection.map(function(x){ return String(x.brief.id); });
+    dataAdapter.submitApproval(freeKey, directionKeys, email || '');
+
     dataAdapter.postApproval({
       slug:              SLUG,
       companyName:       String(client.companyName || ''),
@@ -2286,8 +2392,9 @@ body.dir-save  .ctl-save{
       });
     }
 
-    // Spots + CTA
+    // Spots + CTA — render immediately from cached value, then refresh from RPC.
     renderSpotsAndCta();
+    refreshSpotsAsync();
   }
 
   function renderSpotsAndCta(){
@@ -2299,12 +2406,11 @@ body.dir-save  .ctl-save{
     var host = document.getElementById('cta-glow');
     if(!line || !btn || !lbl) return;
 
-    var full = offer.spotsTaken >= offer.spotsTotal;
+    var full = spotsLeft <= 0;
     if(!full){
-      var remaining = offer.spotsTotal - offer.spotsTaken;
-      var text = offer.spotsTaken === 0
-        ? (offer.spotsTotal + ' early-client spots')
-        : (remaining + ' of ' + offer.spotsTotal + ' early-client spots left');
+      var text = spotsLeft >= SPOTS_TOTAL
+        ? (SPOTS_TOTAL + ' early-client spots')
+        : (spotsLeft + ' of ' + SPOTS_TOTAL + ' early-client spots left');
       line.textContent = text;
       line.classList.remove('full');
       lbl.textContent  = 'Unlock the portal · $' + offer.earlyPrice + '/month';
@@ -2313,8 +2419,6 @@ body.dir-save  .ctl-save{
       btn.disabled = false;
       if(host) host.classList.remove('glow-off');
       if(state.waitlistJoined && ack){
-        // If they somehow already joined a waitlist earlier and spots reopened,
-        // just leave the ack hidden — Stripe path takes over.
         ack.classList.remove('on');
       }
     } else {
@@ -2334,6 +2438,13 @@ body.dir-save  .ctl-save{
         if(ack) ack.classList.remove('on');
       }
     }
+  }
+  // Refresh the live spot count from the RPC and re-render the CTA. Called
+  // when the confirmation screen mounts.
+  function refreshSpotsAsync(){
+    dataAdapter.getSpotsLeft().then(function(n){
+      if(typeof n === 'number'){ spotsLeft = n; renderSpotsAndCta(); }
+    });
   }
 
   function formatDeliverBy(iso){
@@ -2355,7 +2466,7 @@ body.dir-save  .ctl-save{
 
   // -- Portal CTA — Stripe or waitlist depending on spots ------------------
   function portalCta(){
-    var full = offer.spotsTaken >= offer.spotsTotal;
+    var full = spotsLeft <= 0;
     if(full){
       if(state.waitlistJoined) return;
       logEvent('', 'waitlist_joined');
@@ -2366,11 +2477,11 @@ body.dir-save  .ctl-save{
       }
       return;
     }
-    // Unlock — go to Stripe.
+    // Unlock — go to Stripe. Fire the PostHog event synchronously so it lands
+    // even though we're about to leave the page.
     logEvent('', 'unlock_clicked');
     var url = client && client.stripeLink19;
     if(!url){ alert('Checkout link is not configured yet for this client.'); return; }
-    try{ localStorage.setItem(PAID_SLUG_KEY, SLUG); }catch(_){}
     var sep = url.indexOf('?') === -1 ? '?' : '&';
     window.location.href = url + sep + 'client_reference_id=' + encodeURIComponent(SLUG);
   }
@@ -2384,70 +2495,6 @@ body.dir-save  .ctl-save{
       timestamp: new Date().toISOString()
     });
     renderSpotsAndCta();
-  }
-
-  // -- Post-payment screen -------------------------------------------------
-  function renderPaidScreen(){
-    var freeTitle = freeArticleTitle() || 'your first article';
-    var deliverStr = state.deliverByIso ? formatDeliverBy(state.deliverByIso) : 'soon';
-    var line = document.getElementById('paid-line');
-    if(line){
-      line.textContent = '';
-      line.appendChild(document.createTextNode('Your article, '));
-      var t = document.createElement('strong'); t.textContent = freeTitle;
-      line.appendChild(t);
-      line.appendChild(document.createTextNode(', lands by '));
-      var d = document.createElement('strong'); d.textContent = deliverStr;
-      line.appendChild(d);
-      line.appendChild(document.createTextNode('.'));
-    }
-    // Reset referral UI if it was already sent in a prior visit.
-    var input = document.getElementById('ref-input');
-    var send  = document.getElementById('ref-send');
-    var ack   = document.getElementById('ref-ack');
-    var err   = document.getElementById('ref-err');
-    if(err) err.textContent = ' ';
-    if(state.referralSent){
-      if(input) input.disabled = true;
-      if(send)  send.disabled  = true;
-      if(ack)   ack.classList.add('on');
-    } else {
-      if(input) input.disabled = false;
-      if(send)  send.disabled  = false;
-      if(ack)   ack.classList.remove('on');
-    }
-  }
-  function submitReferral(){
-    var input = document.getElementById('ref-input');
-    var err   = document.getElementById('ref-err');
-    var raw = (input.value || '').trim();
-    if(!raw){
-      err.textContent = 'Add a URL to send.'; input.focus(); return;
-    }
-    // Validate — accept anything URL-like; prepend https:// if scheme missing.
-    var candidate = /^[a-z]+:\/\//i.test(raw) ? raw : 'https://' + raw;
-    try{
-      var u = new URL(candidate);
-      if(u.protocol !== 'http:' && u.protocol !== 'https:') throw new Error('bad scheme');
-    }catch(_){
-      err.textContent = "That doesn't look like a URL.";
-      input.focus();
-      return;
-    }
-    err.textContent = ' ';
-    state.referralSent = true;
-    saveState();
-    logEvent('', 'referral_sent', { url: candidate });
-    dataAdapter.postReferral({
-      slug:        SLUG,
-      referredUrl: candidate,
-      timestamp:   new Date().toISOString()
-    });
-    var send = document.getElementById('ref-send');
-    var ack  = document.getElementById('ref-ack');
-    if(input) input.disabled = true;
-    if(send)  send.disabled  = true;
-    if(ack)   ack.classList.add('on');
   }
 
   // -- Source sheet --------------------------------------------------------
@@ -2690,7 +2737,6 @@ body.dir-save  .ctl-save{
   }
   function closeHistory(){
     if(previousScreen && previousScreen !== 'history') return show(previousScreen);
-    if(state.paid) { renderPaidScreen(); return show('paid'); }
     if(state.approved) { renderConfirmation(); return show('confirmation'); }
     var d = computeDirection();
     if(d.length) return show('direction');
@@ -2722,9 +2768,9 @@ body.dir-save  .ctl-save{
       case 'approve-direction':   approve(); return;
       case 'back-to-direction':   show('direction'); return;
       case 'portal-cta':          portalCta(); return;
-      case 'referral-send':       submitReferral(); return;
       case 'show-history':        openHistory(); return;
       case 'close-history':       closeHistory(); return;
+      case 'start-over':          startOver(); return;
       case 'hist-tab-actions':    selectHistoryTab('actions'); return;
       case 'hist-tab-sources':    selectHistoryTab('sources'); return;
       case 'show-info':           openInfo(); return;
@@ -2740,11 +2786,14 @@ body.dir-save  .ctl-save{
     }
   });
 
-  // Referral input Enter → submit
-  document.addEventListener('keydown', function(e){
-    if(e.key !== 'Enter') return;
-    if(e.target && e.target.id === 'ref-input'){ e.preventDefault(); submitReferral(); }
-  });
+  // "Start over" wipes localStorage for this slug (like ?fresh=1 but without
+  // rebooting the page). Handy during pitches when the same phone re-tests.
+  function startOver(){
+    if(!confirm("Start over? This clears every swipe you've made so far.")) return;
+    try{ localStorage.removeItem(storageKey()); }catch(_){}
+    try{ localStorage.removeItem(LEGACY_PAID_SLUG_KEY); }catch(_){}
+    location.reload();
+  }
 
   boot();
 })();

@@ -1,63 +1,53 @@
-headersOrigin = "config"
-redirectsOrigin = "config"
-
-[functions]
-
-  [functions."*"]
-
-[[plugins]]
-origin = "ui"
-package = "@netlify/plugin-lighthouse"
-pinned_version = "6"
-
-  [plugins.inputs]
+# Static site — no framework build. The build step runs a schema check on
+# every /clients/*.json feed so a malformed pitch cannot ship.
 
 [build]
-publish = "/Users/vedikabhasin/Desktop/join-waitlist/project"
-publishOrigin = "config"
-commandOrigin = "config"
-base = "/Users/vedikabhasin/Desktop/join-waitlist/project"
-command = "node validate-feeds.js"
+  command = "node validate-feeds.js"
+  publish = "."
 
-  [build.environment]
-
-  [build.processing]
-
-    [build.processing.css]
-
-    [build.processing.html]
-
-    [build.processing.images]
-
-    [build.processing.js]
-
-  [build.services]
-
-[[headers]]
-for = "/*"
-
-  [headers.values]
-  Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data:; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'"
-  X-Frame-Options = "DENY"
-  X-Content-Type-Options = "nosniff"
-  Referrer-Policy = "strict-origin"
-  Permissions-Policy = "camera=(), microphone=(), geolocation=(), interest-cohort=()"
-
-[[headers]]
-for = "/clients/*"
-
-  [headers.values]
-  X-Robots-Tag = "noindex, nofollow, noarchive"
-  Cache-Control = "no-store"
-
+# -----------------------------------------------------------------------------
+# Routing
+# The swipe feed template is served from /swipe.html. Every /:slug URL that
+# does not match a real file resolves to it with ?slug=:slug, so a new client
+# is one JSON file in /clients/, never a new HTML file.
+# Netlify serves existing files (index.html, /assets/*, etc.) first, so this
+# rule only fires for unknown paths.
+# -----------------------------------------------------------------------------
 [[redirects]]
-from = "/:slug"
-to = "/swipe.html?slug=:slug"
-status = 200
-force = false
+  from   = "/:slug"
+  to     = "/swipe.html?slug=:slug"
+  status = 200
+  force  = false
 
-  [redirects.query]
+# -----------------------------------------------------------------------------
+# Security headers
+# CSP:
+#   script-src  self + inline (small helpers) + esm.sh (Supabase JS import) +
+#               PostHog's asset host.
+#   style-src   self + inline + Google Fonts CSS (imported at the top of each
+#               <style>).
+#   font-src    self + gstatic.
+#   img-src     self + data URIs.
+#   connect-src self + every Supabase project host + PostHog ingest.
+#   frame-ancestors 'none' + form-action 'self' + strict-origin referrer so
+#               private pitch URLs never leak.
+# The wildcard *.supabase.co covers the project's REST + Auth + Storage
+# endpoints; the anon key alone bounded by RLS is what actually protects data.
+# -----------------------------------------------------------------------------
+[[headers]]
+  for = "/*"
+  [headers.values]
+    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' https://esm.sh https://us-assets.i.posthog.com https://eu-assets.i.posthog.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data:; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://us.i.posthog.com https://eu.i.posthog.com; frame-ancestors 'none'; base-uri 'self'; form-action 'self'"
+    X-Frame-Options       = "DENY"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy        = "strict-origin"
+    Permissions-Policy     = "camera=(), microphone=(), geolocation=(), interest-cohort=()"
 
-  [redirects.conditions]
-
-  [redirects.headers]
+# Client feeds should never be listed or crawled directly. The catch-all is
+# behind server-side X-Robots-Tag as belt and suspenders to the meta tag on
+# swipe.html.
+[[headers]]
+  for = "/clients/*"
+  [headers.values]
+    X-Robots-Tag = "noindex, nofollow, noarchive"
+    Cache-Control = "no-store"

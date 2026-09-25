@@ -1,6 +1,5 @@
 {
-  "spotsTotal": 10,
-  "spotsTaken": 0,
+  "_comment": "Prices only. Spot count comes live from the spots_left() Supabase RPC.",
   "earlyPrice": 19,
   "laterPrice": 49
 }
