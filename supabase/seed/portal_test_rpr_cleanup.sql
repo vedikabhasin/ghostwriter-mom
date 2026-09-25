@@ -11,8 +11,10 @@ begin
   delete from articles     where company_id = v_company;
   update cards set drop_date = null where company_id = v_company;
   update companies set hub_unlocked = false where id = v_company;
-  -- Test users (and any teammate invited during the walkthrough).
-  delete from auth.users where email like 'vedikabhasin+rpr-%@gmail.com';
+  -- The two test users by their fixed ids (Sam's email was later changed to
+  -- vedikabhasinwork@gmail.com), plus any teammate invited while testing.
+  delete from auth.users where id in ('0b7e5a52-2f1c-4c8e-9a61-7f0a1c2b3d01', '0b7e5a52-2f1c-4c8e-9a61-7f0a1c2b3d02')
+     or email like 'vedikabhasin+rpr-%@gmail.com';
   delete from members m where m.company_id = v_company
     and not exists (select 1 from auth.users u where u.id = m.user_id);
 end $$;

@@ -8,7 +8,7 @@ which also runs **84 checks**. The last run passed all 84 (`shots/results.json`)
 | Test member | Email | Role | Avatar |
 |---|---|---|---|
 | Patrick | `vedikabhasin+rpr-owner@gmail.com` | owner (display name falls back to `contact_first_name`) | ghost (yellow) |
-| Sam | `vedikabhasin+rpr-sam@gmail.com` | member | blob (violet) |
+| Sam | `vedikabhasinwork@gmail.com` | member | blob (violet) |
 
 Both exist in the live project now (`supabase/seed/portal_test_rpr.sql`).
 Remove them with `supabase/seed/portal_test_rpr_cleanup.sql`.
@@ -95,4 +95,4 @@ npm i --no-save stripe@14.25.0 && node tests/portal/stripe-webhook.test.mjs   # 
 2. Supabase Auth → URL Configuration must list `https://www.ghostwriter.mom/portal`
    (see the root README). The default mailer only sends to your team's addresses,
    so use custom SMTP or your own address.
-3. Open `/portal`, enter `vedikabhasin+rpr-sam@gmail.com`, and follow the link.
+3. Open `/portal`, enter `vedikabhasinwork@gmail.com` (Sam), and follow the link.

@@ -5,7 +5,7 @@
 -- Undo with portal_test_rpr_cleanup.sql.
 --
 --   owner   vedikabhasin+rpr-owner@gmail.com   shows as "Patrick" (contact_first_name)
---   member  vedikabhasin+rpr-sam@gmail.com     display_name "Sam"
+--   member  vedikabhasinwork@gmail.com         display_name "Sam"
 --
 -- Run in the Supabase SQL editor (runs as postgres, bypasses RLS).
 -- ---------------------------------------------------------------------------
@@ -22,7 +22,7 @@ begin
   -- Auth users (email-confirmed; they sign in with "Send me a link").
   for u in select * from (values
       (v_owner_uid, 'vedikabhasin+rpr-owner@gmail.com'),
-      (v_sam_uid,   'vedikabhasin+rpr-sam@gmail.com')) as t(id, email)
+      (v_sam_uid,   'vedikabhasinwork@gmail.com')) as t(id, email)
   loop
     insert into auth.users (instance_id, id, aud, role, email, encrypted_password, email_confirmed_at,
                             raw_app_meta_data, raw_user_meta_data, created_at, updated_at,
