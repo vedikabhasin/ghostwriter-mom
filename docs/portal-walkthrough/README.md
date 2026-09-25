@@ -86,6 +86,7 @@ which is written just before the `gdoc_opened` click).
 npm install
 node tests/portal/walkthrough.mjs          # UI: screenshots here, exit 1 on any failed check
 bash tests/portal/invite-member.sh         # edge function under Deno (npx deno works)
+npm i --no-save stripe@14.25.0 && node tests/portal/stripe-webhook.test.mjs   # webhook under Deno, signed events
 ```
 
 ## Try it for real
