@@ -504,7 +504,11 @@ body,a,button,input,.frag{cursor:var(--pencil),auto;}
   const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   if(!hasGSAP || reduce){
+    // Static fallback — GSAP blocked by CSP, offline, or reduced-motion.
+    // Reveal every draggable and every frozen testimonial so the page never
+    // ships with invisible content.
     frags.forEach(el => { el.style.opacity = '1'; });
+    document.querySelectorAll('.testimonial').forEach(el => { el.style.opacity = '1'; });
     return;
   }
 
