@@ -1,0 +1,109 @@
+{
+  "slug": "rpr-k7m2qx",
+  "companyName": "Rock Paper Reality",
+  "contactFirstName": "Patrick",
+  "emailKnown": true,
+  "stripeLink19": "https://buy.stripe.com/7sY8wP0M833Rcx21YugnK09",
+  "directionShape": { "pillar": 1, "insight": 2 },
+  "offerText": "Your first article is on me.",
+  "signal": {
+    "text": "RPR ranks #1 for 'augmented reality in events', but Google's AI Overview above it cites Onirix.",
+    "source": "Google search",
+    "date": "2026-09-24"
+  },
+  "cards": [
+    { "id": "rpr-01", "format": "pillar", "title": "WebAR After 8th Wall: Buyer's Guide",
+      "angle": "8th Wall's hosted platform ended February 28, 2026. Every guide to what comes next is written by a platform selling itself. RPR can write the neutral one.",
+      "evidence": "Search '8th Wall alternatives' and every result is a vendor: Zapworks, Kivicube, Blippar, Arloopa. The engine is now MIT open source without SLAM, VPS, Maps, or hand tracking. Your 'Is WebAR Better than AR Apps?' page predates all of it and folds into this pillar.",
+      "tags": ["webar", "platforms", "timely"],
+      "sources": [
+        { "title": "8th Wall open source announcement", "publisher": "8th Wall", "url": "https://8thwall.org/blog/8th-wall-open-source" },
+        { "title": "8th Wall shutdown: 2026 WebAR guide", "publisher": "Kivicube", "url": "https://www.kivicube.com/post/augmented-reality-after-8th-wall-shutdown-your-2026-guide-to-the-right-webar-platform/" },
+        { "title": "Mattercraft for 8th Wall developers", "publisher": "Zapworks", "url": "https://zap.works/mattercraft-for-8th-wall-studio-developers/" },
+        { "title": "Blippar vs 8th Wall in 2026", "publisher": "Blippar", "url": "https://www.blippar.com/blippar-vs-8th-wall-which-webar-platform-should-you-choose-in-2026/" },
+        { "title": "WebAR Insights", "publisher": "Rock Paper Reality", "url": "https://rockpaperreality.com/insights/web-ar/" }
+      ] },
+
+    { "id": "rpr-02", "format": "pillar", "title": "Google Maps AR for Brands",
+      "angle": "Location-based AR inside Google Maps needs no app and no QR code. RPR shipped the first-of-its-kind launch and has the award to prove it.",
+      "evidence": "Your Paris landmarks launch with Google Arts and Culture was covered by Forbes, and won the 2025 Auggie Award for AR in Google Maps. No page on your site explains how a brand buys it.",
+      "tags": ["location-ar", "owned-proof"],
+      "sources": [
+        { "title": "Google Maps introduces AR for Paris landmarks with Rock Paper Reality", "publisher": "Forbes", "url": "https://www.forbes.com/sites/charliefink/2024/11/11/google-maps-introduces-ar-for-paris-landmarks-by-rock-paper-reality/" },
+        { "title": "First-of-its-kind AR content launch in Google Maps", "publisher": "Rock Paper Reality", "url": "https://rockpaperreality.com/our-work/first-of-its-kind-ar-content-launch-in-google-maps-in-collaboration-with-google-arts-and-culture/" },
+        { "title": "Insights (Auggie Award 2025)", "publisher": "Rock Paper Reality", "url": "https://rockpaperreality.com/insights/" }
+      ] },
+
+    { "id": "rpr-03", "format": "pillar", "title": "AR Glasses for Brands: What to Build",
+      "angle": "The first glasses wave is audio, not holograms. Android XR launches audio glasses this fall and display glasses have no date. Brands should build for voice and navigation now, and for visual AR on Snap's Specs.",
+      "evidence": "Google confirms Android XR audio glasses with Gentle Monster and Warby Parker this fall. Display glasses are listed as 'stay tuned'. Snap's display Specs are reportedly priced at $2,500. Navigation is a launch feature, which is where your Google Maps work lands. Your Vision Pro piece is written for a headset moment that has passed.",
+      "tags": ["glasses", "timely", "location-ar"],
+      "sources": [
+        { "title": "Android XR at I/O 2026", "publisher": "Google", "url": "https://blog.google/products-and-platforms/platforms/android/android-xr-io-2026/" },
+        { "title": "Android XR devices", "publisher": "Android", "url": "https://www.android.com/xr/" },
+        { "title": "Snap's AR glasses with display reportedly beat Android XR to launch", "publisher": "9to5Google", "url": "https://9to5google.com/2026/05/22/snap-ar-glasses-spectacles-price-release-date-report/" }
+      ] },
+
+    { "id": "rpr-04", "format": "insight", "title": "AR for Events: Win the AI Overview",
+      "angle": "RPR is the #1 result for 'augmented reality in events', yet Google's AI Overview above it quotes Onirix. Restructure the page so the answer engine quotes RPR.",
+      "evidence": "Google search, September 24, 2026: your page is the first organic result, directly beneath an AI Overview citing Onirix and a LinkedIn post.",
+      "tags": ["refresh", "events", "ai-search"],
+      "sources": [
+        { "title": "Google search: augmented reality in events (Sep 24, 2026)", "publisher": "Google", "url": "https://www.google.com/search?q=augmented+reality+in+events" },
+        { "title": "Augmented Reality for Events", "publisher": "Rock Paper Reality", "url": "https://rockpaperreality.com/insights/ar-use-cases/augmented-reality-for-events/" }
+      ] },
+
+    { "id": "rpr-05", "format": "insight", "title": "VR in Museums: Cost and Timeline",
+      "angle": "You rank top 3 for what VR does in museums. The next thing a museum director searches is what it costs, and nobody answers it.",
+      "evidence": "Google search, September 24, 2026: 'How Virtual Reality is Transforming Museums' ranks top 3. Cost searches return museums' own ticketed VR attractions, not a buyer's guide.",
+      "tags": ["museums", "buyer-intent"],
+      "sources": [
+        { "title": "Google search: virtual reality in museums (Sep 24, 2026)", "publisher": "Google", "url": "https://www.google.com/search?q=virtual+reality+in+museums" },
+        { "title": "Insights", "publisher": "Rock Paper Reality", "url": "https://rockpaperreality.com/insights/" }
+      ] },
+
+    { "id": "rpr-06", "format": "insight", "title": "Replacing 8th Wall VPS With Google Geospatial",
+      "angle": "8th Wall's VPS is gone. For location-anchored campaigns, Google's Geospatial stack is the replacement, and RPR has already shipped on it.",
+      "evidence": "Links your two pillars: the 8th Wall buyer's guide and Google Maps AR for Brands. Built on your Google Maps launch.",
+      "tags": ["location-ar", "webar"],
+      "sources": [
+        { "title": "8th Wall open source announcement", "publisher": "8th Wall", "url": "https://8thwall.org/blog/8th-wall-open-source" },
+        { "title": "Geospatial Creator: world-scale AR in minutes", "publisher": "Google Developers", "url": "https://developers.googleblog.com/en/create-world-scale-augmented-reality-experiences-in-minutes-with-googles-geospatial-creator/" },
+        { "title": "First-of-its-kind AR content launch in Google Maps", "publisher": "Rock Paper Reality", "url": "https://rockpaperreality.com/our-work/first-of-its-kind-ar-content-launch-in-google-maps-in-collaboration-with-google-arts-and-culture/" }
+      ] },
+
+    { "id": "rpr-07", "format": "insight", "title": "AI in XR Production: Where Budget Moved",
+      "angle": "Generative AI didn't make immersive cheaper. It moved budget from building assets to designing the experience.",
+      "evidence": "Builds on Preston Platt's AWE USA 2025 session, which lives on your Insights page only as an event recap.",
+      "tags": ["ai", "production"],
+      "sources": [
+        { "title": "Insights (AWE USA 2025: How AI Supercharged XR)", "publisher": "Rock Paper Reality", "url": "https://rockpaperreality.com/insights/" }
+      ] },
+
+    { "id": "rpr-08", "format": "insight", "title": "Experiential AR ROI: What to Measure",
+      "angle": "Events buyers ask what an activation returned. Give them the four numbers that answer it, and the one that doesn't.",
+      "evidence": "The follow-up to your #1 events page. Extends Omead Sinai's AWE USA 2025 talk on why events matter more than ever.",
+      "tags": ["events", "buyer-intent"],
+      "sources": [
+        { "title": "Augmented Reality for Events", "publisher": "Rock Paper Reality", "url": "https://rockpaperreality.com/insights/ar-use-cases/augmented-reality-for-events/" },
+        { "title": "Insights (AWE USA 2025: Why Events Matter More Than Ever)", "publisher": "Rock Paper Reality", "url": "https://rockpaperreality.com/insights/" }
+      ] },
+
+    { "id": "rpr-09", "format": "insight", "title": "Gaussian Splatting for Museum Tours",
+      "angle": "Splats capture a gallery in an afternoon at photographic realism. For museums and attractions, that changes what a virtual tour costs.",
+      "evidence": "Pairs your existing Gaussian Splatting article with the museum buyers you already rank for. Leaves the original article untouched.",
+      "tags": ["3d", "museums"],
+      "sources": [
+        { "title": "Gaussian Splatting: When Does it Make Sense to Use and Why?", "publisher": "Rock Paper Reality", "url": "https://rockpaperreality.com/insights/3d-vfx/gaussian-splatting-when-does-it-make-sense-to-use-and-why/" }
+      ] },
+
+    { "id": "rpr-10", "format": "insight", "title": "Location-Based AR for Tourism Boards",
+      "angle": "Tourism boards want visitors to stay longer at a site. Location AR in Maps puts the story on the landmark itself, with no app to download.",
+      "evidence": "Connects your tourism use-case page to the Google Maps pillar and the Paris landmarks launch.",
+      "tags": ["location-ar", "tourism"],
+      "sources": [
+        { "title": "AR in Tourism and Travel", "publisher": "Rock Paper Reality", "url": "https://rockpaperreality.com/insights/ar-use-cases/augmented-reality-in-tourism-and-travel/" },
+        { "title": "First-of-its-kind AR content launch in Google Maps", "publisher": "Rock Paper Reality", "url": "https://rockpaperreality.com/our-work/first-of-its-kind-ar-content-launch-in-google-maps-in-collaboration-with-google-arts-and-culture/" }
+      ] }
+  ]
+}

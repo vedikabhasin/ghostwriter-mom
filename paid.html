@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<meta name="referrer" content="no-referrer">
+<title>Ghostwriter Mom | Thanks</title>
+<link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+<style>
+  html,body{margin:0;height:100%;background:#F1F0EC;color:#0E0E0E;
+    font-family:"Inter Tight",system-ui,sans-serif;}
+  .wrap{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;
+    padding:24px;text-align:center;gap:12px;}
+  .mono{font-family:ui-monospace,"SF Mono","SFMono-Regular",Menlo,Consolas,monospace;
+    font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:#6a6a6a;}
+  h1{font-weight:800;font-size:24px;letter-spacing:-0.02em;margin:0;}
+  p{font-size:15px;line-height:1.5;max-width:32ch;margin:0;color:#0E0E0E;}
+  a{color:#0E0E0E;text-decoration:underline;text-underline-offset:3px;}
+</style>
+</head>
+<body>
+<main class="wrap">
+  <p class="mono">Redirecting&hellip;</p>
+  <h1>Thanks. Wrapping things up.</h1>
+  <p id="fallback" hidden>If this page doesn't move on its own, <a href="/" id="home">go home</a>.</p>
+</main>
+<script>
+  // The Stripe success URL lands here. We route back to the pitch page that
+  // launched checkout so it can show its own paid confirmation state.
+  (function(){
+    var KEY = 'gwm-swipe-pending-slug';
+    var slug = null;
+    try{ slug = localStorage.getItem(KEY) || ''; }catch(_){}
+    // Sanity: only allow the same slug shape we accept in swipe.html.
+    if(slug && /^[a-z0-9_-]{1,64}$/i.test(slug)){
+      try{ localStorage.removeItem(KEY); }catch(_){}
+      location.replace('/' + encodeURIComponent(slug) + '?paid=1');
+      return;
+    }
+    document.getElementById('fallback').hidden = false;
+  })();
+</script>
+</body>
+</html>

@@ -1,0 +1,130 @@
+{
+  "slug": "swipetemplate",
+  "companyName": "Beacon Labs",
+  "contactFirstName": "Sam",
+  "emailKnown": false,
+  "stripeLink19": "https://buy.stripe.com/8x228r52o9sffJe0UqgnK07",
+  "directionShape": { "pillar": 1, "post": 2 },
+  "offerText": "Your first article is on me.",
+  "signal": {
+    "text": "Consumer Reports Wearable Privacy Audit dropped this morning. Beacon isn't rated; Apollo Neuro was scored C+ on retention policy. First-mover framing on trust is open for one publish cycle.",
+    "source": "Consumer Reports (2026 Wearable Privacy Audit)",
+    "date": "October 3, 2026"
+  },
+  "cards": [
+    {
+      "id": "c1",
+      "format": "pillar",
+      "title": "Bedside manner: wearables' positioning problem",
+      "angle": "Consumer neurotech keeps marketing to biohackers when the real ROI is helping doctors run harder conversations. Reposition around that reader and the enterprise pipeline gets warmer.",
+      "evidence": "Beacon's investor teardown on The Information (July 2026) lists three enterprise sleep-clinic pilots. beaconlabs.com still opens with 'biohack your brain.'",
+      "tags": ["positioning", "healthcare", "GTM"],
+      "sources": [
+        { "title": "Beacon Labs teardown", "publisher": "The Information", "url": "https://www.theinformation.com/articles/beacon-labs-teardown-2026" },
+        { "title": "beaconlabs.com homepage", "publisher": "Beacon Labs", "url": "https://beaconlabs.com/" }
+      ]
+    },
+    {
+      "id": "c2",
+      "format": "insight",
+      "title": "12-hour sensors: the clinician trust threshold",
+      "angle": "Short datasets make clinicians skeptical. Battery life is not a spec issue, it is a credibility issue.",
+      "evidence": "Nature Sleep Medicine review (June 2026, doi:10.1038/nsm.2026.4471) cites 10-plus hours of continuous recording as the accepted clinical trust cutoff.",
+      "tags": ["credibility", "product", "medical"],
+      "sources": [
+        { "title": "Continuous sleep recording thresholds (review, June 2026)", "publisher": "Nature Sleep Medicine", "url": "https://www.nature.com/articles/nsm.2026.4471" }
+      ]
+    },
+    {
+      "id": "c3",
+      "format": "post",
+      "title": "Compliance moats wearable startups keep ignoring",
+      "angle": "FDA clearance is table stakes. The real moat is HIPAA-BAA-signed cloud storage, and it is cheaper to prove than most founders realize.",
+      "evidence": "Beacon's AWS re:Invent 2026 healthcare track talk (recording on YouTube) walks through a BAA-signed setup. The marketing site never surfaces it.",
+      "tags": ["regulatory", "moat", "differentiation"],
+      "sources": [
+        { "title": "AWS re:Invent 2026 healthcare track — Beacon Labs session", "publisher": "AWS", "url": "https://aws.amazon.com/events/reinvent/2026/healthcare/beacon-labs/" },
+        { "title": "AWS re:Invent 2026 — Beacon BAA walkthrough (recording)", "publisher": "YouTube", "url": "https://www.youtube.com/watch?v=example-beacon-baa" }
+      ]
+    },
+    {
+      "id": "c4",
+      "format": "insight",
+      "title": "Refresh the Mayo case study",
+      "angle": "The published Mayo case answers what you did, not what changed for the buyer. Three added questions surface the outcome numbers and turn it into a linkable asset.",
+      "evidence": "Public case study at beaconlabs.com/case/mayo (published June 2026) contains zero specific outcome numbers.",
+      "tags": ["refresh", "case-studies", "conversion"],
+      "sources": [
+        { "title": "Mayo case study", "publisher": "Beacon Labs", "url": "https://beaconlabs.com/case/mayo" }
+      ]
+    },
+    {
+      "id": "c5",
+      "format": "insight",
+      "title": "Wearables' hidden B2B2C business model",
+      "angle": "The reviews complain about your app UX, but the real customer is the clinic that recommends you. Their UX starts with a clinician dashboard that does not exist yet.",
+      "evidence": "Amazon reviews for Beacon Ring average 4.1 stars from verified consumers and 4.8 stars from reviewers whose profiles identify as sleep clinicians.",
+      "tags": ["positioning", "product-strategy"],
+      "sources": [
+        { "title": "Beacon Ring product reviews", "publisher": "Amazon", "url": "https://www.amazon.com/beacon-ring/product-reviews/example" },
+        { "title": "Beacon Ring product page", "publisher": "Beacon Labs", "url": "https://beaconlabs.com/product/ring" }
+      ]
+    },
+    {
+      "id": "c6",
+      "format": "pillar",
+      "title": "Wearable privacy: 2026's open trust category",
+      "angle": "The privacy-first wearable brand is unclaimed. Whoever writes the plain-language biometric-data manifesto owns the trust conversation for a decade.",
+      "evidence": "Consumer Reports 2026 Wearable Privacy Audit (September) shows every top-10 policy buries data-retention terms behind an appendix link.",
+      "tags": ["privacy", "trust", "category-leadership"],
+      "sources": [
+        { "title": "Wearable Privacy Audit 2026", "publisher": "Consumer Reports", "url": "https://www.consumerreports.org/electronics/wearables/wearable-privacy-audit-2026/" }
+      ]
+    },
+    {
+      "id": "c7",
+      "format": "post",
+      "title": "Pricing pages that negotiate against you",
+      "angle": "Anchor pricing at the enterprise tier and let self-serve buyers scroll past it. Right now your cheapest tier loads first and trains buyers to see a $29 product.",
+      "evidence": "beaconlabs.com/pricing loads $29/mo first. The Series A deck filed on Crunchbase (May 2026) references enterprise ACVs of $2,400 per seat per year.",
+      "tags": ["pricing", "positioning"],
+      "sources": [
+        { "title": "Beacon Labs pricing", "publisher": "Beacon Labs", "url": "https://beaconlabs.com/pricing" },
+        { "title": "Beacon Labs Series A profile", "publisher": "Crunchbase", "url": "https://www.crunchbase.com/organization/beacon-labs/funding_rounds" }
+      ]
+    },
+    {
+      "id": "c8",
+      "format": "insight",
+      "title": "Peer review's silent marketing gap",
+      "angle": "Peer review is the highest-cost credibility you have, and it is not doing marketing work. Three studies exist and none of them appear on a conversion page.",
+      "evidence": "npj Digital Medicine paper (March 2026, doi:10.1038/npj.dm.2026.0142) is not linked from beaconlabs.com/product, /pricing, or /case pages.",
+      "tags": ["credibility", "science", "conversion"],
+      "sources": [
+        { "title": "Beacon Ring clinical validation (March 2026)", "publisher": "npj Digital Medicine", "url": "https://www.nature.com/articles/npj.dm.2026.0142" }
+      ]
+    },
+    {
+      "id": "c9",
+      "format": "pillar",
+      "title": "Developer wearables: the untold segment",
+      "angle": "Every API discussion is written for consumer app builders. The quiet users are contract research orgs, a whole category with its own vocabulary and its own buying signal.",
+      "evidence": "Beacon's public GitHub org shows three CRO-adjacent forks of beacon-sdk in Q3 2026. That signal never lands on the marketing site.",
+      "tags": ["developer-marketing", "API", "CROs"],
+      "sources": [
+        { "title": "beacon-sdk repository network", "publisher": "GitHub", "url": "https://github.com/beaconlabs/beacon-sdk/network" }
+      ]
+    },
+    {
+      "id": "c10",
+      "format": "post",
+      "title": "Founder reading lists as authority",
+      "angle": "Your public reading list is more interesting than most of what you post. Publish it every two weeks with a one-line 'why this matters' for the sector.",
+      "evidence": "Three papers you cited on LinkedIn without framing in September 2026 (posts dated Sep 4, Sep 15, Sep 22) each pulled roughly 3x the engagement of your product posts.",
+      "tags": ["personal-brand", "authority", "content-cadence"],
+      "sources": [
+        { "title": "Sam Kirsch — activity", "publisher": "LinkedIn", "url": "https://www.linkedin.com/in/sam-kirsch/recent-activity/" }
+      ]
+    }
+  ]
+}
