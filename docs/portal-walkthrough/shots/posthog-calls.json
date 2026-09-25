@@ -1,0 +1,263 @@
+[
+ [
+  "identify",
+  "1bb928fa-8ec4-4fe2-a033-8fb266233aa1",
+  {
+   "role": "member"
+  }
+ ],
+ [
+  "group",
+  "company",
+  "rpr-k7m2qx",
+  {
+   "name": "Rock Paper Reality"
+  }
+ ],
+ [
+  "register",
+  {
+   "slug": "rpr-k7m2qx",
+   "surface": "portal"
+  }
+ ],
+ [
+  "capture",
+  "portal_login",
+  {
+   "surface": "portal",
+   "via": "link",
+   "read_only": false
+  }
+ ],
+ [
+  "capture",
+  "overlap_seen",
+  {
+   "surface": "portal",
+   "state": "agree",
+   "card_id": "50023ddd-baf5-4df2-8c00-8a08680eb33c"
+  }
+ ],
+ [
+  "capture",
+  "overlap_seen",
+  {
+   "surface": "portal",
+   "state": "split",
+   "card_id": "555a6ac1-4ae5-4e64-891b-bac19c77021b"
+  }
+ ],
+ [
+  "capture",
+  "dot_jump",
+  {
+   "surface": "portal",
+   "to_index": 7,
+   "via": "tap"
+  }
+ ],
+ [
+  "capture",
+  "note_added",
+  {
+   "surface": "portal",
+   "card_id": "555a6ac1-4ae5-4e64-891b-bac19c77021b",
+   "length": 91
+  }
+ ],
+ [
+  "capture",
+  "overlap_seen",
+  {
+   "surface": "portal",
+   "state": "timing",
+   "card_id": "263f1ea9-6a1e-47b5-9f9b-44f9800fcb03"
+  }
+ ],
+ [
+  "capture",
+  "dot_jump",
+  {
+   "surface": "portal",
+   "to_index": 9,
+   "via": "tap"
+  }
+ ],
+ [
+  "capture",
+  "feed_swipe",
+  {
+   "surface": "portal",
+   "action": "like",
+   "via": "button",
+   "card_id": "263f1ea9-6a1e-47b5-9f9b-44f9800fcb03",
+   "format": "insight",
+   "changed": true
+  }
+ ],
+ [
+  "capture",
+  "decision_changed",
+  {
+   "surface": "portal",
+   "from": "save",
+   "to": "like",
+   "card_id": "263f1ea9-6a1e-47b5-9f9b-44f9800fcb03"
+  }
+ ],
+ [
+  "capture",
+  "overlap_seen",
+  {
+   "surface": "portal",
+   "state": "agree",
+   "card_id": "263f1ea9-6a1e-47b5-9f9b-44f9800fcb03"
+  }
+ ],
+ [
+  "capture",
+  "dot_jump",
+  {
+   "surface": "portal",
+   "to_index": 2,
+   "via": "tap"
+  }
+ ],
+ [
+  "capture",
+  "feed_swipe",
+  {
+   "surface": "portal",
+   "action": "like",
+   "via": "swipe",
+   "card_id": "ddb56fd1-080f-4f20-bd22-da0165c358e4",
+   "format": "insight",
+   "changed": false
+  }
+ ],
+ [
+  "capture",
+  "overlap_seen",
+  {
+   "surface": "portal",
+   "state": "split",
+   "card_id": "ddb56fd1-080f-4f20-bd22-da0165c358e4"
+  }
+ ],
+ [
+  "capture",
+  "dot_jump",
+  {
+   "surface": "portal",
+   "to_index": 2,
+   "via": "tap"
+  }
+ ],
+ [
+  "capture",
+  "ghost_tapped",
+  {
+   "surface": "portal",
+   "article_id": "3e4c4873-4b2b-4bac-846e-00cfbf2d450b",
+   "format": "insight"
+  }
+ ],
+ [
+  "capture",
+  "article_interest",
+  {
+   "surface": "portal",
+   "article_id": "3e4c4873-4b2b-4bac-846e-00cfbf2d450b",
+   "card_id": "263f1ea9-6a1e-47b5-9f9b-44f9800fcb03",
+   "format": "insight"
+  }
+ ],
+ [
+  "capture",
+  "library_open",
+  {
+   "surface": "portal",
+   "article_id": "1bbb84f3-6ff2-4c6e-aeb2-4e39636036d7",
+   "status": "delivered",
+   "format": "pillar"
+  }
+ ],
+ [
+  "capture",
+  "article_copied",
+  {
+   "surface": "portal",
+   "article_id": "1bbb84f3-6ff2-4c6e-aeb2-4e39636036d7",
+   "format": "pillar"
+  }
+ ],
+ [
+  "capture",
+  "marked_live",
+  {
+   "surface": "portal",
+   "article_id": "1bbb84f3-6ff2-4c6e-aeb2-4e39636036d7",
+   "live": true
+  }
+ ],
+ [
+  "capture",
+  "marked_live",
+  {
+   "surface": "portal",
+   "article_id": "1bbb84f3-6ff2-4c6e-aeb2-4e39636036d7",
+   "live": false
+  }
+ ],
+ [
+  "capture",
+  "marked_live",
+  {
+   "surface": "portal",
+   "article_id": "1bbb84f3-6ff2-4c6e-aeb2-4e39636036d7",
+   "live": true
+  }
+ ],
+ [
+  "capture",
+  "hub_tapped",
+  {
+   "surface": "portal",
+   "members": 2
+  }
+ ],
+ [
+  "capture",
+  "invite_sent",
+  {
+   "surface": "portal",
+   "count": 1,
+   "requested": 1
+  }
+ ],
+ [
+  "capture",
+  "hub_locked_viewed",
+  {
+   "surface": "portal",
+   "items": 5
+  }
+ ],
+ [
+  "capture",
+  "hub_tapped",
+  {
+   "surface": "portal",
+   "members": 3
+  }
+ ],
+ [
+  "capture",
+  "hub_locked_viewed",
+  {
+   "surface": "portal",
+   "items": 5
+  }
+ ]
+]

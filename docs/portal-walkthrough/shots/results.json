@@ -1,0 +1,354 @@
+[
+ {
+  "name": "otp: shouldCreateUser false",
+  "ok": true,
+  "detail": "{\"email\":\"vedikabhasin+rpr-sam@gmail.com\",\"data\":{},\"create_user\":false,\"gotrue_meta_security\":{},\"code_challenge\":null,\"code_challenge_method\":null}"
+ },
+ {
+  "name": "otp: redirect to /portal",
+  "ok": true,
+  "detail": "/auth/v1/otp?redirect_to=http%3A%2F%2Flocalhost%3A8877%2Fportal"
+ },
+ {
+  "name": "feed: signal card on top",
+  "ok": true
+ },
+ {
+  "name": "feed: count line",
+  "ok": true,
+  "detail": "10 cards · 7 unread"
+ },
+ {
+  "name": "feed: 11 dots (signal + 10)",
+  "ok": true
+ },
+ {
+  "name": "url hash cleared",
+  "ok": true
+ },
+ {
+  "name": "onboarding: library switch glows",
+  "ok": true
+ },
+ {
+  "name": "swipe on signal moves on, no decision",
+  "ok": true
+ },
+ {
+  "name": "new-this-week label on latest drop",
+  "ok": true
+ },
+ {
+  "name": "agree overlap glow",
+  "ok": true
+ },
+ {
+  "name": "stamp shows current decision",
+  "ok": true
+ },
+ {
+  "name": "first agree line",
+  "ok": true,
+  "detail": "You both want this one. It’s moving up."
+ },
+ {
+  "name": "split overlap glow",
+  "ok": true
+ },
+ {
+  "name": "split label has 2 avatars",
+  "ok": true
+ },
+ {
+  "name": "split: Add a note",
+  "ok": true
+ },
+ {
+  "name": "no New label on older drop",
+  "ok": true
+ },
+ {
+  "name": "first split line",
+  "ok": true,
+  "detail": "Patrick wants to fast-track this. You passed. Leave a note?Add a note"
+ },
+ {
+  "name": "note counter",
+  "ok": true,
+  "detail": "91 / 280"
+ },
+ {
+  "name": "note max 280",
+  "ok": true
+ },
+ {
+  "name": "note saved with card_id",
+  "ok": true
+ },
+ {
+  "name": "first note line",
+  "ok": true
+ },
+ {
+  "name": "timing overlap glow",
+  "ok": true
+ },
+ {
+  "name": "refresh marker",
+  "ok": true
+ },
+ {
+  "name": "buttons faint at rest (~25%)",
+  "ok": true,
+  "detail": "0.25 {\"body\":\"\",\"hover\":false,\"focus\":\"\"}"
+ },
+ {
+  "name": "button brightens on hover",
+  "ok": true
+ },
+ {
+  "name": "decision upserted (save -> like)",
+  "ok": true
+ },
+ {
+  "name": "swipe_event appended, source portal",
+  "ok": true
+ },
+ {
+  "name": "advanced to next card",
+  "ok": true
+ },
+ {
+  "name": "first changed line",
+  "ok": true,
+  "detail": "Changed your mind? Swipe back anytime. We track the final call."
+ },
+ {
+  "name": "drag right records like",
+  "ok": true
+ },
+ {
+  "name": "revisit shows new stamp + split",
+  "ok": true
+ },
+ {
+  "name": "history: sales-page swipes shown as Patrick",
+  "ok": true
+ },
+ {
+  "name": "history: Sam's own rows say You",
+  "ok": true
+ },
+ {
+  "name": "up next: agree cards first",
+  "ok": true
+ },
+ {
+  "name": "onboarding: pencil glows",
+  "ok": true
+ },
+ {
+  "name": "library: 1 delivered on top",
+  "ok": true
+ },
+ {
+  "name": "library: two ghost cards",
+  "ok": true
+ },
+ {
+  "name": "library: no prices",
+  "ok": true
+ },
+ {
+  "name": "library swipe rotates (ghost now on top)",
+  "ok": true
+ },
+ {
+  "name": "library swipe keeps all 3",
+  "ok": true
+ },
+ {
+  "name": "ghost copy",
+  "ok": true
+ },
+ {
+  "name": "notify inserts wants_written note",
+  "ok": true
+ },
+ {
+  "name": "reader: gdoc link shown",
+  "ok": true
+ },
+ {
+  "name": "reader: html cleaned",
+  "ok": true
+ },
+ {
+  "name": "copy: text/html + text/plain",
+  "ok": true,
+  "detail": "text/plain,text/html"
+ },
+ {
+  "name": "copy: headings preserved, no classes/styles",
+  "ok": true
+ },
+ {
+  "name": "copy: plain text has list",
+  "ok": true
+ },
+ {
+  "name": "copy toast",
+  "ok": true
+ },
+ {
+  "name": "mark live: status live + live_at",
+  "ok": true
+ },
+ {
+  "name": "first live line",
+  "ok": true
+ },
+ {
+  "name": "mark live toggles back",
+  "ok": true
+ },
+ {
+  "name": "library shows Live tag",
+  "ok": true
+ },
+ {
+  "name": "invite: one field (1 seat left)",
+  "ok": true
+ },
+ {
+  "name": "invite: client validation",
+  "ok": true
+ },
+ {
+  "name": "invite: member added (3 total)",
+  "ok": true
+ },
+ {
+  "name": "hub: locked",
+  "ok": true
+ },
+ {
+  "name": "hub: note sticky",
+  "ok": true
+ },
+ {
+  "name": "hub: wants_written not shown as sticky",
+  "ok": true
+ },
+ {
+  "name": "hub: 3 books",
+  "ok": true
+ },
+ {
+  "name": "hub: agree cards",
+  "ok": true
+ },
+ {
+  "name": "hub: overlay line",
+  "ok": true
+ },
+ {
+  "name": "second pencil tap goes straight to Hub",
+  "ok": true
+ },
+ {
+  "name": "onboarding flags saved",
+  "ok": true,
+  "detail": "{\"feed_intro\":true,\"library_glow\":true,\"lines\":{\"agree\":true,\"split\":true,\"note\":true,\"changed\":true,\"ghost\":true,\"live\":true},\"pencil_glow\":true,\"hub_invite_seen\":true}"
+ },
+ {
+  "name": "identify by member id",
+  "ok": true
+ },
+ {
+  "name": "group company = slug",
+  "ok": true
+ },
+ {
+  "name": "no email in any PostHog call",
+  "ok": true
+ },
+ {
+  "name": "PostHog events captured (except gdoc_opened, next)",
+  "ok": true,
+  "detail": "missing: "
+ },
+ {
+  "name": "portal_login via link",
+  "ok": true
+ },
+ {
+  "name": "gdoc opens in new tab",
+  "ok": true,
+  "detail": "chrome-error://chromewebdata/"
+ },
+ {
+  "name": "gdoc_opened captured",
+  "ok": true
+ },
+ {
+  "name": "A: no page errors",
+  "ok": true,
+  "detail": ""
+ },
+ {
+  "name": "desktop: focus brightens buttons",
+  "ok": true
+ },
+ {
+  "name": "skip opens Hub",
+  "ok": true
+ },
+ {
+  "name": "B: no page errors",
+  "ok": true,
+  "detail": ""
+ },
+ {
+  "name": "no membership copy",
+  "ok": true
+ },
+ {
+  "name": "expired link message",
+  "ok": true
+ },
+ {
+  "name": "read-only: resubscribe line",
+  "ok": true
+ },
+ {
+  "name": "read-only: no switch, no pencil",
+  "ok": true
+ },
+ {
+  "name": "read-only: no Mark live",
+  "ok": true
+ },
+ {
+  "name": "3 members: no invite, Hub opens",
+  "ok": true
+ },
+ {
+  "name": "unlocked: no blur, coming-soon line",
+  "ok": true
+ },
+ {
+  "name": "owner split line",
+  "ok": true,
+  "detail": "Sam passed. You want this one. Leave a note?Add a note"
+ },
+ {
+  "name": "owner: sales swipe counts as own stamp",
+  "ok": true
+ },
+ {
+  "name": "C: no page errors",
+  "ok": true,
+  "detail": ""
+ }
+]

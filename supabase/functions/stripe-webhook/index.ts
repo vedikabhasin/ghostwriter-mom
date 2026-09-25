@@ -30,31 +30,43 @@ const admin = createClient(SUPABASE_URL, SERVICE_ROLE_KEY, {
   auth: { persistSession: false, autoRefreshToken: false },
 });
 
-// A tiny placeholder shape set. Session B will replace this with real monsters.
+// The six avatar shapes; the portal draws them as monsters (portal/avatars.js).
 const AVATAR_SHAPES = ["blob", "worm", "ghost", "spike", "pebble", "curl"] as const;
 const pickAvatar = () => AVATAR_SHAPES[Math.floor(Math.random() * AVATAR_SHAPES.length)];
 
-// Look up an existing auth user by email — Supabase's admin API has no direct
-// getUserByEmail, so we fall back to inviteUserByEmail and use its result;
-// if the user already exists, we page through auth.users to find the id.
-async function ensureAuthUser(email: string): Promise<string | null> {
-  const invite = await admin.auth.admin.inviteUserByEmail(email, {
-    redirectTo: PORTAL_REDIRECT,
-  });
-  if (invite.data?.user?.id) return invite.data.user.id;
-
-  // If the user already exists, the invite call errors. Locate by paging.
-  let page = 1;
+// Find or create the payer's auth user WITHOUT sending email. Creating the
+// user and the membership must not depend on the mailer: inviteUserByEmail
+// rolls the user back when the email fails, which used to leave a paid
+// customer with no portal and Stripe with a 200 (so no retry).
+async function findAuthUser(email: string): Promise<string | null> {
   const perPage = 200;
-  while (page <= 25) {
+  for (let page = 1; page <= 25; page++) {
     const { data, error } = await admin.auth.admin.listUsers({ page, perPage });
     if (error) throw error;
     const hit = data.users.find(u => (u.email ?? "").toLowerCase() === email.toLowerCase());
     if (hit) return hit.id;
     if (data.users.length < perPage) break;
-    page += 1;
   }
   return null;
+}
+
+async function ensureAuthUser(email: string): Promise<string> {
+  const created = await admin.auth.admin.createUser({ email, email_confirm: true });
+  if (created.data?.user?.id) return created.data.user.id;
+  // Most likely the user already exists (a returning customer).
+  const existing = await findAuthUser(email);
+  if (existing) return existing;
+  throw new Error(`could not create or find auth user: ${created.error?.message ?? "unknown"}`);
+}
+
+// Best effort: a mailer failure is logged, never thrown. The member can
+// always request a fresh link from /portal ("Send me a link").
+async function sendPortalLink(email: string) {
+  const { error } = await admin.auth.signInWithOtp({
+    email,
+    options: { shouldCreateUser: false, emailRedirectTo: PORTAL_REDIRECT },
+  });
+  if (error) console.error("portal link email failed (member still created)", email, error.message);
 }
 
 async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
@@ -95,24 +107,29 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
     return;
   }
 
+  // Throws on failure -> 500 -> the dedupe row is removed and Stripe retries.
   const userId = await ensureAuthUser(email);
-  if (!userId) {
-    console.error("could not resolve auth user for email", email);
-    return;
-  }
 
   if (companyId) {
-    const { error } = await admin.from("members").upsert(
-      {
-        company_id:   companyId,
-        user_id:      userId,
-        role:         "owner",
-        avatar_shape: pickAvatar(),
-      },
-      { onConflict: "company_id,user_id", ignoreDuplicates: false }
-    );
+    // Update-then-insert rather than upsert: the 3-member cap trigger fires on
+    // any INSERT attempt, so an upsert would fail for a returning owner on a
+    // full team.
+    const { data: existing, error: selErr } = await admin
+      .from("members").select("id")
+      .eq("company_id", companyId).eq("user_id", userId).maybeSingle();
+    if (selErr) throw selErr;
+    const { error } = existing
+      ? await admin.from("members").update({ role: "owner" }).eq("id", existing.id)
+      : await admin.from("members").insert({
+          company_id:   companyId,
+          user_id:      userId,
+          role:         "owner",
+          avatar_shape: pickAvatar(),
+        });
     if (error) throw error;
   }
+
+  await sendPortalLink(email);
 }
 
 async function handleSubscriptionDeleted(sub: Stripe.Subscription) {

@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#F1F0EC">
+<meta name="robots" content="noindex, nofollow">
+<meta name="referrer" content="no-referrer">
+<title>Ghostwriter Mom | Portal</title>
+<link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png">
+<!-- PostHog stub (same as the sales page). posthog.init() runs once
+     /config/runtime.json is read. -->
+<script>
+!function(t,e){var o,n,p,r;e.__SV||(window.posthog=e,e._i=[],e.init=function(i,s,a){function g(t,e){var o=e.split(".");2==o.length&&(t=t[o[0]],e=o[1]),t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}}(p=t.createElement("script")).type="text/javascript",p.crossOrigin="anonymous",p.async=!0,p.src=s.api_host.replace(".i.posthog.com","-assets.i.posthog.com")+"/static/array.js",(r=t.getElementsByTagName("script")[0]).parentNode.insertBefore(p,r);var u=e;for(void 0!==a?u=e[a]=[]:a="posthog",u.people=u.people||[],u.toString=function(t){var e="posthog";return"posthog"!==a&&(e+="."+a),t||(e+=" (stub)"),e},u.people.toString=function(){return u.toString(1)+".people (stub)"},o="init capture register register_once register_for_session unregister unregister_for_session getFeatureFlag getFeatureFlagPayload isFeatureEnabled reloadFeatureFlags updateEarlyAccessFeatureEnrollment getEarlyAccessFeatures on onFeatureFlags onSessionId getSurveys getActiveMatchingSurveys renderSurvey canRenderSurvey identify setPersonProperties group resetGroups setPersonPropertiesForFlags resetPersonPropertiesForFlags setGroupPropertiesForFlags resetGroupPropertiesForFlags reset get_distinct_id getGroups get_session_id get_session_replay_url alias set_config startSessionRecording stopSessionRecording sessionRecordingStarted captureException loadToolbar get_property getSessionProperty createPersonProfile opt_in_capturing opt_out_capturing has_opted_in_capturing has_opted_out_capturing clear_opt_in_out_capturing debug getPageViewId".split(" "),n=0;n<o.length;n++)g(u,o[n]);e._i.push([i,s,a])},e.__SV=1)}(document,window.posthog||[]);
+</script>
+<link rel="stylesheet" href="/portal/portal.css">
+</head>
+<body data-view="loading">
+
+<div class="bg-tint format" id="tint-format" aria-hidden="true"></div>
+<div class="bg-tint action" id="tint-action" aria-hidden="true"></div>
+
+<main class="shell" id="shell">
+  <header class="topbar">
+    <div class="brandmark">Ghostwriter Mom<span class="reg">&reg;</span></div>
+    <div class="topbar-right">
+      <span class="company-name" id="company-name"></span>
+      <button type="button" class="btn-ghost tiny" data-action="sign-out" id="sign-out-btn" hidden>Sign out</button>
+    </div>
+  </header>
+
+  <!-- LOADING -->
+  <section class="screen" id="screen-loading" role="status" aria-live="polite">
+    <div class="loading">Opening your portal&hellip;</div>
+  </section>
+
+  <!-- SIGN IN -->
+  <section class="screen center" id="screen-signin">
+    <p class="eyebrow">Your portal</p>
+    <h1 class="hello">Welcome <em>back</em>.</h1>
+    <form class="signin-form" id="signin-form" novalidate>
+      <label class="field" for="signin-email">
+        <input type="email" id="signin-email" name="email" placeholder="you@work.com"
+               autocomplete="email" inputmode="email" required aria-label="Email">
+      </label>
+      <p class="field-msg" id="signin-msg" aria-live="polite">&nbsp;</p>
+      <span class="btn-glow-host">
+        <span class="btn-glow" aria-hidden="true"></span>
+        <button type="submit" class="btn btn-primary" id="signin-btn">
+          Send me a link <span class="arr" aria-hidden="true">&#8594;</span>
+        </button>
+      </span>
+    </form>
+  </section>
+
+  <!-- NO MEMBERSHIP -->
+  <section class="screen center" id="screen-nolink">
+    <p class="eyebrow">Your portal</p>
+    <p class="big-copy">This email isn't linked to a portal yet. Reply to your Ghostwriter Mom email.</p>
+    <button type="button" class="btn-ghost" data-action="sign-out">Use a different email</button>
+  </section>
+
+  <!-- FEED -->
+  <section class="screen" id="screen-feed">
+    <div class="feed-top">
+      <span class="feed-count" id="feed-count"></span>
+      <button type="button" class="btn-ghost" data-action="show-history">History</button>
+    </div>
+    <div class="card-stage" id="card-stage" aria-live="polite"></div>
+    <div class="dots-wrap">
+      <button type="button" class="dot-nav" data-action="feed-prev" aria-label="Previous card">&#8249;</button>
+      <div class="dots" id="dots" role="tablist" aria-label="Cards"></div>
+      <button type="button" class="dot-nav" data-action="feed-next" aria-label="Next card">&#8250;</button>
+    </div>
+    <div class="feed-controls" id="feed-controls" aria-label="Card actions">
+      <button type="button" class="ctl ctl-pass lg" data-decide="pass" aria-label="Pass on this card">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+        <span class="ctl-label">Pass</span>
+      </button>
+      <button type="button" class="ctl ctl-save sm" data-decide="save" aria-label="Save this card for later">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 3h12a1 1 0 0 1 1 1v18l-7-4-7 4V4a1 1 0 0 1 1-1z"/></svg>
+        <span class="ctl-label">Save</span>
+      </button>
+      <button type="button" class="ctl ctl-super sm" data-decide="fasttrack" aria-label="Fast-track this card">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.4 7 .7-5.3 4.8 1.6 6.9L12 17.3 5.8 20.8l1.6-6.9L2 9.1l7-.7z"/></svg>
+        <span class="ctl-label">Fast&#8209;track</span>
+      </button>
+      <button type="button" class="ctl ctl-like lg" data-decide="like" aria-label="Like this card">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 21s-7-4.35-10-9.5C.5 8 2.7 4 6.5 4c2 0 3.5 1 5.5 3 2-2 3.5-3 5.5-3 3.8 0 6 4 4.5 7.5C19 16.65 12 21 12 21z"/></svg>
+        <span class="ctl-label">Like</span>
+      </button>
+    </div>
+  </section>
+
+  <!-- HISTORY -->
+  <section class="screen" id="screen-history">
+    <div class="feed-top">
+      <span class="eyebrow">History</span>
+      <button type="button" class="btn-ghost" data-action="close-history">Back to feed</button>
+    </div>
+    <div class="hist-tabs" role="tablist" aria-label="History views">
+      <button type="button" class="hist-tab active" role="tab" aria-selected="true"  data-tab="log">Decisions</button>
+      <button type="button" class="hist-tab"        role="tab" aria-selected="false" data-tab="upnext">Up next</button>
+    </div>
+    <div id="history-log" role="tabpanel"></div>
+    <div id="history-upnext" role="tabpanel" hidden></div>
+  </section>
+
+  <!-- LIBRARY -->
+  <section class="screen" id="screen-library">
+    <p class="resub-line" id="resub-line" hidden></p>
+    <div class="feed-top">
+      <span class="eyebrow">Library</span>
+      <span class="feed-count" id="lib-count"></span>
+    </div>
+    <div class="deck-stage" id="deck-stage"></div>
+    <div class="dots-wrap lib-nav" id="lib-nav">
+      <button type="button" class="dot-nav" data-action="lib-prev" aria-label="Previous article">&#8249;</button>
+      <span class="lib-hint">Swipe to shuffle. Tap to open.</span>
+      <button type="button" class="dot-nav" data-action="lib-next" aria-label="Next article">&#8250;</button>
+    </div>
+    <button type="button" class="pencil-sticker" id="pencil-sticker" data-action="hub" aria-label="Open your Hub"></button>
+  </section>
+
+  <!-- HUB -->
+  <section class="screen" id="screen-hub">
+    <div class="hub-canvas" id="hub-canvas">
+      <div class="hub-items" id="hub-items"></div>
+      <div class="hub-overlay" id="hub-overlay">
+        <div class="hub-overlay-panel">
+          <p class="hub-line" id="hub-line"></p>
+          <button type="button" class="btn btn-secondary" data-action="back-to-library">Back to Library</button>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- Bottom switch: Feed / Library -->
+<nav class="switch" id="switch" aria-label="Portal sections" hidden>
+  <button type="button" class="switch-btn" data-go="feed" id="switch-feed">Feed</button>
+  <button type="button" class="switch-btn" data-go="library" id="switch-library">Library</button>
+</nav>
+
+<!-- Onboarding bubble -->
+<div class="bubble" id="bubble" role="status" hidden>
+  <span class="bubble-text" id="bubble-text"></span>
+  <button type="button" class="bubble-x" data-action="bubble-dismiss" aria-label="Dismiss">&times;</button>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+
+<!-- Sources sheet (same as the sales page) -->
+<div class="sheet-scrim" id="src-sheet" role="dialog" aria-modal="true" aria-label="Sources">
+  <div class="sheet-panel">
+    <div class="sheet-grabber" aria-hidden="true"></div>
+    <div class="sheet-head">
+      <div>
+        <p class="sheet-h">Sources</p>
+        <p class="sheet-t" id="src-sheet-title"></p>
+      </div>
+      <button type="button" class="sheet-close" data-close="src-sheet" aria-label="Close sources">&times;</button>
+    </div>
+    <ol class="sheet-list" id="src-sheet-list"></ol>
+  </div>
+</div>
+
+<!-- Note sheet -->
+<div class="sheet-scrim" id="note-sheet" role="dialog" aria-modal="true" aria-label="Add a note">
+  <div class="sheet-panel">
+    <div class="sheet-grabber" aria-hidden="true"></div>
+    <div class="sheet-head">
+      <div>
+        <p class="sheet-h">Add a note</p>
+        <p class="sheet-t" id="note-sheet-title"></p>
+      </div>
+      <button type="button" class="sheet-close" data-close="note-sheet" aria-label="Close">&times;</button>
+    </div>
+    <label class="note-field" for="note-input">
+      <textarea id="note-input" maxlength="280" rows="4" placeholder="What should the team know?" aria-label="Note"></textarea>
+    </label>
+    <div class="note-foot">
+      <span class="note-count" id="note-count">0 / 280</span>
+      <span class="btn-glow-host inline">
+        <span class="btn-glow" aria-hidden="true"></span>
+        <button type="button" class="btn btn-primary" id="note-save">Save note</button>
+      </span>
+    </div>
+  </div>
+</div>
+
+<!-- Ghost (approved, unwritten) sheet -->
+<div class="sheet-scrim" id="ghost-sheet" role="dialog" aria-modal="true" aria-label="Approved article">
+  <div class="sheet-panel">
+    <div class="sheet-grabber" aria-hidden="true"></div>
+    <div class="sheet-head">
+      <div>
+        <p class="sheet-h" id="ghost-sheet-fmt"></p>
+        <p class="sheet-t" id="ghost-sheet-title"></p>
+      </div>
+      <button type="button" class="sheet-close" data-close="ghost-sheet" aria-label="Close">&times;</button>
+    </div>
+    <p class="ghost-copy">Approved, not written yet. Credits open soon.</p>
+    <span class="btn-glow-host" id="notify-host">
+      <span class="btn-glow" aria-hidden="true"></span>
+      <button type="button" class="btn btn-primary" id="notify-btn">Notify me</button>
+    </span>
+  </div>
+</div>
+
+<!-- Reader -->
+<div class="reader" id="reader" role="dialog" aria-modal="true" aria-labelledby="reader-title" hidden>
+  <div class="reader-bar">
+    <button type="button" class="sheet-close" data-close="reader" aria-label="Close article">&times;</button>
+    <span class="card-format" id="reader-fmt"></span>
+    <span class="reader-date" id="reader-date"></span>
+  </div>
+  <article class="reader-body">
+    <h1 class="reader-title" id="reader-title"></h1>
+    <div class="reader-html" id="reader-html"></div>
+  </article>
+  <div class="reader-actions">
+    <span class="btn-glow-host inline">
+      <span class="btn-glow" aria-hidden="true"></span>
+      <button type="button" class="btn btn-primary" id="copy-web">Copy for web</button>
+    </span>
+    <a class="btn btn-secondary" id="gdoc-link" target="_blank" rel="noopener noreferrer" hidden>Google Doc</a>
+    <button type="button" class="live-toggle" id="live-toggle" role="switch" aria-checked="false">
+      <span class="live-knob" aria-hidden="true"></span><span class="live-label">Mark live</span>
+    </button>
+  </div>
+</div>
+
+<!-- Invite pop-up -->
+<div class="modal-scrim" id="invite-modal" role="dialog" aria-modal="true" aria-labelledby="invite-title">
+  <div class="modal-panel">
+    <h3 id="invite-title">Who else decides your content?</h3>
+    <p class="modal-sub" id="invite-sub">They'll get a sign-in link. Up to 3 people per portal.</p>
+    <form id="invite-form" novalidate>
+      <div id="invite-fields"></div>
+      <p class="field-msg" id="invite-msg" aria-live="polite">&nbsp;</p>
+      <span class="btn-glow-host">
+        <span class="btn-glow" aria-hidden="true"></span>
+        <button type="submit" class="btn btn-primary" id="invite-btn">Invite <span class="arr" aria-hidden="true">&#8594;</span></button>
+      </span>
+    </form>
+    <button type="button" class="btn-ghost center-btn" data-action="invite-skip">Skip for now</button>
+  </div>
+</div>
+
+<script type="module" src="/portal/portal.js"></script>
+</body>
+</html>

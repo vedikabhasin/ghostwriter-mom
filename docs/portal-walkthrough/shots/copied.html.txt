@@ -1,0 +1,17 @@
+<h2>8th Wall is open source. Now what?</h2><p>On February 28, 2026, 8th Wall's hosted platform shut down. The engine is now MIT-licensed, but SLAM, VPS, Maps and hand tracking did not come with it. <strong>Every guide to what comes next is written by a vendor.</strong></p><h2>What you actually lost</h2><ul><li>World tracking (SLAM)</li><li>Visual positioning (VPS)</li><li>Hand tracking</li></ul><h3>The shortlist</h3><p>Zapworks, Kivicube, Blippar and Arloopa each cover part of it. <a href="https://8thwall.org/blog/8th-wall-open-source">Read the announcement</a>.</p>
+
+----- text/plain -----
+
+8th Wall is open source. Now what?
+
+On February 28, 2026, 8th Wall's hosted platform shut down. The engine is now MIT-licensed, but SLAM, VPS, Maps and hand tracking did not come with it. Every guide to what comes next is written by a vendor.
+
+What you actually lost
+
+- World tracking (SLAM)
+- Visual positioning (VPS)
+- Hand tracking
+
+The shortlist
+
+Zapworks, Kivicube, Blippar and Arloopa each cover part of it. Read the announcement.
