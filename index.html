@@ -67,18 +67,16 @@ body,a,button,input,.frag{cursor:var(--pencil),auto;}
 @media (min-width:768px){.wordmark{margin-top:28px;}}
 .wordmark .reg{font-weight:600;font-size:0.68em;vertical-align:super;color:var(--ink-soft);}
 
-.hero{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
-  text-align:center;width:100%;max-width:880px;gap:18px;padding:14px 0;}
-.headline{font-family:var(--font-display);font-weight:800;font-size:clamp(22px,5vw,44px);
-  line-height:1.06;letter-spacing:-0.025em;color:var(--ink);margin:0;text-wrap:balance;}
-.headline .accent-word{font-family:var(--font-accent);font-style:italic;font-weight:700;letter-spacing:0;}
-.headline .muted-word{color:var(--grey-300);}
-.headline .nowrap{white-space:nowrap;}
-.lede{font-family:var(--font-body);font-size:clamp(13px,1.8vw,17px);font-weight:400;
-  line-height:1.55;color:var(--grey-body);max-width:560px;margin:0;}
+.hero{flex:1;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;
+  text-align:left;width:100%;max-width:640px;gap:14px;padding:14px 0;}
+.headline{font-family:var(--font-display);font-weight:800;font-size:clamp(30px,6.4vw,46px);
+  line-height:1.08;letter-spacing:-0.025em;color:var(--ink);margin:0;text-wrap:balance;}
+.headline em{font-family:var(--font-accent);font-style:italic;font-weight:700;letter-spacing:0;}
+.lede{font-family:var(--font-body);font-size:clamp(15px,2vw,17px);font-weight:400;
+  line-height:1.55;color:#333;max-width:560px;margin:0;text-wrap:balance;}
 
 /* email capture — stacks on mobile, inline pill on tablet+ */
-.capture{margin-top:4px;display:flex;flex-direction:column;align-items:center;gap:12px;width:100%;max-width:560px;}
+.capture{margin-top:4px;display:flex;flex-direction:column;align-items:stretch;gap:10px;width:100%;max-width:560px;}
 .field{position:relative;display:flex;flex-direction:column;align-items:stretch;width:100%;
   background:var(--white);border:1px solid rgba(14,14,14,0.10);border-radius:22px;
   padding:8px;gap:8px;box-shadow:0 18px 50px -34px rgba(14,14,14,0.5);}
@@ -109,17 +107,17 @@ body,a,button,input,.frag{cursor:var(--pencil),auto;}
   .join-host{width:auto;}
 }
 
-.capture-meta{display:flex;flex-direction:column;align-items:center;gap:12px;width:100%;}
-.alt-cta{display:inline-flex;align-items:center;justify-content:center;gap:9px;border:none;background:var(--accent);color:var(--accent-ink);
-  font-family:var(--font-body);font-weight:600;font-size:13.5px;padding:14px 22px;min-height:48px;border-radius:var(--radius-pill);
-  text-decoration:none;text-align:center;
-  transition:transform var(--dur) var(--ease),filter var(--dur) var(--ease);}
-.alt-cta:hover{transform:scale(1.02);filter:brightness(1.04);}
-.alt-cta:active{transform:scale(0.99);}
-.alt-cta .tag{font-family:var(--mono);font-size:10px;letter-spacing:0.08em;background:rgba(14,14,14,0.12);
-  padding:3px 7px;border-radius:999px;}
+/* Inline error + ack lines. Replaces the old modal / alt-CTA. */
+.err{font-family:var(--mono);font-size:12px;color:#8a1a1a;min-height:16px;margin:0 4px;}
+.ack{font-family:var(--font-body);font-size:15px;line-height:1.5;color:var(--ink);
+  margin:0;padding:14px 16px;
+  background:rgba(184,255,113,0.28);
+  border:1px solid rgba(184,255,113,0.55);border-radius:16px;
+  display:none;}
+.ack.on{display:block;}
+.form-hp{position:absolute;left:-10000px;top:auto;width:1px;height:1px;overflow:hidden;}
 
-.footer{font-family:var(--mono);font-size:clamp(9px,1.4vw,11px);letter-spacing:0.16em;text-transform:uppercase;color:var(--ink-soft);text-align:center;}
+.footer{font-family:var(--mono);font-size:clamp(9px,1.4vw,11px);letter-spacing:0.16em;text-transform:uppercase;color:var(--ink-soft);text-align:left;width:100%;max-width:640px;}
 
 /* ---------- scattered fragments ---------- */
 #frags{position:fixed;inset:0;z-index:5;pointer-events:none;}
@@ -220,37 +218,6 @@ body,a,button,input,.frag{cursor:var(--pencil),auto;}
   .frag.hide-md{display:none;}
 }
 
-/* ---------- testimonials (frozen, click-to-shake-NO) ---------- */
-#testimonials{position:fixed;inset:0;z-index:10;pointer-events:none;}
-.testimonial{position:absolute;pointer-events:auto;cursor:pointer;
-  user-select:none;-webkit-user-select:none;-webkit-tap-highlight-color:transparent;
-  opacity:0;will-change:transform,opacity;transform-origin:center;}
-.testimonial img{display:block;width:100%;height:auto;
-  filter:drop-shadow(0 22px 50px rgba(14,14,14,0.22));}
-.testimonial-inner{display:block;transition:transform 360ms var(--ease);}
-.testimonial:hover .testimonial-inner{filter:brightness(1.02);}
-.testimonial.t-brazu{top:2vh;left:0.5vw;width:clamp(240px,28vw,380px);}
-.testimonial.t-brazu .testimonial-inner{transform:rotate(-2deg);}
-.testimonial.t-recado{top:1.5vh;right:0.5vw;width:clamp(160px,18vw,240px);}
-.testimonial.t-recado .testimonial-inner{transform:rotate(3deg);}
-.testimonial.t-swarm{bottom:3vh;left:0.5vw;width:clamp(200px,24vw,320px);}
-.testimonial.t-swarm .testimonial-inner{transform:rotate(-3deg);}
-@media (max-width:767px){.testimonial{display:none;}}
-
-/* ---------- modal ---------- */
-.scrim{position:fixed;inset:0;z-index:60;background:rgba(14,14,14,0.34);backdrop-filter:blur(4px);
-  display:none;align-items:center;justify-content:center;padding:20px;}
-.scrim.open{display:flex;}
-.modal{position:relative;background:var(--white);border-radius:24px;padding:32px 24px 28px;max-width:430px;width:100%;
-  text-align:center;box-shadow:0 30px 80px -20px rgba(14,14,14,0.35);}
-.modal-x{position:absolute;top:6px;right:6px;border:none;background:transparent;font-size:24px;line-height:1;color:var(--ink-soft);
-  width:48px;height:48px;display:inline-flex;align-items:center;justify-content:center;border-radius:50%;cursor:inherit;}
-.modal-x:hover{background:var(--canvas-alt);}
-.modal h3{font-family:var(--font-display);font-weight:800;font-size:clamp(22px,3vw,26px);letter-spacing:-0.02em;color:var(--ink);margin:14px 0 8px;}
-.modal p{font-size:14px;line-height:1.5;color:var(--grey-body);margin:0 auto 20px;max-width:330px;}
-.modal .ring{width:52px;height:52px;border-radius:50%;background:var(--accent);color:var(--accent-ink);
-  display:inline-flex;align-items:center;justify-content:center;font-size:25px;font-weight:700;}
-
 @keyframes glow-breathe{0%,100%{opacity:0.78;transform:scale(1)}50%{opacity:0.97;transform:scale(1.04)}}
 @media(prefers-reduced-motion:reduce){
   .frag{opacity:1!important;}
@@ -265,7 +232,7 @@ body,a,button,input,.frag{cursor:var(--pencil),auto;}
   <div class="wordmark">Ghostwriter Mom<span class="reg">&reg;</span></div>
 
   <section class="hero">
-    <h1 class="headline">No <span class="muted-word">brief</span>, no <span class="muted-word">prompt</span>.<br>Just content that <span class="accent-word">ranks</span>.</h1>
+    <h1 class="headline">No <em>brief</em>, no prompt. Just content that ranks.</h1>
     <p class="lede">A content portal for technical companies. Early access is invite only.</p>
 
     <form class="capture" id="capture" name="join-waitlist" method="POST" data-netlify="true" netlify-honeypot="bot-field" action="/?success=1">
@@ -275,19 +242,18 @@ body,a,button,input,.frag{cursor:var(--pencil),auto;}
       <input type="hidden" id="submitted-tz" name="submitted-tz" value="">
       <p hidden><label>Don't fill this out: <input name="bot-field"></label></p>
       <div class="field">
-        <input id="email" name="email" type="email" placeholder="vedika@ghostwriter.mom" autocomplete="email" required aria-label="Email address">
+        <input id="email" name="email" type="email" placeholder="vedika@ghostwriter.mom" autocomplete="email" inputmode="email" required aria-label="Email address">
         <span class="join-host">
-          <span class="join-glow"></span>
-          <button class="join" type="submit">Join the waitlist for instant delivery <span class="arr">&#8594;</span></button>
+          <span class="join-glow" aria-hidden="true"></span>
+          <button class="join" type="submit">Join the waitlist <span class="arr" aria-hidden="true">&#8594;</span></button>
         </span>
       </div>
-      <div class="capture-meta">
-        <a class="alt-cta" id="altcta" href="https://buy.stripe.com/4gM4gz2Ug47VbsYdHcgnK05" target="_blank" rel="noopener">Get a trial piece in 24 hours <span class="tag">PAY LINK</span></a>
-      </div>
+      <p class="err" id="wl-err">&nbsp;</p>
+      <p class="ack" id="wl-ack">On the list. I'll reach out when the next spot opens.</p>
     </form>
   </section>
 
-  <div class="footer">Copyright 2026&copy; All Rights Reserved</div>
+  <div class="footer">Ghostwriter Mom &copy; <span id="year"></span></div>
 </main>
 
 <div id="frags">
@@ -358,29 +324,6 @@ body,a,button,input,.frag{cursor:var(--pencil),auto;}
 
 </div>
 
-<!-- Customer testimonials — frozen overlays, click to shake "no" -->
-<div id="testimonials">
-  <div class="testimonial t-brazu" data-id="brazu" role="img" aria-label="Vedika impressed me with her proactive approach, quick delivery, and deep insights. — Henrique Campos, CEO & Co-founder at Brazu">
-    <div class="testimonial-inner">
-      <img src="assets/testimonials/review-brazu.png" alt="Henrique Campos, CEO and Co-founder at Brazu testimonial: Vedika impressed me with her proactive approach, quick delivery, and deep insights. She anticipated challenges, addressed them effectively, and ensured everything was delivered smoothly. Her efficiency truly made a difference.">
-    </div>
-  </div>
-  <div class="testimonial t-recado" data-id="recado" role="img" aria-label="What a turnaround. I asked her for a trial piece and she delivered on the very same day. — Aryan, Founder at Recado">
-    <div class="testimonial-inner">
-      <img src="assets/testimonials/review-recardo.png" alt="Aryan, Founder at Recado testimonial: Wow! What a turnaround. I asked her for a trial piece and she delivered on the very same day. We posted her article with a social media post the very next day. Five stars.">
-    </div>
-  </div>
-  <div class="testimonial t-swarm" data-id="swarm" role="img" aria-label="Vedika provided a solid article for our site and SaaS app onboarding. — Olivier Roth, CGO at The Swarm">
-    <div class="testimonial-inner">
-      <img src="assets/testimonials/review-the-swarm.png" alt="Olivier Roth, CGO at The Swarm testimonial: Vedika provided a solid article for our site and SaaS app onboarding. Loved the quick content delivery package and all the very actionable suggestions on posting.">
-    </div>
-  </div>
-</div>
-
-<div class="scrim" id="scrim">
-  <div class="modal" id="modal"></div>
-</div>
-
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 <script>
 (function(){
@@ -448,56 +391,53 @@ body,a,button,input,.frag{cursor:var(--pencil),auto;}
   }
   frags.forEach(el => el.addEventListener('pointerdown', startDrag));
 
-  // modal + form
-  const scrim = document.getElementById('scrim');
-  const modal = document.getElementById('modal');
-  const hasGSAP = typeof window.gsap !== 'undefined';
+  // Footer year
+  const yearEl = document.getElementById('year');
+  if(yearEl) yearEl.textContent = String(new Date().getFullYear());
 
-  function openModal(html){
-    modal.innerHTML = html;
-    scrim.classList.add('open');
-    if(hasGSAP){
-      gsap.fromTo(scrim, {opacity:0}, {opacity:1, duration:0.32, ease:'power2.out'});
-      gsap.fromTo(modal, {y:18, scale:0.96, opacity:0}, {y:0, scale:1, opacity:1, duration:0.55, ease:'power3.out'});
-    }
-  }
-  function closeModal(){
-    if(hasGSAP){
-      gsap.to(scrim, {opacity:0, duration:0.24, ease:'power2.in', onComplete:()=>{
-        scrim.classList.remove('open'); scrim.style.opacity='';
-      }});
-    } else {
-      scrim.classList.remove('open');
-    }
-  }
-  scrim.addEventListener('click', e=>{ if(e.target===scrim) closeModal(); });
-  document.addEventListener('click', e=>{ if(e.target.closest('[data-close]')) closeModal(); });
-  document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeModal(); });
+  // Waitlist form — inline ack (no modal). Validates client-side, then
+  // fetch-POSTs to the same Netlify form endpoint so the ack replaces the
+  // form in place.
+  const hasGSAP  = typeof window.gsap !== 'undefined';
+  const form     = document.getElementById('capture');
+  const emailEl  = document.getElementById('email');
+  const errEl    = document.getElementById('wl-err');
+  const ackEl    = document.getElementById('wl-ack');
+  const atEl     = document.getElementById('submitted-at');
+  const atLoc    = document.getElementById('submitted-at-local');
+  const tzEl     = document.getElementById('submitted-tz');
+  const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-  function joinView(){
-    return `<button class="modal-x" aria-label="Close" data-close>&times;</button>
-      <div class="ring" style="background:var(--ink-pill);color:#fff">&#9998;</div>
-      <h3>You're on the list.</h3>
-      <p>We'll send you a note when our instant AI delivery agent is ready for you.</p>
-      <a class="alt-cta" href="https://buy.stripe.com/4gM4gz2Ug47VbsYdHcgnK05" target="_blank" rel="noopener" style="margin:0 auto">Get a trial piece in 24 hours <span class="tag">PAY LINK</span></a>`;
+  // Netlify's default success redirect (action="/?success=1") bounces back
+  // here; surface the ack in that case too.
+  if(new URLSearchParams(location.search).get('success') === '1'){
+    ackEl.classList.add('on');
+    if(emailEl) emailEl.value = '';
   }
 
-  const form = document.getElementById('capture');
-  form.addEventListener('submit', e=>{
+  form.addEventListener('submit', e => {
     e.preventDefault();
-    const v = document.getElementById('email').value;
-    if(!v.includes('@')) { document.getElementById('email').focus(); return; }
-    // stamp time fields just before submission so Netlify captures them
+    const raw = (emailEl.value || '').trim();
+    emailEl.value = raw;
+    if(!EMAIL_RE.test(raw)){
+      errEl.textContent = "That email address doesn't look right.";
+      emailEl.focus();
+      return;
+    }
+    errEl.textContent = ' ';
     const now = new Date();
-    const tz = Intl.DateTimeFormat().resolvedOptions().timeZone || '';
-    document.getElementById('submitted-at').value = now.toISOString();
-    document.getElementById('submitted-at-local').value = now.toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'long' });
-    document.getElementById('submitted-tz').value = tz;
-    const data = new FormData(form);
+    atEl.value  = now.toISOString();
+    atLoc.value = now.toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'long' });
+    try{ tzEl.value = Intl.DateTimeFormat().resolvedOptions().timeZone || ''; }catch(_){}
     const body = new URLSearchParams();
-    data.forEach((val, key)=>body.append(key, val));
-    fetch('/', { method:'POST', headers:{'Content-Type':'application/x-www-form-urlencoded'}, body:body.toString() }).catch(()=>{});
-    openModal(joinView());
+    new FormData(form).forEach((val, key) => body.append(key, val));
+    fetch('/', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: body.toString()
+    }).catch(() => {});
+    ackEl.classList.add('on');
+    emailEl.value = '';
   });
 
   // GSAP entrance for frags + text animations on headline/lede
@@ -505,10 +445,7 @@ body,a,button,input,.frag{cursor:var(--pencil),auto;}
 
   if(!hasGSAP || reduce){
     // Static fallback — GSAP blocked by CSP, offline, or reduced-motion.
-    // Reveal every draggable and every frozen testimonial so the page never
-    // ships with invisible content.
     frags.forEach(el => { el.style.opacity = '1'; });
-    document.querySelectorAll('.testimonial').forEach(el => { el.style.opacity = '1'; });
     return;
   }
 
@@ -535,46 +472,6 @@ body,a,button,input,.frag{cursor:var(--pencil),auto;}
       d.el.style.setProperty('--scl', '1');
     });
   }, 1.0 * 1000 + data.length * 55 + 400);
-
-  // ---- testimonials: entrance from center (same vibe as frags), then shake-NO on click ----
-  const testimonials = Array.from(document.querySelectorAll('.testimonial'));
-  if(testimonials.length){
-    const tdata = testimonials.map(el => {
-      const r = el.getBoundingClientRect();
-      return { el, dx: (r.left + r.width/2) - cx, dy: (r.top + r.height/2) - cy };
-    });
-    tdata.forEach(d => {
-      gsap.set(d.el, { x: -d.dx*0.7, y: -d.dy*0.7, scale: 0.55, opacity: 0 });
-    });
-    gsap.to(testimonials, {
-      x: 0, y: 0, scale: 1, opacity: 1,
-      duration: 1.0, ease: 'power3.out',
-      stagger: 0.16,
-      delay: 0.4
-    });
-    // hard fallback if rAF is throttled
-    setTimeout(() => {
-      testimonials.forEach(el => {
-        el.style.opacity = '1';
-        el.style.transform = '';
-      });
-    }, 2400);
-
-    // click / tap → shake "no" (horizontal back-and-forth, decaying)
-    testimonials.forEach(el => {
-      el.addEventListener('click', () => {
-        if(el.dataset.shaking === '1') return;
-        el.dataset.shaking = '1';
-        gsap.timeline({ onComplete: () => { el.dataset.shaking = '0'; } })
-          .to(el, { x: -10, duration: 0.06, ease: 'sine.inOut' })
-          .to(el, { x:  10, duration: 0.1,  ease: 'sine.inOut' })
-          .to(el, { x:  -8, duration: 0.1,  ease: 'sine.inOut' })
-          .to(el, { x:   8, duration: 0.1,  ease: 'sine.inOut' })
-          .to(el, { x:  -4, duration: 0.1,  ease: 'sine.inOut' })
-          .to(el, { x:   0, duration: 0.06, ease: 'sine.out'   });
-      });
-    });
-  }
 
   // ---- text animations: word-by-word reveal on headline, fade on lede ----
   function splitWords(el){
