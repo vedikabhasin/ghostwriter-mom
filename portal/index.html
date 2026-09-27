@@ -105,7 +105,6 @@
       <button type="button" class="btn-ghost" data-action="show-history">History</button>
     </div>
     <div class="card-stage" id="card-stage" aria-live="polite"></div>
-    <p class="caught-up gwm-center gwm-mono-tag" id="caught-up" hidden>All caught up</p>
     <div class="dots-wrap">
       <button type="button" class="dot-nav gwm-center" data-action="feed-prev" aria-label="Previous card">&#8249;</button>
       <div class="dots" id="dots" role="tablist" aria-label="Cards"></div>
@@ -163,6 +162,15 @@
 
   <!-- HUB (the Library's design mode) -->
   <section class="screen" id="screen-hub" aria-label="Hub">
+    <!-- Hub header: seats and Invite. Never under the lock blur or modal. -->
+    <div class="hub-head" id="hub-head">
+      <span class="eyebrow gwm-mono-tag">Hub</span>
+      <div class="hub-head-right">
+        <div class="seats" id="hub-seats" aria-label="Seats"></div>
+        <button type="button" class="btn-invite gwm-btn" data-action="invite" id="hub-invite">Invite</button>
+      </div>
+    </div>
+    <div class="hub-body" id="hub-body">
     <div class="hub-scroll" id="hub-scroll">
       <div class="hub-canvas" id="hub-canvas"></div>
     </div>
@@ -184,10 +192,13 @@
       <button type="button" class="hub-done gwm-center" data-hub="done">Done</button>
     </div>
     <div class="hub-overlay" id="hub-overlay" hidden>
-      <div class="hub-overlay-panel">
-        <p class="hub-line">Your notes, articles, and ideas, in one place. Unlocks with your first credit pack.</p>
+      <div class="hub-overlay-panel" role="dialog" aria-labelledby="hub-lock-title">
+        <h3 class="hub-line" id="hub-lock-title">Your Hub opens with your first credit pack.</h3>
+        <p class="hub-sub">It’s where drafts, edits, and your team’s notes come together.</p>
+        <button type="button" class="btn btn-primary gwm-btn" data-action="hub-start" id="hub-start">Start with 5 credits</button>
         <button type="button" class="btn btn-secondary gwm-btn" data-action="back-to-library">Back to Library</button>
       </div>
+    </div>
     </div>
   </section>
 </main>
@@ -284,11 +295,34 @@
       </div>
       <button type="button" class="sheet-close gwm-center" data-close="ghost-sheet" aria-label="Close">&times;</button>
     </div>
-    <p class="ghost-copy" id="ghost-copy">Approved, not written yet. Credits open soon.</p>
-    <span class="btn-glow-host" id="notify-host">
-      <span class="btn-glow" aria-hidden="true"></span>
-      <button type="button" class="btn btn-primary gwm-btn" id="notify-btn">Notify me</button>
-    </span>
+    <p class="ghost-copy" id="ghost-copy"></p>
+    <div class="write-box" id="write-box" hidden>
+      <div class="fmt-choice" id="fmt-choice" role="radiogroup" aria-label="Format">
+        <button type="button" class="fmt-opt gwm-btn" role="radio" data-fmt="post">Post</button>
+        <button type="button" class="fmt-opt gwm-btn" role="radio" data-fmt="insight">Insight</button>
+        <button type="button" class="fmt-opt gwm-btn" role="radio" data-fmt="pillar">Pillar</button>
+      </div>
+      <p class="write-cost" id="write-cost" aria-live="polite"></p>
+      <button type="button" class="btn btn-primary gwm-btn" id="write-btn">Write this</button>
+      <p class="field-msg" id="write-msg" aria-live="polite">&nbsp;</p>
+    </div>
+    <div class="card-notes" id="ghost-notes"></div>
+  </div>
+</div>
+
+<!-- Credits sheet: Starter, plan, top-up, or resume the $19 first -->
+<div class="sheet-scrim" id="credits-sheet" role="dialog" aria-modal="true" aria-labelledby="credits-title">
+  <div class="sheet-panel">
+    <div class="sheet-grabber" aria-hidden="true"></div>
+    <div class="sheet-head">
+      <div>
+        <p class="sheet-h">Credits</p>
+        <p class="sheet-t" id="credits-title"></p>
+      </div>
+      <button type="button" class="sheet-close gwm-center" data-close="credits-sheet" aria-label="Close">&times;</button>
+    </div>
+    <div class="credits-body" id="credits-body"></div>
+    <p class="field-msg" id="credits-msg" aria-live="polite">&nbsp;</p>
   </div>
 </div>
 
@@ -302,6 +336,7 @@
   <article class="reader-body">
     <h1 class="reader-title" id="reader-title"></h1>
     <div class="reader-html" id="reader-html"></div>
+    <div class="card-notes" id="reader-notes"></div>
   </article>
   <div class="reader-actions">
     <span class="btn-glow-host inline">
@@ -319,7 +354,8 @@
 <div class="modal-scrim" id="invite-modal" role="dialog" aria-modal="true" aria-labelledby="invite-title">
   <div class="modal-panel">
     <h3 id="invite-title">Who else decides your content?</h3>
-    <p class="modal-sub" id="invite-sub">They'll get a sign-in link. Up to 3 people per portal.</p>
+    <p class="modal-sub" id="invite-sub">They’ll get a sign-in link.</p>
+    <p class="seat-line gwm-mono-tag" id="invite-seats"></p>
     <form id="invite-form" novalidate>
       <div id="invite-fields"></div>
       <p class="field-msg" id="invite-msg" aria-live="polite">&nbsp;</p>

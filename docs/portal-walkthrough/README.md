@@ -3,8 +3,9 @@
 The Vedika Bhasin portal (`vedika-bhasin-ycfogw`, `is_internal = true`) walked
 through as **vedikabhasin@gmail.com** (owner) at 375px and on desktop, then from
 the other side as **blendbases@gmail.com** (member). Every screenshot comes from
-`tests/portal/walkthrough.mjs`, which also runs **178 checks**. The last run passed
-all 178 (`shots/results.json`).
+`tests/portal/walkthrough.mjs`, which also runs **272 checks** across four
+account types (Vedika, a locked $19 account, an account with credits, RPR). The
+last run passed all 272 (`shots/results.json`). The credit sections are at the end.
 
 The test data is the live Vedika rows: the same article ids, series, statuses and
 decisions, and the two seeded Hub notes (`tests/portal/fixture-vedika.mjs`).
@@ -59,7 +60,7 @@ shows the usual dot and label (`m10`).
 | | |
 |---|---|
 | ![](shots/m12-library-delivered.jpg) **vb-01** "Delivered in 19h · Sep 26, 7:15 PM". Top card flat; two cards per side at ±5–8°. Pencil glows (onboarding). | ![](shots/m14-library-countdown.jpg) **vb-05** live countdown "Arriving in 14h 18m" (ticks every 30s). |
-| ![](shots/m13-library-ghost.jpg) **bx-01** ghost: paper body, dashed teal border, "Approved" stamp, two dashed trails. | ![](shots/m15-library-live.jpg) After Mark live: small ink "Live" tag. |
+| ![](shots/m13-library-ghost.jpg) **bx-01** ghost: paper body, dashed teal border, "Approved" stamp, two dashed trails, "Ready to write · 1 credit". | ![](shots/m15-library-live.jpg) After Mark live: small ink "Live" tag. |
 
 ## 5. Hub
 
@@ -89,6 +90,32 @@ shows the usual dot and label (`m10`).
 |---|---|
 | ![](shots/m01-login.jpg) "YOUR PORTAL" / "Welcome *back*." Desk objects stay at the edges. | ![](shots/m02-login-sent.jpg) After "Send me a link": "Check your inbox.", envelope, "The link works for 24 hours." |
 
+## 9. Credits: a locked $19 account (Acme, no purchase yet)
+
+Gating comes from account state (`portal_account()`), never from ids or names.
+
+| | |
+|---|---|
+| ![](shots/c01-locked-library-ready.jpg) Library open at $19. Approved, unwritten cards carry "Ready to write · 3 credits". | ![](shots/c02-write-this-no-credits.jpg) "Write this": format defaults to the card's, cost updates live, "Get credits" at 0. |
+| ![](shots/c03-starter-checkout-step.jpg) Never bought: Starter, "Your $19 counts toward this." Checkout gets the first-purchase coupon. | ![](shots/c04-invite-two-seats.jpg) First Hub tap: the invite pop-up, "Two seats left." from the real member count. |
+| ![](shots/c05-invite-error.jpg) One message per error code: seat_limit, invalid_email, self_invite, already_member, failed. | ![](shots/c06-locked-hub.jpg) Locked Hub: blurred canvas, lock modal. The header seats and Invite stay above it. |
+| ![](shots/c07-feed-last-two.jpg) Last two cards: the stack thins, the remaining dots pulse once. | ![](shots/c08-caught-up.jpg) Caught up: face-down stack (next week's first format face-up because those cards exist), drop day and countdown, a line per seat. |
+
+## 10. Credits: the same account with a Starter pack and a plan month
+
+| | |
+|---|---|
+| ![](shots/c09-write-this.jpg) 25 credits. Pillar = 8. A teammate's note is readable on the card. | ![](shots/c10-arriving.jpg) Spent: the piece goes straight to writing, "Arriving in 24h 0m", header 17 credits. |
+| ![](shots/c11-queued.jpg) A second piece waits: "Queued". | ![](shots/c12-hub-write-this.jpg) Hub open (a purchase plus an active $19). Unwritten cards get the same "Write this". |
+| ![](shots/c13-plan-or-topup.jpg) Bought before: plan (only if none running) or a top-up with a quantity picker. | ![](shots/c14-library-568.jpg) 375x568: the stamp stays on one line and the hint sits above the switch. |
+
+## 11. RPR as it is live (the $19 set to cancel on Oct 25, no purchases)
+
+| | |
+|---|---|
+| ![](shots/r01-rpr-feed.jpg) Feed and swipes stay open until Oct 25. The 10 updated cards. | ![](shots/r02-rpr-caught-up.jpg) Caught up: first opened on a Friday, so drops land on Fridays. No face-up card: next week's cards don't exist yet. |
+| ![](shots/r03-rpr-hub-locked.jpg) Hub locked, one seat left. | ![](shots/r04-rpr-resume.jpg) "Resume your $19 to buy credits": one click resumes the same subscription, then straight into the Starter checkout. |
+
 ## PostHog
 
 Identify uses `member.id` only; no email appears in any call (checked). Events
@@ -100,8 +127,11 @@ captured include `feed_swipe`, `overlap_seen`, `moved_up`, `library_open`,
 
 ```bash
 npm install
+npm i --no-save --no-package-lock @electric-sql/pglite stripe@14.25.0
 node tests/portal/walkthrough.mjs          # UI: screenshots here, exits 1 on any failed check
-bash tests/portal/invite-member.sh         # edge function under Deno
-npm i --no-save stripe@14.25.0 && node tests/portal/stripe-webhook.test.mjs
+node tests/portal/credits-sql.test.mjs     # migrations + credit rules on PGlite
+node tests/portal/stripe-webhook.test.mjs  # webhook under Deno
+node tests/portal/create-checkout.test.mjs # checkout under Deno, fake Stripe
+bash tests/portal/invite-member.sh         # invites under Deno
 node validate-feeds.js
 ```

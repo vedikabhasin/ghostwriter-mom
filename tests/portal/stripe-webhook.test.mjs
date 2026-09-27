@@ -18,8 +18,20 @@ const stripe = new Stripe('sk_test_x');
 
 const state = {
   calls: [], otp: [], users: [], mailerDown: true, createUserFails: false,
-  companies: [{ id: 'c1', slug: 'rpr-k7m2qx', subscription_status: 'none', is_internal: false }],
+  companies: [
+    { id: 'c1', slug: 'rpr-k7m2qx', subscription_status: 'none', is_internal: false },
+    { id: 'c2', slug: 'acme', subscription_status: 'active', is_internal: false, stripe_subscription_id: 'sub_19', plan_subscription_id: null, stripe_customer_id: 'cus_2' },
+    { id: 'c3', slug: 'vedika', subscription_status: 'active', is_internal: true, stripe_subscription_id: null, plan_subscription_id: null, stripe_customer_id: null },
+  ],
   members: [], stripe_events: [],
+  // credits_grant is idempotent on source id in SQL (tested in credits-sql);
+  // the mock mirrors that so replays are visible here.
+  grants: [],
+  rpcImpl: {
+    credits_grant: (b) => { if (state.grants.some((g) => g.p_source_id === b.p_source_id)) return false; state.grants.push(b); return true; },
+    credits_extend: () => 1,
+    credits_expire_all: () => 5,
+  },
 };
 const mock = await startMock(MOCK_PORT, state);
 
@@ -34,7 +46,8 @@ const fn = spawn(deno === 'deno' ? 'deno' : 'npx', [...(deno === 'deno' ? [] : [
   '--import-map', path.join(tmp, 'import_map.json'), '--allow-net', '--allow-env', '--allow-read', '--allow-sys',
   path.join(ROOT, 'supabase/functions/stripe-webhook/index.ts')], {
   env: { ...process.env, STRIPE_SECRET_KEY: 'sk_test_x', STRIPE_WEBHOOK_SECRET: SECRET,
-    SUPABASE_URL: `http://127.0.0.1:${MOCK_PORT}`, SUPABASE_SERVICE_ROLE_KEY: 'service', DENO_NO_UPDATE_CHECK: '1' },
+    SUPABASE_URL: `http://127.0.0.1:${MOCK_PORT}`, SUPABASE_SERVICE_ROLE_KEY: 'service', DENO_NO_UPDATE_CHECK: '1',
+    STRIPE_PRICE_STARTER: 'price_starter', STRIPE_PRICE_PLAN: 'price_plan', STRIPE_PRICE_TOPUP: 'price_topup', STRIPE_COUPON_FIRST_CREDITS: 'coupon_19' },
   stdio: ['ignore', 'pipe', 'pipe'],
 });
 let fnLog = '';
@@ -83,6 +96,47 @@ state.createUserFails = false;
 // 5. subscription.deleted still marks the company canceled.
 r = await post({ id: 'evt_4', type: 'customer.subscription.deleted', object: 'event', data: { object: { id: 'sub_1', object: 'subscription', current_period_end: 1793000000 } } });
 check('subscription deleted: canceled with end date', r.status === 200 && state.companies[0].subscription_status === 'canceled' && !!state.companies[0].subscription_ends_at);
+
+// 6. Credits.
+const ev = (id, type, object) => ({ id, type, object: 'event', data: { object } });
+const credit = (id, kind, extra) => ev(id, 'checkout.session.completed', { id, object: 'checkout.session', mode: kind === 'plan' ? 'subscription' : 'payment',
+  payment_status: 'paid', customer: 'cus_2', metadata: { company_id: 'c2', kind, credits: kind === 'starter' ? '5' : kind === 'plan' ? '20' : '3' }, ...(extra || {}) });
+const rpcs = (name) => state.rpc.filter((x) => x.name === name).map((x) => x.body);
+const c2 = () => state.companies.find((c) => c.id === 'c2');
+
+r = await post(credit('cs_starter', 'starter'));
+check('starter checkout: +5 starter, no expiry', r.status === 200 && state.grants.some((g) => g.p_company_id === 'c2' && g.p_amount === 5 && g.p_product === 'starter' && g.p_source_id === 'cs_starter' && g.p_expires_at === null), JSON.stringify(rpcs('credits_grant')));
+r = await post({ ...credit('cs_starter', 'starter'), id: 'evt_replay' });
+check('replayed checkout (new event id, same session): granted once', r.status === 200 && state.grants.filter((g) => g.p_source_id === 'cs_starter').length === 1);
+r = await post(credit('cs_topup', 'topup'));
+check('top-up checkout: +quantity credits, no expiry', state.grants.some((g) => g.p_source_id === 'cs_topup' && g.p_amount === 3 && g.p_product === 'topup' && g.p_expires_at === null));
+r = await post(credit('cs_unpaid', 'topup', { payment_status: 'unpaid' }));
+check('unpaid checkout: no credits', r.status === 200 && !state.grants.some((g) => g.p_source_id === 'cs_unpaid'));
+r = await post(credit('cs_plan', 'plan', { subscription: 'sub_plan' }));
+check('plan checkout: records the plan subscription, credits wait for the invoice', c2().plan_subscription_id === 'sub_plan' && !state.grants.some((g) => g.p_source_id === 'cs_plan'));
+const start = 1790000000, end = start + 30 * 86400;
+r = await post(ev('evt_inv1', 'invoice.paid', { id: 'in_plan1', object: 'invoice', customer: 'cus_2', subscription: 'sub_plan', period_start: start, period_end: end,
+  lines: { data: [{ price: { id: 'price_plan' }, period: { start, end } }] } }));
+const pg = state.grants.find((g) => g.p_source_id === 'in_plan1');
+check('invoice.paid (plan): +20 plan credits, rollover cap 20', r.status === 200 && pg && pg.p_amount === 20 && pg.p_product === 'plan' && pg.p_rollover_cap === 20, JSON.stringify(pg));
+check('plan credits expire at the end of the NEXT billing period', pg && pg.p_expires_at === new Date((end + 30 * 86400) * 1000).toISOString(), pg && pg.p_expires_at);
+check('plan period end recorded', c2().plan_period_end === new Date(end * 1000).toISOString());
+r = await post(ev('evt_inv19', 'invoice.paid', { id: 'in_19', object: 'invoice', customer: 'cus_2', subscription: 'sub_19', period_start: start, period_end: end,
+  lines: { data: [{ price: { id: 'price_19' }, period: { start, end } }] } }));
+check('invoice.paid ($19): no credits', r.status === 200 && !state.grants.some((g) => g.p_source_id === 'in_19'));
+r = await post(ev('evt_upd1', 'customer.subscription.updated', { id: 'sub_19', object: 'subscription', status: 'active', cancel_at_period_end: true, current_period_end: end }));
+check('$19 set to cancel at period end: canceled until the end date', c2().subscription_status === 'canceled' && c2().subscription_ends_at === new Date(end * 1000).toISOString());
+r = await post(ev('evt_upd2', 'customer.subscription.updated', { id: 'sub_19', object: 'subscription', status: 'active', cancel_at_period_end: false, current_period_end: end }));
+check('$19 resumed: active again, no end date', c2().subscription_status === 'active' && c2().subscription_ends_at === null);
+r = await post(ev('evt_del_plan', 'customer.subscription.deleted', { id: 'sub_plan', object: 'subscription', current_period_end: end }));
+check('plan cancelled, $19 active: credits get 60 more days, portal untouched',
+  rpcs('credits_extend').some((b) => b.p_company_id === 'c2' && b.p_days === 60) && c2().plan_subscription_id === null && c2().subscription_status === 'active');
+r = await post(ev('evt_del_19', 'customer.subscription.deleted', { id: 'sub_19', object: 'subscription', current_period_end: end }));
+check('$19 cancelled: every credit expires, portal canceled',
+  rpcs('credits_expire_all').some((b) => b.p_company_id === 'c2' && b.p_source_id === 'sub_19') && c2().subscription_status === 'canceled');
+const before = state.rpc.length;
+r = await post({ ...credit('cs_internal', 'starter'), data: { object: { id: 'cs_internal', object: 'checkout.session', payment_status: 'paid', metadata: { company_id: 'c3', kind: 'starter', credits: '5' } } } });
+check('internal company: ignored', r.status === 200 && state.rpc.length === before);
 
 fn.kill(); mock.close();
 const failed = results.filter((x) => !x).length;

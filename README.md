@@ -31,6 +31,12 @@ project/
 ```bash
 node validate-feeds.js         # schema-checks every clients/*.json
 npm install                    # picks up @supabase/supabase-js for the import script
+npm i --no-save --no-package-lock @electric-sql/pglite stripe@14.25.0
+node tests/portal/credits-sql.test.mjs       # every migration on PGlite + the credit rules
+node tests/portal/stripe-webhook.test.mjs    # webhook under Deno (needs deno on PATH)
+node tests/portal/create-checkout.test.mjs   # checkout under Deno, fake Stripe
+bash tests/portal/invite-member.sh           # invites under Deno
+node tests/portal/walkthrough.mjs            # the portal in Chromium, every account type
 ```
 
 ## Manual setup (do this once, before first deploy)
@@ -111,24 +117,52 @@ supabase secrets set \
   PORTAL_REDIRECT=https://www.ghostwriter.mom/portal
 ```
 
-Deploy the function (JWT verification off — Stripe signs the payload):
+Deploy the functions. `supabase/config.toml` turns platform JWT verification
+off for all three: Stripe signs the webhook, and the project signs sessions
+with ES256 keys that the legacy `verify_jwt` gate rejects, so `invite-member`
+and `create-checkout` check the caller themselves with `admin.auth.getUser`.
 
 ```bash
-supabase functions deploy stripe-webhook --no-verify-jwt
+supabase functions deploy stripe-webhook  --no-verify-jwt
+supabase functions deploy invite-member   --no-verify-jwt
+supabase functions deploy create-checkout --no-verify-jwt
 ```
 
 Register the endpoint in Stripe (Dashboard → Developers → Webhooks):
 
 - Endpoint URL:  `https://<your-ref>.functions.supabase.co/stripe-webhook`
 - Events to send:
-  - `checkout.session.completed`
-  - `customer.subscription.deleted`
+  - `checkout.session.completed` ($19, Starter, top-up, plan start)
+  - `invoice.paid` (plan credits every month)
+  - `customer.subscription.updated` ($19 cancel at period end, resume)
+  - `customer.subscription.deleted` ($19 or plan ended)
 - Copy the signing secret into `STRIPE_WEBHOOK_SECRET` above.
 
 Stripe Payment Link (existing $19/mo): confirm it still passes
 `client_reference_id` through to `checkout.session.completed`. Both current
 links do (they were built with `?client_reference_id=<slug>` in the deploy
 step).
+
+### 3b. Credits in Stripe (test mode first)
+
+"$19 decides, credits make." Create these in Stripe, in USD, then set the
+four secrets:
+
+| What | Stripe object | Secret |
+|---|---|---|
+| Starter: 5 credits, one-time | Price, one-time, $495 | `STRIPE_PRICE_STARTER` |
+| Plan: 20 credits a month | Price, recurring monthly, $2,000 | `STRIPE_PRICE_PLAN` |
+| Top-up: 1 credit | Price, one-time, $125 (the portal sends the quantity) | `STRIPE_PRICE_TOPUP` |
+| First credit purchase: the $19 counts | Coupon, $19 off, duration once | `STRIPE_COUPON_FIRST_CREDITS` |
+
+```bash
+supabase secrets set STRIPE_PRICE_STARTER=price_... STRIPE_PRICE_PLAN=price_... \
+  STRIPE_PRICE_TOPUP=price_... STRIPE_COUPON_FIRST_CREDITS=...
+```
+
+Until they are set, `create-checkout` answers `not_configured` and the portal
+says checkout isn't set up yet. Costs per piece live in the database
+(`credit_costs()`: post 1, insight 3, pillar 8; 1 credit = $100).
 
 ### 4. PostHog
 
@@ -176,14 +210,27 @@ read through RLS; the only new database objects are three functions in
 - `portal_can_write(company_id)`: false once a canceled subscription has ended.
   The portal is read-only Library at that point.
 
-Deploy the invite function (JWT verification stays on):
+`invite-member` is deployed with the other functions above (JWT verification
+off, the function checks the caller).
 
-```bash
-supabase functions deploy invite-member
-```
+### Credits and pieces (`migrations/20260928000007_credits.sql` to `…009`)
 
-`hub_unlocked` is set by hand for now:
-`update companies set hub_unlocked = true where slug = '…';`
+- `credit_ledger`: append-only. A `grant` row holds credits and their expiry;
+  every `spend`, `refund`, `expire` or `adjust` row points at its grant
+  (`grant_id`). Balance = what's left on unexpired grants
+  (`credit_balance(company)`). Spends take from the soonest-expiring grant
+  first; refunds go back to the grant they came from.
+- `pieces`: what credits buy. `spend_credits(article, format)` queues one; the
+  first with nothing in `writing` starts at once (24h clock). Move statuses by
+  hand in Supabase: `update pieces set status = 'delivered' where id = …;`
+  Allowed: queued to writing or killed; writing to delivered or killed;
+  delivered to revising (once), done or killed; revising to delivered or done.
+  Killing a queued piece refunds it. The next queued piece starts when the
+  one in writing leaves it.
+- Hub access (`hub_access()`): internal, or already open (`hub_unlocked`),
+  or a credit purchase with an active $19. It stays open at 0 credits.
+- Adding credits by hand (internal portals, goodwill):
+  `insert into credit_ledger (company_id, delta, kind, product) values ('…', 5, 'grant', 'manual');`
 
 Walkthrough, screenshots and how to rerun the tests:
 [`docs/portal-walkthrough/`](docs/portal-walkthrough/README.md).

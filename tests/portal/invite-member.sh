@@ -26,7 +26,17 @@ expect too_many        tok-sam '{"emails":["a@b.co","b@b.co","c@b.co"]}' 400 too
 expect seat_limit      tok-sam '{"emails":["new1@b.co","new2@b.co"]}'   409 '"seats_left":1'
 expect invite_ok       tok-sam '{"emails":["New1@B.co"]}'               200 '"status":"invited"'
 expect now_full        tok-sam '{"emails":["new3@b.co"]}'               409 '"seats_left":0'
+# Company c2 (one member): existing accounts, repeats, and a mailer outage.
+expect existing_gets_link tok-two '{"emails":["existing@x.com"]}'        200 '"status":"invited"'
+expect already_member     tok-two '{"emails":["existing@x.com"]}'        409 '"error":"already_member"'
+curl -s -X POST http://127.0.0.1:54321/__mail -d '{"down":true}' > /dev/null
+expect mail_down          tok-two '{"emails":["existing2@x.com"]}'       502 '"error":"failed"'
+curl -s -X POST http://127.0.0.1:54321/__mail -d '{"down":false}' > /dev/null
 state=$(curl -s http://127.0.0.1:54321/__state)
+if [[ "$state" == *'"otps":[{"email":"existing@x.com","create_user":false,"redirect":"https://www.ghostwriter.mom/portal"}]'* ]]; then
+  echo "ok   existing account: one sign-in link, no new user"; else echo "FAIL existing account link: $state"; fail=1; fi
+if [[ "$state" == *'"company_id":"c2","user_id":"u-exist2"'* ]]; then
+  echo "ok   mail down: seat row kept, reported as failed"; else echo "FAIL mail down row: $state"; fail=1; fi
 if [[ "$state" == *'"user_id":"u-new1","role":"member","display_name":"New1"'* && "$state" == *'"redirect":"https://www.ghostwriter.mom/portal"'* ]]; then
   echo "ok   members row + invite redirect"; else echo "FAIL members row: $state"; fail=1; fi
 exit $fail

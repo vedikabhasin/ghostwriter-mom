@@ -30,7 +30,7 @@ export function isRevealOpen() { return !!open; }
  * @param {object} o
  *   state: 'agree'|'split'|'timing'
  *   left, right: { member, action, name }
- *   card: { format, series, title }
+ *   card: { format, series, title, angle, sources }
  *   onPrimary(), onClose()
  */
 export function showReveal(o) {
@@ -40,11 +40,14 @@ export function showReveal(o) {
   root.className = 'reveal rv-' + o.state + (prefersReduced ? ' rv-static' : '');
   root.setAttribute('aria-label', COPY[o.state].line);
 
-  // Background: burst / diagonal split / yellow wash.
+  // Background, one per state so the three never look alike: Agree is a
+  // like-green burst, Split is like-green and pass-coral halves meeting at
+  // the card, Timing is like-green fading into save-yellow.
   const bg = h('div', 'rv-bg');
   if (o.state === 'split') {
-    bg.style.setProperty('--rv-a', `var(--${o.left.action})`);
-    bg.style.setProperty('--rv-b', `var(--${o.right.action})`);
+    const side = (act) => (act === 'pass' ? 'var(--pass)' : 'var(--like)');
+    bg.style.setProperty('--rv-a', side(o.left.action));
+    bg.style.setProperty('--rv-b', side(o.right.action));
   }
   if (o.state === 'agree') {
     const shared = o.left.action === 'fasttrack' && o.right.action === 'fasttrack' ? 'fasttrack' : 'like';
@@ -57,7 +60,9 @@ export function showReveal(o) {
       f.innerHTML = shared === 'fasttrack' ? ICONS.bolt : ICONS.heart;
       const r = mix(hash(o.card.title) + i * 0x9e3779b9);
       f.style.left = (4 + (r % 92)) + '%';
-      f.style.top = (8 + ((r >>> 7) % 80)) + '%';
+      // Above the stage or below the buttons, never over the headline.
+      const band = (r >>> 12) % 2 ? [4, 30] : [80, 94];
+      f.style.top = (band[0] + ((r >>> 7) % (band[1] - band[0]))) + '%';
       f.style.setProperty('--d', ((r >>> 3) % 500) + 'ms');
       f.style.setProperty('--s', (0.7 + ((r >>> 5) % 6) / 10).toFixed(2));
       icons.appendChild(f);
@@ -81,6 +86,9 @@ export function showReveal(o) {
   if (o.card.series) head.appendChild(h('span', 'gwm-series-label', o.card.series));
   card.appendChild(head);
   card.appendChild(h('p', 'rv-card-title', o.card.title));
+  if (o.card.angle) card.appendChild(h('p', 'rv-card-sub', o.card.angle));
+  const nSrc = Array.isArray(o.card.sources) ? o.card.sources.length : 0;
+  if (nSrc) card.appendChild(h('span', 'rv-card-src gwm-mono-tag', nSrc === 1 ? '1 source' : nSrc + ' sources'));
   stage.appendChild(card);
   stage.appendChild(side('right', o.right));
   root.appendChild(stage);
@@ -89,17 +97,13 @@ export function showReveal(o) {
   copy.id = 'rv-line';
   root.appendChild(copy);
 
+  // Flat buttons straight from the tokens: no glow, no gradient edge.
   const actions = h('div', 'rv-actions');
-  const host = h('span', 'btn-glow-host');
-  const glow = h('span', 'btn-glow');
-  glow.setAttribute('aria-hidden', 'true');
-  host.appendChild(glow);
-  const primary = h('button', 'btn btn-primary gwm-btn', COPY[o.state].primary);
+  const primary = h('button', 'btn btn-primary rv-btn gwm-btn', COPY[o.state].primary);
   primary.type = 'button';
-  host.appendChild(primary);
-  const secondary = h('button', 'btn btn-secondary gwm-btn', 'Keep swiping');
+  const secondary = h('button', 'btn btn-secondary rv-btn gwm-btn', 'Keep swiping');
   secondary.type = 'button';
-  actions.append(host, secondary);
+  actions.append(primary, secondary);
   root.appendChild(actions);
 
   primary.addEventListener('click', () => { closeReveal(); o.onPrimary && o.onPrimary(); });

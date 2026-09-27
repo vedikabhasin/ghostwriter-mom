@@ -6,14 +6,19 @@ const state = {
     { id: 'u-sam', email: 'sam@x.com' },
     { id: 'u-out', email: 'outsider@x.com' },
     { id: 'u-exist', email: 'existing@x.com' },
+    { id: 'u-two', email: 'two@y.com' },
+    { id: 'u-exist2', email: 'existing2@x.com' },
   ],
   members: [
     { id: 'm1', company_id: 'c1', user_id: 'u-owner', role: 'owner', avatar_shape: 'ghost', created_at: '1' },
     { id: 'm2', company_id: 'c1', user_id: 'u-sam', role: 'member', avatar_shape: 'blob', created_at: '2' },
+    { id: 'm3', company_id: 'c2', user_id: 'u-two', role: 'owner', avatar_shape: 'worm', created_at: '3' },
   ],
   invites: [],
+  otps: [],
+  mailDown: false, // POST /__mail {down:true|false}
 };
-const tokens = { 'tok-sam': 'u-sam', 'tok-out': 'u-out' };
+const tokens = { 'tok-sam': 'u-sam', 'tok-out': 'u-out', 'tok-two': 'u-two' };
 function send(res, code, body) { res.writeHead(code, { 'content-type': 'application/json' }); res.end(JSON.stringify(body)); }
 http.createServer(async (req, res) => {
   let raw = ''; for await (const c of req) raw += c;
@@ -26,10 +31,19 @@ http.createServer(async (req, res) => {
   if (p === '/auth/v1/invite') {
     const { email } = JSON.parse(raw);
     if (state.users.some((x) => x.email === email)) return send(res, 422, { msg: 'A user with this email address has already been registered', error_code: 'email_exists' });
+    // Like GoTrue: a mail failure rolls the new user back.
+    if (state.mailDown) return send(res, 500, { msg: 'Error sending invite email', error_code: 'unexpected_failure' });
     const nu = { id: 'u-' + email.split('@')[0], email };
     state.users.push(nu); state.invites.push({ email, redirect: u.searchParams.get('redirect_to') });
     return send(res, 200, nu);
   }
+  if (p === '/auth/v1/otp') {
+    const b = JSON.parse(raw);
+    if (state.mailDown) return send(res, 500, { msg: 'Error sending magic link email' });
+    state.otps.push({ email: b.email, create_user: b.create_user, redirect: u.searchParams.get('redirect_to') });
+    return send(res, 200, {});
+  }
+  if (p === '/__mail') { state.mailDown = !!JSON.parse(raw).down; return send(res, 200, {}); }
   if (p === '/auth/v1/admin/users') return send(res, 200, { users: state.users, aud: 'authenticated' });
   if (p === '/rest/v1/members' && req.method === 'GET') {
     let rows = state.members;

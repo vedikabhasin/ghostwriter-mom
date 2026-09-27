@@ -1,7 +1,9 @@
 // -----------------------------------------------------------------------------
-// invite-member — Deno edge function, called by the portal's Hub invite pop-up.
-// Deploy with:  supabase functions deploy invite-member
-// (JWT verification ON: the caller must be a signed-in portal member.)
+// invite-member: Deno edge function, called by the portal's invite pop-up.
+// Deploy with:  supabase functions deploy invite-member --no-verify-jwt
+// Platform JWT check is OFF on purpose (supabase/config.toml): the project
+// signs sessions with ES256 keys, which the legacy verify_jwt gate rejects.
+// The function verifies the caller itself with admin.auth.getUser(token).
 //
 // Body: { emails: string[] }   (1 or 2 addresses; `email: string` also works)
 //
@@ -10,7 +12,13 @@
 //   2. every address is a valid email and is not already on the team
 //   3. current members + new invites stays at 3 or under
 // Then, per address: inviteUserByEmail (Supabase Auth sends the only email)
-// and insert a members row (role 'member', random avatar_shape).
+// and insert a members row (role 'member', random avatar_shape). An address
+// that already has an account can't be invited, so it gets a normal sign-in
+// link instead. Either way exactly one email goes out.
+//
+// Errors (top-level `error`): not_signed_in, not_a_member, no_email,
+// too_many, invalid_email, self_invite, seat_limit, already_member (every
+// address is already on the team), failed (502, nothing was sent).
 //
 // Environment (provided by the Supabase runtime unless noted):
 //   SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY
@@ -69,11 +77,22 @@ async function findUserId(email: string): Promise<string | null> {
   return null;
 }
 
-async function inviteOrFind(email: string): Promise<string | null> {
+// Returns the user id and whether the invite email already went out.
+async function inviteOrFind(email: string): Promise<{ id: string | null; emailed: boolean }> {
   const invite = await admin.auth.admin.inviteUserByEmail(email, { redirectTo: PORTAL_REDIRECT });
-  if (invite.data?.user?.id) return invite.data.user.id;
-  // Existing user: they sign in with "Send me a link" on /portal.
-  return await findUserId(email);
+  if (invite.data?.user?.id) return { id: invite.data.user.id, emailed: true };
+  if (invite.error) console.error("inviteUserByEmail", invite.error.status, invite.error.message);
+  return { id: await findUserId(email), emailed: false };
+}
+
+// Existing account: the same sign-in link as "Send me a link" on /portal.
+async function sendSignInLink(email: string): Promise<boolean> {
+  const { error } = await admin.auth.signInWithOtp({
+    email,
+    options: { shouldCreateUser: false, emailRedirectTo: PORTAL_REDIRECT },
+  });
+  if (error) console.error("signInWithOtp", error.status, error.message);
+  return !error;
 }
 
 Deno.serve(async (req) => {
@@ -84,7 +103,10 @@ Deno.serve(async (req) => {
   const token = (req.headers.get("Authorization") ?? "").replace(/^Bearer\s+/i, "");
   if (!token) return json(401, { error: "not_signed_in" });
   const { data: userData, error: userErr } = await admin.auth.getUser(token);
-  if (userErr || !userData?.user) return json(401, { error: "not_signed_in" });
+  if (userErr || !userData?.user) {
+    console.error("getUser failed", userErr?.status, userErr?.message);
+    return json(401, { error: "not_signed_in" });
+  }
   const callerId = userData.user.id;
 
   const { data: callerRows, error: callerErr } = await admin
@@ -123,11 +145,11 @@ Deno.serve(async (req) => {
   }
 
   const taken = team.map((m) => m.avatar_shape ?? "");
-  const results: { email: string; status: "invited" | "already_member" | "failed" }[] = [];
+  const results: { email: string; status: "invited" | "already_member" | "added_no_email" | "failed" }[] = [];
 
   for (const email of emails) {
     try {
-      const userId = await inviteOrFind(email);
+      const { id: userId, emailed } = await inviteOrFind(email);
       if (!userId) { results.push({ email, status: "failed" }); continue; }
       if (team.some((m) => m.user_id === userId)) {
         results.push({ email, status: "already_member" });
@@ -149,13 +171,22 @@ Deno.serve(async (req) => {
       }
       taken.push(avatar);
       team.push({ id: "", user_id: userId, avatar_shape: avatar });
-      results.push({ email, status: "invited" });
+      // The seat is theirs even if the link fails; they can ask for a fresh
+      // one on /portal. Report it so the pop-up can say so.
+      const sent = emailed || await sendSignInLink(email);
+      results.push({ email, status: sent ? "invited" : "added_no_email" });
     } catch (err) {
       console.error("invite failed", err instanceof Error ? err.message : err);
       results.push({ email, status: "failed" });
     }
   }
 
-  const ok = results.some((r) => r.status === "invited" || r.status === "already_member");
-  return json(ok ? 200 : 502, { results, seats_left: Math.max(0, MAX_MEMBERS - team.length) });
+  const seats_left = Math.max(0, MAX_MEMBERS - team.length);
+  if (results.every((r) => r.status === "already_member")) {
+    return json(409, { error: "already_member", results, seats_left });
+  }
+  if (!results.some((r) => r.status === "invited")) {
+    return json(502, { error: "failed", results, seats_left });
+  }
+  return json(200, { results, seats_left });
 });

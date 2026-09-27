@@ -181,6 +181,16 @@
  ],
  [
   "capture",
+  "credits_opened",
+  {
+   "surface": "portal",
+   "need": 1,
+   "active": true,
+   "ever_bought": false
+  }
+ ],
+ [
+  "capture",
   "library_open",
   {
    "surface": "portal",
@@ -203,7 +213,16 @@
   "hub_tapped",
   {
    "surface": "portal",
-   "members": 2
+   "members": 2,
+   "hub_access": true
+  }
+ ],
+ [
+  "capture",
+  "invite_opened",
+  {
+   "surface": "portal",
+   "seats_left": 1
   }
  ],
  [
@@ -268,7 +287,8 @@
   "hub_tapped",
   {
    "surface": "portal",
-   "members": 2
+   "members": 2,
+   "hub_access": true
   }
  ],
  [

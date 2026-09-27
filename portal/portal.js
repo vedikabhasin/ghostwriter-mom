@@ -1,13 +1,17 @@
 // -----------------------------------------------------------------------------
 // ghostwriter.mom portal. Three places: Feed, Library, and the Library's design
 // mode, the Hub. Reads through RLS as the signed-in member; writes through RLS
-// (notes, hub_items, members.onboarding) or the portal_* RPCs (decisions, mark
-// live), plus the invite-member edge function.
+// (notes, hub_items, members.onboarding) or RPCs (portal_decide,
+// portal_set_live, spend_credits), plus the invite-member and create-checkout
+// edge functions.
+//
+// "$19 decides, credits make." Everything is gated on account state from
+// portal_account() (balance, Hub access, $19 status), never on ids or names.
 //
 // Colors, type and motion come from /styles/tokens.css; date formats from
 // /portal/lib.js (copied from swipe.html); the mascot from /portal/avatars.js.
 // -----------------------------------------------------------------------------
-import { $, $all, h, prefersReduced, fmtWhen, fmtDay, hoursBetween, countdown, todayStr } from '/portal/lib.js';
+import { $, $all, h, prefersReduced, fmtWhen, fmtDay, hoursBetween, countdown, todayStr, countdownLong, nextDrop, fmtWeekday } from '/portal/lib.js';
 import { avatarSVG, pencilSVG, ICONS } from '/portal/avatars.js';
 import { showReveal, closeReveal, isRevealOpen } from '/portal/reveal.js';
 import { initHub, enterHub, articleRects, slotForNewItem } from '/portal/hub.js';
@@ -18,6 +22,9 @@ const VERT_T = 100;
 const CHIP_LIMIT = 3;
 const NOTE_MAX = 280;
 const WANTS_WRITTEN = 'wants_written';
+const MAX_SEATS = 3;
+// What Stripe charges (display only; the prices live in Stripe).
+const PRICE_TEXT = { starter: '$495', plan: '$2,000', topupEach: 125 };
 const POSITIVE = ['like', 'fasttrack'];
 const ACTION_LABEL = { like: 'Liked', pass: 'Passed', save: 'Saved', fasttrack: 'Fast-track' };
 const FMT_LABEL = { pillar: 'Pillar', insight: 'Insight', post: 'Post' };
@@ -30,7 +37,7 @@ let sb = null;
 let ph = { capture() {}, identify() {}, group() {}, register() {}, reset() {} };
 const S = {
   session: null, me: null, company: null, members: [], cards: [], decisions: [], events: [],
-  signal: null, articles: [], notes: [], hubItems: [], readOnly: false,
+  signal: null, articles: [], notes: [], hubItems: [], pieces: [], account: null, readOnly: false,
   view: 'loading', feedIndex: 0, items: [], libOrder: [], onb: {}, loaded: false,
   forceHub: null, // internal testing switch: 'locked' | 'invite'
 };
@@ -172,6 +179,55 @@ function runOnboarding() {
   });
 }
 
+// -- Account: credits, Hub access, the $19 (portal_account) ---------------------
+const credits = (n) => n + (n === 1 ? ' credit' : ' credits');
+function costOf(fmt) {
+  const c = S.account && S.account.costs;
+  return c && Number.isFinite(c[fmt]) ? c[fmt] : null;
+}
+function balance() { return (S.account && S.account.balance) || 0; }
+function hubOpen() { return !!(S.account && S.account.hub_access); }
+async function refreshAccount() {
+  const [acct, pieces] = await Promise.all([
+    sb.rpc('portal_account', { p_company_id: S.company.id }),
+    sb.from('pieces').select('id,article_id,card_id,format,cost,status,position,queued_at,writing_at,deliver_by,delivered_at').eq('company_id', S.company.id),
+  ]);
+  if (acct.error) console.warn('[portal] account failed', acct.error.message); else S.account = acct.data;
+  if (pieces.error) console.warn('[portal] pieces failed', pieces.error.message); else S.pieces = pieces.data;
+}
+async function refreshArticles() {
+  const { data, error } = await sb.from('articles').select(ARTICLE_COLS).eq('company_id', S.company.id);
+  if (!error) S.articles = data;
+}
+const ARTICLE_COLS = 'id,card_id,format,title,status,body_html,google_doc_url,requested_at,deliver_by,delivered_at,live_at,created_at';
+
+// -- Seats ----------------------------------------------------------------------
+function seatsLeft() { return Math.max(0, MAX_SEATS - S.members.length); }
+const SEAT_LINE = { 1: 'One seat left.', 2: 'Two seats left.' };
+/** Three seats: a monster per member, a dashed ghost per open seat. */
+function renderSeats(wrap) {
+  wrap.textContent = '';
+  for (let i = 0; i < MAX_SEATS; i++) {
+    const m = S.members[i];
+    if (m) {
+      const s0 = h('span', 'seat');
+      s0.dataset.member = m.id;
+      s0.appendChild(avatarEl(m));
+      s0.title = displayName(m);
+      wrap.appendChild(s0);
+    } else {
+      const g = h('span', 'seat empty gwm-center', '+');
+      g.dataset.seat = String(i + 1);
+      g.title = 'Seat ' + (i + 1) + ' is open';
+      wrap.appendChild(g);
+    }
+  }
+}
+function renderHubHead() {
+  renderSeats($('#hub-seats'));
+  $('#hub-invite').hidden = !seatsLeft() || S.readOnly;
+}
+
 // -- People -------------------------------------------------------------------
 function owner() { return S.members.find((m) => m.role === 'owner') || null; }
 function memberById(id) { return S.members.find((m) => m.id === id) || null; }
@@ -278,7 +334,7 @@ function maybeReveal(card) {
   seenOverlap.add(card.id + ov.state);
   showReveal({
     state: ov.state, left, right,
-    card: { format: card.format, series: card.series, title: card.title },
+    card: { format: card.format, series: card.series, title: card.title, angle: card.angle, sources: card.sources },
     onPrimary: () => (ov.state === 'agree' ? moveUp(card) : openNoteSheet(card)),
     onClose: () => track('reveal_dismissed', { state: ov.state }),
     onDismiss: () => setTimeout(() => {
@@ -311,6 +367,8 @@ function buildItems() {
   S.items = [];
   if (S.signal) S.items.push({ kind: 'signal', signal: S.signal });
   cards.forEach((c) => S.items.push({ kind: 'card', card: c, isNew: c.drop_date === latest }));
+  // After the last card, the empty slot becomes the caught-up state.
+  if (cards.length) S.items.push({ kind: 'end' });
   S.feedIndex = Math.min(S.feedIndex, Math.max(0, S.items.length - 1));
 }
 function renderFeed() {
@@ -320,14 +378,24 @@ function renderFeed() {
   const unread = cards.filter((i) => !myAction(i.card.id)).length;
   $('#feed-count').textContent = cards.length + (cards.length === 1 ? ' card' : ' cards') + ' · ' + unread + ' unread';
 
+  stopFeedTimer();
   if (!S.items.length) {
     stage.appendChild(h('p', 'lib-empty', 'Your first drop lands soon.'));
     renderDots(); renderControls(); return;
   }
+  if (S.items[S.feedIndex].kind === 'end') {
+    stage.style.height = '';
+    if (peekObserver) peekObserver.disconnect();
+    stage.appendChild(buildCaughtUp());
+    setFormatTint(null);
+    renderDots(); renderControls();
+    return;
+  }
+  // The stack thins toward the end: a peek layer only for cards still to come.
   const els = [];
   for (let d = 2; d >= 0; d--) {
     const item = S.items[S.feedIndex + d];
-    if (!item) continue;
+    if (!item || item.kind === 'end') continue;
     const el = buildFeedCard(item, d);
     stage.appendChild(el);
     els[d] = el;
@@ -341,9 +409,79 @@ function renderFeed() {
   const cur = S.items[S.feedIndex];
   setFormatTint(cur.kind === 'card' ? cur.card.format : null);
   if (cur.kind === 'card') noticeOverlap(cur.card);
-  $('#caught-up').hidden = !(S.feedIndex === S.items.length - 1 && cards.length && !unread);
   renderDots();
   renderControls();
+  pulseLastDots();
+}
+// Reaching the last two cards: the remaining dots pulse once.
+let pulsed = false;
+function pulseLastDots() {
+  const cardIdx = S.items.map((it, i) => (it.kind === 'card' ? i : -1)).filter((i) => i >= 0);
+  const left = cardIdx.filter((i) => i >= S.feedIndex).length;
+  if (pulsed || !left || left > 2 || prefersReduced) return;
+  pulsed = true;
+  cardIdx.filter((i) => i >= S.feedIndex).forEach((i) => { const d = $('#dots').children[i]; if (d) d.classList.add('pulse'); });
+}
+let feedTimer = null;
+function stopFeedTimer() { clearInterval(feedTimer); feedTimer = null; }
+/** Cards in this drop a member hasn't decided on yet. */
+function unseenBy(m) {
+  return feedCards().filter((c) => !teamDecisions(c.id).has(m.id)).length;
+}
+function buildCaughtUp() {
+  const box = h('div', 'caught-up');
+  box.setAttribute('role', 'group');
+  box.setAttribute('aria-label', 'All caught up');
+  // Face-down stack of next week's five. A real card's format shows face-up
+  // on top only if next week's cards already exist; nothing is invented.
+  const upcoming = S.cards.filter((c) => c.drop_date && c.drop_date > todayStr())
+    .sort((a, b) => (a.drop_date < b.drop_date ? -1 : a.drop_date > b.drop_date ? 1 : a.sort_order - b.sort_order));
+  const stack = h('div', 'fd-stack');
+  stack.setAttribute('aria-hidden', 'true');
+  for (let i = 4; i >= 0; i--) {
+    const c = h('div', 'fd-card');
+    c.style.setProperty('--i', String(i));
+    if (i === 0 && upcoming[0]) {
+      c.classList.add('face-up', 'fmt-' + upcoming[0].format);
+      c.appendChild(h('span', 'card-format gwm-center gwm-mono-tag', FMT_LABEL[upcoming[0].format] || upcoming[0].format));
+    }
+    stack.appendChild(c);
+  }
+  box.appendChild(stack);
+  const when = nextDrop(S.company.first_opened_at || S.company.created_at);
+  box.appendChild(h('p', 'cu-title', '5 new on ' + fmtWeekday(when)));
+  const cd = h('p', 'cu-count gwm-mono-tag', 'In ' + (countdownLong(when) || 'a moment'));
+  cd.id = 'cu-count';
+  box.appendChild(cd);
+  feedTimer = setInterval(() => { const el = $('#cu-count'); if (el) el.textContent = 'In ' + (countdownLong(when) || 'a moment'); }, 30000);
+
+  const seats = h('div', 'seats cu-seats');
+  renderSeats(seats);
+  box.appendChild(seats);
+  const lines = h('div', 'cu-lines');
+  S.members.forEach((m) => {
+    const n = unseenBy(m);
+    if (!n) return;
+    const b = h('button', 'cu-line', (m.id === S.me.id ? 'You haven’t' : displayName(m) + ' hasn’t') + ' seen ' + n + ' of these.');
+    b.type = 'button';
+    // Copies nothing, sends nothing: it only points at that seat.
+    b.addEventListener('click', () => {
+      $all('.seat.hl', box).forEach((x) => x.classList.remove('hl'));
+      const seat = seats.querySelector(`[data-member="${m.id}"]`);
+      if (seat) { void seat.offsetWidth; seat.classList.add('hl'); }
+    });
+    lines.appendChild(b);
+  });
+  if (!S.readOnly) {
+    for (let i = S.members.length; i < MAX_SEATS; i++) {
+      const b = h('button', 'cu-line open', 'Seat ' + (i + 1) + ' is open. Invite someone who decides content.');
+      b.type = 'button';
+      b.addEventListener('click', () => openInvite(null));
+      lines.appendChild(b);
+    }
+  }
+  box.appendChild(lines);
+  return box;
 }
 let peekObserver = null;
 function syncPeeks(els) {
@@ -463,6 +601,7 @@ function renderDots() {
   const wrap = $('#dots');
   wrap.textContent = '';
   S.items.forEach((item, i) => {
+    if (item.kind === 'end') return;
     const d = h('button', 'dot');
     d.type = 'button';
     d.setAttribute('role', 'tab');
@@ -706,6 +845,8 @@ function renderHistory(tab) {
     byCard.get(e.card_id).push(e);
   });
   const cardById = new Map(S.cards.map((c) => [c.id, c]));
+  // Cards with only notes still get a box: notes are readable at $19.
+  S.notes.forEach((n) => { if (n.card_id && n.body !== WANTS_WRITTEN && !byCard.has(n.card_id)) byCard.set(n.card_id, [{ created_at: n.created_at, note: true }]); });
   const groups = Array.from(byCard.entries())
     .filter(([id]) => cardById.has(id))
     .sort((a, b) => (a[1][a[1].length - 1].created_at < b[1][b[1].length - 1].created_at ? 1 : -1));
@@ -717,6 +858,7 @@ function renderHistory(tab) {
     if (c.series) title.prepend(h('span', 'gwm-series-label', c.series));
     box.appendChild(title);
     evs.slice().reverse().forEach((e) => {
+      if (e.note) return;
       const m = eventMember(e.member_id);
       const row = h('div', 'hist-row');
       row.appendChild(avatarEl(m));
@@ -728,6 +870,9 @@ function renderHistory(tab) {
       row.appendChild(h('span', 'when', fmtWhen(e.created_at)));
       box.appendChild(row);
     });
+    const notes = h('div', 'card-notes');
+    renderNotes(notes, cardId);
+    box.appendChild(notes);
     log.appendChild(box);
   });
 
@@ -774,13 +919,25 @@ const FAN = [
   { x: 30, r: 5 }, { x: -30, r: -5 },
   { x: 50, r: 8 }, { x: -50, r: -8 },
 ];
+/** The live piece (credits spent) for an article, if any. */
+function pieceFor(a) {
+  return S.pieces.find((p) => p.article_id === a.id && p.status !== 'killed') || null;
+}
+/** Approved, unwritten, not the free pick, nothing spent on it yet. */
+function writable(a) {
+  return a.status === 'approved_unwritten' && !a.requested_at && !pieceFor(a) && !S.readOnly;
+}
 /** Delivery state line for a card. */
 function deliveryState(a) {
   if (a.status === 'approved_unwritten') {
+    const piece = pieceFor(a);
+    if (piece && piece.status === 'queued') return { kind: 'queued', text: 'Queued' };
     if (a.requested_at && a.deliver_by) {
       const left = countdown(a.deliver_by);
       return { kind: 'arriving', text: left ? 'Arriving in ' + left : 'Arriving any minute' };
     }
+    const cost = costOf(a.format);
+    if (writable(a) && cost) return { kind: 'ready', text: 'Ready to write · ' + credits(cost) };
     return { kind: 'approved', text: 'Approved · not written yet' };
   }
   const when = fmtWhen(a.delivered_at || a.created_at);
@@ -805,7 +962,8 @@ function renderLibrary(opts) {
   const byId = new Map(S.articles.map((a) => [a.id, a]));
   const order = S.libOrder.map((id) => byId.get(id)).filter(Boolean);
   const written = order.filter((a) => a.status !== 'approved_unwritten').length;
-  $('#lib-count').textContent = order.length ? written + ' written · ' + (order.length - written) + ' approved' : '';
+  $('#lib-count').textContent = (order.length ? written + ' written · ' + (order.length - written) + ' approved' : '') +
+    (balance() > 0 ? (order.length ? ' · ' : '') + credits(balance()) : '');
   $('#lib-nav').hidden = order.length < 2;
   if (!order.length) {
     stage.appendChild(h('p', 'lib-empty', 'Your articles land here as they’re written.'));
@@ -843,7 +1001,7 @@ function renderLibrary(opts) {
     b.appendChild(h('h3', 'book-title', a.title));
     const st = deliveryState(a);
     if (st.kind === 'delivered') {
-      b.appendChild(h('span', 'book-stamp delivered gwm-center', st.text));
+      b.appendChild(h('span', 'book-stamp delivered', st.text));
     } else {
       b.appendChild(h('span', 'book-stamp approved gwm-center', 'Approved'));
       const line = h('span', 'book-state ' + st.kind, st.text);
@@ -860,7 +1018,22 @@ function renderLibrary(opts) {
     els[i] = b;
   }
   if (visible.some((a) => deliveryState(a).kind === 'arriving')) countdownTimer = setInterval(tickCountdowns, 30000);
+  if (els[0]) fitOneLine($all('.book-stamp.delivered, .book-state', els[0]));
   if (opts && opts.fromRects) animateBooksFrom(opts.fromRects, els);
+}
+/** Status stamps never wrap: tighten, then shrink the type, until the whole
+ *  stamp fits the card's inner width. */
+function fitOneLine(list) {
+  list.forEach((el) => {
+    el.style.fontSize = ''; el.style.letterSpacing = '';
+    const card = el.parentElement, cs = getComputedStyle(card);
+    const room = card.clientWidth - parseFloat(cs.paddingRight) - 6 - Math.max(0, el.offsetLeft);
+    const width = () => el.getBoundingClientRect().width / Math.cos(4 * Math.PI / 180);
+    if (el.scrollWidth <= room && width() <= room + 8) return;
+    el.style.letterSpacing = '0.02em';
+    let size = parseFloat(getComputedStyle(el).fontSize);
+    while (el.offsetWidth > room && size > 7.5) { size -= 0.25; el.style.fontSize = size + 'px'; }
+  });
 }
 function animateBooksFrom(rects, els) {
   if (prefersReduced) return;
@@ -917,46 +1090,226 @@ function attachBookGestures(el, article) {
   });
 }
 function openArticle(a) {
-  if (a.status === 'approved_unwritten') return openGhost(a);
+  if (a.status === 'approved_unwritten') return openWrite(a);
   openReader(a);
 }
 
-// Ghost card
-let ghostArticle = null;
-function wantsWritten(a) {
-  return S.notes.some((n) => n.member_id === S.me.id && n.body === WANTS_WRITTEN && n.card_id && n.card_id === a.card_id);
+// Notes on a card, readable anywhere at $19 (History, Library, reader).
+function renderNotes(wrap, cardId) {
+  wrap.textContent = '';
+  const list = S.notes.filter((n) => n.card_id && n.card_id === cardId && n.body !== WANTS_WRITTEN);
+  wrap.hidden = !list.length;
+  if (!list.length) return;
+  wrap.appendChild(h('p', 'notes-h gwm-mono-tag', list.length === 1 ? '1 note' : list.length + ' notes'));
+  list.forEach((n) => {
+    const row = h('div', 'card-note');
+    const m = memberById(n.member_id);
+    row.appendChild(avatarEl(m));
+    const body = h('div', 'cn-body');
+    body.appendChild(h('span', 'cn-who', nameOrYou(m) + ' · ' + fmtDay(n.created_at)));
+    body.appendChild(h('span', 'cn-text', n.body));
+    row.appendChild(body);
+    wrap.appendChild(row);
+  });
 }
-function openGhost(a) {
-  ghostArticle = a;
+
+// "Write this": an approved, unwritten card. Pick a format, see the cost,
+// spend credits (or get some).
+let writeArticle = null, writeFmt = null;
+function openWrite(a) {
+  writeArticle = a;
   track('ghost_tapped', { article_id: a.id, format: a.format });
-  S.onb.lines = S.onb.lines || {};
-  if (!S.onb.lines.ghost) { S.onb.lines.ghost = true; saveOnb(); }
   $('#ghost-sheet-fmt').textContent = FMT_LABEL[a.format] || a.format;
   $('#ghost-sheet-title').textContent = a.title;
   const st = deliveryState(a);
-  const arriving = st.kind === 'arriving';
-  // A free pick in progress is already being written: say when, no Notify me.
-  $('#ghost-copy').textContent = arriving ? 'Being written now. ' + st.text + '.' : 'Approved, not written yet. Credits open soon.';
-  $('#notify-host').hidden = S.readOnly || arriving;
-  const btn = $('#notify-btn');
-  const done = wantsWritten(a);
-  btn.disabled = done;
-  btn.textContent = done ? 'You’re on the list' : 'Notify me';
+  const canWrite = writable(a) && !!costOf(a.format);
+  $('#ghost-copy').textContent =
+    st.kind === 'arriving' ? 'Being written now. ' + st.text + '.' :
+    st.kind === 'queued' ? 'Queued. Writing starts when the piece ahead of it is delivered.' :
+    'Approved, not written yet.';
+  $('#write-box').hidden = !canWrite;
+  if (canWrite) { writeFmt = a.format; renderWriteBox(); }
+  renderNotes($('#ghost-notes'), a.card_id);
   openScrim('ghost-sheet');
 }
-async function notifyMe() {
-  const a = ghostArticle;
-  if (!a || wantsWritten(a)) return;
-  const btn = $('#notify-btn');
+function renderWriteBox() {
+  $all('#fmt-choice .fmt-opt').forEach((b) => {
+    const on = b.dataset.fmt === writeFmt;
+    b.classList.toggle('on', on);
+    b.setAttribute('aria-checked', on ? 'true' : 'false');
+    b.textContent = FMT_LABEL[b.dataset.fmt] + ' · ' + costOf(b.dataset.fmt);
+    b.setAttribute('aria-label', FMT_LABEL[b.dataset.fmt] + ', ' + credits(costOf(b.dataset.fmt)));
+  });
+  const cost = costOf(writeFmt), bal = balance();
+  $('#write-cost').textContent = credits(cost) + '. You have ' + credits(bal) + '.';
+  const btn = $('#write-btn');
+  btn.textContent = bal >= cost ? 'Write this · ' + credits(cost) : 'Get credits';
+  btn.disabled = false;
+  $('#write-msg').textContent = ' ';
+  $('#write-msg').className = 'field-msg';
+}
+async function writeThis() {
+  const a = writeArticle;
+  if (!a) return;
+  const cost = costOf(writeFmt);
+  if (balance() < cost) { closeScrim('ghost-sheet'); openCredits({ need: cost - balance() }); return; }
+  const btn = $('#write-btn');
   btn.disabled = true;
-  track('article_interest', { article_id: a.id, card_id: a.card_id, format: a.format });
-  const { data, error } = await sb.from('notes')
-    .insert({ company_id: S.company.id, member_id: S.me.id, card_id: a.card_id, body: WANTS_WRITTEN })
-    .select('id,member_id,card_id,body,created_at').single();
-  if (error) { btn.disabled = false; toast('That didn’t save. Try again.'); return; }
-  S.notes.push(data);
-  btn.textContent = 'You’re on the list';
-  toast('We’ll let you know.');
+  const { data, error } = await sb.rpc('spend_credits', { p_article_id: a.id, p_format: writeFmt });
+  if (error) {
+    btn.disabled = false;
+    if (/insufficient_credits/.test(error.message)) { await refreshAccount(); renderWriteBox(); return; }
+    $('#write-msg').textContent = 'That didn’t go through. Try again.';
+    $('#write-msg').className = 'field-msg err';
+    return;
+  }
+  track('credits_spent', { article_id: a.id, format: writeFmt, cost });
+  await Promise.all([refreshAccount(), refreshArticles()]);
+  closeScrim('ghost-sheet');
+  toast(data.piece.status === 'writing' ? 'Writing starts now. It lands within 24 hours.' : 'Queued. It starts when the one ahead of it is delivered.');
+  if (S.view === 'library') renderLibrary();
+  if (S.view === 'hub') goHub();
+}
+
+// Credits sheet: resume the $19 first if needed, then Starter (never bought)
+// or plan and top-up.
+function openCredits(opts) {
+  const A = S.account || {};
+  const body = $('#credits-body');
+  body.textContent = '';
+  $('#credits-msg').textContent = ' ';
+  $('#credits-msg').className = 'field-msg';
+  const title = $('#credits-title');
+  const offer = (label, big, note, btnText, onClick) => {
+    const box = h('div', 'offer');
+    box.appendChild(h('p', 'offer-h gwm-mono-tag', label));
+    box.appendChild(h('p', 'offer-big', big));
+    if (note) box.appendChild(h('p', 'offer-note', note));
+    const b = h('button', 'btn btn-primary gwm-btn', btnText);
+    b.type = 'button';
+    b.addEventListener('click', () => onClick(b));
+    box.appendChild(b);
+    body.appendChild(box);
+    return box;
+  };
+  if (S.company.is_internal) {
+    title.textContent = 'Internal portal';
+    body.appendChild(h('p', 'offer-note', 'Credits on this portal are added by hand in Supabase.'));
+  } else if (!A.portal_active) {
+    if (A.can_resume) {
+      title.textContent = 'Resume your $19 to buy credits';
+      offer('Your $19 portal', 'Ends ' + fmtDay(S.company.subscription_ends_at),
+        'Resume it and it keeps renewing as before. No new charge today.', 'Resume my $19', resumeThenBuy);
+    } else {
+      title.textContent = 'Your $19 portal has ended';
+      const p0 = h('p', 'offer-note', 'Credits need an active $19 portal. ');
+      const a0 = h('a', null, 'Resubscribe');
+      a0.href = '/' + encodeURIComponent(S.company.slug);
+      p0.appendChild(a0);
+      body.appendChild(p0);
+    }
+  } else if (!A.ever_bought) {
+    title.textContent = 'Start with 5 credits';
+    offer('Starter', '5 credits · ' + PRICE_TEXT.starter, 'Your $19 counts toward this.', 'Continue to checkout', (b) => checkout('starter', 1, b));
+  } else {
+    title.textContent = 'You have ' + credits(balance()) + '.';
+    if (!A.plan_active) {
+      offer('Plan', '20 credits a month · ' + PRICE_TEXT.plan, 'Unused credits carry over one month.', 'Start the plan', (b) => checkout('plan', 1, b));
+    }
+    let qty = Math.max(1, (opts && opts.need) || 1);
+    const box = offer('Top-up', '$' + PRICE_TEXT.topupEach + ' per credit', null, '', (b) => checkout('topup', qty, b));
+    const btn = box.querySelector('button');
+    const picker = h('div', 'qty');
+    const minus = h('button', 'qty-btn gwm-center', '−'); minus.type = 'button'; minus.setAttribute('aria-label', 'One fewer');
+    const out = h('output', 'qty-n');
+    const plus = h('button', 'qty-btn gwm-center', '+'); plus.type = 'button'; plus.setAttribute('aria-label', 'One more');
+    const sync = () => {
+      out.textContent = String(qty);
+      btn.textContent = 'Buy ' + credits(qty) + ' · $' + (qty * PRICE_TEXT.topupEach).toLocaleString('en-US');
+      minus.disabled = qty <= 1;
+    };
+    minus.addEventListener('click', () => { qty = Math.max(1, qty - 1); sync(); });
+    plus.addEventListener('click', () => { qty = Math.min(100, qty + 1); sync(); });
+    picker.append(minus, out, plus);
+    box.insertBefore(picker, btn);
+    sync();
+  }
+  track('credits_opened', { need: (opts && opts.need) || 0, active: !!A.portal_active, ever_bought: !!A.ever_bought });
+  openScrim('credits-sheet');
+}
+const CHECKOUT_ERR = {
+  portal_inactive: 'Your $19 needs to be active first.',
+  starter_used: 'You already used the Starter pack. Pick a plan or a top-up.',
+  plan_active: 'Your plan is already running.',
+  not_configured: 'Checkout isn’t set up yet. Try again soon.',
+};
+async function invokeCheckout(body) {
+  const { data, error } = await sb.functions.invoke('create-checkout', { body });
+  if (!error) return { data };
+  let code = '';
+  try { code = (await error.context.json()).error; } catch (_) {}
+  return { code: code || 'failed' };
+}
+async function checkout(action, quantity, btn) {
+  if (btn) btn.disabled = true;
+  const msg = $('#credits-msg');
+  msg.className = 'field-msg';
+  msg.textContent = 'Opening checkout…';
+  const r = await invokeCheckout({ action, quantity });
+  if (r.data && r.data.url) {
+    track('checkout_started', { kind: action, quantity });
+    // The webhook can land before the person is back; compare with this.
+    try { sessionStorage.setItem('gwm_balance_before', String(balance())); } catch (_) {}
+    location.assign(r.data.url);
+    return;
+  }
+  if (btn) btn.disabled = false;
+  msg.textContent = CHECKOUT_ERR[r.code] || 'We couldn’t reach checkout. Try again in a minute.';
+  msg.className = 'field-msg err';
+  if (r.code === 'portal_inactive' || r.code === 'starter_used' || r.code === 'plan_active') { await refreshAccount(); }
+}
+// One click: resume the same $19 subscription, then straight on to credits.
+async function resumeThenBuy(btn) {
+  btn.disabled = true;
+  const msg = $('#credits-msg');
+  msg.className = 'field-msg';
+  msg.textContent = 'Resuming your $19…';
+  const r = await invokeCheckout({ action: 'resume' });
+  if (!r.data || !r.data.resumed) {
+    btn.disabled = false;
+    msg.textContent = 'We couldn’t resume it. Resubscribe from your sales page.';
+    msg.className = 'field-msg err';
+    return;
+  }
+  track('portal_resumed');
+  S.company.subscription_status = 'active';
+  S.company.subscription_ends_at = null;
+  await refreshAccount();
+  if (!S.account.ever_bought) return checkout('starter', 1, btn);
+  openCredits();
+}
+// Back from Stripe Checkout.
+async function afterCheckout() {
+  const flag = PARAMS.get('credits');
+  if (!flag) return;
+  const p = new URLSearchParams(location.search);
+  p.delete('credits'); p.delete('kind');
+  history.replaceState(null, '', location.pathname + (p.toString() ? '?' + p : ''));
+  if (flag !== 'success') { toast('Checkout canceled. Nothing was charged.'); return; }
+  toast('Payment received. Your credits land in a moment.');
+  let before = balance();
+  try {
+    const stored = sessionStorage.getItem('gwm_balance_before');
+    if (stored !== null) before = Number(stored);
+    sessionStorage.removeItem('gwm_balance_before');
+  } catch (_) {}
+  for (let i = 0; i < 10 && balance() === before; i++) {
+    await new Promise((r) => setTimeout(r, 1500));
+    await refreshAccount();
+    if (balance() !== before) break;
+  }
+  if (balance() !== before) toast(credits(balance()) + ' ready.');
+  if (S.view === 'library') renderLibrary();
 }
 
 // -- Reader --------------------------------------------------------------------
@@ -1033,6 +1386,7 @@ function openReader(a) {
   gdoc.hidden = !/^https:\/\//i.test(url);
   if (!gdoc.hidden) gdoc.href = url;
   $('#copy-web').disabled = !a.body_html;
+  renderNotes($('#reader-notes'), a.card_id);
   const lt = $('#live-toggle');
   lt.hidden = S.readOnly;
   lt.setAttribute('aria-checked', a.status === 'live' ? 'true' : 'false');
@@ -1091,24 +1445,35 @@ async function toggleLive() {
 }
 
 // -- Hub entry: pencil -> (invite) -> design mode --------------------------------
+// First tap: the invite pop-up (if a seat is open), then the Hub. A locked
+// Hub shows its lock modal over a blurred canvas; the header with seats and
+// Invite stays usable above it.
 function openHubFlow() {
-  track('hub_tapped', { members: S.members.length, forced: S.forceHub || undefined });
+  track('hub_tapped', { members: S.members.length, forced: S.forceHub || undefined, hub_access: hubOpen() });
   if (S.onb.library_glow && !S.onb.pencil_glow) { setFlag('pencil_glow'); $('#pencil-sticker').classList.remove('onb-glow'); }
   hideBubble();
   const forceInvite = S.forceHub === 'invite';
-  if (forceInvite || (S.members.length < 3 && !S.onb.hub_invite_seen)) openInvite();
+  if (forceInvite || (seatsLeft() > 0 && !S.onb.hub_invite_seen)) openInvite(goHub, { flag: true });
   else goHub();
 }
 function goHub() {
+  renderHubHead();
   enterHub({ forceLocked: S.forceHub === 'locked', fromRects: libraryRects() });
 }
 function exitHub() {
   const rects = articleRects();
   go('library', { fromRects: rects });
 }
-function openInvite() {
-  const seats = Math.min(2, 3 - S.members.length);
-  if (seats <= 0) { toast('Your portal already has 3 people.'); goHub(); return; }
+
+// One invite pop-up for the Hub's first tap, the Hub header and the Feed's
+// caught-up state. `after` runs once it closes (sent or skipped).
+let inviteAfter = null, inviteFlag = false;
+function openInvite(after, opts) {
+  inviteAfter = after || null;
+  inviteFlag = !!(opts && opts.flag);
+  const left = seatsLeft();
+  const seats = Math.min(2, left);
+  if (seats <= 0) { toast('All 3 seats are taken.'); finishInvite(); return; }
   const wrap = $('#invite-fields');
   wrap.textContent = '';
   for (let i = 0; i < seats; i++) {
@@ -1122,23 +1487,39 @@ function openInvite() {
     lab.appendChild(input);
     wrap.appendChild(lab);
   }
-  $('#invite-sub').textContent = seats === 1
-    ? 'They’ll get a sign-in link. One seat left on your portal.'
-    : 'They’ll get a sign-in link. Up to 3 people per portal.';
-  $('#invite-msg').textContent = ' ';
+  $('#invite-seats').textContent = SEAT_LINE[left] || '';
+  $('#invite-seats').hidden = !SEAT_LINE[left];
+  $('#invite-msg').textContent = ' ';
   $('#invite-msg').className = 'field-msg';
   $('#invite-btn').disabled = false;
+  track('invite_opened', { seats_left: left });
   openScrim('invite-modal');
   setTimeout(() => { const f = $('#invite-fields input'); if (f) f.focus(); }, 60);
 }
+function finishInvite() {
+  const f = inviteAfter;
+  inviteAfter = null;
+  if (inviteFlag) setFlag('hub_invite_seen');
+  inviteFlag = false;
+  if (S.view === 'hub') renderHubHead();
+  if (S.view === 'feed') renderFeed();
+  if (f) f();
+}
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+const INVITE_ERR = {
+  seat_limit: 'All 3 seats are taken.',
+  invalid_email: 'That email doesn’t look right.',
+  self_invite: 'That’s you. Invite someone else.',
+  already_member: 'They’re already on your portal.',
+};
 async function submitInvite(e) {
   e.preventDefault();
   const msg = $('#invite-msg');
   const emails = $all('#invite-fields input').map((i) => i.value.trim().toLowerCase()).filter(Boolean);
-  if (!emails.length) { msg.textContent = 'Add an email, or skip for now.'; msg.className = 'field-msg err'; return; }
-  const bad = emails.find((x) => !EMAIL_RE.test(x));
-  if (bad) { msg.textContent = 'That email doesn’t look right: ' + bad; msg.className = 'field-msg err'; return; }
+  const fail = (text) => { msg.textContent = text; msg.className = 'field-msg err'; };
+  if (!emails.length) return fail('Add an email, or skip for now.');
+  if (emails.some((x) => !EMAIL_RE.test(x))) return fail(INVITE_ERR.invalid_email);
+  if (S.session && emails.includes(String(S.session.user.email || '').toLowerCase())) return fail(INVITE_ERR.self_invite);
   const btn = $('#invite-btn');
   btn.disabled = true;
   msg.textContent = 'Sending…';
@@ -1147,27 +1528,23 @@ async function submitInvite(e) {
   if (error) {
     let code = '';
     try { code = (await error.context.json()).error; } catch (_) {}
-    msg.textContent = {
-      seat_limit: 'Your portal already has 3 people.',
-      invalid_email: 'One of those emails doesn’t look right.',
-      self_invite: 'That’s your own email.',
-    }[code] || 'That didn’t go through. Try again.';
-    msg.className = 'field-msg err';
+    track('invite_failed', { code: code || 'unknown' });
     btn.disabled = false;
+    // Every other failure (502 / failed, network): never the generic line.
+    fail(INVITE_ERR[code] || 'We couldn’t send that invite. Try again in a minute.');
+    if (code === 'seat_limit' || code === 'already_member') await refreshMembers();
     return;
   }
   const sent = (data && data.results || []).filter((r) => r.status === 'invited').length;
   track('invite_sent', { count: sent, requested: emails.length });
-  setFlag('hub_invite_seen');
   await refreshMembers();
   closeScrim('invite-modal');
-  toast(sent ? (sent === 1 ? 'Invite sent.' : 'Invites sent.') : 'They’re already on your portal.');
-  goHub();
+  toast(sent === 1 ? 'Invite sent.' : 'Invites sent.');
+  finishInvite();
 }
 function skipInvite() {
-  setFlag('hub_invite_seen');
   closeScrim('invite-modal');
-  goHub();
+  finishInvite();
 }
 async function refreshMembers() {
   const { data } = await sb.from('members').select('id,user_id,role,display_name,avatar_shape,onboarding,created_at')
@@ -1293,13 +1670,13 @@ async function loadPortal(fromLink) {
   S.onb = Object.assign({}, S.me.onboarding || {});
   const cid = S.me.company_id;
   const [company, members, cards, decisions, events, signal, articles, notes, hubItems] = await Promise.all([
-    sb.from('companies').select('id,slug,name,contact_first_name,subscription_status,subscription_ends_at,hub_unlocked,is_internal').eq('id', cid).single(),
+    sb.from('companies').select('id,slug,name,contact_first_name,subscription_status,subscription_ends_at,hub_unlocked,is_internal,first_opened_at,created_at').eq('id', cid).single(),
     sb.from('members').select('id,user_id,role,display_name,avatar_shape,onboarding,created_at').eq('company_id', cid).order('created_at'),
     sb.from('cards').select('id,card_key,format,series,title,angle,evidence,tags,sources,drop_date,sort_order').eq('company_id', cid).order('sort_order'),
     sb.from('decisions').select('card_id,member_id,action,updated_at').eq('company_id', cid),
     sb.from('swipe_events').select('id,card_id,member_id,action,source,created_at').eq('company_id', cid).order('created_at'),
     sb.from('signals').select('text,source,signal_date').eq('company_id', cid).order('signal_date', { ascending: false }).order('created_at', { ascending: false }).limit(1),
-    sb.from('articles').select('id,card_id,format,title,status,body_html,google_doc_url,requested_at,deliver_by,delivered_at,live_at,created_at').eq('company_id', cid),
+    sb.from('articles').select(ARTICLE_COLS).eq('company_id', cid),
     sb.from('notes').select('id,member_id,card_id,body,created_at').eq('company_id', cid).order('created_at'),
     sb.from('hub_items').select('*').eq('company_id', cid),
   ]);
@@ -1316,6 +1693,7 @@ async function loadPortal(fromLink) {
   S.hubItems = hubItems.data;
   const c = S.company;
   S.readOnly = c.subscription_status === 'canceled' && !!c.subscription_ends_at && new Date(c.subscription_ends_at) <= new Date();
+  await refreshAccount();
   S.loaded = true;
   await applySwitches();
 
@@ -1345,6 +1723,7 @@ async function loadPortal(fromLink) {
     return;
   }
   go('feed');
+  afterCheckout();
 }
 
 async function boot() {
@@ -1367,7 +1746,7 @@ async function boot() {
   }
   initHub({
     get sb() { return sb; }, S, show, track, toast, firstLine, avatarEl, displayName, memberById,
-    libArticles, exitHub, FMT_LABEL, WANTS_WRITTEN,
+    libArticles, exitHub, FMT_LABEL, WANTS_WRITTEN, hubOpen, writable, openWrite,
   });
   const { data } = await sb.auth.getSession();
   S.session = data.session;
@@ -1416,13 +1795,15 @@ document.addEventListener('click', (e) => {
     case 'hub': return openHubFlow();
     case 'back-to-library': return exitHub();
     case 'invite-skip': return skipInvite();
+    case 'invite': return openInvite(null);
+    case 'hub-start': return openCredits();
     case 'bubble-dismiss': return dismissBubble();
     case 'sign-out': return signOut();
     case 'signin-again': return resetSignin();
   }
 });
 // Tap outside a sheet closes it.
-['src-sheet', 'note-sheet', 'ghost-sheet', 'hub-text-sheet'].forEach((id) => {
+['src-sheet', 'note-sheet', 'ghost-sheet', 'hub-text-sheet', 'credits-sheet'].forEach((id) => {
   $('#' + id).addEventListener('click', (e) => { if (e.target.id === id) closeScrim(id); });
 });
 $('#signin-form').addEventListener('submit', sendLink);
@@ -1433,7 +1814,13 @@ $('#note-input').addEventListener('input', (e) => {
   $('#note-save').disabled = !e.target.value.trim();
 });
 $('#note-save').addEventListener('click', saveNote);
-$('#notify-btn').addEventListener('click', notifyMe);
+$('#write-btn').addEventListener('click', writeThis);
+$('#fmt-choice').addEventListener('click', (e) => {
+  const b = e.target.closest('[data-fmt]');
+  if (!b) return;
+  writeFmt = b.dataset.fmt;
+  renderWriteBox();
+});
 $('#copy-web').addEventListener('click', copyForWeb);
 $('#live-toggle').addEventListener('click', toggleLive);
 $('#gdoc-link').addEventListener('click', () => readerArticle && track('gdoc_opened', { article_id: readerArticle.id }));
@@ -1470,7 +1857,7 @@ document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape') {
     if (isRevealOpen()) return closeReveal();
     if (!$('#reader').hidden) return closeScrim('reader');
-    ['src-sheet', 'note-sheet', 'ghost-sheet', 'hub-text-sheet'].forEach((id) => closeScrim(id));
+    ['src-sheet', 'note-sheet', 'ghost-sheet', 'hub-text-sheet', 'credits-sheet'].forEach((id) => closeScrim(id));
     $('#hub-emoji-picker').hidden = true;
     if ($('#invite-modal').classList.contains('open')) skipInvite();
     return;

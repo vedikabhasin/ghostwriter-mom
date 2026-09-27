@@ -28,18 +28,18 @@ function toDate(v) {
   // Date-only strings are pinned to local noon so they never slip a day.
   return /^\d{4}-\d{2}-\d{2}$/.test(v) ? new Date(v + 'T12:00:00') : new Date(v);
 }
-/** "Sep 22, 5:40 PM" — swipe.html fmtWhen. */
+/** "Sep 22, 5:40 PM": swipe.html fmtWhen. */
 export function fmtWhen(v) {
   try { return toDate(v).toLocaleString(undefined, { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' }); }
   catch (_) { return String(v); }
 }
-/** "Sep 22" — the date half of fmtWhen. */
+/** "Sep 22": the date half of fmtWhen. */
 export function fmtDay(v) {
   if (!v) return '';
   try { return toDate(v).toLocaleDateString(undefined, { month: 'short', day: 'numeric' }); }
   catch (_) { return String(v); }
 }
-/** "Monday, Sep 28, 5:40 PM" — swipe.html formatDeliverBy. */
+/** "Monday, Sep 28, 5:40 PM": swipe.html formatDeliverBy. */
 export function fmtDeliverBy(v) {
   try { return toDate(v).toLocaleString(undefined, { weekday: 'long', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' }); }
   catch (_) { return String(v); }
@@ -59,4 +59,38 @@ export function countdown(iso, now = Date.now()) {
 export function todayStr() {
   const d = new Date();
   return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+}
+
+// ---- weekly drop day --------------------------------------------------------
+// The drop day is the weekday the company first opened its sales page, read
+// in the viewer's timezone; a Saturday or Sunday becomes Monday.
+/** 0 (Sun) to 6 (Sat). */
+export function dropWeekday(firstOpenedIso) {
+  const w = new Date(firstOpenedIso).getDay();
+  return w === 0 || w === 6 ? 1 : w;
+}
+/** Local midnight of the next drop day after today. */
+export function nextDrop(firstOpenedIso, now = new Date()) {
+  const want = dropWeekday(firstOpenedIso);
+  const d = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  do { d.setDate(d.getDate() + 1); } while (d.getDay() !== want);
+  return d;
+}
+/** "Tuesday, Oct 6" */
+export function fmtWeekday(d) {
+  try { return d.toLocaleDateString(undefined, { weekday: 'long', month: 'short', day: 'numeric' }); }
+  catch (_) { return String(d); }
+}
+/** Date-only "YYYY-MM-DD" for a local date. */
+export function dateStr(d) {
+  return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+}
+/** "3d 4h", "14h 20m" or "20m" until `when`, or null once it has passed. */
+export function countdownLong(when, now = Date.now()) {
+  const ms = new Date(when) - now;
+  if (!(ms > 0)) return null;
+  const mins = Math.ceil(ms / 60000);
+  const dd = Math.floor(mins / 1440), hh = Math.floor((mins % 1440) / 60), mm = mins % 60;
+  if (dd) return `${dd}d ${hh}h`;
+  return hh ? `${hh}h ${mm}m` : `${mm}m`;
 }
