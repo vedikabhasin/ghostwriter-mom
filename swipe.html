@@ -178,7 +178,51 @@ body.is-dragging{overflow:hidden; touch-action:none;}
   font-family:var(--font-mono); font-size:11px; letter-spacing:0.1em; text-transform:uppercase;
   color:#4a4a4a; margin-bottom:2px;
 }
-.feed-counter{font-weight:700; color:var(--ink);}
+.feed-counter{font-weight:700; color:var(--ink); transition:color 240ms var(--ease);}
+.feed-counter.pulse-once{ animation:counter-pulse 0.9s var(--ease) 1; }
+@keyframes counter-pulse{
+  0%,100% { color:var(--ink);           transform:scale(1);   }
+  22%     { color:var(--fasttrack-ink); transform:scale(1.14);}
+  55%     { color:var(--ink);           transform:scale(1);   }
+}
+@media (prefers-reduced-motion:reduce){
+  .feed-counter.pulse-once{ animation:none; }
+}
+
+/* Face-down "That's all N. Pick one to write free." beat. Rendered by
+   showEndOfDeck() in place of the last card once the deck runs out. */
+.deck-end{
+  position:absolute; inset:0;
+  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:16px;
+  padding:0 22px; text-align:center;
+  animation:deck-end-in 320ms var(--ease-spring) both;
+}
+.deck-facedown{
+  position:relative; width:140px; height:190px;
+}
+.deck-facedown .fd-card{
+  position:absolute; inset:0; border-radius:var(--radius-card);
+  background:
+    repeating-linear-gradient(135deg, rgba(14,14,14,0.05) 0 6px, rgba(14,14,14,0.02) 6px 12px),
+    #F4EFE6;
+  border:1.5px solid rgba(14,14,14,0.14);
+  box-shadow:0 10px 24px -14px rgba(14,14,14,0.35);
+}
+.deck-facedown .fd-c2{ transform:translate(6px, 6px)   rotate(3deg); opacity:0.75; z-index:2; }
+.deck-facedown .fd-c3{ transform:translate(12px, 12px) rotate(6deg); opacity:0.5;  z-index:1; }
+.deck-facedown .fd-c1{ z-index:3; }
+.deck-end-copy{
+  font-family:var(--font-display); font-weight:800;
+  font-size:clamp(18px, 4.6vw, 22px); letter-spacing:-0.015em; line-height:1.18;
+  color:var(--ink); margin:0; max-width:280px; text-wrap:balance;
+}
+@keyframes deck-end-in{
+  0% { opacity:0; transform:translateY(8px) scale(0.98); }
+  100% { opacity:1; transform:translateY(0) scale(1); }
+}
+@media (prefers-reduced-motion:reduce){
+  .deck-end{ animation:none; }
+}
 
 .card-stage{
   position:relative;
@@ -688,10 +732,11 @@ body.dir-save  .ctl-save{
 /* -----------------------------------------------------------------------------
    CONFIRMATION SCREEN — one framed portal dashboard preview + price block
    ----------------------------------------------------------------------------- */
-.conf-lede{
+.conf-lede,
+.conf-lede-new{
   font-family:var(--font-display); font-weight:800;
-  font-size:clamp(24px, 6.6vw, 30px); letter-spacing:-0.02em; line-height:1.1;
-  color:var(--ink); margin:0 0 2px; text-wrap:balance;
+  font-size:clamp(24px, 6.6vw, 30px); letter-spacing:-0.02em; line-height:1.12;
+  color:var(--ink); margin:0 0 4px; text-wrap:balance;
 }
 .conf-arrive{
   font-family:var(--font-body); font-size:15px; line-height:1.5; color:var(--ink); margin:0 0 6px;
@@ -760,6 +805,16 @@ body.dir-save  .ctl-save{
   display:inline-flex; align-items:center; gap:4px;
 }
 .pd-h .badge.locked svg{width:10px; height:10px;}
+.pd-h .badge.preview{
+  background:transparent; color:var(--marker-ink);
+  border:1.5px solid var(--marker-outline);
+  padding:2px 8px; letter-spacing:0.14em; font-weight:700;
+}
+.pd-h .pd-h-count{
+  margin-left:auto;
+  font-family:var(--font-mono); font-size:9.5px; letter-spacing:0.06em;
+  color:#4a4a4a; text-transform:none; font-weight:700;
+}
 .pd-meta{
   font-family:var(--font-mono); font-size:11px; letter-spacing:0.04em; color:#333; margin:0;
 }
@@ -815,6 +870,92 @@ body.dir-save  .ctl-save{
   55%     { transform:translate3d(0,18px,0) rotate(-2deg);       opacity:0.75;z-index:1; }
   70%     { transform:translate3d(0,8px,0)  rotate(-1deg);       opacity:0.9; z-index:2; }
   100%    { transform:translate3d(0,0,0)    rotate(0deg);        opacity:1;   z-index:3; }
+}
+
+/* ----- Seat preview (real card + three ghost stamps looping MATCH/SPLIT/TIMING) ----- */
+.seat-preview{
+  position:relative; height:150px; margin:2px auto 6px;
+  display:grid; grid-template-columns:1fr; gap:8px;
+  align-items:start; justify-items:center;
+  width:100%; max-width:340px;
+}
+.seat-card{
+  width:100%; max-width:220px;
+  background:var(--paper); border:1.5px solid var(--f-color, rgba(14,14,14,0.2));
+  border-radius:14px; padding:10px 12px;
+  display:flex; flex-direction:column; gap:4px;
+  box-shadow:0 8px 18px -12px rgba(14,14,14,0.4);
+  position:relative;
+}
+.seat-card.fmt-pillar  { --f-color:var(--f-pillar);  }
+.seat-card.fmt-insight { --f-color:var(--f-insight); }
+.seat-card.fmt-post    { --f-color:var(--f-post);    }
+.seat-card .fmt-pill{
+  display:inline-flex; align-self:flex-start; align-items:center;
+  padding:2px 8px; border-radius:999px;
+  font-family:var(--font-mono); font-size:8.5px; letter-spacing:0.14em;
+  text-transform:uppercase; font-weight:700; line-height:1;
+  background:var(--f-color); color:var(--ink);
+}
+.seat-card.fmt-pillar  .fmt-pill{color:var(--f-pillar-ink);}
+.seat-card.fmt-insight .fmt-pill{color:var(--f-insight-ink);}
+.seat-card.fmt-post    .fmt-pill{color:var(--f-post-ink);}
+.seat-card .seat-card-title{
+  font-family:var(--font-display); font-weight:700; font-size:12px; line-height:1.25;
+  color:var(--ink); margin:2px 0 0;
+  display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;
+}
+.seat-row{
+  display:grid; grid-template-columns:repeat(3, 1fr); gap:6px;
+  width:100%; max-width:280px; align-items:center;
+}
+.seat-slot{
+  display:flex; flex-direction:column; align-items:center; gap:4px;
+  min-height:52px;
+}
+.seat-avatar{
+  width:26px; height:26px; border-radius:50%;
+  display:inline-flex; align-items:center; justify-content:center;
+  background:#fff; border:1.5px solid rgba(14,14,14,0.22);
+  color:var(--ink); font-family:var(--font-mono); font-size:9px; font-weight:800;
+  letter-spacing:0.04em; line-height:1;
+}
+.seat-slot.demo .seat-avatar{ border-style:dashed; opacity:0.55; background:transparent; }
+.seat-stamp{
+  min-height:14px; display:inline-flex; align-items:center; justify-content:center;
+  padding:2px 6px; border-radius:4px;
+  font-family:var(--font-mono); font-size:8.5px; font-weight:800; letter-spacing:0.1em;
+  text-transform:uppercase; line-height:1;
+  border:1.5px solid transparent; opacity:0;
+  transition:opacity 320ms var(--ease);
+}
+.seat-stamp.on{ opacity:1; }
+.seat-stamp.a-like  { background:var(--like); color:var(--like-ink); }
+.seat-stamp.a-pass  { background:var(--pass); color:var(--pass-ink); }
+.seat-stamp.a-save  { background:var(--save); color:var(--save-ink); }
+.seat-stamp.a-fasttrack{ background:var(--fasttrack); color:var(--fasttrack-ink); }
+.seat-slot.demo .seat-stamp{ border-style:dashed; }
+.seat-label{
+  font-family:var(--font-mono); font-size:8px; letter-spacing:0.14em;
+  text-transform:uppercase; color:#4a4a4a; font-weight:700;
+}
+.seat-result{
+  align-self:center; justify-self:center;
+  padding:3px 10px 3px 12px; border-radius:999px;
+  font-family:var(--font-mono); font-size:9.5px; font-weight:800;
+  letter-spacing:0.14em; text-transform:uppercase; line-height:1;
+  background:transparent; color:var(--ink);
+  border:1.5px solid var(--marker-outline);
+  opacity:0; transition:opacity 320ms var(--ease);
+  display:inline-flex; align-items:center; justify-content:center;
+}
+.seat-result.on{ opacity:1; }
+.seat-result.r-match  { border-color:var(--like);  color:var(--like-ink);  background:rgba(184,255,113,0.18); }
+.seat-result.r-split  { border-color:var(--pass);  color:var(--pass-ink);  background:rgba(255,107,92,0.14); }
+.seat-result.r-timing { border-color:var(--save);  color:var(--save-ink);  background:rgba(245,232,74,0.24); }
+
+@media (prefers-reduced-motion:reduce){
+  .seat-stamp, .seat-result{ transition:none; }
 }
 
 /* Signals row inside dashboard */
@@ -940,9 +1081,10 @@ body.dir-save  .ctl-save{
   font-family:var(--font-mono); font-size:11px; letter-spacing:0.1em; text-transform:uppercase;
   color:#333; margin:2px 0 0;
 }
-.price-later{
-  font-family:var(--font-mono); font-size:11px; letter-spacing:0.1em; text-transform:uppercase;
-  color:#6a6a6a; margin:0;
+/* Under the price: one line covering seats + early-client promise. */
+.seat-line{
+  font-family:var(--font-mono); font-size:11px; letter-spacing:0.08em;
+  color:#333; margin:2px 0 0; text-align:center;
 }
 .spots-line{
   font-family:var(--font-mono); font-size:11.5px; letter-spacing:0.06em;
@@ -951,7 +1093,17 @@ body.dir-save  .ctl-save{
   font-weight:700; text-align:center;
 }
 .spots-line.full{
-  background:rgba(255,157,192,0.24); color:var(--pass-ink);
+  background:rgba(255,107,92,0.18); color:var(--pass-ink);
+}
+
+/* Signal — competitor name blurred but the shape stays. */
+.blur-name{
+  color:transparent;
+  background:rgba(14,14,14,0.14);
+  border-radius:3px;
+  padding:0 2px;
+  filter:blur(4px);
+  -webkit-user-select:none; user-select:none;
 }
 .offer-fine{
   font-family:var(--font-mono); font-size:10.5px; letter-spacing:0.1em; text-transform:uppercase;
@@ -1176,45 +1328,42 @@ body.dir-save  .ctl-save{
 
   <!-- CONFIRMATION — one framed portal preview + price block -->
   <section class="screen" id="screen-confirmation">
-    <h2 class="conf-lede">Direction approved.</h2>
+    <p class="portal-eyebrow" id="conf-eyebrow">FOR <span data-slot="companyNameUpper"></span></p>
+    <h2 class="conf-lede-new">
+      Keep what you've built.<br>
+      Five new directions every <span data-slot="dropWeekday"></span>.
+    </h2>
     <p class="conf-arrive" id="conf-arrive"></p>
 
-    <p class="portal-eyebrow">Weekly insight + SEO portal</p>
-    <h3 class="portal-h">Unlock access to the portal.</h3>
-    <p class="portal-p" id="portal-tagline"></p>
+    <p class="portal-p">
+      Your team swipes, the portal logs every call, and Signals shows where you
+      rank and who AI cites instead.
+    </p>
 
     <div class="portal-dashboard">
       <div class="portal-inner">
 
         <section class="pd-section">
-          <p class="pd-h">Feed</p>
-          <div class="pd-feed-stack" aria-hidden="true">
-            <div class="m"></div><div class="m"></div><div class="m"></div>
-          </div>
-          <p class="pd-meta">Next drop: <strong data-slot="nextDropDate"></strong></p>
+          <p class="pd-h">Feed <span class="badge preview">Preview</span></p>
+          <div class="seat-preview" id="seat-preview" aria-hidden="true"></div>
+          <p class="pd-meta">Next drop: <strong data-slot="nextDropLabel"></strong></p>
         </section>
 
-        <section class="pd-section">
+        <section class="pd-section" id="pd-signals-section">
           <p class="pd-h">Signals <span class="badge included">Included</span></p>
           <div class="pd-signal-row">
             <span class="dot" aria-hidden="true"></span>
-            <p class="msg" data-slot="signal-text"></p>
+            <p class="msg" id="pd-signal-msg"></p>
           </div>
         </section>
 
         <section class="pd-section">
-          <p class="pd-h">Log</p>
+          <p class="pd-h">Log <span class="pd-h-count" id="pd-log-count"></span></p>
           <div class="pd-log" id="pd-log"></div>
         </section>
 
         <section class="pd-section">
-          <p class="pd-h">
-            Library
-            <span class="badge locked" aria-hidden="true">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>
-              Locked
-            </span>
-          </p>
+          <p class="pd-h">Library</p>
           <div class="pd-library" id="pd-library"></div>
         </section>
 
@@ -1223,19 +1372,20 @@ body.dir-save  .ctl-save{
 
     <div class="price-block">
       <p class="price-headline"><span data-slot="price-early"></span>/month</p>
-      <p class="price-early">Early clients keep this price.</p>
-      <p class="price-later"><span data-slot="price-later"></span>/month after early access.</p>
-      <p class="spots-line" id="spots-line"></p>
+      <p class="seat-line">Up to 3 seats &middot; Early clients keep this price.</p>
+      <p class="spots-line" id="spots-line" hidden></p>
     </div>
 
     <span class="btn-glow-host" id="cta-glow">
       <span class="btn-glow" aria-hidden="true"></span>
       <button type="button" class="btn btn-primary" data-action="portal-cta" id="portal-cta-btn">
-        <span id="portal-cta-label">Unlock the portal &middot; $19/month</span>
+        <span id="portal-cta-label">Keep your portal &middot; $19/month</span>
         <span class="arr" aria-hidden="true">&#8594;</span>
       </button>
     </span>
-    <p class="offer-fine" id="cta-fine">Cancel anytime. Your free article is on the way.</p>
+    <p class="offer-fine" id="cta-fine">
+      Cancel anytime. Your free article lands <span data-slot="dropWeekday"></span> either way.
+    </p>
     <p class="waitlist-ack" id="waitlist-ack">Noted. I'll be in touch.</p>
 
     <div style="display:flex; justify-content:center; gap:14px; flex-wrap:wrap; margin-top:6px;">
@@ -1526,6 +1676,8 @@ body.dir-save  .ctl-save{
       directionShape:   rpc.direction_shape || {},
       offerText:        rpc.offer_text || '',
       signal:           rpc.signal || null,
+      firstOpenedAt: rpc.first_opened_at || null,
+      showScarcity:  rpc.show_scarcity === true,
       cards: (rpc.cards || []).map(function(c){
         return {
           id:       c.card_key,
@@ -1744,6 +1896,18 @@ body.dir-save  .ctl-save{
       })
       .then(function(pair){
         client = pair[0]; offer = pair[1];
+        // Stamp first_opened_at on the very first visit (fire-and-forget;
+        // no-op if the column already carries a value). Update the local
+        // client copy synchronously so the confirmation screen has a real
+        // weekday even on this same session.
+        if(supabase && !client.firstOpenedAt){
+          supabase.rpc('bump_first_opened_at', { p_slug: SLUG })
+            .then(function(res){
+              if(!res.error && res.data){ client.firstOpenedAt = res.data; }
+            });
+          // Optimistic assumption for this session: the first visit is now.
+          client.firstOpenedAt = new Date().toISOString();
+        }
         onClientReady();
       })
       .catch(function(err){
@@ -1756,10 +1920,12 @@ body.dir-save  .ctl-save{
     $all('[data-slot="contactFirstName"]').forEach(function(el){ el.textContent = client.contactFirstName; });
     $all('[data-slot="offerText"]').forEach(function(el){ el.textContent = String(client.offerText || ''); });
     var sig = client.signal || {};
-    $all('[data-slot="signal-text"]').forEach(function(el){ el.textContent = String(sig.text || ''); });
+    // Signal text lives on the confirmation Signals tile now — renderConfirmation
+    // handles blurring the competitor name so we don't paint it here.
     // Prices displayed everywhere come from offer.json.
     $all('[data-slot="price-early"]').forEach(function(el){ el.textContent = '$' + offer.earlyPrice; });
-    $all('[data-slot="price-later"]').forEach(function(el){ el.textContent = '$' + offer.laterPrice; });
+    // "$49 after early access" line is gone by product spec — the price
+    // block only shows the current $19/month.
 
     // Routing on return. Pre-compute lastDirection so the confirmation screen
     // can name the free article + siblings even on a cold reload. Stripe's own
@@ -1778,17 +1944,36 @@ body.dir-save  .ctl-save{
   }
 
   // -- Cards ---------------------------------------------------------------
+  // Update the "N of M" counter and, when the deck runs thin, pulse the
+  // remaining number once so it's clear the stack is ending. The counter
+  // element carries data-remaining so CSS can also thin the visible peek.
   function updateCounter(){
     var n = client.cards.length;
     var i = Math.min(state.cardIndex + 1, n);
+    var remaining = Math.max(0, n - state.cardIndex);
     var el = document.getElementById('feed-counter');
-    if(el) el.textContent = i + ' of ' + n;
+    if(!el) return;
+    el.textContent = i + ' of ' + n;
+    el.setAttribute('data-remaining', String(remaining));
+    // Pulse once when we cross into the final two cards. Data attribute is
+    // used instead of a class toggle so re-firing renderStack doesn't re-loop
+    // the animation forever.
+    if(remaining <= 2 && remaining > 0 && !el.dataset.pulsed){
+      el.dataset.pulsed = '1';
+      el.classList.add('pulse-once');
+      setTimeout(function(){ el.classList.remove('pulse-once'); }, 900);
+    }
   }
   function renderStack(){
     var stage = document.getElementById('card-stage');
     stage.textContent = '';
     updateCounter();
-    for(var d = VISIBLE_DEPTH - 1; d >= 0; d--){
+    // Thin the peek: while 2 cards remain, only show the front + one peek.
+    // While 1 card remains, only the front. Prevents "phantom cards" behind
+    // the last real one.
+    var remaining = client.cards.length - state.cardIndex;
+    var visibleDepth = Math.min(VISIBLE_DEPTH, remaining);
+    for(var d = visibleDepth - 1; d >= 0; d--){
       var idx = state.cardIndex + d;
       var card = client.cards[idx];
       if(!card) continue;
@@ -2062,11 +2247,36 @@ body.dir-save  .ctl-save{
       }
       updateCounter();
       if(action === 'super' || state.cardIndex >= client.cards.length){
-        goToDirection();
+        // Deck's empty: show a face-down stack with "That's all N. Pick one
+        // to write free." then hand into the pick-a-topic (direction) screen.
+        // Respects prefers-reduced-motion by skipping the beat entirely.
+        showEndOfDeck(client.cards.length);
+        setTimeout(function(){ goToDirection(); }, prefersReduced ? 0 : 900);
       } else {
         attachOnboardingHint();
       }
     }, prefersReduced ? 0 : 640);
+  }
+
+  // Renders a face-down stack + copy in the card stage. Not a real card, so
+  // no gesture wiring, no format tint.
+  function showEndOfDeck(total){
+    var stage = document.getElementById('card-stage');
+    if(!stage) return;
+    stage.textContent = '';
+    var el = document.createElement('div');
+    el.className = 'deck-end';
+    el.setAttribute('aria-live', 'polite');
+    el.innerHTML =
+      '<div class="deck-facedown" aria-hidden="true">' +
+        '<span class="fd-card fd-c1"></span>' +
+        '<span class="fd-card fd-c2"></span>' +
+        '<span class="fd-card fd-c3"></span>' +
+      '</div>' +
+      '<p class="deck-end-copy">' +
+        "That's all " + total + '. Pick one to write free.' +
+      '</p>';
+    stage.appendChild(el);
   }
 
   // -- Direction -----------------------------------------------------------
@@ -2334,9 +2544,26 @@ body.dir-save  .ctl-save{
   }
 
   function renderConfirmation(){
-    // Top line — "Your article, <freeArticleTitle>, lands by <deliverBy>. …"
     var freeTitle = freeArticleTitle() || 'your first article';
-    var deliverStr = state.deliverByIso ? formatDeliverBy(state.deliverByIso) : 'soon';
+    var deliverStr = state.deliverByIso ? fmtDT(state.deliverByIso) : 'soon';
+
+    // Company name (uppercase eyebrow).
+    $all('[data-slot="companyNameUpper"]').forEach(function(el){
+      el.textContent = String(client.companyName || '').toUpperCase();
+    });
+
+    // Weekly drop weekday from first_opened_at (Sat/Sun collapse to Monday).
+    // Falls back to "next Monday" only if we truly don't have a stamp yet.
+    var nextDrop = nextDropDate(client.firstOpenedAt) || nextDropDate(new Date().toISOString());
+    var weekday  = fmtWeekday(nextDrop);
+    $all('[data-slot="dropWeekday"]').forEach(function(el){ el.textContent = weekday; });
+    $all('[data-slot="nextDropLabel"]').forEach(function(el){
+      el.textContent = fmtWeekdayMonDay(nextDrop);
+    });
+
+    // Optional "lands by" line under the main copy — keeps the original
+    // "Your article, X, lands by Sep 22, 5:40 PM." sentence so nothing
+    // ambiguous slips through.
     var arriveEl = document.getElementById('conf-arrive');
     if(arriveEl){
       arriveEl.textContent = '';
@@ -2344,43 +2571,30 @@ body.dir-save  .ctl-save{
       var s = document.createElement('strong'); s.textContent = freeTitle;
       arriveEl.appendChild(s);
       arriveEl.appendChild(document.createTextNode(', lands by '));
-      var d = document.createElement('strong'); d.textContent = deliverStr;
-      arriveEl.appendChild(d);
-      // Only mention the other saved slots when there are any.
-      var otherCount = (lastDirection ? lastDirection.length : 1) - 1;
-      if(otherCount === 1){
-        arriveEl.appendChild(document.createTextNode('. The other one is saved in your portal.'));
-      } else if(otherCount > 1){
-        arriveEl.appendChild(document.createTextNode('. The other two are saved in your portal.'));
-      } else {
-        arriveEl.appendChild(document.createTextNode('.'));
-      }
+      var d2 = document.createElement('strong'); d2.textContent = deliverStr;
+      arriveEl.appendChild(d2);
+      arriveEl.appendChild(document.createTextNode('.'));
     }
 
-    // Portal tagline
-    var tag = document.getElementById('portal-tagline');
-    if(tag){
-      tag.textContent = '5 new content directions for ' + String(client.companyName || '') +
-                        ' every week, one real signal, and a log of every decision.';
+    // ---- Feed tile: seat preview (real card + YOU + SEAT 2 + SEAT 3 loop)
+    renderSeatPreview();
+
+    // ---- Log tile: visitor's real swipes newest first + count header
+    var log      = document.getElementById('pd-log');
+    var countEl  = document.getElementById('pd-log-count');
+    var swipeEvs = state.events.filter(function(e){
+      return ['like','pass','save','super'].indexOf(e.action) !== -1;
+    });
+    if(countEl){
+      countEl.textContent = swipeEvs.length + ' call' + (swipeEvs.length === 1 ? '' : 's') + ' logged';
     }
-
-    // Next drop = approvedAt + 7 days
-    var baseTs = state.approvedAtIso ? new Date(state.approvedAtIso).getTime() : Date.now();
-    var next   = new Date(baseTs + 7 * DAY_MS);
-    var ndEl = document.querySelector('[data-slot="nextDropDate"]');
-    if(ndEl) ndEl.textContent = formatNextDrop(next);
-
-    // Log — 3 latest gesture events with wrap-friendly titles
-    var log = document.getElementById('pd-log');
     if(log){
       log.textContent = '';
-      var recent = state.events.slice().reverse().filter(function(e){
-        return ['like','pass','save','super'].indexOf(e.action) !== -1;
-      }).slice(0, 3);
+      var recent = swipeEvs.slice().reverse().slice(0, 3);
       if(!recent.length){
         var empty = document.createElement('div');
         empty.style.cssText = 'font-family:var(--font-mono); font-size:11.5px; color:#4a4a4a; padding:4px 0;';
-        empty.textContent = 'Every decision you make lands here.';
+        empty.textContent = 'Every call you make lands here.';
         log.appendChild(empty);
       } else {
         recent.forEach(function(ev){
@@ -2399,12 +2613,12 @@ body.dir-save  .ctl-save{
       }
     }
 
-    // Library — 3 slots, free = Arriving, others = "Approved, not written"
+    // ---- Library tile: free pick = ARRIVING + countdown; others READY TO
+    // WRITE. No credit numbers, no LOCKED badge (badge already gone).
     var lib = document.getElementById('pd-library');
     if(lib){
       lib.textContent = '';
       var slots = lastDirection || [];
-      // Reorder: free pick first (as Arriving), then the others in order.
       var freeId = state.freePickCardId;
       var ordered = slots.slice().sort(function(a, b){
         var af = String(a.brief.id) === String(freeId) ? 0 : 1;
@@ -2422,7 +2636,11 @@ body.dir-save  .ctl-save{
         var body = document.createElement('div'); body.className = 'lib-body';
         var lt  = document.createElement('span'); lt.className = 'lib-title'; lt.textContent = title;
         var st  = document.createElement('span'); st.className = 'status';
-        st.textContent = arriving ? 'Arriving' : 'Approved, not written';
+        if(arriving){
+          st.textContent = 'Arriving ' + (state.deliverByIso ? fmtDT(state.deliverByIso) : 'soon');
+        } else {
+          st.textContent = 'Ready to write';
+        }
         body.appendChild(lt); body.appendChild(st);
         var stamp = document.createElement('span'); stamp.className = 'approved-stamp'; stamp.textContent = 'Approved';
         slot.appendChild(idx); slot.appendChild(body); slot.appendChild(stamp);
@@ -2430,9 +2648,155 @@ body.dir-save  .ctl-save{
       });
     }
 
+    // ---- Signals tile: only rendered when the company has a signal row.
+    // Blur the competitor name — the source string names them, not the text.
+    var sigSection = document.getElementById('pd-signals-section');
+    var sigMsg     = document.getElementById('pd-signal-msg');
+    var sig        = client && client.signal;
+    if(sigSection && sigMsg){
+      if(sig && sig.text){
+        sigSection.hidden = false;
+        renderBlurredSignal(sigMsg, sig);
+      } else {
+        // Never invent a signal — hide the tile outright.
+        sigSection.hidden = true;
+      }
+    }
+
     // Spots + CTA — render immediately from cached value, then refresh from RPC.
     renderSpotsAndCta();
     refreshSpotsAsync();
+  }
+
+  // ---- Signals: paint the text, hunt for a query in quotes, wrap the
+  // competitor's name (from signal.source) in a blurred span. Uses
+  // textContent throughout so a mis-authored signal can't inject markup.
+  function renderBlurredSignal(el, sig){
+    el.textContent = '';
+    var text   = String(sig.text || '');
+    var source = String(sig.source || '').trim();
+    // Extract the first quoted query for a "For 'X'" preamble if the caller
+    // wants one. For now we just repaint the full sentence with the
+    // competitor's name blurred wherever it appears.
+    if(!source){ el.textContent = text; return; }
+    var lower = text.toLowerCase();
+    var target = source.toLowerCase();
+    var i = lower.indexOf(target);
+    if(i === -1){
+      // Nothing to blur — dump the full sentence untouched.
+      el.textContent = text;
+      return;
+    }
+    el.appendChild(document.createTextNode(text.slice(0, i)));
+    var blur = document.createElement('span');
+    blur.className = 'blur-name';
+    blur.textContent = text.slice(i, i + source.length);
+    blur.setAttribute('aria-label', 'competitor name');
+    el.appendChild(blur);
+    el.appendChild(document.createTextNode(text.slice(i + source.length)));
+  }
+
+  // ---- Feed-tile seat preview: build a real card from this client's deck
+  // (prefers the visitor's free pick, falls back to their liked cards, then
+  // the first card). One YOU seat with the visitor's actual swipe on that
+  // card. SEAT 2 and SEAT 3 are dashed ghosts cycling demo reactions +
+  // result chip through MATCH / SPLIT / TIMING.
+  var seatCycleTimer = null;
+  function renderSeatPreview(){
+    var host = document.getElementById('seat-preview');
+    if(!host || !client || !client.cards || !client.cards.length) return;
+    if(seatCycleTimer){ clearInterval(seatCycleTimer); seatCycleTimer = null; }
+    host.textContent = '';
+
+    // Pick the card that best represents "the visitor's call" for the demo.
+    var pickId = state.freePickCardId ||
+                 (state.liked[0] && state.liked[0].id) ||
+                 (state.saved[0] && state.saved[0].id) ||
+                 (state.superLiked && state.superLiked.id) ||
+                 client.cards[0].id;
+    var card = findFull(pickId) || client.cards[0];
+    var fmt  = String(card.format || 'post').toLowerCase();
+    var yourAction = actionOnCard(card.id) || 'like';   // if the visitor never touched this card, assume like
+
+    // ---- real-card mock at top ----
+    var seatCard = document.createElement('div');
+    seatCard.className = 'seat-card fmt-' + fmt;
+    var pill = document.createElement('span'); pill.className = 'fmt-pill';
+    pill.textContent = fmt === 'pillar' ? 'Pillar' : fmt === 'insight' ? 'Insight' : 'Post';
+    var t = document.createElement('p'); t.className = 'seat-card-title'; t.textContent = String(card.title || '');
+    seatCard.appendChild(pill); seatCard.appendChild(t);
+    host.appendChild(seatCard);
+
+    // ---- three seats + result chip ----
+    var row = document.createElement('div'); row.className = 'seat-row';
+    var s1 = makeSeatSlot('you', 'YOU', yourAction, false);
+    var s2 = makeSeatSlot('demo2', 'SEAT 2', null, true);
+    var s3 = makeSeatSlot('demo3', 'SEAT 3', null, true);
+    row.appendChild(s1); row.appendChild(s2); row.appendChild(s3);
+    host.appendChild(row);
+
+    var result = document.createElement('span'); result.className = 'seat-result';
+    host.appendChild(result);
+
+    // Loop through MATCH -> SPLIT -> TIMING. Each state maps to seat 2/3's
+    // stamps and the result chip color.
+    var loop = [
+      // MATCH: everyone likes it
+      { s2:'like', s3:'like', label:'MATCH',  cls:'r-match'  },
+      // SPLIT: seats disagree
+      { s2:'pass', s3:'like', label:'SPLIT',  cls:'r-split'  },
+      // TIMING: someone saves for later
+      { s2:'save', s3:'like', label:'TIMING', cls:'r-timing' }
+    ];
+    var idx = 0;
+    function paint(){
+      var step = loop[idx];
+      setStamp(s2, step.s2);
+      setStamp(s3, step.s3);
+      result.className = 'seat-result on ' + step.cls;
+      result.textContent = step.label;
+      idx = (idx + 1) % loop.length;
+    }
+    if(prefersReduced){
+      // Static: land on MATCH and stop.
+      paint();
+      return;
+    }
+    paint();
+    seatCycleTimer = setInterval(paint, 2400);
+  }
+  function actionOnCard(cardKey){
+    // Search state.liked/passed/saved + superLiked for this card key.
+    for(var i = 0; i < state.liked.length; i++)  if(String(state.liked[i].id) === String(cardKey))  return 'like';
+    for(var j = 0; j < state.passed.length; j++) if(String(state.passed[j].id) === String(cardKey)) return 'pass';
+    for(var k = 0; k < state.saved.length; k++)  if(String(state.saved[k].id) === String(cardKey))  return 'save';
+    if(state.superLiked && String(state.superLiked.id) === String(cardKey)) return 'fasttrack';
+    return null;
+  }
+  function makeSeatSlot(fid, label, action, isDemo){
+    var slot = document.createElement('div');
+    slot.className = 'seat-slot' + (isDemo ? ' demo' : '');
+    var av = document.createElement('span'); av.className = 'seat-avatar';
+    av.textContent = isDemo ? '?' : 'YOU';
+    if(isDemo){ av.style.fontSize = '11px'; }
+    var stamp = document.createElement('span'); stamp.className = 'seat-stamp';
+    stamp.setAttribute('data-slot', 'stamp');
+    if(action) setStamp({ stamp: stamp }, action);
+    var lbl = document.createElement('span'); lbl.className = 'seat-label'; lbl.textContent = label;
+    slot.appendChild(av); slot.appendChild(stamp); slot.appendChild(lbl);
+    slot._stamp = stamp;
+    return slot;
+  }
+  function setStamp(slotOrObj, action){
+    var stamp = slotOrObj._stamp || slotOrObj.stamp;
+    if(!stamp) return;
+    stamp.className = 'seat-stamp on a-' + (action === 'super' ? 'fasttrack' : action);
+    stamp.textContent =
+      action === 'like'      ? 'LIKED'
+    : action === 'pass'      ? 'PASSED'
+    : action === 'save'      ? 'SAVED'
+    : action === 'fasttrack' || action === 'super' ? 'FAST'
+    : '';
   }
 
   function renderSpotsAndCta(){
@@ -2444,26 +2808,36 @@ body.dir-save  .ctl-save{
     var host = document.getElementById('cta-glow');
     if(!line || !btn || !lbl) return;
 
-    var full = spotsLeft <= 0;
+    // Scarcity pill is hidden by default. Only rendered when this client
+    // carries show_scarcity = true in the DB. Live count still gates the CTA.
+    var full         = spotsLeft <= 0;
+    var showScarcity = !!(client && client.showScarcity);
+    if(!showScarcity){
+      line.hidden = true;
+    } else {
+      line.hidden = false;
+      if(!full){
+        line.textContent = spotsLeft >= SPOTS_TOTAL
+          ? (SPOTS_TOTAL + ' early-client spots')
+          : (spotsLeft + ' of ' + SPOTS_TOTAL + ' early-client spots left');
+        line.classList.remove('full');
+      } else {
+        line.textContent = 'Early-client spots are full';
+        line.classList.add('full');
+      }
+    }
+
     if(!full){
-      var text = spotsLeft >= SPOTS_TOTAL
-        ? (SPOTS_TOTAL + ' early-client spots')
-        : (spotsLeft + ' of ' + SPOTS_TOTAL + ' early-client spots left');
-      line.textContent = text;
-      line.classList.remove('full');
-      lbl.textContent  = 'Unlock the portal · $' + offer.earlyPrice + '/month';
-      fine.textContent = 'Cancel anytime. Your free article is on the way.';
-      fine.style.display = '';
+      lbl.textContent = 'Keep your portal · $' + offer.earlyPrice + '/month';
+      // Restore the templated "lands by {Weekday}" line (renderConfirmation
+      // populates the data-slot inside it).
+      if(fine) fine.style.display = '';
       btn.disabled = false;
       if(host) host.classList.remove('glow-off');
-      if(state.waitlistJoined && ack){
-        ack.classList.remove('on');
-      }
+      if(state.waitlistJoined && ack){ ack.classList.remove('on'); }
     } else {
-      line.textContent = 'Early-client spots are full';
-      line.classList.add('full');
       if(state.waitlistJoined){
-        lbl.textContent = "Joined the waitlist";
+        lbl.textContent = 'Joined the waitlist';
         btn.disabled = true;
         if(host) host.classList.add('glow-off');
         if(fine) fine.style.display = 'none';
@@ -2485,21 +2859,53 @@ body.dir-save  .ctl-save{
     });
   }
 
-  function formatDeliverBy(iso){
+  // Shared date/time helper: one format everywhere — "Sep 22, 5:40 PM" —
+  // in the visitor's local timezone. Time is optional (drop out for pure
+  // date labels).
+  function fmtDT(iso, opts){
+    var withTime = !opts || opts.withTime !== false;
     try{
-      var d = new Date(iso);
-      return d.toLocaleString(undefined, {
-        weekday:'long', month:'short', day:'numeric',
-        hour:'numeric', minute:'2-digit'
-      });
+      var d = (iso instanceof Date) ? iso : new Date(iso);
+      var conf = { month:'short', day:'numeric' };
+      if(withTime){ conf.hour = 'numeric'; conf.minute = '2-digit'; }
+      return d.toLocaleString(undefined, conf);
     }catch(e){ return String(iso); }
   }
-  function formatNextDrop(d){
+  function fmtWeekday(iso){
     try{
-      return d.toLocaleDateString(undefined, {
-        weekday:'long', month:'short', day:'numeric'
-      });
-    }catch(e){ return d.toDateString(); }
+      var d = (iso instanceof Date) ? iso : new Date(iso);
+      return d.toLocaleDateString(undefined, { weekday:'long' });
+    }catch(e){ return ''; }
+  }
+  function fmtWeekdayMonDay(iso){
+    try{
+      var d = (iso instanceof Date) ? iso : new Date(iso);
+      return d.toLocaleDateString(undefined, { weekday:'long', month:'short', day:'numeric' });
+    }catch(e){ return ''; }
+  }
+  // Backwards-compat aliases for the earlier code paths.
+  function formatDeliverBy(iso){ return fmtDT(iso); }
+  function formatNextDrop(d){ return fmtWeekdayMonDay(d); }
+
+  // Drop-day math: weekly cadence anchored to the company's first_opened_at
+  // in the visitor's timezone. Saturday or Sunday collapses to Monday. Next
+  // drop = the next occurrence of that weekday strictly after now.
+  function dropWeekdayIndex(firstOpenedIso){
+    if(!firstOpenedIso) return null;
+    var first = new Date(firstOpenedIso);
+    var wd = first.getDay(); // 0 Sun .. 6 Sat, viewer TZ
+    if(wd === 0 || wd === 6) wd = 1; // Sat / Sun -> Mon
+    return wd;
+  }
+  function nextDropDate(firstOpenedIso){
+    var wd = dropWeekdayIndex(firstOpenedIso);
+    if(wd === null) return null;
+    var now = new Date();
+    var d = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 9, 0, 0, 0);
+    var diff = (wd - d.getDay() + 7) % 7;
+    if(diff === 0) diff = 7; // strictly after now
+    d.setDate(d.getDate() + diff);
+    return d;
   }
 
   // -- Portal CTA — Stripe or waitlist depending on spots ------------------
