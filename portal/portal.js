@@ -1194,6 +1194,9 @@ function readAuthError() {
   history.replaceState(null, '', location.pathname);
   return /expired|invalid/i.test(desc) ? 'That link has expired. Send yourself a fresh one.' : desc.replace(/\+/g, ' ');
 }
+// The email the last link and code went to. The code form verifies against
+// this, never against whatever is in the email input now.
+let sentTo = null;
 async function sendLink(e) {
   e.preventDefault();
   const input = $('#signin-email');
@@ -1216,17 +1219,48 @@ async function sendLink(e) {
   }
   // Same answer whether or not the email has a portal.
   msg.textContent = ' ';
+  sentTo = email;
   $('#sent-email').textContent = email;
   $('#signin-form').hidden = true;
   $('#signin-sent').hidden = false;
+  $('#signin-code').focus();
+}
+// Six to eight digit code from the same email, for people whose link opens in
+// an email app's built-in browser instead of the one they want to stay in.
+async function verifyCode(e) {
+  e.preventDefault();
+  const input = $('#signin-code');
+  const msg = $('#code-msg');
+  const token = input.value.replace(/\s+/g, '');
+  input.value = token;
+  const bad = () => {
+    msg.textContent = 'That code didn’t work. Check the latest email or send a new one.';
+    msg.className = 'field-msg err';
+  };
+  if (!sentTo || !/^[0-9]{6,8}$/.test(token)) return bad();
+  const btn = $('#code-btn');
+  btn.disabled = true;
+  msg.className = 'field-msg';
+  msg.textContent = 'Checking…';
+  let res;
+  try { res = await sb.auth.verifyOtp({ email: sentTo, token, type: 'email' }); }
+  catch (err) { res = { error: err }; }
+  btn.disabled = false;
+  if (res.error || !res.data || !res.data.session) return bad();
+  msg.textContent = ' ';
+  S.session = res.data.session;
+  start(true);
 }
 function resetSignin() {
+  $('#signin-code').value = '';
+  $('#code-msg').textContent = ' ';
+  $('#code-msg').className = 'field-msg';
   $('#signin-sent').hidden = true;
   $('#signin-form').hidden = false;
   $('#signin-email').focus();
 }
 async function signOut() {
-  try { await sb.auth.signOut(); } catch (_) {}
+  try { await sb.auth.signOut({ scope: 'local' }); } catch (_) {}
   try { ph.reset(); } catch (_) {}
   location.href = '/portal';
 }
@@ -1348,7 +1382,12 @@ async function boot() {
   }
   start(fromLink);
 }
+// verifyOtp also fires SIGNED_IN, so the listener and the code form can both
+// ask to start. Only the first one runs.
+let started = false;
 async function start(fromLink) {
+  if (started || S.loaded) return;
+  started = true;
   show('loading');
   try { await loadPortal(fromLink); }
   catch (err) {
@@ -1387,6 +1426,7 @@ document.addEventListener('click', (e) => {
   $('#' + id).addEventListener('click', (e) => { if (e.target.id === id) closeScrim(id); });
 });
 $('#signin-form').addEventListener('submit', sendLink);
+$('#code-form').addEventListener('submit', verifyCode);
 $('#invite-form').addEventListener('submit', submitInvite);
 $('#note-input').addEventListener('input', (e) => {
   $('#note-count').textContent = e.target.value.length + ' / ' + NOTE_MAX;

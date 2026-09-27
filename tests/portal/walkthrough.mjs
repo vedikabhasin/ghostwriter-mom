@@ -90,7 +90,7 @@ async function newPage(browser, { mobile, db, token, reduced }) {
   const errors = [];
   page.on('pageerror', (e) => errors.push(e.message));
   page.on('console', (m) => { if (m.type() === 'error' && !m.text().includes('ERR_FAILED')) errors.push(m.text()); });
-  page.on('requestfailed', (r) => { if (!/posthog/.test(r.url())) errors.push('requestfailed ' + r.url()); });
+  page.on('requestfailed', (r) => { if (!/posthog/.test(r.url())) errors.push('requestfailed ' + r.url() + ' ' + (r.failure() && r.failure().errorText)); });
   return { ctx, page, mock, errors };
 }
 const shot = (page, name) => page.screenshot({ path: `${OUT}/${name}.jpg`, type: 'jpeg', quality: 80 });
@@ -180,7 +180,17 @@ for (const mobile of [true, false]) {
     await page.fill('#signin-email', 'vedikabhasin@gmail.com');
     await page.click('#signin-btn');
     await page.waitForSelector('#signin-sent:not([hidden])');
-    check('login: "Check your inbox." + 24 hours', (await page.textContent('#signin-sent')).includes('Check your inbox.') && (await page.textContent('#signin-sent')).includes('The link works for 24 hours.'));
+    const sentText = await page.textContent('#signin-sent');
+    check('login: "Check your inbox." + same answer for any email', sentText.includes('Check your inbox.')
+      && sentText.includes('If vedikabhasin@gmail.com has a portal, a sign-in link and code are on their way.') && !sentText.includes('24 hours'), sentText);
+    const codeField = await page.evaluate(() => {
+      const i = document.querySelector('#signin-code');
+      return i && { focused: document.activeElement === i, inputmode: i.inputMode, ac: i.autocomplete, pattern: i.getAttribute('pattern'),
+        min: i.minLength, max: i.maxLength, btn: document.querySelector('#code-btn').textContent.trim() };
+    });
+    check('login: code input present, focused after send, numeric one-time-code (6 to 8 digits) + Sign in',
+      codeField && codeField.focused && codeField.inputmode === 'numeric' && codeField.ac === 'one-time-code'
+      && codeField.pattern === '[0-9]*' && codeField.min === 6 && codeField.max === 8 && codeField.btn.startsWith('Sign in'), JSON.stringify(codeField));
     const otp = mock.log.find((l) => l.path.startsWith('/auth/v1/otp'));
     check('login: signInWithOtp, shouldCreateUser false', otp && otp.body.create_user === false);
     await shot(page, `${tag}02-login-sent`);
@@ -598,6 +608,58 @@ console.log('\n=== blendbases@gmail.com (375px)');
   check('blendbases: sees Vedika\'s note in the Hub', (await p.page.textContent('#hub-canvas')).includes('Grok is my best proof'));
   await shot(p.page, 'b03-hub-other-side');
   check('blendbases: no page errors', !p.errors.length, p.errors.join(' | '));
+  await p.ctx.close();
+}
+
+// Sign in with the six-digit code instead of the link, then sign out.
+{
+  console.log('\n=== Sign in with a code (375px)');
+  const p = await newPage(browser, { mobile: true, db: vedikaDb(), token: null });
+  await p.page.goto(BASE + '/portal');
+  await p.page.waitForSelector('#screen-signin.on');
+  await p.page.fill('#signin-email', 'VedikaBhasin@gmail.com ');
+  await p.page.click('#signin-btn');
+  await p.page.waitForSelector('#signin-sent:not([hidden])');
+  // Retyping the email field must not change which address the code verifies.
+  await p.page.evaluate(() => { document.querySelector('#signin-email').value = 'someone@else.com'; });
+  // A bad code: error shown, still on the sign-in screen.
+  await p.page.fill('#signin-code', '000 000');
+  await p.page.click('#code-btn');
+  await p.page.waitForFunction(() => document.querySelector('#code-msg').classList.contains('err'));
+  check('code: bad code shows the error and stays on sign-in',
+    (await p.page.textContent('#code-msg')) === 'That code didn’t work. Check the latest email or send a new one.'
+    && await p.page.locator('#screen-signin.on').count() === 1 && await p.page.locator('#signin-sent:not([hidden])').count() === 1);
+  check('code: spaces stripped from a pasted code', (await p.page.inputValue('#signin-code')) === '000000');
+  check('code: button enabled again after a failed check', await p.page.isEnabled('#code-btn'));
+  // "Use a different email" resets the form and clears the code.
+  await p.page.click('#signin-sent [data-action="signin-again"]');
+  check('code: "Use a different email" returns to the email form and clears the code',
+    await p.page.locator('#signin-form:not([hidden])').count() === 1 && (await p.page.inputValue('#signin-code')) === ''
+    && (await p.page.textContent('#code-msg')).trim() === '');
+  await p.page.fill('#signin-email', 'vedikabhasin@gmail.com');
+  await p.page.click('#signin-btn');
+  await p.page.waitForSelector('#signin-sent:not([hidden])');
+  // A good code, pasted with a space.
+  const loadsBefore = p.mock.log.filter((l) => l.method === 'GET' && l.path.startsWith('/rest/v1/companies')).length;
+  await p.page.fill('#signin-code', '123 456');
+  await p.page.click('#code-btn');
+  await p.page.waitForSelector('#screen-feed.on');
+  const verifies = p.mock.log.filter((l) => l.path.startsWith('/auth/v1/verify'));
+  const last = verifies[verifies.length - 1];
+  check('code: verifyOtp called with the sent email, the code and type email',
+    last && last.body.email === 'vedikabhasin@gmail.com' && last.body.token === '123456' && last.body.type === 'email', JSON.stringify(last && last.body));
+  await wait(600);
+  const loads = p.mock.log.filter((l) => l.method === 'GET' && l.path.startsWith('/rest/v1/companies')).length - loadsBefore;
+  check('code: lands on the feed, portal started once', await p.page.locator('#screen-feed.on').count() === 1 && loads === 1, 'company loads: ' + loads);
+  // Sign out only this device.
+  await p.page.click('#sign-out-btn');
+  await p.page.waitForSelector('#screen-signin.on');
+  const logout = p.mock.log.find((l) => l.path.startsWith('/auth/v1/logout'));
+  check('sign out: local scope only', logout && /[?&]scope=local\b/.test(logout.path), logout && logout.path);
+  // Expected noise only: the 403 from the bad code, and the logout request the
+  // redirect to /portal cancels after its response arrived.
+  const unexpected = p.errors.filter((e) => !/status of 403/.test(e) && !/logout\?scope=local net::ERR_ABORTED/.test(e));
+  check('code: no page errors', !unexpected.length, unexpected.join(' | '));
   await p.ctx.close();
 }
 

@@ -188,6 +188,10 @@ body[data-view="signin"] .desk{display:block;}
   box-shadow:0 0 0 3px var(--white), 0 0 0 4.5px rgba(14,14,14,0.08), 0 16px 28px -14px rgba(14,14,14,0.45);}
 .sent-head{font-family:var(--font-display); font-weight:800; font-size:clamp(24px, 5vw, 30px); letter-spacing:-0.02em; margin:0;}
 .sent-sub{font-size:15px; line-height:1.5; color:var(--ink); margin:0 0 4px;}
+.code-form{width:100%; margin-top:10px;}
+.code-form input{font-family:var(--font-mono); letter-spacing:0.18em;}
+.code-form input::placeholder{letter-spacing:0.04em;}
+.join:disabled{opacity:0.55; cursor:default; transform:none; filter:none;}
 .login-foot{font-family:var(--font-mono); font-size:10px; text-transform:uppercase; color:var(--ink-soft); width:100%; max-width:640px;}
 
 /* -----------------------------------------------------------------------------

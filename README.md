@@ -66,6 +66,11 @@ order they are named (schema → RLS → RPCs).
                                 a real customer pays. The default Supabase
                                 mailer rate-limits per project and is fine
                                 for dev but not for a paid signup.
+- Magic Link email template:    paste `supabase/templates/magic-link.html`
+                                into Dashboard > Authentication > Email
+                                Templates > Magic Link, with the subject
+                                `Your Ghostwriter Mom sign-in`. It carries
+                                both the link and the code the portal accepts.
 
 **Environment (Dashboard → Settings → API):**
 

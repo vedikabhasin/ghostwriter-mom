@@ -52,6 +52,15 @@ export function createMock(db, USERS) {
 
     // --- Auth
     if (path === '/auth/v1/otp') return json(route, 200, {});
+    // Email OTP: the code 123456 is valid for any known user; anything else is
+    // treated as expired or invalid, the same 403 GoTrue returns.
+    if (path === '/auth/v1/verify' && method === 'POST') {
+      const tok = Object.keys(USERS).find((k) => USERS[k].email === String(body.email || '').toLowerCase());
+      if (!tok || body.type !== 'email' || body.token !== '123456') return json(route, 403, { code: 403, error_code: 'otp_expired', msg: 'Token has expired or is invalid' });
+      const u = USERS[tok];
+      return json(route, 200, { access_token: tok, refresh_token: 'r-' + tok, token_type: 'bearer', expires_in: 3600,
+        expires_at: Math.floor(Date.now() / 1000) + 3600, user: { id: u.id, email: u.email, aud: 'authenticated', role: 'authenticated' } });
+    }
     if (path === '/auth/v1/logout') return route.fulfill({ status: 204, headers: { 'access-control-allow-origin': '*' } });
     if (path === '/auth/v1/user') return user ? json(route, 200, { id: user.id, email: user.email, aud: 'authenticated', role: 'authenticated' }) : json(route, 401, { msg: 'invalid JWT' });
 

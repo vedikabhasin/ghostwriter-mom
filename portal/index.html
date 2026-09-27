@@ -70,7 +70,21 @@
       <div class="signin-sent" id="signin-sent" hidden role="status" aria-live="polite">
         <span class="envelope" aria-hidden="true">&#9993;&#65039;</span>
         <p class="sent-head">Check your inbox.</p>
-        <p class="sent-sub">We sent a sign-in link to <strong id="sent-email"></strong>. The link works for 24 hours.</p>
+        <p class="sent-sub">If <strong id="sent-email"></strong> has a portal, a sign-in link and code are on their way.</p>
+        <form class="capture code-form" id="code-form" novalidate>
+          <div class="login-field">
+            <input type="text" id="signin-code" name="code" placeholder="6-digit code"
+                   inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]*"
+                   minlength="6" maxlength="8" required aria-label="Sign-in code">
+            <span class="join-host">
+              <span class="join-glow" aria-hidden="true"></span>
+              <button type="submit" class="join gwm-btn" id="code-btn">
+                Sign in <span class="arr gwm-center" aria-hidden="true">&#8594;</span>
+              </button>
+            </span>
+          </div>
+          <p class="field-msg" id="code-msg" aria-live="polite">&nbsp;</p>
+        </form>
         <button type="button" class="btn-ghost" data-action="signin-again">Use a different email</button>
       </div>
     </div>
