@@ -164,12 +164,12 @@
  {
   "name": "note: hub_items row kind note, created_by me",
   "ok": true,
-  "detail": "{\"id\":\"hmg6myu9t0d\",\"ref_id\":\"nz2xknw4nirq\",\"body\":null,\"emoji\":null,\"x\":536,\"y\":22,\"rotation\":0.20000000000000018,\"z\":3,\"hidden\":false,\"updated_at\":\"2026-09-27T22:35:06.494Z\",\"company_id\":\"b22beda7-45cf-486a-931e-d3b429619788\",\"kind\":\"note\",\"created_by\":\"9afe9458-e205-4209-96ec-9c8f6fab77c5\"}"
+  "detail": "{\"id\":\"hdfkf1vj4xa6\",\"ref_id\":\"n0f46vwa94ye7\",\"body\":null,\"emoji\":null,\"x\":538,\"y\":26,\"rotation\":-3,\"z\":3,\"hidden\":false,\"updated_at\":\"2026-09-27T23:29:53.378Z\",\"company_id\":\"b22beda7-45cf-486a-931e-d3b429619788\",\"kind\":\"note\",\"created_by\":\"9afe9458-e205-4209-96ec-9c8f6fab77c5\"}"
  },
  {
   "name": "note: placed next to the seeded rules notes",
   "ok": true,
-  "detail": "536,22"
+  "detail": "538,26"
  },
  {
   "name": "reveal timing: entrance <= 1.2s, transform + opacity only",
@@ -219,7 +219,7 @@
  {
   "name": "notes readable in Feed history on the card",
   "ok": true,
-  "detail": "VBDesigning Overwhelm Without Harm\n\nYouLIKED\nSep 27, 10:35 PM\nblendbasesPASSED\nSep 27, 8:35 PM\n\n1 NOTE\n\nYOU · SEP 27\nGrok is my best proof of the way-out idea. "
+  "detail": "VBDesigning Overwhelm Without Harm\n\nYouLIKED\nSep 27, 11:29 PM\nblendbasesPASSED\nSep 27, 9:30 PM\n\n1 NOTE\n\nYOU · SEP 27\nGrok is my best proof of the way-out idea. "
  },
  {
   "name": "up next: vb-02 moved to the top",
@@ -229,7 +229,7 @@
  {
   "name": "library: top card flat, centered, fully opaque",
   "ok": true,
-  "detail": "{\"count\":3,\"topText\":\"POST\\nVB\\nI Design for the Moment AI Is Wrong\\nDELIVERED IN 19H · SEP 26, 10:34 PM\",\"topOpaque\":true,\"topFlat\":true,\"backsHidden\":true,\"backRot\":[-5,5],\"topZ\":20,\"backZ\":[16,18]}"
+  "detail": "{\"count\":3,\"topText\":\"POST\\nVB\\nI Design for the Moment AI Is Wrong\\nDELIVERED IN 19H · SEP 26, 11:29 PM\",\"topOpaque\":true,\"topFlat\":true,\"backsHidden\":true,\"backRot\":[-5,5],\"topZ\":20,\"backZ\":[16,18]}"
  },
  {
   "name": "library: back cards rotated 5-8 deg, content hidden, below the top",
@@ -239,12 +239,12 @@
  {
   "name": "library: vb-01 \"Delivered in 19h · <date>\"",
   "ok": true,
-  "detail": "POST\nVB\nI Design for the Moment AI Is Wrong\nDELIVERED IN 19H · SEP 26, 10:34 PM"
+  "detail": "POST\nVB\nI Design for the Moment AI Is Wrong\nDELIVERED IN 19H · SEP 26, 11:29 PM"
  },
  {
   "name": "375px vb-01: status stamp on one line, inside the card",
   "ok": true,
-  "detail": "[{\"text\":\"Delivered in 19h · Sep 26, 10:34 PM\",\"oneLine\":true,\"inside\":true,\"size\":\"8.25px\"}]"
+  "detail": "[{\"text\":\"Delivered in 19h · Sep 26, 11:29 PM\",\"oneLine\":true,\"inside\":true,\"size\":\"8.25px\"}]"
  },
  {
   "name": "library header: no credits line at 0 balance",
@@ -352,12 +352,12 @@
  {
   "name": "drag: x/y saved on drop, last dragged comes to front",
   "ok": true,
-  "detail": "{\"x\":669,\"y\":358,\"z\":7,\"before\":{\"id\":\"h09r8jimcvz3r\",\"ref_id\":\"553f5a86-290e-4a13-ad97-3e7fa29e6c5f\",\"body\":null,\"emoji\":null,\"x\":549,\"y\":268,\"rotation\":-3.3,\"z\":4,\"hidden\":false,\"updated_at\":\"2026-09-27T22:35:19.047Z\",\"company_id\":\"b22beda7-45cf-486a-931e-d3b429619788\",\"kind\":\"article\",\"created_by\":null}}"
+  "detail": "{\"x\":669,\"y\":358,\"z\":7,\"before\":{\"id\":\"hmc016m8di\",\"ref_id\":\"553f5a86-290e-4a13-ad97-3e7fa29e6c5f\",\"body\":null,\"emoji\":null,\"x\":549,\"y\":268,\"rotation\":-3.3,\"z\":4,\"hidden\":false,\"updated_at\":\"2026-09-27T23:30:05.939Z\",\"company_id\":\"b22beda7-45cf-486a-931e-d3b429619788\",\"kind\":\"article\",\"created_by\":null}}"
  },
  {
   "name": "pin: dropped onto an item stays attached (ref_id = item)",
   "ok": true,
-  "detail": "{\"id\":\"h4bkkrbe6l8h\",\"ref_id\":\"h09r8jimcvz3r\",\"body\":null,\"emoji\":\"🔥\",\"x\":42,\"y\":28,\"rotation\":0,\"z\":8,\"hidden\":false,\"updated_at\":\"2026-09-27T22:35:22.834Z\",\"company_id\":\"b22beda7-45cf-486a-931e-d3b429619788\",\"kind\":\"emoji\",\"created_by\":\"9afe9458-e205-4209-96ec-9c8f6fab77c5\"}"
+  "detail": "{\"id\":\"hjdo398yvqbj\",\"ref_id\":\"hmc016m8di\",\"body\":null,\"emoji\":\"🔥\",\"x\":42,\"y\":28,\"rotation\":0,\"z\":8,\"hidden\":false,\"updated_at\":\"2026-09-27T23:30:09.757Z\",\"company_id\":\"b22beda7-45cf-486a-931e-d3b429619788\",\"kind\":\"emoji\",\"created_by\":\"9afe9458-e205-4209-96ec-9c8f6fab77c5\"}"
  },
  {
   "name": "pin: rendered inside its item",
@@ -636,7 +636,7 @@
  {
   "name": "library: top card flat, centered, fully opaque",
   "ok": true,
-  "detail": "{\"count\":3,\"topText\":\"POST\\nVB\\nI Design for the Moment AI Is Wrong\\nDELIVERED IN 19H · SEP 26, 10:35 PM\",\"topOpaque\":true,\"topFlat\":true,\"backsHidden\":true,\"backRot\":[-5,5],\"topZ\":20,\"backZ\":[16,18]}"
+  "detail": "{\"count\":3,\"topText\":\"POST\\nVB\\nI Design for the Moment AI Is Wrong\\nDELIVERED IN 19H · SEP 26, 11:30 PM\",\"topOpaque\":true,\"topFlat\":true,\"backsHidden\":true,\"backRot\":[-5,5],\"topZ\":20,\"backZ\":[16,18]}"
  },
  {
   "name": "library: back cards rotated 5-8 deg, content hidden, below the top",
@@ -646,12 +646,12 @@
  {
   "name": "library: vb-01 \"Delivered in 19h · <date>\"",
   "ok": true,
-  "detail": "POST\nVB\nI Design for the Moment AI Is Wrong\nDELIVERED IN 19H · SEP 26, 10:35 PM"
+  "detail": "POST\nVB\nI Design for the Moment AI Is Wrong\nDELIVERED IN 19H · SEP 26, 11:30 PM"
  },
  {
   "name": "desktop vb-01: status stamp on one line, inside the card",
   "ok": true,
-  "detail": "[{\"text\":\"Delivered in 19h · Sep 26, 10:35 PM\",\"oneLine\":true,\"inside\":true,\"size\":\"10px\"}]"
+  "detail": "[{\"text\":\"Delivered in 19h · Sep 26, 11:30 PM\",\"oneLine\":true,\"inside\":true,\"size\":\"10px\"}]"
  },
  {
   "name": "library header: no credits line at 0 balance",
@@ -755,12 +755,12 @@
  {
   "name": "drag: x/y saved on drop, last dragged comes to front",
   "ok": true,
-  "detail": "{\"x\":669,\"y\":122,\"z\":6,\"before\":{\"id\":\"huj93qxahug9\",\"ref_id\":\"553f5a86-290e-4a13-ad97-3e7fa29e6c5f\",\"body\":null,\"emoji\":null,\"x\":549,\"y\":32,\"rotation\":-3.3,\"z\":3,\"hidden\":false,\"updated_at\":\"2026-09-27T22:35:41.184Z\",\"company_id\":\"b22beda7-45cf-486a-931e-d3b429619788\",\"kind\":\"article\",\"created_by\":null}}"
+  "detail": "{\"x\":669,\"y\":122,\"z\":6,\"before\":{\"id\":\"hhyg2mehluv4\",\"ref_id\":\"553f5a86-290e-4a13-ad97-3e7fa29e6c5f\",\"body\":null,\"emoji\":null,\"x\":549,\"y\":32,\"rotation\":-3.3,\"z\":3,\"hidden\":false,\"updated_at\":\"2026-09-27T23:30:27.997Z\",\"company_id\":\"b22beda7-45cf-486a-931e-d3b429619788\",\"kind\":\"article\",\"created_by\":null}}"
  },
  {
   "name": "pin: dropped onto an item stays attached (ref_id = item)",
   "ok": true,
-  "detail": "{\"id\":\"hxsh1ndkgf3r\",\"ref_id\":\"huj93qxahug9\",\"body\":null,\"emoji\":\"🔥\",\"x\":42,\"y\":28,\"rotation\":0,\"z\":7,\"hidden\":false,\"updated_at\":\"2026-09-27T22:35:44.981Z\",\"company_id\":\"b22beda7-45cf-486a-931e-d3b429619788\",\"kind\":\"emoji\",\"created_by\":\"9afe9458-e205-4209-96ec-9c8f6fab77c5\"}"
+  "detail": "{\"id\":\"hgn6412q2cob\",\"ref_id\":\"hhyg2mehluv4\",\"body\":null,\"emoji\":\"🔥\",\"x\":42,\"y\":28,\"rotation\":0,\"z\":7,\"hidden\":false,\"updated_at\":\"2026-09-27T23:30:31.813Z\",\"company_id\":\"b22beda7-45cf-486a-931e-d3b429619788\",\"kind\":\"emoji\",\"created_by\":\"9afe9458-e205-4209-96ec-9c8f6fab77c5\"}"
  },
  {
   "name": "pin: rendered inside its item",
@@ -902,7 +902,7 @@
  {
   "name": "locked $19 delivered: status stamp on one line, inside the card",
   "ok": true,
-  "detail": "[{\"text\":\"Delivered in 19h · Sep 26, 5:35 AM\",\"oneLine\":true,\"inside\":true,\"size\":\"8px\"}]"
+  "detail": "[{\"text\":\"Delivered in 19h · Sep 26, 6:30 AM\",\"oneLine\":true,\"inside\":true,\"size\":\"8px\"}]"
  },
  {
   "name": "locked $19: approved card chip \"Ready to write · 3 credits\"",
@@ -986,17 +986,17 @@
  {
   "name": "caught up: face-down stack of 5, first real next-week format face-up",
   "ok": true,
-  "detail": "{\"text\":\"INSIGHT\\n\\n5 new on Tuesday, Sep 29\\n\\nIN 1D 1H\\n\\n+\\nLee hasn’t seen 5 of these.\\nSeat 3 is open. Invite someone who decides content.\",\"stack\":5,\"faceUp\":\"Insight\"}"
+  "detail": "{\"text\":\"INSIGHT\\n\\n5 new on Tuesday, Sep 29\\n\\nIN 1D 0H\\n\\n+\\nLee hasn’t seen 5 of these.\\nSeat 3 is open. Invite someone who decides content.\",\"stack\":5,\"faceUp\":\"Insight\"}"
  },
  {
   "name": "caught up: \"5 new on Tuesday, Sep 29\" (drop day = weekday first opened) with a live countdown",
   "ok": true,
-  "detail": "INSIGHT\n\n5 new on Tuesday, Sep 29\n\nIN 1D 1H\n\n+\nLee hasn’t seen 5 of these.\nSeat 3 is open. Invite someone who decides content."
+  "detail": "INSIGHT\n\n5 new on Tuesday, Sep 29\n\nIN 1D 0H\n\n+\nLee hasn’t seen 5 of these.\nSeat 3 is open. Invite someone who decides content."
  },
  {
   "name": "caught up: a line per seat with cards left, an invite line per open seat",
   "ok": true,
-  "detail": "INSIGHT\n\n5 new on Tuesday, Sep 29\n\nIN 1D 1H\n\n+\nLee hasn’t seen 5 of these.\nSeat 3 is open. Invite someone who decides content."
+  "detail": "INSIGHT\n\n5 new on Tuesday, Sep 29\n\nIN 1D 0H\n\n+\nLee hasn’t seen 5 of these.\nSeat 3 is open. Invite someone who decides content."
  },
  {
   "name": "tapping a seat line only highlights that seat",
@@ -1086,19 +1086,19 @@
  {
   "name": "RPR caught up (UTC viewer): first opened on a Friday -> \"5 new on Friday, Oct 2\"",
   "ok": true,
-  "detail": "5 new on Friday, Oct 2In 4d 1h+You haven’t seen 10 of these.Sam hasn’t seen 10 of these.Seat 3 is open. Invite someone who decides content."
+  "detail": "5 new on Friday, Oct 2In 4d 0h+++You haven’t seen 10 of these.Seat 2 is open. Invite someone who decides content.Seat 3 is open. Invite someone who decides content.Seat 4 is open. Invite someone who decides content."
  },
  {
-  "name": "RPR caught up: both seats have cards left, seat 3 open, no invented face-up card",
+  "name": "RPR caught up: the test seat has cards left, seats 2 to 4 open, no invented face-up card",
   "ok": true,
-  "detail": "5 new on Friday, Oct 2In 4d 1h+You haven’t seen 10 of these.Sam hasn’t seen 10 of these.Seat 3 is open. Invite someone who decides content."
+  "detail": "5 new on Friday, Oct 2In 4d 0h+++You haven’t seen 10 of these.Seat 2 is open. Invite someone who decides content.Seat 3 is open. Invite someone who decides content.Seat 4 is open. Invite someone who decides content."
  },
  {
   "name": "RPR Library: empty shelf, no credits line",
   "ok": true
  },
  {
-  "name": "RPR: first Hub tap -> invite pop-up, \"One seat left.\"",
+  "name": "RPR: first Hub tap -> invite pop-up, \"Three seats left.\" (seat_limit 4, one test seat)",
   "ok": true
  },
  {
@@ -1133,7 +1133,7 @@
  {
   "name": "375x568 delivered: status stamp on one line, inside the card",
   "ok": true,
-  "detail": "[{\"text\":\"Delivered in 19h · Sep 26, 5:36 AM\",\"oneLine\":true,\"inside\":true,\"size\":\"7.5px\"}]"
+  "detail": "[{\"text\":\"Delivered in 19h · Sep 26, 6:31 AM\",\"oneLine\":true,\"inside\":true,\"size\":\"7.5px\"}]"
  },
  {
   "name": "375x667: \"Swipe to shuffle. Tap to open.\" sits above the Feed/Library switch, uncovered",
@@ -1143,7 +1143,7 @@
  {
   "name": "375x667 delivered: status stamp on one line, inside the card",
   "ok": true,
-  "detail": "[{\"text\":\"Delivered in 19h · Sep 26, 5:36 AM\",\"oneLine\":true,\"inside\":true,\"size\":\"8px\"}]"
+  "detail": "[{\"text\":\"Delivered in 19h · Sep 26, 6:31 AM\",\"oneLine\":true,\"inside\":true,\"size\":\"8px\"}]"
  },
  {
   "name": "375x812: \"Swipe to shuffle. Tap to open.\" sits above the Feed/Library switch, uncovered",
@@ -1153,7 +1153,7 @@
  {
   "name": "375x812 delivered: status stamp on one line, inside the card",
   "ok": true,
-  "detail": "[{\"text\":\"Delivered in 19h · Sep 26, 5:36 AM\",\"oneLine\":true,\"inside\":true,\"size\":\"8px\"}]"
+  "detail": "[{\"text\":\"Delivered in 19h · Sep 26, 6:31 AM\",\"oneLine\":true,\"inside\":true,\"size\":\"8px\"}]"
  },
  {
   "name": "1280x700: \"Swipe to shuffle. Tap to open.\" sits above the Feed/Library switch, uncovered",
@@ -1163,7 +1163,7 @@
  {
   "name": "1280x700 delivered: status stamp on one line, inside the card",
   "ok": true,
-  "detail": "[{\"text\":\"Delivered in 19h · Sep 26, 5:36 AM\",\"oneLine\":true,\"inside\":true,\"size\":\"9.75px\"}]"
+  "detail": "[{\"text\":\"Delivered in 19h · Sep 26, 6:31 AM\",\"oneLine\":true,\"inside\":true,\"size\":\"9.75px\"}]"
  },
  {
   "name": "blendbases: Agree reveal on first view of vb-02 (You + vedikabhasin)",

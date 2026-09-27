@@ -2,9 +2,10 @@
 //   acmeDb()                  a $19 portal, no credit purchase yet: Hub locked
 //   acmeDb({ credits: true }) the same with a Starter pack and a plan month
 //   rprDb()                   RPR as it is on the live project: the 10 cards
-//                             from clients/rpr-k7m2qx.json, 2 seats, no
-//                             decisions or articles, the $19 set to cancel
-//                             (canceled, ends Oct 25) so it can be resumed.
+//                             from clients/rpr-k7m2qx.json, no decisions or
+//                             articles, the $19 set to cancel (canceled, ends
+//                             Oct 25) so it can be resumed, seat_limit 4 with
+//                             one temporary test seat and 3 empty.
 // Gating is on account state only; nothing here keys on ids or names.
 import fs from 'node:fs';
 import path from 'node:path';
@@ -18,8 +19,7 @@ const localDay = (offsetDays = 0) => {
 export const ACCOUNT_USERS = {
   'tok-acme':   { id: 'a0000000-0000-0000-0000-00000000000a', email: 'dana@acme.co' },
   'tok-acme2':  { id: 'a0000000-0000-0000-0000-00000000000b', email: 'lee@acme.co' },
-  'tok-rpr':    { id: 'b0000000-0000-0000-0000-00000000000a', email: 'patrick@rockpaperreality.com' },
-  'tok-rpr2':   { id: 'b0000000-0000-0000-0000-00000000000b', email: 'sam@rockpaperreality.com' },
+  'tok-rpr':    { id: 'b0000000-0000-0000-0000-00000000000a', email: 'vedikabhasinwork@gmail.com' },
 };
 export const ACME_OWNER = 'a1000000-0000-0000-0000-000000000001';
 
@@ -79,11 +79,10 @@ export function rprDb() {
   return {
     companies: [{ id: CO, slug: 'rpr-k7m2qx', name: 'Rock Paper Reality', contact_first_name: 'Patrick', is_internal: false,
       subscription_status: 'canceled', subscription_ends_at: '2026-10-25T20:38:34+00:00', hub_unlocked: false,
-      stripe_subscription_id: 'sub_1UJftBH0XOK4lyYe2EXA6g9r', plan_subscription_id: null,
+      stripe_subscription_id: 'sub_1UJftBH0XOK4lyYe2EXA6g9r', plan_subscription_id: null, seat_limit: 4,
       first_opened_at: '2026-09-25T18:56:44.314023+00:00', created_at: '2026-09-25T18:56:44.314023+00:00' }],
     members: [
-      { id: 'b1000000-0000-0000-0000-000000000001', company_id: CO, user_id: ACCOUNT_USERS['tok-rpr'].id, role: 'owner', display_name: null, avatar_shape: 'ghost', onboarding: {}, created_at: '2026-09-25T20:00:00Z' },
-      { id: 'b1000000-0000-0000-0000-000000000002', company_id: CO, user_id: ACCOUNT_USERS['tok-rpr2'].id, role: 'member', display_name: 'Sam', avatar_shape: 'blob', onboarding: {}, created_at: '2026-09-25T20:05:00Z' },
+      { id: 'b1000000-0000-0000-0000-000000000002', company_id: CO, user_id: ACCOUNT_USERS['tok-rpr'].id, role: 'member', display_name: 'vedikabhasinwork', avatar_shape: 'blob', onboarding: {}, created_at: '2026-09-25T20:05:00Z' },
     ],
     cards: feed.cards.map((c, i) => ({ id: 'b3000000-0000-0000-0000-0000000000' + String(i).padStart(2, '0'), company_id: CO, card_key: c.id, format: c.format, series: null,
       title: c.title, angle: c.angle, evidence: c.evidence, tags: c.tags || [], sources: c.sources || [], drop_date: drops[i], sort_order: i })),

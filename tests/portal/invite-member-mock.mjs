@@ -14,6 +14,7 @@ const state = {
     { id: 'm2', company_id: 'c1', user_id: 'u-sam', role: 'member', avatar_shape: 'blob', created_at: '2' },
     { id: 'm3', company_id: 'c2', user_id: 'u-two', role: 'owner', avatar_shape: 'worm', created_at: '3' },
   ],
+  companies: [{ id: 'c1', seat_limit: 3 }, { id: 'c2', seat_limit: 3 }],
   invites: [],
   otps: [],
   mailDown: false, // POST /__mail {down:true|false}
@@ -45,6 +46,10 @@ http.createServer(async (req, res) => {
   }
   if (p === '/__mail') { state.mailDown = !!JSON.parse(raw).down; return send(res, 200, {}); }
   if (p === '/auth/v1/admin/users') return send(res, 200, { users: state.users, aud: 'authenticated' });
+  if (p === '/rest/v1/companies' && req.method === 'GET') {
+    const c = state.companies.find((x) => x.id === (u.searchParams.get('id') || '').replace('eq.', ''));
+    return c ? send(res, 200, c) : send(res, 406, { code: 'PGRST116' });
+  }
   if (p === '/rest/v1/members' && req.method === 'GET') {
     let rows = state.members;
     for (const [k, v] of u.searchParams) if (v.startsWith('eq.')) rows = rows.filter((r) => r[k] === v.slice(3));

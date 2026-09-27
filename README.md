@@ -229,6 +229,12 @@ off, the function checks the caller).
   one in writing leaves it.
 - Hub access (`hub_access()`): internal, or already open (`hub_unlocked`),
   or a credit purchase with an active $19. It stays open at 0 credits.
+- Seats: `companies.seat_limit` (default 3) drives the members trigger,
+  `invite-member` and the portal. **Temporary:** RPR has `seat_limit = 4`
+  and one test seat (vedikabhasinwork@gmail.com), leaving its 3 real seats
+  empty. Before sending RPR their portal:
+  `delete from members where company_id = (select id from companies where slug = 'rpr-k7m2qx') and user_id = (select id from auth.users where email = 'vedikabhasinwork@gmail.com');`
+  then `update companies set seat_limit = 3 where slug = 'rpr-k7m2qx';`
 - Adding credits by hand (internal portals, goodwill):
   `insert into credit_ledger (company_id, delta, kind, product) values ('…', 5, 'grant', 'manual');`
 

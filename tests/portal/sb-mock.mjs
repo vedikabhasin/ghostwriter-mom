@@ -122,7 +122,8 @@ export function createMock(db, USERS) {
       const emails = [...new Set((body.emails || []).map((e) => String(e).trim().toLowerCase()))];
       const team = db.members.filter((m) => m.company_id === caller.company_id);
       if (emails.includes(user.email)) return json(route, 400, { error: 'self_invite' });
-      if (team.length + emails.length > 3) return json(route, 409, { error: 'seat_limit', seats_left: 3 - team.length });
+      const limit = companyById(caller.company_id).seat_limit || 3;
+      if (team.length + emails.length > limit) return json(route, 409, { error: 'seat_limit', seats_left: limit - team.length });
       const results = emails.map((email, i) => {
         db.members.push({ id: 'm-new-' + i, company_id: caller.company_id, user_id: 'u-new-' + i, role: 'member',
           display_name: email.split('@')[0].split(/[._+-]/)[0].replace(/^./, (c) => c.toUpperCase()), avatar_shape: ['pebble', 'curl'][i], onboarding: {}, created_at: new Date().toISOString() });

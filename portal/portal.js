@@ -22,7 +22,6 @@ const VERT_T = 100;
 const CHIP_LIMIT = 3;
 const NOTE_MAX = 280;
 const WANTS_WRITTEN = 'wants_written';
-const MAX_SEATS = 3;
 // What Stripe charges (display only; the prices live in Stripe).
 const PRICE_TEXT = { starter: '$495', plan: '$2,000', topupEach: 125 };
 const POSITIVE = ['like', 'fasttrack'];
@@ -202,12 +201,15 @@ async function refreshArticles() {
 const ARTICLE_COLS = 'id,card_id,format,title,status,body_html,google_doc_url,requested_at,deliver_by,delivered_at,live_at,created_at';
 
 // -- Seats ----------------------------------------------------------------------
-function seatsLeft() { return Math.max(0, MAX_SEATS - S.members.length); }
-const SEAT_LINE = { 1: 'One seat left.', 2: 'Two seats left.' };
+// Seats come from the account (companies.seat_limit, 3 unless raised).
+function seatLimit() { return (S.company && S.company.seat_limit) || 3; }
+function seatsLeft() { return Math.max(0, seatLimit() - S.members.length); }
+const SEAT_LINE = { 1: 'One seat left.', 2: 'Two seats left.', 3: 'Three seats left.' };
+const allTaken = () => 'All ' + seatLimit() + ' seats are taken.';
 /** Three seats: a monster per member, a dashed ghost per open seat. */
 function renderSeats(wrap) {
   wrap.textContent = '';
-  for (let i = 0; i < MAX_SEATS; i++) {
+  for (let i = 0; i < Math.max(seatLimit(), S.members.length); i++) {
     const m = S.members[i];
     if (m) {
       const s0 = h('span', 'seat');
@@ -473,7 +475,7 @@ function buildCaughtUp() {
     lines.appendChild(b);
   });
   if (!S.readOnly) {
-    for (let i = S.members.length; i < MAX_SEATS; i++) {
+    for (let i = S.members.length; i < seatLimit(); i++) {
       const b = h('button', 'cu-line open', 'Seat ' + (i + 1) + ' is open. Invite someone who decides content.');
       b.type = 'button';
       b.addEventListener('click', () => openInvite(null));
@@ -1473,7 +1475,7 @@ function openInvite(after, opts) {
   inviteFlag = !!(opts && opts.flag);
   const left = seatsLeft();
   const seats = Math.min(2, left);
-  if (seats <= 0) { toast('All 3 seats are taken.'); finishInvite(); return; }
+  if (seats <= 0) { toast(allTaken()); finishInvite(); return; }
   const wrap = $('#invite-fields');
   wrap.textContent = '';
   for (let i = 0; i < seats; i++) {
@@ -1507,7 +1509,7 @@ function finishInvite() {
 }
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 const INVITE_ERR = {
-  seat_limit: 'All 3 seats are taken.',
+  get seat_limit() { return allTaken(); },
   invalid_email: 'That email doesn’t look right.',
   self_invite: 'That’s you. Invite someone else.',
   already_member: 'They’re already on your portal.',
@@ -1670,7 +1672,7 @@ async function loadPortal(fromLink) {
   S.onb = Object.assign({}, S.me.onboarding || {});
   const cid = S.me.company_id;
   const [company, members, cards, decisions, events, signal, articles, notes, hubItems] = await Promise.all([
-    sb.from('companies').select('id,slug,name,contact_first_name,subscription_status,subscription_ends_at,hub_unlocked,is_internal,first_opened_at,created_at').eq('id', cid).single(),
+    sb.from('companies').select('id,slug,name,contact_first_name,subscription_status,subscription_ends_at,hub_unlocked,is_internal,first_opened_at,created_at,seat_limit').eq('id', cid).single(),
     sb.from('members').select('id,user_id,role,display_name,avatar_shape,onboarding,created_at').eq('company_id', cid).order('created_at'),
     sb.from('cards').select('id,card_key,format,series,title,angle,evidence,tags,sources,drop_date,sort_order').eq('company_id', cid).order('sort_order'),
     sb.from('decisions').select('card_id,member_id,action,updated_at').eq('company_id', cid),

@@ -247,6 +247,20 @@ console.log('\n=== credits_grant (what the webhook calls)');
   await asService();
 }
 
+console.log('\n=== seat_limit');
+{
+  await asService();
+  const addMember = (id, uid) => fails(`insert into members (id, company_id, user_id, role) values ($1, $2, $3, 'member')`, [id, CO, uid]);
+  await db.exec(`insert into auth.users values ('00000000-0000-0000-0000-0000000000d1','d1@x.co'), ('00000000-0000-0000-0000-0000000000d2','d2@x.co')`);
+  const third = await addMember('20000000-0000-0000-0000-0000000000d1', '00000000-0000-0000-0000-0000000000d1');
+  const fourth = await addMember('20000000-0000-0000-0000-0000000000d2', '00000000-0000-0000-0000-0000000000d2');
+  check('default seat_limit 3: a 4th member is refused', third === null && /already has 3 members/.test(fourth || ''), fourth);
+  await db.exec(`update companies set seat_limit = 4 where id = '${CO}'`);
+  const fourthOk = await addMember('20000000-0000-0000-0000-0000000000d2', '00000000-0000-0000-0000-0000000000d2');
+  check('seat_limit 4: the 4th member fits', fourthOk === null, fourthOk);
+  await db.exec(`delete from members where id in ('20000000-0000-0000-0000-0000000000d1','20000000-0000-0000-0000-0000000000d2'); update companies set seat_limit = 3 where id = '${CO}'`);
+}
+
 console.log('\n=== Hub access and RLS');
 {
   await reset();

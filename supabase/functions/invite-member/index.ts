@@ -10,7 +10,8 @@
 // Checks, in order:
 //   1. caller has a valid session and is a member of a company
 //   2. every address is a valid email and is not already on the team
-//   3. current members + new invites stays at 3 or under
+//   3. current members + new invites stays within companies.seat_limit (3
+//      unless raised, e.g. for a temporary test seat)
 // Then, per address: inviteUserByEmail (Supabase Auth sends the only email)
 // and insert a members row (role 'member', random avatar_shape). An address
 // that already has an account can't be invited, so it gets a normal sign-in
@@ -29,7 +30,6 @@ import { createClient } from "npm:@supabase/supabase-js@2.45.0";
 const SUPABASE_URL     = Deno.env.get("SUPABASE_URL")!;
 const SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 const PORTAL_REDIRECT  = Deno.env.get("PORTAL_REDIRECT") ?? "https://www.ghostwriter.mom/portal";
-const MAX_MEMBERS      = 3;
 
 // Same six names the Stripe webhook assigns; the portal draws them as monsters.
 const AVATAR_SHAPES = ["blob", "worm", "ghost", "spike", "pebble", "curl"];
@@ -135,13 +135,16 @@ Deno.serve(async (req) => {
   }
 
   // 3. Seats.
+  const { data: co, error: coErr } = await admin.from("companies").select("seat_limit").eq("id", caller.company_id).single();
+  if (coErr || !co) return json(500, { error: "lookup_failed" });
+  const MAX_MEMBERS = co.seat_limit ?? 3;
   const { data: team, error: teamErr } = await admin
     .from("members")
     .select("id, user_id, avatar_shape")
     .eq("company_id", caller.company_id);
   if (teamErr) return json(500, { error: "lookup_failed" });
   if (team.length + emails.length > MAX_MEMBERS) {
-    return json(409, { error: "seat_limit", seats_left: Math.max(0, MAX_MEMBERS - team.length) });
+    return json(409, { error: "seat_limit", seat_limit: MAX_MEMBERS, seats_left: Math.max(0, MAX_MEMBERS - team.length) });
   }
 
   const taken = team.map((m) => m.avatar_shape ?? "");

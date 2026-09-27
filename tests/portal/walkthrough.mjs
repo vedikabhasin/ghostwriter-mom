@@ -891,7 +891,7 @@ console.log('\n=== Account with credits (375px): Acme after a Starter pack and a
   await p.ctx.close();
 }
 
-console.log('\n=== RPR (375px): canceled at period end, Oct 25, no purchases');
+console.log('\n=== RPR (375px): canceled at period end, Oct 25, no purchases, test seat + 3 empty');
 {
   const db = rprDb();
   const p = await newPage(browser, { mobile: true, db, token: 'tok-rpr' });
@@ -906,8 +906,9 @@ console.log('\n=== RPR (375px): canceled at period end, Oct 25, no purchases');
   const cu = await page.textContent('#card-stage .caught-up');
   const rprDrop = expectedDrop(db.companies[0].first_opened_at, 'UTC');
   check(`RPR caught up (UTC viewer): first opened on a Friday -> "5 new on ${rprDrop}"`, rprDrop.startsWith('Friday') && cu.includes('5 new on ' + rprDrop), cu);
-  check('RPR caught up: both seats have cards left, seat 3 open, no invented face-up card',
-    cu.includes('You haven’t seen 10 of these.') && cu.includes('Sam hasn’t seen 10 of these.') && cu.includes('Seat 3 is open.') && await page.locator('.fd-card.face-up').count() === 0, cu);
+  check('RPR caught up: the test seat has cards left, seats 2 to 4 open, no invented face-up card',
+    cu.includes('You haven’t seen 10 of these.') && ['Seat 2 is open.', 'Seat 3 is open.', 'Seat 4 is open.'].every((t) => cu.includes(t)) &&
+    await page.locator('.cu-seats .seat.empty').count() === 3 && await page.locator('.fd-card.face-up').count() === 0, cu);
   await shot(page, 'r02-rpr-caught-up');
   await page.click('#switch-library');
   await page.waitForSelector('#screen-library.on');
@@ -915,7 +916,7 @@ console.log('\n=== RPR (375px): canceled at period end, Oct 25, no purchases');
   check('RPR Library: empty shelf, no credits line', (await page.textContent('#deck-stage')).includes('Your articles land here as they’re written.') && (await page.textContent('#lib-count')) === '');
   await page.click('#pencil-sticker');
   await page.waitForSelector('#invite-modal.open');
-  check('RPR: first Hub tap -> invite pop-up, "One seat left."', (await page.textContent('#invite-seats')) === 'One seat left.');
+  check('RPR: first Hub tap -> invite pop-up, "Three seats left." (seat_limit 4, one test seat)', (await page.textContent('#invite-seats')) === 'Three seats left.' && await page.locator('#invite-fields input').count() === 2);
   await page.click('[data-action="invite-skip"]');
   await page.waitForSelector('#screen-hub.on');
   await wait(700);
