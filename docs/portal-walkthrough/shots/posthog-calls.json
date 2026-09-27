@@ -1,23 +1,24 @@
 [
  [
   "identify",
-  "1bb928fa-8ec4-4fe2-a033-8fb266233aa1",
+  "9afe9458-e205-4209-96ec-9c8f6fab77c5",
   {
-   "role": "member"
+   "role": "owner"
   }
  ],
  [
   "group",
   "company",
-  "rpr-k7m2qx",
+  "vedika-bhasin-ycfogw",
   {
-   "name": "Rock Paper Reality"
+   "name": "Vedika Bhasin",
+   "internal": true
   }
  ],
  [
   "register",
   {
-   "slug": "rpr-k7m2qx",
+   "slug": "vedika-bhasin-ycfogw",
    "surface": "portal"
   }
  ],
@@ -32,20 +33,11 @@
  ],
  [
   "capture",
-  "overlap_seen",
+  "dot_jump",
   {
    "surface": "portal",
-   "state": "agree",
-   "card_id": "50023ddd-baf5-4df2-8c00-8a08680eb33c"
-  }
- ],
- [
-  "capture",
-  "overlap_seen",
-  {
-   "surface": "portal",
-   "state": "split",
-   "card_id": "555a6ac1-4ae5-4e64-891b-bac19c77021b"
+   "to_index": 1,
+   "via": "key"
   }
  ],
  [
@@ -53,34 +45,16 @@
   "dot_jump",
   {
    "surface": "portal",
-   "to_index": 7,
+   "to_index": 3,
    "via": "tap"
   }
  ],
  [
   "capture",
-  "note_added",
-  {
-   "surface": "portal",
-   "card_id": "555a6ac1-4ae5-4e64-891b-bac19c77021b",
-   "length": 91
-  }
- ],
- [
-  "capture",
-  "overlap_seen",
-  {
-   "surface": "portal",
-   "state": "timing",
-   "card_id": "263f1ea9-6a1e-47b5-9f9b-44f9800fcb03"
-  }
- ],
- [
-  "capture",
   "dot_jump",
   {
    "surface": "portal",
-   "to_index": 9,
+   "to_index": 2,
    "via": "tap"
   }
  ],
@@ -91,19 +65,10 @@
    "surface": "portal",
    "action": "like",
    "via": "button",
-   "card_id": "263f1ea9-6a1e-47b5-9f9b-44f9800fcb03",
-   "format": "insight",
-   "changed": true
-  }
- ],
- [
-  "capture",
-  "decision_changed",
-  {
-   "surface": "portal",
-   "from": "save",
-   "to": "like",
-   "card_id": "263f1ea9-6a1e-47b5-9f9b-44f9800fcb03"
+   "card_id": "3d3b288d-6792-4168-ae25-ccc5e66760ce",
+   "format": "post",
+   "series": "VB",
+   "changed": false
   }
  ],
  [
@@ -112,7 +77,16 @@
   {
    "surface": "portal",
    "state": "agree",
-   "card_id": "263f1ea9-6a1e-47b5-9f9b-44f9800fcb03"
+   "card_id": "3d3b288d-6792-4168-ae25-ccc5e66760ce",
+   "reveal": true
+  }
+ ],
+ [
+  "capture",
+  "moved_up",
+  {
+   "surface": "portal",
+   "card_id": "3d3b288d-6792-4168-ae25-ccc5e66760ce"
   }
  ],
  [
@@ -120,7 +94,7 @@
   "dot_jump",
   {
    "surface": "portal",
-   "to_index": 2,
+   "to_index": 4,
    "via": "tap"
   }
  ],
@@ -130,9 +104,10 @@
   {
    "surface": "portal",
    "action": "like",
-   "via": "swipe",
-   "card_id": "ddb56fd1-080f-4f20-bd22-da0165c358e4",
-   "format": "insight",
+   "via": "button",
+   "card_id": "c1b7cb8e-d1c0-45f8-9517-b338338282e6",
+   "format": "post",
+   "series": "VB",
    "changed": false
   }
  ],
@@ -142,7 +117,48 @@
   {
    "surface": "portal",
    "state": "split",
-   "card_id": "ddb56fd1-080f-4f20-bd22-da0165c358e4"
+   "card_id": "c1b7cb8e-d1c0-45f8-9517-b338338282e6",
+   "reveal": true
+  }
+ ],
+ [
+  "capture",
+  "note_added",
+  {
+   "surface": "portal",
+   "card_id": "c1b7cb8e-d1c0-45f8-9517-b338338282e6",
+   "length": 82
+  }
+ ],
+ [
+  "capture",
+  "feed_swipe",
+  {
+   "surface": "portal",
+   "action": "save",
+   "via": "button",
+   "card_id": "c2975be9-dfa9-4215-a215-9fa21087b1ea",
+   "format": "post",
+   "series": "VB",
+   "changed": false
+  }
+ ],
+ [
+  "capture",
+  "overlap_seen",
+  {
+   "surface": "portal",
+   "state": "timing",
+   "card_id": "c2975be9-dfa9-4215-a215-9fa21087b1ea",
+   "reveal": true
+  }
+ ],
+ [
+  "capture",
+  "reveal_dismissed",
+  {
+   "surface": "portal",
+   "state": "timing"
   }
  ],
  [
@@ -150,7 +166,7 @@
   "dot_jump",
   {
    "surface": "portal",
-   "to_index": 2,
+   "to_index": 4,
    "via": "tap"
   }
  ],
@@ -159,18 +175,8 @@
   "ghost_tapped",
   {
    "surface": "portal",
-   "article_id": "3e4c4873-4b2b-4bac-846e-00cfbf2d450b",
-   "format": "insight"
-  }
- ],
- [
-  "capture",
-  "article_interest",
-  {
-   "surface": "portal",
-   "article_id": "3e4c4873-4b2b-4bac-846e-00cfbf2d450b",
-   "card_id": "263f1ea9-6a1e-47b5-9f9b-44f9800fcb03",
-   "format": "insight"
+   "article_id": "8add2b56-951c-460c-a674-27bee47f4954",
+   "format": "post"
   }
  ],
  [
@@ -178,18 +184,9 @@
   "library_open",
   {
    "surface": "portal",
-   "article_id": "1bbb84f3-6ff2-4c6e-aeb2-4e39636036d7",
+   "article_id": "553f5a86-290e-4a13-ad97-3e7fa29e6c5f",
    "status": "delivered",
-   "format": "pillar"
-  }
- ],
- [
-  "capture",
-  "article_copied",
-  {
-   "surface": "portal",
-   "article_id": "1bbb84f3-6ff2-4c6e-aeb2-4e39636036d7",
-   "format": "pillar"
+   "format": "post"
   }
  ],
  [
@@ -197,25 +194,7 @@
   "marked_live",
   {
    "surface": "portal",
-   "article_id": "1bbb84f3-6ff2-4c6e-aeb2-4e39636036d7",
-   "live": true
-  }
- ],
- [
-  "capture",
-  "marked_live",
-  {
-   "surface": "portal",
-   "article_id": "1bbb84f3-6ff2-4c6e-aeb2-4e39636036d7",
-   "live": false
-  }
- ],
- [
-  "capture",
-  "marked_live",
-  {
-   "surface": "portal",
-   "article_id": "1bbb84f3-6ff2-4c6e-aeb2-4e39636036d7",
+   "article_id": "553f5a86-290e-4a13-ad97-3e7fa29e6c5f",
    "live": true
   }
  ],
@@ -229,19 +208,59 @@
  ],
  [
   "capture",
-  "invite_sent",
+  "hub_opened",
   {
    "surface": "portal",
-   "count": 1,
-   "requested": 1
+   "items": 6
   }
  ],
  [
   "capture",
-  "hub_locked_viewed",
+  "hub_item_moved",
   {
    "surface": "portal",
-   "items": 5
+   "kind": "article"
+  }
+ ],
+ [
+  "capture",
+  "hub_pin_added",
+  {
+   "surface": "portal",
+   "emoji": "🔥",
+   "attached": true
+  }
+ ],
+ [
+  "capture",
+  "hub_item_moved",
+  {
+   "surface": "portal",
+   "kind": "article"
+  }
+ ],
+ [
+  "capture",
+  "hub_item_hidden",
+  {
+   "surface": "portal",
+   "kind": "text"
+  }
+ ],
+ [
+  "capture",
+  "hub_item_unhidden",
+  {
+   "surface": "portal",
+   "kind": "text"
+  }
+ ],
+ [
+  "capture",
+  "hub_text_added",
+  {
+   "surface": "portal",
+   "length": 37
   }
  ],
  [
@@ -249,15 +268,15 @@
   "hub_tapped",
   {
    "surface": "portal",
-   "members": 3
+   "members": 2
   }
  ],
  [
   "capture",
-  "hub_locked_viewed",
+  "hub_opened",
   {
    "surface": "portal",
-   "items": 5
+   "items": 8
   }
  ]
 ]
