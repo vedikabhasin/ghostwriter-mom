@@ -19,43 +19,17 @@
 </script>
 <style>
 /* -----------------------------------------------------------------------------
-   Ghostwriter Mom swipe feed. Same tokens as the main site. One idea per
-   screen. The card is the page.
+   Ghostwriter Mom swipe feed.
+   Format + action colors + typography + easing all come from the shared
+   /styles/tokens.css. Only sales-page-specific state variables (the drag
+   tints) live locally.
    ----------------------------------------------------------------------------- */
+@import url('/styles/tokens.css');
 @import url('https://fonts.googleapis.com/css2?family=Inter+Tight:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&display=swap');
 @font-face{font-family:"Palatino Brand";src:url("fonts/pala.ttf") format("truetype");font-weight:400 700;font-display:swap;}
 @font-face{font-family:"PW School Script";src:url("fonts/PWSchoolScript.ttf") format("truetype");font-display:swap;}
 
 :root{
-  --canvas:#F1F0EC; --white:#FFFFFF; --paper:#FDFCF8;
-  --ink:#0E0E0E; --ink-pill:#171717; --ink-soft:#5F5F5F; --grey-body:#8A8A8A;
-  --accent:#B8FF71; --accent-ink:#245C15;
-
-  /* Main-site brand glow — used behind primary CTAs on hover. */
-  --glow:conic-gradient(from 180deg,#ff6ec7,#ffd36e,#b8ff71,#6ee7ff,#9d7bff,#ff6ec7);
-
-  /* Action tints (used for drag crossfade + gesture stamps). */
-  --pass:#FF9DC0; --pass-ink:#5A1E3B;
-  --like:#B8FF71; --like-ink:#194111;
-  --super:#B79CFF; --super-ink:#2A1A63;
-  --save:#F5E84A; --save-ink:#3A3200;
-
-  /* Format tints. Pillar = violet, Insight = blue, Post = yellow.
-     Refresh is a TAG that pins an orange corner marker on the card. */
-  --f-pillar:#B79CFF;   --f-pillar-ink:#2A1A63;
-  --f-insight:#8CC8FF;  --f-insight-ink:#123458;
-  --f-post:#F5E84A;     --f-post-ink:#3A3200;
-  --tag-refresh:#FFB45A; --tag-refresh-ink:#5A2E00;
-
-  --font-display:"Inter Tight","Neue Haas Grotesk Display",system-ui,sans-serif;
-  --font-accent:"Palatino Brand",Georgia,serif;
-  --font-body:"Inter Tight",system-ui,sans-serif;
-  --font-mono:ui-monospace,"SF Mono","SFMono-Regular",Menlo,Consolas,monospace;
-
-  --ease:cubic-bezier(0.22,1,0.36,1);
-  --ease-spring:cubic-bezier(0.34,1.56,0.64,1);
-  --radius-card:22px;
-
   --tint-format:transparent;
   --tint-action:transparent;
   --tint-action-strength:0;
@@ -242,34 +216,54 @@ body.is-dragging{overflow:hidden; touch-action:none;}
              inset 0 0 0 2px var(--f-color, transparent);
   transform:translateY(0) scale(1);
 }
+/* Peek cards share the front card's exact width, horizontal center, and
+   transform origin. Offset is vertical only — 6px and 12px below the front
+   card, at lower opacity, with EVERY child hidden so no text bleeds through. */
 .card[data-depth="1"], .card[data-depth="2"]{
   background:var(--f-back, #EFECE4);
   box-shadow:0 12px 30px -18px rgba(14,14,14,0.25),
              inset 0 0 0 2px var(--f-color, transparent);
   border:1px solid rgba(14,14,14,0.06);
   pointer-events:none;
+  transform-origin:center top;
 }
-.card[data-depth="1"]{z-index:2; transform:translateY(-10px) scale(0.965); opacity:0.94;}
-.card[data-depth="2"]{z-index:1; transform:translateY(-20px) scale(0.93);  opacity:0.82;}
-.card[data-depth="1"] > :not(.card-format-slot),
+.card[data-depth="1"]{z-index:2; transform:translateY(6px);  opacity:0.72;}
+.card[data-depth="2"]{z-index:1; transform:translateY(12px); opacity:0.48;}
+/* Hide everything on peek cards — no format pill, no title, nothing. */
+.card[data-depth="1"] > *,
 .card[data-depth="2"] > *{visibility:hidden;}
 
 .card.fmt-pillar  { --f-color: var(--f-pillar);  --f-back:#E5DDFF; }
 .card.fmt-insight { --f-color: var(--f-insight); --f-back:#DAECFF; }
-.card.fmt-post    { --f-color: var(--f-post);    --f-back:#FDF6C7; }
+.card.fmt-post    { --f-color: var(--f-post);    --f-back:#CDF4F1; }
 
+/* Refresh marker — ink outline, no fill. Same shape as .gwm-marker. */
 .card.has-refresh::before{
   content:'Refresh';
   position:absolute; top:16px; right:16px;
-  background:var(--tag-refresh); color:var(--tag-refresh-ink);
-  padding:4px 10px; border-radius:999px;
+  background:transparent; color:var(--marker-ink);
+  border:1.5px solid var(--marker-outline);
+  padding:3px 10px 3px 11px; border-radius:999px;
   font-family:var(--font-mono); font-size:9px; font-weight:700;
   letter-spacing:0.16em; text-transform:uppercase;
   z-index:2; pointer-events:none;
-  box-shadow:0 4px 10px -4px rgba(90,46,0,0.35);
+  display:inline-flex; align-items:center; justify-content:center; line-height:1;
 }
 .card[data-depth="1"].has-refresh::before,
 .card[data-depth="2"].has-refresh::before{ visibility:hidden; }
+
+/* Series label — small ink-outline pill next to the format pill. Only
+   rendered when the card carries a series (VB / BlendXR). */
+.card-series{
+  display:inline-flex; align-items:center; justify-content:center;
+  padding:3px 8px 3px 9px; border-radius:999px; line-height:1;
+  font-family:var(--font-mono); font-size:9px; font-weight:700;
+  letter-spacing:0.14em; text-transform:uppercase;
+  background:transparent; color:var(--marker-ink);
+  border:1.5px solid var(--marker-outline);
+  margin-left:6px;
+  vertical-align:middle;
+}
 
 .card-format{
   display:inline-flex; align-self:flex-start; align-items:center;
@@ -869,36 +863,69 @@ body.dir-save  .ctl-save{
 .a-source_opened, .a-approved, .a-free_pick, .a-unlock_clicked,
 .a-waitlist_joined, .a-referral_sent, .a-portal_interest{background:rgba(14,14,14,0.10); color:#333;}
 
-/* Library locked slots — title above status so 375px keeps the title readable */
-.pd-library{display:flex; flex-direction:column; gap:6px;}
+/* Library locked slots — ghost card style.
+   Opaque paper-white body, dashed border in the format color. Two faint
+   dashed-outline copies trail down-right (6px @ 25% opacity, 12px @ 12%
+   opacity) via ::before + ::after so the slot reads as a stack of future
+   drafts. "Approved" text stamp on the .arriving free-pick slot; other
+   slots carry the same ghost silhouette without the stamp. */
+.pd-library{display:flex; flex-direction:column; gap:16px;}
 .pd-library-slot{
-  display:grid; grid-template-columns:22px 1fr; gap:10px; align-items:start;
-  padding:10px;
-  background:rgba(14,14,14,0.03);
-  border:1px dashed rgba(14,14,14,0.15);
-  border-radius:10px;
+  position:relative; isolation:isolate;
+  display:grid; grid-template-columns:22px 1fr auto; gap:10px; align-items:start;
+  padding:12px 14px 14px;
+  background:var(--paper, #FDFCF8);
+  border:1.5px dashed var(--fmt-color, rgba(14,14,14,0.28));
+  border-radius:14px;
+  color:var(--ink);
 }
-.pd-library-slot.arriving{
-  background:rgba(184,255,113,0.18);
-  border-color:rgba(184,255,113,0.45);
+/* Ghost trail — two offset dashed outlines. They're absolutely positioned
+   OUTSIDE the slot's clip because .pd-library has enough gap to hold them. */
+.pd-library-slot::before,
+.pd-library-slot::after{
+  content:""; position:absolute; inset:0;
+  border:1.5px dashed var(--fmt-color, rgba(14,14,14,0.28));
+  border-radius:14px;
+  pointer-events:none; z-index:-1;
 }
+.pd-library-slot::before{ transform:translate(6px, 6px);   opacity:0.25; }
+.pd-library-slot::after { transform:translate(12px, 12px); opacity:0.12; }
+
+.pd-library-slot.fmt-pillar  { --fmt-color:var(--f-pillar);  }
+.pd-library-slot.fmt-insight { --fmt-color:var(--f-insight); }
+.pd-library-slot.fmt-post    { --fmt-color:var(--f-post);    }
+
 .pd-library-slot .idx{
   width:22px; height:22px; border-radius:50%;
-  background:rgba(14,14,14,0.08); color:#4a4a4a;
+  background:rgba(14,14,14,0.08); color:var(--ink);
   display:inline-flex; align-items:center; justify-content:center;
   font-family:var(--font-mono); font-weight:700; font-size:10px;
-  margin-top:1px;
+  line-height:1;
+  margin-top:2px;
 }
 .pd-library-slot .lib-body{display:flex; flex-direction:column; gap:3px; min-width:0;}
 .pd-library-slot .lib-title{
   font-family:var(--font-body); font-size:13px; line-height:1.35; color:var(--ink);
-  word-break:break-word; font-weight:500;
+  word-break:break-word; font-weight:600;
 }
 .pd-library-slot .status{
   font-family:var(--font-mono); font-size:9.5px; letter-spacing:0.14em; text-transform:uppercase;
   color:#4a4a4a; font-weight:700;
 }
-.pd-library-slot.arriving .status{color:var(--like-ink);}
+/* "Approved" text stamp on the arriving (free-pick) slot. */
+.pd-library-slot .approved-stamp{
+  display:inline-flex; align-items:center; justify-content:center;
+  align-self:flex-start;
+  padding:4px 10px 4px 12px;
+  border:1.5px solid var(--fmt-color, rgba(14,14,14,0.28));
+  border-radius:6px;
+  font-family:var(--font-mono); font-size:9px; font-weight:800;
+  letter-spacing:0.18em; text-transform:uppercase;
+  color:var(--ink);
+  background:transparent; line-height:1;
+  transform:rotate(-4deg);
+}
+.pd-library-slot:not(.arriving) .approved-stamp{ display:none; }
 
 /* Price block */
 .price-block{
@@ -1507,7 +1534,8 @@ body.dir-save  .ctl-save{
           angle:    c.angle,
           evidence: c.evidence,
           tags:     Array.isArray(c.tags) ? c.tags : [],
-          sources:  Array.isArray(c.sources) ? c.sources : []
+          sources:  Array.isArray(c.sources) ? c.sources : [],
+          series:   c.series || null
         };
       }),
       // Fill in stripeLink19 from the JSON copy (Stripe Payment Link is not
@@ -1791,7 +1819,10 @@ body.dir-save  .ctl-save{
     }
     if(hasRefresh) el.classList.add('has-refresh');
     el.innerHTML =
-      '<span class="card-format card-format-slot" data-slot="fmt"></span>' +
+      '<div class="card-format-row">' +
+        '<span class="card-format card-format-slot" data-slot="fmt"></span>' +
+        '<span class="card-series" data-slot="series" hidden></span>' +
+      '</div>' +
       '<h2 class="card-title"    data-slot="title"></h2>' +
       '<p  class="card-angle"    data-slot="angle"></p>' +
       '<p  class="card-evidence" data-slot="evidence"></p>' +
@@ -1803,6 +1834,11 @@ body.dir-save  .ctl-save{
       '<span class="card-stamp super" aria-hidden="true">Fast-track</span>' +
       '<div class="ghost-hint" data-slot="hint" hidden></div>';
     el.querySelector('[data-slot="fmt"]').textContent      = fmtLabel;
+    var seriesEl = el.querySelector('[data-slot="series"]');
+    if(card.series){
+      seriesEl.textContent = String(card.series);
+      seriesEl.hidden = false;
+    }
     el.querySelector('[data-slot="title"]').textContent    = String(card.title || '');
     el.querySelector('[data-slot="angle"]').textContent    = String(card.angle || '');
     el.querySelector('[data-slot="evidence"]').textContent = String(card.evidence || '');
@@ -2378,16 +2414,18 @@ body.dir-save  .ctl-save{
       ordered.forEach(function(x, i){
         var full = findFull(x.brief.id);
         var title = full ? String(full.title) : String(x.brief.title || '');
+        var format = String((full && full.format) || x.brief.format || 'post').toLowerCase();
         var arriving = String(x.brief.id) === String(freeId);
         var slot = document.createElement('div');
-        slot.className = 'pd-library-slot' + (arriving ? ' arriving' : '');
+        slot.className = 'pd-library-slot fmt-' + format + (arriving ? ' arriving' : '');
         var idx = document.createElement('span'); idx.className = 'idx'; idx.textContent = String(i + 1);
         var body = document.createElement('div'); body.className = 'lib-body';
         var lt  = document.createElement('span'); lt.className = 'lib-title'; lt.textContent = title;
         var st  = document.createElement('span'); st.className = 'status';
         st.textContent = arriving ? 'Arriving' : 'Approved, not written';
         body.appendChild(lt); body.appendChild(st);
-        slot.appendChild(idx); slot.appendChild(body);
+        var stamp = document.createElement('span'); stamp.className = 'approved-stamp'; stamp.textContent = 'Approved';
+        slot.appendChild(idx); slot.appendChild(body); slot.appendChild(stamp);
         lib.appendChild(slot);
       });
     }

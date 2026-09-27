@@ -63,7 +63,9 @@ export function avatarSVG(member, size = 28) {
     `</svg>`;
 }
 
-// The Ghostwriter Mom pencil mascot, used as the Hub sticker.
+// The Ghostwriter Mom pencil mascot — plain, no face. Mirrors the SVG that
+// serves as the waitlist page cursor. Used as the Hub sticker on the portal;
+// shared so the two surfaces read as one product.
 export function pencilSVG(size = 88) {
   return `<svg width="${size}" height="${size}" viewBox="0 0 88 88" aria-hidden="true" focusable="false">` +
     `<g transform="rotate(-38 44 44)" stroke="#0E0E0E" stroke-width="1.8" stroke-linejoin="round">` +
@@ -73,9 +75,5 @@ export function pencilSVG(size = 88) {
       `<rect x="41" y="27" width="6" height="40" fill="#FFD84A" stroke="none"/>` +
       `<rect x="35" y="67" width="18" height="6" fill="#BBBBBB"/>` +
       `<rect x="35" y="73" width="18" height="10" rx="3.5" fill="#B8FF71"/>` +
-      `<circle cx="40" cy="41" r="3.4" fill="#fff"/><circle cx="40.6" cy="41.6" r="1.7" fill="#0E0E0E" stroke="none"/>` +
-      `<circle cx="48" cy="41" r="3.4" fill="#fff"/><circle cx="48.6" cy="41.6" r="1.7" fill="#0E0E0E" stroke="none"/>` +
-      `<path d="M40.5 49q3.5 3 7 0" fill="none" stroke-linecap="round"/>` +
-      `<circle cx="37.6" cy="47" r="1.6" fill="#FF9DC0" stroke="none"/><circle cx="50.4" cy="47" r="1.6" fill="#FF9DC0" stroke="none"/>` +
     `</g></svg>`;
 }

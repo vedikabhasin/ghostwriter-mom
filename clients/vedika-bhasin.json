@@ -1,0 +1,188 @@
+{
+  "slug": "vedika-bhasin",
+  "companyName": "Vedika Bhasin",
+  "contactFirstName": "Vedika",
+  "isInternal": true,
+  "signal": {
+    "text": "Civic Twin posts go live Sep 28 and Oct 5. The VB series starts the week after.",
+    "source": "Content calendar",
+    "date": "2026-09-27"
+  },
+  "cards": [
+    {
+      "id": "vb-01", "series": "VB", "format": "post",
+      "title": "I Design for the Moment AI Is Wrong",
+      "angle": "Everyone designs for the moment AI gets it right. The manifesto post: judgment is the product.",
+      "evidence": "Objects: three wrong moments designed for, Civic Twin's approval gate, Brief Monster's Trap page, the object-detection errors in Existential Until I Met You. Media: three-panel carousel, one real screenshot per wrong moment. Links in first comment.",
+      "tags": ["manifesto", "ai", "design"],
+      "sources": [
+        { "title": "Civic Twin",    "publisher": "Vedika Bhasin", "url": "https://twincitysf.netlify.app" },
+        { "title": "Brief Monster", "publisher": "Vedika Bhasin", "url": "https://briefmonster.netlify.app" }
+      ]
+    },
+    {
+      "id": "vb-02", "series": "VB", "format": "post",
+      "title": "The Parts Other Creators Build With",
+      "angle": "Making an effect is different from making the pieces effects are made from. The quietest work outlives the campaign.",
+      "evidence": "Object: Effect House subgraphs authored to fill platform gaps, generalized into templates, then shipped as official nodes. The Physics category now carries 17+ nodes and 5+ subgraphs from these templates. Media: Subgraphs turned nodes and Where the platform is now slides from the XR Specialist deck. Add the Effect House template page link.",
+      "tags": ["effect-house", "ar", "platform"],
+      "sources": [
+        { "title": "AR reel", "publisher": "YouTube", "url": "https://youtu.be/dp1iao-g1Ys" }
+      ]
+    },
+    {
+      "id": "bx-01", "series": "BlendXR", "format": "post",
+      "title": "The Experienced Eyes Are Retiring",
+      "angle": "ABC estimates construction must attract 349,000 net new workers in 2026, mostly to replace retirements. What leaves the site when a 30-year foreman does?",
+      "evidence": "Object: the veteran who knows where to look before anything goes wrong. Direction, not a shipped feature: capture what experts notice and train new hires against it. Visual: two gaze paths over one real engine capture (Figma overlay), expert calm and targeted, new hire scattered. Base: blueprint to blocking capture. ABC figure confirmed on abc.org (Jan 15, 2026); it is a model-based estimate, so say estimates. Share direction, not scoring thresholds.",
+      "tags": ["construction", "workforce", "training"],
+      "sources": [
+        { "title": "ABC: Construction Must Attract 349,000 Workers in 2026 (Jan 15, 2026)", "publisher": "ABC", "url": "https://www.abc.org/News-Media/News-Releases/abc-construction-industry-must-attract-349000-workers-in-2026-despite-macroeconomic-headwinds" },
+        { "title": "ABC 2026 labor demand (Jan 28, 2026)", "publisher": "Construction Dive", "url": "https://www.constructiondive.com/news/labor-demand-gap-shrinks-abc-construction-staff/810681/" }
+      ]
+    },
+    {
+      "id": "vb-03", "series": "VB", "format": "post",
+      "title": "Designing Overwhelm Without Harm",
+      "angle": "Making people feel focus fatigue without making them sick. Empathy needs a way out.",
+      "evidence": "Object: Grok's challenge and solution table. Distortions anchored to focal objects, audio layers offset by small delays, a safe exit during high chaos. Media: the table as carousel slides plus one award photo. Links: ASU Worlds for Change news and Vimeo demo.",
+      "tags": ["vr", "empathy", "design"],
+      "sources": [
+        { "title": "Sun Devil wins worldbuilding competition", "publisher": "ASU News", "url": "https://news.asu.edu/20240402-arts-humanities-and-education-sun-devil-wins-worldbuilding-competition-game-imagines" },
+        { "title": "Grok demo", "publisher": "Vimeo", "url": "https://vimeo.com/651126224" }
+      ]
+    },
+    {
+      "id": "vb-04", "series": "VB", "format": "post",
+      "title": "Existential Until I Met You",
+      "angle": "Technology doesn't exist without humans, and feels existential without them too. The machine finds joy in being seen.",
+      "evidence": "Object: a doorbell camera feed run through MediaPipe and TouchDesigner that stays blurry and vintage until a person looks back, then turns vivid and radiant. Media: 20 to 30 second native clip plus the early object-detection error screenshots.",
+      "tags": ["creative-tech", "touchdesigner", "ai"],
+      "sources": [
+        { "title": "Existential Until I Met You", "publisher": "YouTube", "url": "https://youtu.be/4maFEUZdybs" }
+      ]
+    },
+    {
+      "id": "bx-02", "series": "BlendXR", "format": "post",
+      "title": "Completion Is Not Competence",
+      "angle": "A training certificate proves someone finished and says nothing about what they noticed. Construction and extraction workers had 1,032 work deaths in 2024, more than any other occupation group.",
+      "evidence": "Object: the pass/fail checkbox. Loops in the earlier procurement post and BlendXR's attention and observation scoring, shown as a demo on synthetic session data. Visual: two slides, a plain completion certificate, then the same trainee's attention score card (Dashboard and gauge mocks). Most applies to count; the highest rate is transportation and material moving (12.5 per 100,000). Keep most programs report pass/fail as a view, not a statistic.",
+      "tags": ["safety", "training", "data"],
+      "sources": [
+        { "title": "Census of Fatal Occupational Injuries 2024", "publisher": "BLS", "url": "https://www.bls.gov/news.release/cfoi.nr0.htm" },
+        { "title": "CFOI full release (PDF)",                    "publisher": "BLS", "url": "https://www.bls.gov/news.release/pdf/cfoi.pdf" }
+      ]
+    },
+    {
+      "id": "vb-05", "series": "VB", "format": "post",
+      "title": "The Most Useful Page Says What Not to Do",
+      "angle": "AI tools give you ideas but never a warning. Taste is mostly refusal.",
+      "evidence": "Object: Brief Monster's Trap page, the tempting move and why it was killed. Media: the Trap page from the Protein Ramen PDF (Builds/BriefMonster/V2).",
+      "tags": ["ai", "taste", "product"],
+      "sources": [
+        { "title": "Brief Monster", "publisher": "Vedika Bhasin", "url": "https://briefmonster.netlify.app" }
+      ]
+    },
+    {
+      "id": "vb-06", "series": "VB", "format": "post",
+      "title": "Three Questions, Eight Answers, 54.8M Views",
+      "angle": "The smallest logic can feel personal. Depth doesn't need complexity.",
+      "evidence": "Object: the Macy's Gift Finder. Three binary questions (holiday aesthetic, gifter or receiver, maximalist or minimalist) branching into eight personalities. Media: TT_Macys_decision_tree plus the node inventory slide. Client clip: only what is already public in the AR reel; check the BTM confidentiality agreement.",
+      "tags": ["ar", "branded", "logic"],
+      "sources": [
+        { "title": "Macy's Gift Finder", "publisher": "YouTube", "url": "https://youtu.be/xH1u7KyVSDA" }
+      ]
+    },
+    {
+      "id": "vb-07", "series": "VB", "format": "post",
+      "title": "Physics Before the Tool Had Physics",
+      "angle": "Effect House had no falling objects yet. Constraints are where invention starts.",
+      "evidence": "Object: the Wellys game, extracting per-axis rotation and position from total head rotation with math nodes because the platform couldn't split them. 80K+ interactions in two weeks. Media: axis-split slides and the Wellys node graph. Client clip: public AR reel only; check BTM confidentiality.",
+      "tags": ["effect-house", "ar", "constraints"],
+      "sources": [
+        { "title": "Wellys", "publisher": "YouTube", "url": "https://youtu.be/vvOF5vjwCcU" }
+      ]
+    },
+    {
+      "id": "bx-03", "series": "BlendXR", "format": "post",
+      "title": "Noticing Too Early Is Also a Miss",
+      "angle": "In a 2025 VR eye-tracking study, trainees who misidentified a hazard decided fastest and scanned most, yet took in the least. Speed is not awareness.",
+      "evidence": "Object: the timing window. BlendXR scores early and late noticing as two different failures, shown through the police sim's visual cue phases (default pulse, alert pulse, fade, bounce). Visual: a three-zone timeline (too early, the window, too late) in Figma, plus the Visual Cue Framework slides. The study used 36 construction and civil engineering students: say trainees, not workers. Share the principle, never thresholds.",
+      "tags": ["eye-tracking", "research", "attention"],
+      "sources": [
+        { "title": "Luo, Seo, Hasanzadeh (2025)", "publisher": "KSCE Journal of Civil Engineering", "url": "https://www.sciencedirect.com/science/article/pii/S1226798825002880" }
+      ]
+    },
+    {
+      "id": "vb-08", "series": "VB", "format": "post",
+      "title": "Three Entries, One Exit",
+      "angle": "What makes a stranger walking past decide to stop? You can't get these alone.",
+      "evidence": "Object: the Cannes Lions 2023 effect for Whalar. QR, mirror and screensaver entries, with rewards that unlock only as more people join (clouds, rainbows, shooting stars, whale clouds). Three weeks from concept lock to platform submission. Media: escalation logic and production timeline slides. Credit the artists. Client clip: public AR reel only.",
+      "tags": ["ar", "events", "social"],
+      "sources": [
+        { "title": "Cannes Lions 2023 effect", "publisher": "YouTube", "url": "https://youtu.be/9YdmqL18IVY" }
+      ]
+    },
+    {
+      "id": "vb-09", "series": "VB", "format": "post",
+      "title": "I Spent a Year Studying VR That Shows Nothing",
+      "angle": "Content-free VR as an intervention for restlessness. Stillness is a design material.",
+      "evidence": "Object: the IRB-reviewed thesis on minimal VR. Media: one figure from the thesis. Add the Zenodo DOI link before posting.",
+      "tags": ["research", "vr", "stillness"],
+      "sources": [
+        { "title": "Vedika Bhasin", "publisher": "Vedika Bhasin", "url": "https://vedikabhasin.com" }
+      ]
+    },
+    {
+      "id": "vb-10", "series": "VB", "format": "post",
+      "title": "A UX Audit in 24 Hours",
+      "angle": "Speed without cutting rigor. What to check first on any site.",
+      "evidence": "Object: The Swarm hired a second audit of 10+ onboarding screens after the first. Media: one blurred Figma audit frame plus one Senja testimonial.",
+      "tags": ["ux", "audit", "speed"],
+      "sources": [
+        { "title": "Testimonials", "publisher": "Senja", "url": "https://senja.io/p/vedika-bhasin/8WlAgrO" }
+      ]
+    },
+    {
+      "id": "bx-04", "series": "BlendXR", "format": "post",
+      "title": "Realism Didn't Stop the Falls",
+      "angle": "Falls, slips and trips killed 844 workers in 2024, and better graphics haven't moved that. Fidelity is a budget line. Attention is a design choice.",
+      "evidence": "Object: one design decision that isn't realism. Prototyping stages from blueprint to blocking to simulation, showing where attention gets designed before fidelity is added. Visual: 3 to 4 slide carousel from the prototyping images, plus a closing slide with the line. Falls fell 4.6% from 2023. Don't post the week after the other BLS post.",
+      "tags": ["safety", "prototyping", "design"],
+      "sources": [
+        { "title": "Census of Fatal Occupational Injuries 2024", "publisher": "BLS", "url": "https://www.bls.gov/news.release/cfoi.nr0.htm" }
+      ]
+    },
+    {
+      "id": "vb-11", "series": "VB", "format": "post",
+      "title": "Voice Beyond the Screen",
+      "angle": "Features that leave the app. The next interface is a sentence.",
+      "evidence": "Object: an Alexa skill layer for a tracking app (Alexa, check in with me at 7pm), built because manual logging is where users drop off. Media: a simple voice-flow diagram of the utterances.",
+      "tags": ["voice", "ux", "product"],
+      "sources": [
+        { "title": "Alexa skill demo", "publisher": "YouTube", "url": "https://youtu.be/LhCsewf-PpA" }
+      ]
+    },
+    {
+      "id": "vb-12", "series": "VB", "format": "post",
+      "title": "An AI With a Gym-Girlie Voice",
+      "angle": "Personality is a design decision. Tone is something you design on purpose.",
+      "evidence": "Object: a haiku generator that gives Gen Z advice with sass. Media: three output screenshots.",
+      "tags": ["ai", "tone", "creative-tech"],
+      "sources": [
+        { "title": "Daily Prescription", "publisher": "Vedika Bhasin", "url": "https://dailyprescription.vercel.app/" }
+      ]
+    },
+    {
+      "id": "bx-05", "series": "BlendXR", "format": "post",
+      "title": "What Eye Tracking Shows a Safety Director",
+      "angle": "Researchers already run standalone VR eye tracking on live construction sites and report recognized, missed and never-seen hazards. What's missing is a view a safety director can read in two minutes.",
+      "evidence": "Object: the two-minute dashboard. First public look at the BlendXR portal (heat map, session replay, per-task scores, trend line), labeled as a demo on synthetic data. Ends on scoping calls being open. Visual: Dashboard and Pipe Dashboard captures (confirm Pipe Dashboard is a real capture), final slide Scoping calls open. The product reveal: post last in the BlendXR run. No formulas.",
+      "tags": ["eye-tracking", "product", "safety"],
+      "sources": [
+        { "title": "Özel and Pekeriçli (2025)",        "publisher": "Automation in Construction",           "url": "https://www.sciencedirect.com/science/article/abs/pii/S0926580525001207" },
+        { "title": "Luo, Seo, Hasanzadeh (2025)",     "publisher": "KSCE Journal of Civil Engineering",    "url": "https://www.sciencedirect.com/science/article/pii/S1226798825002880" }
+      ]
+    }
+  ]
+}

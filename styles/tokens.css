@@ -1,0 +1,97 @@
+/* ---------------------------------------------------------------------------
+   Shared design tokens for ghostwriter.mom.
+   Loaded by /swipe.html, /portal/portal.css, and /waitlist.html so both
+   surfaces read the same values. Change a color here to change it everywhere.
+   The seven format + action colors are the only ones anything on-brand should
+   use. Nothing else in the CSS should carry a raw hex for them.
+   --------------------------------------------------------------------------- */
+:root{
+  /* -------- brand + neutrals -------- */
+  --canvas:#F1F0EC; --canvas-alt:#F2F2F2; --paper:#FDFCF8; --white:#FFFFFF;
+  --ink:#0E0E0E; --ink-pill:#171717; --ink-soft:#5F5F5F;
+  --grey-300:#C2C2C2; --grey-body:#6a6a6a;
+  --accent:#B8FF71; --accent-ink:#245C15;
+  --glow:conic-gradient(from 180deg,#ff6ec7,#ffd36e,#b8ff71,#6ee7ff,#9d7bff,#ff6ec7);
+
+  /* -------- formats (card categories) --------
+     pillar = violet, insight = blue, post = teal. */
+  --f-pillar:#B79CFF;   --f-pillar-ink:#2A1A63;
+  --f-insight:#8CC8FF;  --f-insight-ink:#123458;
+  --f-post:#4ECDC4;     --f-post-ink:#0F5C58;
+
+  /* -------- actions (swipes) --------
+     like = green, pass = coral red, save = yellow, fasttrack = orange.
+     `super` is a legacy alias for fasttrack from the sales-page code. */
+  --like:#B8FF71;       --like-ink:#194111;
+  --pass:#FF6B5C;       --pass-ink:#5A1A12;
+  --save:#F5E84A;       --save-ink:#3A3200;
+  --fasttrack:#FFB45A;  --fasttrack-ink:#5A2E00;
+  --super:#FFB45A;      --super-ink:#5A2E00;
+
+  /* -------- neutral markers --------
+     Refresh, "New this week", Signal, series labels. Ink outline, no fill. */
+  --marker-ink:#0E0E0E;
+  --marker-outline:rgba(14,14,14,0.32);
+
+  /* -------- typography -------- */
+  --font-display:"Inter Tight","Neue Haas Grotesk Display",system-ui,sans-serif;
+  --font-accent:"Palatino Brand",Georgia,serif;
+  --font-body:"Inter Tight",system-ui,sans-serif;
+  --font-script:"PW School Script",cursive;
+  --font-mono:ui-monospace,"SF Mono","SFMono-Regular",Menlo,Consolas,monospace;
+  --mono:var(--font-mono);
+
+  /* -------- motion + geometry -------- */
+  --ease:cubic-bezier(0.22,1,0.36,1);
+  --ease-spring:cubic-bezier(0.34,1.56,0.64,1);
+  --dur:220ms;
+  --radius-pill:999px;
+  --radius-card:22px;
+}
+
+/* ---------------------------------------------------------------------------
+   Shared utilities.
+   Centering: text in tags and buttons used to sit off-center because
+   monospace letter-spacing adds trailing space. All tags and buttons flex-
+   center with line-height 1, and monospace tags carry a padding-right equal
+   to their letter-spacing so the last letter's tail is compensated.
+   --------------------------------------------------------------------------- */
+.gwm-center,
+.gwm-chip,
+.gwm-tag,
+.gwm-pill,
+.gwm-btn{
+  display:inline-flex; align-items:center; justify-content:center;
+  line-height:1;
+}
+/* Any element carrying a mono letter-spacing should either add
+   .gwm-mono-tag or set --mono-lsp on itself. */
+.gwm-mono-tag{
+  padding-right:0.14em;
+  letter-spacing:0.14em;
+}
+
+/* Ink-outline neutral marker (Refresh, New this week, Signal, series label).
+   Use this shape instead of a color fill for markers that aren't formats. */
+.gwm-marker{
+  display:inline-flex; align-items:center; justify-content:center;
+  padding:3px 9px 3px 10px;
+  border-radius:999px; line-height:1;
+  font-family:var(--font-mono); font-size:9.5px; font-weight:700;
+  letter-spacing:0.14em; text-transform:uppercase;
+  background:transparent; color:var(--marker-ink);
+  border:1.5px solid var(--marker-outline);
+}
+
+/* Series label component — same visual as .gwm-marker, sized to sit next to
+   the format pill on a card. */
+.gwm-series-label{
+  display:inline-flex; align-items:center; justify-content:center;
+  padding:3px 8px 3px 9px;
+  border-radius:999px; line-height:1;
+  font-family:var(--font-mono); font-size:9px; font-weight:700;
+  letter-spacing:0.14em; text-transform:uppercase;
+  background:transparent; color:var(--marker-ink);
+  border:1.5px solid var(--marker-outline);
+  vertical-align:middle;
+}

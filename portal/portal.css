@@ -1,37 +1,20 @@
 /* -----------------------------------------------------------------------------
-   Ghostwriter Mom portal. Same tokens, grid and glass as the sales page
-   (swipe.html). Three places: Feed, Library, Hub. The card is the focus.
+   Ghostwriter Mom portal.
+   Format + action colors + typography + easing come from /styles/tokens.css.
+   Only portal-specific state variables (tint state, overlap glows) live here.
    ----------------------------------------------------------------------------- */
+@import url('/styles/tokens.css');
 @import url('https://fonts.googleapis.com/css2?family=Inter+Tight:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&display=swap');
 @font-face{font-family:"Palatino Brand";src:url("/fonts/pala.ttf") format("truetype");font-weight:400 700;font-display:swap;}
 
 :root{
-  --canvas:#F1F0EC; --white:#FFFFFF; --paper:#FDFCF8;
-  --ink:#0E0E0E; --ink-pill:#171717; --ink-soft:#5F5F5F; --grey-body:#8A8A8A;
-  --accent:#B8FF71; --accent-ink:#245C15;
-  --glow:conic-gradient(from 180deg,#ff6ec7,#ffd36e,#b8ff71,#6ee7ff,#9d7bff,#ff6ec7);
-
-  --pass:#FF9DC0; --pass-ink:#5A1E3B;
-  --like:#B8FF71; --like-ink:#194111;
-  --super:#B79CFF; --super-ink:#2A1A63;
-  --save:#F5E84A; --save-ink:#3A3200;
-
-  --f-pillar:#B79CFF;   --f-pillar-ink:#2A1A63;
-  --f-insight:#8CC8FF;  --f-insight-ink:#123458;
-  --f-post:#F5E84A;     --f-post-ink:#3A3200;
-  --tag-refresh:#FFB45A; --tag-refresh-ink:#5A2E00;
-
-  /* Overlap glows */
-  --ov-agree:#6FE36A; --ov-split:#FF6EB0; --ov-timing:#F5D800;
-
-  --font-display:"Inter Tight","Neue Haas Grotesk Display",system-ui,sans-serif;
-  --font-accent:"Palatino Brand",Georgia,serif;
-  --font-body:"Inter Tight",system-ui,sans-serif;
-  --font-mono:ui-monospace,"SF Mono","SFMono-Regular",Menlo,Consolas,monospace;
-
-  --ease:cubic-bezier(0.22,1,0.36,1);
-  --ease-spring:cubic-bezier(0.34,1.56,0.64,1);
-  --radius-card:22px;
+  /* Overlap glows — each member's action color drives its overlap tint per
+     spec (Agree=like/green, Split=pass/coral, Timing=save/yellow) instead of
+     the three custom colors we used to keep here. Kept as aliases so the JS
+     that references --ov-* keeps working. */
+  --ov-agree:  var(--like);
+  --ov-split:  var(--pass);
+  --ov-timing: var(--save);
 
   --tint-format:transparent;
   --tint-action:transparent;
@@ -205,7 +188,7 @@ body[data-view="hub"] .topbar{max-width:520px; width:100%; margin:0 auto;}
 
 .card.fmt-pillar  { --f-color: var(--f-pillar);  --f-back:#E5DDFF; }
 .card.fmt-insight { --f-color: var(--f-insight); --f-back:#DAECFF; }
-.card.fmt-post    { --f-color: var(--f-post);    --f-back:#FDF6C7; }
+.card.fmt-post    { --f-color: var(--f-post);    --f-back:#CDF4F1; }
 .card.fmt-signal  { --f-color: rgba(14,14,14,0.85); --f-back:#E8E6E0; }
 
 /* Overlap edge glow on the top card */
@@ -213,12 +196,15 @@ body[data-view="hub"] .topbar{max-width:520px; width:100%; margin:0 auto;}
 .card[data-depth="0"].ov-split { box-shadow:0 0 0 2px var(--ov-split),  0 0 46px 6px rgba(255,110,176,0.5),  0 30px 80px -20px rgba(14,14,14,0.28), inset 0 1px 0 rgba(255,255,255,0.85);}
 .card[data-depth="0"].ov-timing{ box-shadow:0 0 0 2px var(--ov-timing), 0 0 46px 6px rgba(245,216,0,0.5),   0 30px 80px -20px rgba(14,14,14,0.28), inset 0 1px 0 rgba(255,255,255,0.85);}
 
+/* Refresh marker — ink outline (no fill), matching the sales page. */
 .card.has-refresh::before{
   content:'Refresh'; position:absolute; top:16px; right:16px;
-  background:var(--tag-refresh); color:var(--tag-refresh-ink);
-  padding:4px 10px; border-radius:999px;
+  background:transparent; color:var(--marker-ink);
+  border:1.5px solid var(--marker-outline);
+  padding:3px 10px 3px 11px; border-radius:999px;
   font-family:var(--font-mono); font-size:9px; font-weight:700; letter-spacing:0.16em; text-transform:uppercase;
-  z-index:2; pointer-events:none; box-shadow:0 4px 10px -4px rgba(90,46,0,0.35);
+  z-index:2; pointer-events:none;
+  display:inline-flex; align-items:center; justify-content:center; line-height:1;
 }
 .card[data-depth="1"].has-refresh::before, .card[data-depth="2"].has-refresh::before{visibility:hidden;}
 
@@ -476,7 +462,7 @@ body.dir-like .ctl-like, body.dir-pass .ctl-pass, body.dir-fasttrack .ctl-super,
 }
 .book.fmt-pillar {--f-color:var(--f-pillar);  --f-back:#EEE8FF; --spine:12px;}
 .book.fmt-insight{--f-color:var(--f-insight); --f-back:#E6F2FF; --spine:5px;}
-.book.fmt-post   {--f-color:var(--f-post);    --f-back:#FEF9D6; --spine:3px;}
+.book.fmt-post   {--f-color:var(--f-post);    --f-back:#D5F4F1; --spine:3px;}
 .book.top{cursor:grab;}
 .book.dragging{transition:none; cursor:grabbing;}
 .book:focus-visible{outline:3px solid var(--ink); outline-offset:3px;}

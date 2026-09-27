@@ -76,17 +76,28 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
   const subscriptionId = typeof session.subscription === "string" ? session.subscription : session.subscription?.id ?? null;
 
   let companyId: string | null = null;
+  let companyIsInternal = false;
   if (slug) {
     const { data, error } = await admin
       .from("companies")
-      .select("id")
+      .select("id, is_internal")
       .eq("slug", slug)
       .maybeSingle();
     if (error) throw error;
     companyId = data?.id ?? null;
+    companyIsInternal = !!data?.is_internal;
     if (!companyId) {
       console.warn("checkout.session.completed: unknown slug", slug, "event", session.id);
     }
+  }
+
+  // Internal companies (Vedika Bhasin's personal portal, etc.) never have
+  // their subscription_status flipped by Stripe. Their state is managed by
+  // hand. We return without touching anything so a stray checkout — most
+  // likely a test — is a no-op.
+  if (companyIsInternal) {
+    console.log("checkout.session.completed: ignoring internal company", slug, "event", session.id);
+    return;
   }
 
   if (companyId) {
@@ -136,13 +147,17 @@ async function handleSubscriptionDeleted(sub: Stripe.Subscription) {
   const endsAt = sub.current_period_end
     ? new Date(sub.current_period_end * 1000).toISOString()
     : null;
+  // Guard: internal companies are never touched by Stripe. In practice their
+  // stripe_subscription_id is null so the update would no-op, but making the
+  // filter explicit protects against a rare id collision.
   const { error } = await admin
     .from("companies")
     .update({
       subscription_status:  "canceled",
       subscription_ends_at: endsAt,
     })
-    .eq("stripe_subscription_id", sub.id);
+    .eq("stripe_subscription_id", sub.id)
+    .eq("is_internal", false);
   if (error) throw error;
 }
 

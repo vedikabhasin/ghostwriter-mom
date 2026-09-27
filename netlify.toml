@@ -6,20 +6,47 @@
   publish = "."
 
 # -----------------------------------------------------------------------------
-# Routing
-# The swipe feed template is served from /swipe.html. Every /:slug URL that
-# does not match a real file resolves to it with ?slug=:slug, so a new client
-# is one JSON file in /clients/, never a new HTML file.
-# Netlify serves existing files (index.html, /assets/*, etc.) first, so this
-# rule only fires for unknown paths.
+# Routing (order matters — Netlify picks the first match)
+# 1. Root -> waitlist (temporary 302; the root becomes a landing page later)
+# 2. /waitlist        -> /waitlist.html rewrite
+# 3. Internal-company slugs -> /portal 302 (one line per internal company)
+# 4. /portal          -> /portal/index.html rewrite
+# 5. /:slug           -> /swipe.html?slug=:slug catch-all for real client pitches
 # -----------------------------------------------------------------------------
-# Member portal. Must come before the /:slug catch-all.
+
+# 1. Root -> waitlist (temporary — status 302, not 301)
+[[redirects]]
+  from   = "/"
+  to     = "/waitlist"
+  status = 302
+  force  = true
+
+# 2. /waitlist serves waitlist.html (not the /index.html round-trip that
+#    Netlify's pretty URLs would try to shorten back to /, which would loop
+#    against rule 1). File is named waitlist.html on purpose.
+[[redirects]]
+  from   = "/waitlist"
+  to     = "/waitlist.html"
+  status = 200
+  force  = true
+
+# 3. Internal companies, one line each.
+#    Each entry is /<generated-slug> -> /portal (302, force=true).
+#    Add a line here after provisioning a new internal company (e.g. Vedika).
+# [[redirects]]
+#   from   = "/vedika-bhasin-XXXXXX"
+#   to     = "/portal"
+#   status = 302
+#   force  = true
+
+# 4. Member portal.
 [[redirects]]
   from   = "/portal"
   to     = "/portal/index.html"
   status = 200
   force  = true
 
+# 5. Real client slugs -> sales page. Catch-all, last.
 [[redirects]]
   from   = "/:slug"
   to     = "/swipe.html?slug=:slug"
@@ -30,7 +57,7 @@
 # Security headers
 # CSP:
 #   script-src  self + inline (small helpers) + esm.sh (Supabase JS import) +
-#               PostHog's asset host.
+#               cdnjs.cloudflare.com (GSAP) + PostHog's asset host.
 #   style-src   self + inline + Google Fonts CSS (imported at the top of each
 #               <style>).
 #   font-src    self + gstatic.
@@ -52,7 +79,8 @@
 
 # Client feeds should never be listed or crawled directly. The catch-all is
 # behind server-side X-Robots-Tag as belt and suspenders to the meta tag on
-# swipe.html.
+# swipe.html. Internal-company feeds (e.g. vedika-bhasin.json) are also here
+# and inherit the same X-Robots + no-store.
 [[headers]]
   for = "/clients/*"
   [headers.values]
