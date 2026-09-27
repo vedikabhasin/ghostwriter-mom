@@ -38,6 +38,11 @@
 #   to     = "/portal"
 #   status = 302
 #   force  = true
+[[redirects]]
+  from   = "/vedika-bhasin-ycfogw"
+  to     = "/portal"
+  status = 302
+  force  = true
 
 # 4. Member portal.
 [[redirects]]

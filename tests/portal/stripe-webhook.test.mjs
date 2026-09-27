@@ -18,7 +18,7 @@ const stripe = new Stripe('sk_test_x');
 
 const state = {
   calls: [], otp: [], users: [], mailerDown: true, createUserFails: false,
-  companies: [{ id: 'c1', slug: 'rpr-k7m2qx', subscription_status: 'none' }],
+  companies: [{ id: 'c1', slug: 'rpr-k7m2qx', subscription_status: 'none', is_internal: false }],
   members: [], stripe_events: [],
 };
 const mock = await startMock(MOCK_PORT, state);

@@ -4,13 +4,15 @@
 // -----------------------------------------------------------------------------
 export const AVATAR_SHAPES = ['blob', 'worm', 'ghost', 'spike', 'pebble', 'curl'];
 
+// Token names from /styles/tokens.css, so a palette change there recolors the
+// monsters too. Resolved through inline style, which inline SVG supports.
 const COLORS = {
-  blob:   { body: '#B79CFF', ink: '#2A1A63' },  // pillar violet
-  worm:   { body: '#8CC8FF', ink: '#123458' },  // insight blue
-  ghost:  { body: '#F5E84A', ink: '#3A3200' },  // post yellow
-  spike:  { body: '#FFB45A', ink: '#5A2E00' },  // refresh orange
-  pebble: { body: '#B8FF71', ink: '#194111' },  // like green
-  curl:   { body: '#FF9DC0', ink: '#5A1E3B' },  // pass pink
+  blob:   { body: 'var(--f-pillar)',  ink: 'var(--f-pillar-ink)' },
+  worm:   { body: 'var(--f-insight)', ink: 'var(--f-insight-ink)' },
+  ghost:  { body: 'var(--save)',      ink: 'var(--save-ink)' },
+  spike:  { body: 'var(--fasttrack)', ink: 'var(--fasttrack-ink)' },
+  pebble: { body: 'var(--like)',      ink: 'var(--like-ink)' },
+  curl:   { body: 'var(--pass)',      ink: 'var(--pass-ink)' },
 };
 
 const BODIES = {
@@ -54,12 +56,12 @@ export function avatarSVG(member, size = 28) {
   const c = COLORS[shape];
   const f = FACES[shape];
   const eyes = f.eyes.map(([x, y]) =>
-    `<circle cx="${x}" cy="${y}" r="2.6" fill="#fff"/><circle cx="${x + 0.5}" cy="${y + 0.4}" r="1.3" fill="${c.ink}"/>`
+    `<circle cx="${x}" cy="${y}" r="2.6" style="fill:var(--white)"/><circle cx="${x + 0.5}" cy="${y + 0.4}" r="1.3" style="fill:${c.ink}"/>`
   ).join('');
   return `<svg class="av-svg" width="${size}" height="${size}" viewBox="0 0 40 40" aria-hidden="true" focusable="false">` +
-    `<path d="${BODIES[shape]}" fill="${c.body}" stroke="${c.ink}" stroke-width="1.6" stroke-linejoin="round"/>` +
+    `<path d="${BODIES[shape]}" style="fill:${c.body};stroke:${c.ink}" stroke-width="1.6" stroke-linejoin="round"/>` +
     eyes +
-    `<path d="${f.mouth}" fill="none" stroke="${c.ink}" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>` +
+    `<path d="${f.mouth}" fill="none" style="stroke:${c.ink}" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>` +
     `</svg>`;
 }
 
@@ -77,3 +79,13 @@ export function pencilSVG(size = 88) {
       `<rect x="35" y="73" width="18" height="10" rx="3.5" fill="#B8FF71"/>` +
     `</g></svg>`;
 }
+
+// Small glyphs (currentColor) used by the note button and the overlap reveal.
+export const ICONS = {
+  pencil: '<svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" focusable="false"><path d="M4 20l1-4.5L15.5 5a2.1 2.1 0 0 1 3 3L8 18.5 4 20z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M13.5 7l3 3" stroke="currentColor" stroke-width="2"/></svg>',
+  heart: '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 21s-7-4.35-10-9.5C.5 8 2.7 4 6.5 4c2 0 3.5 1 5.5 3 2-2 3.5-3 5.5-3 3.8 0 6 4 4.5 7.5C19 16.65 12 21 12 21z" fill="currentColor"/></svg>',
+  bolt: '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M13 2L4 14h7l-1 8 9-12h-7l1-8z" fill="currentColor"/></svg>',
+  text: '<svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false"><path d="M5 6V4h14v2M12 4v16M9 20h6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>',
+  eye: '<svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="3" fill="currentColor"/></svg>',
+  dots: '<svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" focusable="false"><circle cx="5" cy="12" r="2" fill="currentColor"/><circle cx="12" cy="12" r="2" fill="currentColor"/><circle cx="19" cy="12" r="2" fill="currentColor"/></svg>',
+};

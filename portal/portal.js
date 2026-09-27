@@ -1,10 +1,16 @@
 // -----------------------------------------------------------------------------
-// ghostwriter.mom portal. Three places: Feed, Library, Hub.
-// Reads through RLS as the signed-in member; writes through RLS (notes,
-// members.onboarding) or the portal_* RPCs (decisions, mark live), and the
-// invite-member edge function.
+// ghostwriter.mom portal. Three places: Feed, Library, and the Library's design
+// mode, the Hub. Reads through RLS as the signed-in member; writes through RLS
+// (notes, hub_items, members.onboarding) or the portal_* RPCs (decisions, mark
+// live), plus the invite-member edge function.
+//
+// Colors, type and motion come from /styles/tokens.css; date formats from
+// /portal/lib.js (copied from swipe.html); the mascot from /portal/avatars.js.
 // -----------------------------------------------------------------------------
-import { avatarSVG, pencilSVG } from '/portal/avatars.js';
+import { $, $all, h, prefersReduced, fmtWhen, fmtDay, hoursBetween, countdown, todayStr } from '/portal/lib.js';
+import { avatarSVG, pencilSVG, ICONS } from '/portal/avatars.js';
+import { showReveal, closeReveal, isRevealOpen } from '/portal/reveal.js';
+import { initHub, enterHub, articleRects, slotForNewItem } from '/portal/hub.js';
 
 const SUPABASE_JS = 'https://esm.sh/@supabase/supabase-js@2.45.0';
 const SWIPE_T = 90;
@@ -15,39 +21,8 @@ const WANTS_WRITTEN = 'wants_written';
 const POSITIVE = ['like', 'fasttrack'];
 const ACTION_LABEL = { like: 'Liked', pass: 'Passed', save: 'Saved', fasttrack: 'Fast-track' };
 const FMT_LABEL = { pillar: 'Pillar', insight: 'Insight', post: 'Post' };
-const FMT_TINT = { pillar: 'rgba(183,156,255,0.28)', insight: 'rgba(140,200,255,0.28)', post: 'rgba(245,232,74,0.26)' };
-const ACTION_TINT = { like: 'rgba(184,255,113,0.5)', pass: 'rgba(255,157,192,0.5)', fasttrack: 'rgba(183,156,255,0.5)', save: 'rgba(245,232,74,0.5)' };
-const prefersReduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-// -- Tiny DOM helpers ---------------------------------------------------------
-const $ = (sel, root) => (root || document).querySelector(sel);
-const $all = (sel, root) => Array.from((root || document).querySelectorAll(sel));
-function h(tag, cls, text) {
-  const e = document.createElement(tag);
-  if (cls) e.className = cls;
-  if (text != null) e.textContent = String(text);
-  return e;
-}
-function avatarEl(member, lg) {
-  const s = h('span', 'av' + (lg ? ' lg' : ''));
-  s.innerHTML = avatarSVG(member || {}, lg ? 27 : 20);
-  s.title = displayName(member);
-  return s;
-}
-function todayStr() {
-  const d = new Date();
-  return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
-}
-function fmtDate(v) {
-  if (!v) return '';
-  const d = /^\d{4}-\d{2}-\d{2}$/.test(v) ? new Date(v + 'T12:00:00') : new Date(v);
-  return d.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: d.getFullYear() === new Date().getFullYear() ? undefined : 'numeric' });
-}
-function fmtWhen(iso) {
-  const d = new Date(iso);
-  return fmtDate(iso) + ', ' + d.toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' });
-}
-function hash(s) { let x = 0; s = String(s); for (let i = 0; i < s.length; i++) x = (x * 31 + s.charCodeAt(i)) >>> 0; return x; }
+const SPRING = 'cubic-bezier(0.34,1.56,0.64,1)';
+const PARAMS = new URLSearchParams(location.search);
 
 // -- State --------------------------------------------------------------------
 let runtime = { supabaseUrl: '', supabaseAnonKey: '', posthogKey: '', posthogHost: 'https://us.i.posthog.com' };
@@ -55,8 +30,9 @@ let sb = null;
 let ph = { capture() {}, identify() {}, group() {}, register() {}, reset() {} };
 const S = {
   session: null, me: null, company: null, members: [], cards: [], decisions: [], events: [],
-  signal: null, articles: [], notes: [], readOnly: false,
+  signal: null, articles: [], notes: [], hubItems: [], readOnly: false,
   view: 'loading', feedIndex: 0, items: [], libOrder: [], onb: {}, loaded: false,
+  forceHub: null, // internal testing switch: 'locked' | 'invite'
 };
 const seenOverlap = new Set();
 
@@ -81,27 +57,29 @@ function show(view) {
   S.view = view;
   document.body.setAttribute('data-view', view);
   $all('.screen').forEach((s) => s.classList.toggle('on', s.id === 'screen-' + view));
-  const sw = $('#switch');
-  sw.hidden = !(S.loaded && (view === 'feed' || view === 'library') && !S.readOnly);
+  $('#switch').hidden = !(S.loaded && (view === 'feed' || view === 'library') && !S.readOnly);
   $('#switch-feed').classList.toggle('active', view === 'feed');
   $('#switch-library').classList.toggle('active', view === 'library');
+  $('#switch-feed').setAttribute('aria-current', view === 'feed' ? 'page' : 'false');
+  $('#switch-library').setAttribute('aria-current', view === 'library' ? 'page' : 'false');
   $('#sign-out-btn').hidden = !S.session;
   if (view !== 'feed') setFormatTint(null);
+  if (view !== 'library') stopCountdowns();
   hideBubble();
   window.scrollTo(0, 0);
 }
 function setFormatTint(format) {
   const t = $('#tint-format');
-  if (!format || !FMT_TINT[format]) { t.setAttribute('data-on', '0'); return; }
-  document.documentElement.style.setProperty('--tint-format', FMT_TINT[format]);
+  if (!format || !FMT_LABEL[format]) { t.setAttribute('data-on', '0'); return; }
+  document.documentElement.style.setProperty('--tint-format', `color-mix(in srgb, var(--f-${format}) 30%, transparent)`);
   t.setAttribute('data-on', '1');
 }
 function setActionTint(action, strength) {
-  document.documentElement.style.setProperty('--tint-action', ACTION_TINT[action] || 'transparent');
+  document.documentElement.style.setProperty('--tint-action', action ? `color-mix(in srgb, var(--${action}) 50%, transparent)` : 'transparent');
   document.documentElement.style.setProperty('--tint-action-strength', String(strength || 0));
 }
 
-// -- Toasts (queued so first-time lines never trample each other) -------------
+// -- Toasts -------------------------------------------------------------------
 // A plain confirmation replaces a plain one on screen; first-time lines queue
 // so each is read in full.
 const toastQueue = [];
@@ -121,7 +99,7 @@ function nextToast() {
   box.className = 'toast' + (t.kind === 'line' ? ' line' : '');
   box.textContent = t.text;
   if (t.action) {
-    const b = h('button', null, t.action.label);
+    const b = h('button', 'gwm-btn', t.action.label);
     b.type = 'button';
     b.addEventListener('click', () => { t.action.fn(); clearTimeout(box._t); nextToast(); });
     box.appendChild(b);
@@ -133,16 +111,16 @@ function nextToast() {
 
 // -- Onboarding flags (members.onboarding) ------------------------------------
 let onbTimer = null;
-function saveOnb() {
+function saveOnb(now) {
   clearTimeout(onbTimer);
-  onbTimer = setTimeout(() => {
-    sb.from('members').update({ onboarding: S.onb }).eq('id', S.me.id).then(({ error }) => {
-      if (error) console.warn('[portal] onboarding save failed', error.message);
-    });
-  }, 250);
+  const run = () => sb.from('members').update({ onboarding: S.onb }).eq('id', S.me.id).then(({ error }) => {
+    if (error) console.warn('[portal] onboarding save failed', error.message);
+  });
+  if (now) return run();
+  onbTimer = setTimeout(run, 250);
 }
 function setFlag(key) { if (S.onb[key]) return; S.onb[key] = true; saveOnb(); }
-// First-time event lines. Each shows once per member.
+/** First-time event lines. Each shows once per member. */
 function firstLine(key, text, opts) {
   S.onb.lines = S.onb.lines || {};
   if (S.onb.lines[key] || S.readOnly) return false;
@@ -163,7 +141,7 @@ function showBubble(key, target, text, place) {
   b.className = 'bubble ' + (place === 'below' ? 'below' : 'above');
   const r = target.getBoundingClientRect();
   const bw = b.offsetWidth, bh = b.offsetHeight;
-  let left = Math.min(Math.max(12, r.left + r.width / 2 - bw / 2), window.innerWidth - bw - 12);
+  const left = Math.min(Math.max(12, r.left + r.width / 2 - bw / 2), window.innerWidth - bw - 12);
   const top = place === 'below' ? r.bottom + 12 : r.top - bh - 12;
   b.style.left = left + 'px';
   b.style.top = Math.max(8, top) + 'px';
@@ -177,12 +155,12 @@ function dismissBubble() {
   else if (k === 'library_glow') { setFlag('library_glow'); $('#switch-library').classList.remove('onb-glow'); }
   else if (k === 'pencil_glow') { setFlag('pencil_glow'); $('#pencil-sticker').classList.remove('onb-glow'); }
 }
+/** First visit: Feed, then a glow on Library, then a glow on the pencil. */
 function runOnboarding() {
-  if (S.readOnly) return;
+  if (S.readOnly || isRevealOpen()) return;
   const o = S.onb;
   $('#switch-library').classList.toggle('onb-glow', !!o.feed_intro && !o.library_glow);
   $('#pencil-sticker').classList.toggle('onb-glow', !!o.library_glow && !o.pencil_glow);
-  // Wait a frame so layout (and the switch) are in place before measuring.
   requestAnimationFrame(() => {
     if (S.view === 'feed' && !o.feed_intro) {
       showBubble('feed_intro', $('#dots'), 'Your feed is live. Swipe to decide, tap a dot to jump.', 'above');
@@ -202,6 +180,13 @@ function displayName(m) {
   if (m.display_name) return m.display_name;
   if (m.role === 'owner' && S.company && S.company.contact_first_name) return S.company.contact_first_name;
   return m.id === (S.me && S.me.id) ? 'You' : 'Teammate';
+}
+function nameOrYou(m) { return m && S.me && m.id === S.me.id ? 'You' : displayName(m); }
+function avatarEl(member, lg) {
+  const s = h('span', 'av' + (lg ? ' lg' : ''));
+  s.innerHTML = avatarSVG(member || {}, lg ? 27 : 20);
+  s.title = displayName(member);
+  return s;
 }
 // Sales-page swipes (member_id null) belong to the owner.
 function ownerStandIn() {
@@ -240,9 +225,19 @@ function overlap(cardId) {
   if (pos.length >= 2) return { state: 'agree', a: m(pos[0]), aAction: pos[0][1], b: m(pos[1]), bAction: pos[1][1] };
   return null;
 }
-// "Up next": what we'd write next. Agree cards move to the top.
+/** Cards any member moved up from an Agree reveal (stored in their onboarding). */
+function pinnedCards() {
+  const set = new Set();
+  S.members.forEach((m) => {
+    const onb = m.id === S.me.id ? S.onb : m.onboarding || {};
+    (onb.pins || []).forEach((id) => set.add(id));
+  });
+  return set;
+}
+/** "Up next": what we'd write next. Moved-up cards first, then Agree cards. */
 function upNext() {
   const written = new Set(S.articles.map((a) => a.card_id).filter(Boolean));
+  const pins = pinnedCards();
   return feedCards()
     .filter((c) => !written.has(c.id))
     .map((c) => {
@@ -251,11 +246,56 @@ function upNext() {
       const ft = acts.filter((a) => a === 'fasttrack').length;
       const pass = acts.filter((a) => a === 'pass').length;
       const ov = overlap(c.id);
-      const score = (ov && ov.state === 'agree' ? 100 : 0) + pos * 10 + ft * 5 - pass * 4;
-      return { card: c, score, pos, ov };
+      const pinned = pins.has(c.id);
+      const score = (pinned ? 1000 : 0) + (ov && ov.state === 'agree' ? 100 : 0) + pos * 10 + ft * 5 - pass * 4;
+      return { card: c, score, pos, ov, pinned };
     })
-    .filter((x) => x.pos > 0)
+    .filter((x) => x.pos > 0 || x.pinned)
     .sort((a, b) => b.score - a.score);
+}
+
+// -- Overlap reveal -----------------------------------------------------------
+// Once per card per member (members.onboarding.reveals), the first time the
+// member views a card with an overlap, or right after their swipe creates one.
+function revealSeen(cardId) { return !!(S.onb.reveals && S.onb.reveals[cardId]); }
+function maybeReveal(card) {
+  const ov = overlap(card.id);
+  if (!ov || S.readOnly || isRevealOpen() || revealSeen(card.id)) return false;
+  if (document.querySelector('.sheet-scrim.open, .modal-scrim.open') || !$('#reader').hidden) return false;
+  const meIn = ov.a.id === S.me.id || ov.b.id === S.me.id;
+  if (!meIn) return false;
+  S.onb.reveals = Object.assign({}, S.onb.reveals, { [card.id]: ov.state });
+  // The reveal carries the Agree / Split first-time lines.
+  S.onb.lines = Object.assign({}, S.onb.lines);
+  if (ov.state === 'agree' || ov.state === 'split') S.onb.lines[ov.state] = true;
+  saveOnb();
+  let left = { member: ov.a, action: ov.aAction }, right = { member: ov.b, action: ov.bAction };
+  if (ov.b.id === S.me.id) [left, right] = [right, left];
+  left.name = nameOrYou(left.member);
+  right.name = nameOrYou(right.member);
+  hideBubble();
+  track('overlap_seen', { state: ov.state, card_id: card.id, reveal: true });
+  seenOverlap.add(card.id + ov.state);
+  showReveal({
+    state: ov.state, left, right,
+    card: { format: card.format, series: card.series, title: card.title },
+    onPrimary: () => (ov.state === 'agree' ? moveUp(card) : openNoteSheet(card)),
+    onClose: () => track('reveal_dismissed', { state: ov.state }),
+    onDismiss: () => setTimeout(() => {
+      const cur = S.items[S.feedIndex];
+      if (S.view === 'feed' && cur && cur.kind === 'card') maybeReveal(cur.card);
+      runOnboarding();
+    }, 80),
+  });
+  return true;
+}
+function moveUp(card) {
+  const pins = new Set(S.onb.pins || []);
+  pins.add(card.id);
+  S.onb.pins = Array.from(pins);
+  saveOnb();
+  track('moved_up', { card_id: card.id });
+  toast('Moved to the top of Up next.');
 }
 
 // -- Feed ---------------------------------------------------------------------
@@ -284,37 +324,47 @@ function renderFeed() {
     stage.appendChild(h('p', 'lib-empty', 'Your first drop lands soon.'));
     renderDots(); renderControls(); return;
   }
+  const els = [];
   for (let d = 2; d >= 0; d--) {
     const item = S.items[S.feedIndex + d];
-    if (item) stage.appendChild(buildFeedCard(item, d));
+    if (!item) continue;
+    const el = buildFeedCard(item, d);
+    stage.appendChild(el);
+    els[d] = el;
   }
-  const top = stage.querySelector('.card[data-depth="0"]');
-  if (top) {
-    stage.style.minHeight = Math.max(window.innerWidth <= 420 ? 380 : 470, top.offsetHeight + 28) + 'px';
-    const cur = S.items[S.feedIndex];
-    setFormatTint(cur.kind === 'card' ? cur.card.format : null);
-    if (cur.kind === 'card') noticeOverlap(cur.card);
-  }
-  if (S.feedIndex === S.items.length - 1 && cards.length && !unread) {
-    stage.appendChild(Object.assign(h('span', 'caught-up', 'All caught up'), { style: 'position:absolute; bottom:-8px;' }));
-  }
+  // Peek cards match the front card exactly: same width, center, origin and
+  // height; only their vertical offset and opacity differ. The front card can
+  // grow after fonts load, so keep them in step.
+  syncPeeks(els);
+  if (peekObserver) peekObserver.disconnect();
+  if (window.ResizeObserver) { peekObserver = new ResizeObserver(() => syncPeeks(els)); peekObserver.observe(els[0]); }
+  const cur = S.items[S.feedIndex];
+  setFormatTint(cur.kind === 'card' ? cur.card.format : null);
+  if (cur.kind === 'card') noticeOverlap(cur.card);
+  $('#caught-up').hidden = !(S.feedIndex === S.items.length - 1 && cards.length && !unread);
   renderDots();
   renderControls();
+}
+let peekObserver = null;
+function syncPeeks(els) {
+  const hgt = els[0].getBoundingClientRect().height;
+  [els[1], els[2]].forEach((el) => { if (el) el.style.height = hgt + 'px'; });
+  $('#card-stage').style.height = (hgt + 12) + 'px';
 }
 function buildFeedCard(item, depth) {
   const el = h('div', 'card');
   el.setAttribute('data-depth', String(depth));
+  if (depth > 0) el.setAttribute('aria-hidden', 'true');
   if (item.kind === 'signal') {
     el.classList.add('fmt-signal');
     el.setAttribute('role', 'group');
     el.setAttribute('aria-label', 'Signal');
     const head = h('div', 'card-head');
-    head.appendChild(h('span', 'card-format', 'Signal'));
+    head.appendChild(h('span', 'gwm-marker', 'Signal'));
     head.appendChild(h('span', 'signal-dot'));
     el.appendChild(head);
     el.appendChild(h('p', 'signal-body', item.signal.text));
-    const meta = h('p', 'signal-meta', (item.signal.source || '') + (item.signal.signal_date ? ' · ' + fmtDate(item.signal.signal_date) : ''));
-    el.appendChild(meta);
+    el.appendChild(h('p', 'signal-meta', (item.signal.source || '') + (item.signal.signal_date ? ' · ' + fmtDay(item.signal.signal_date) : '')));
     el.appendChild(h('span', 'signal-hint', 'Swipe for this week’s cards →'));
     if (depth === 0) attachCardGestures(el, item);
     return el;
@@ -323,20 +373,18 @@ function buildFeedCard(item, depth) {
   const fmt = String(c.format || 'post').toLowerCase();
   el.classList.add('fmt-' + fmt);
   el.setAttribute('role', 'group');
-  el.setAttribute('aria-label', (FMT_LABEL[fmt] || 'Card') + ': ' + c.title);
+  el.setAttribute('aria-label', (FMT_LABEL[fmt] || 'Card') + (c.series ? ' · ' + c.series : '') + ': ' + c.title);
   const tags = Array.isArray(c.tags) ? c.tags : [];
   if (tags.some((t) => String(t).toLowerCase() === 'refresh')) el.classList.add('has-refresh');
 
   const head = h('div', 'card-head');
-  head.appendChild(h('span', 'card-format', FMT_LABEL[fmt] || fmt));
-  if (item.isNew) head.appendChild(h('span', 'new-label', 'New this week'));
-  el.appendChild(head);
-
-  // Overlap label sits in the header row to keep the card short on phones.
+  head.appendChild(h('span', 'card-format gwm-center gwm-mono-tag', FMT_LABEL[fmt] || fmt));
+  if (c.series) head.appendChild(h('span', 'gwm-series-label', c.series));
+  if (item.isNew) head.appendChild(h('span', 'gwm-marker', 'New this week'));
   const ov = depth === 0 ? overlap(c.id) : null;
   if (ov) {
     el.classList.add('ov-' + ov.state);
-    const lab = h('span', 'ov-label ' + ov.state);
+    const lab = h('span', 'ov-label gwm-center ' + ov.state);
     const avs = h('span', 'avs');
     avs.appendChild(avatarEl(ov.a)); avs.appendChild(avatarEl(ov.b));
     lab.appendChild(avs);
@@ -344,33 +392,23 @@ function buildFeedCard(item, depth) {
     lab.setAttribute('aria-label', ov.state + ': ' + displayName(ov.a) + ' ' + ACTION_LABEL[ov.aAction].toLowerCase() + ', ' + displayName(ov.b) + ' ' + ACTION_LABEL[ov.bAction].toLowerCase());
     head.appendChild(lab);
   }
+  el.appendChild(head);
 
   el.appendChild(h('h2', 'card-title', c.title));
   el.appendChild(h('p', 'card-angle', c.angle));
-  if (c.evidence) el.appendChild(h('p', 'card-evidence', c.evidence));
+  if (c.evidence) el.appendChild(h('p', 'proof', c.evidence));
   const tagWrap = h('div', 'card-tags');
   tags.filter((t) => String(t).toLowerCase() !== 'refresh').forEach((t) => tagWrap.appendChild(h('span', 'card-tag', t)));
   el.appendChild(tagWrap);
 
-  if (depth === 0) {
-    const notes = S.notes.filter((n) => n.card_id === c.id && n.body !== WANTS_WRITTEN).slice(-2);
-    if (notes.length) {
-      const wrap = h('div', 'card-notes');
-      notes.forEach((n) => {
-        const row = h('div', 'n');
-        row.appendChild(avatarEl(memberById(n.member_id)));
-        row.appendChild(h('span', null, n.body));
-        wrap.appendChild(row);
-      });
-      el.appendChild(wrap);
-    }
-    if (ov && (ov.state === 'split' || ov.state === 'timing') && !S.readOnly) {
-      const nb = h('button', 'note-btn', 'Add a note');
-      nb.type = 'button';
-      stopDrag(nb);
-      nb.addEventListener('click', (e) => { e.stopPropagation(); openNoteSheet(c); });
-      tagWrap.appendChild(nb);
-    }
+  if (depth === 0 && ov && (ov.state === 'split' || ov.state === 'timing') && !S.readOnly) {
+    const nb = h('button', 'btn-note gwm-btn');
+    nb.type = 'button';
+    nb.innerHTML = ICONS.pencil;
+    nb.appendChild(h('span', null, 'Add a note'));
+    stopDrag(nb);
+    nb.addEventListener('click', (e) => { e.stopPropagation(); openNoteSheet(c); });
+    el.appendChild(nb);
   }
 
   const sources = Array.isArray(c.sources) ? c.sources : [];
@@ -379,7 +417,7 @@ function buildFeedCard(item, depth) {
     sw.appendChild(h('span', 'card-sources-label', 'Sources'));
     sources.slice(0, CHIP_LIMIT).forEach((src, i) => sw.appendChild(sourceChip(src, i + 1, c)));
     if (sources.length > CHIP_LIMIT) {
-      const more = h('button', 'src-chip more', '+' + (sources.length - CHIP_LIMIT));
+      const more = h('button', 'src-chip more gwm-center', '+' + (sources.length - CHIP_LIMIT));
       more.type = 'button';
       more.setAttribute('aria-label', 'Open all sources');
       stopDrag(more);
@@ -391,24 +429,26 @@ function buildFeedCard(item, depth) {
 
   const mine = myAction(c.id);
   if (mine && depth === 0) {
-    const st = h('span', 'card-stamp ' + mine, ACTION_LABEL[mine]);
+    const st = h('span', 'card-stamp gwm-center ' + mine, ACTION_LABEL[mine]);
     st.setAttribute('aria-label', 'Your call: ' + ACTION_LABEL[mine]);
     el.appendChild(st);
   }
-  ['like', 'pass', 'save', 'fasttrack'].forEach((a) => {
-    const s = h('span', 'drag-stamp ' + a, ACTION_LABEL[a]);
-    s.setAttribute('aria-hidden', 'true');
-    el.appendChild(s);
-  });
-  if (depth === 0) attachCardGestures(el, item);
+  if (depth === 0) {
+    ['like', 'pass', 'save', 'fasttrack'].forEach((a) => {
+      const s = h('span', 'drag-stamp gwm-center ' + a, ACTION_LABEL[a]);
+      s.setAttribute('aria-hidden', 'true');
+      el.appendChild(s);
+    });
+    attachCardGestures(el, item);
+  }
   return el;
 }
 function sourceChip(src, num, card) {
   const b = h('button', 'src-chip');
   b.type = 'button';
   b.setAttribute('aria-label', 'Source ' + num + ': ' + (src.publisher || '') + '. Open list of sources.');
-  const n = h('span', 'num', num);
-  const i0 = h('span', 'mono-init', String(src.publisher || '?').trim().charAt(0).toUpperCase() || '?');
+  const n = h('span', 'num gwm-center', num);
+  const i0 = h('span', 'mono-init gwm-center', String(src.publisher || '?').trim().charAt(0).toUpperCase() || '?');
   const p = h('span', 'pub', src.publisher || '');
   b.append(n, i0, p);
   stopDrag(b);
@@ -435,17 +475,14 @@ function renderDots() {
       if (!read) d.classList.add('unread');
       const ov = overlap(item.card.id);
       if (ov) d.classList.add('ov-' + ov.state);
-      d.setAttribute('aria-label', 'Card ' + (i + (S.signal ? 0 : 1)) + ': ' + item.card.title + (read ? '' : ' (unread)'));
+      d.setAttribute('aria-label', 'Card ' + (i + (S.signal ? 0 : 1)) + ': ' + item.card.title + (read ? '' : ' (unread)') + (ov ? ' · ' + ov.state : ''));
     }
     if (i === S.feedIndex) { d.classList.add('current'); d.setAttribute('aria-selected', 'true'); }
     else d.setAttribute('aria-selected', 'false');
     wrap.appendChild(d);
   });
   const cur = wrap.children[S.feedIndex];
-  if (cur) {
-    const left = cur.offsetLeft - wrap.clientWidth / 2 + cur.offsetWidth / 2;
-    wrap.scrollLeft = left;
-  }
+  if (cur) wrap.scrollLeft = cur.offsetLeft - wrap.clientWidth / 2 + cur.offsetWidth / 2;
   $('[data-action="feed-prev"]').disabled = S.feedIndex <= 0;
   $('[data-action="feed-next"]').disabled = S.feedIndex >= S.items.length - 1;
 }
@@ -469,23 +506,10 @@ function goTo(i, via) {
 function noticeOverlap(card) {
   const ov = overlap(card.id);
   if (!ov) return;
+  if (maybeReveal(card)) return;
   if (!seenOverlap.has(card.id + ov.state)) {
     seenOverlap.add(card.id + ov.state);
     track('overlap_seen', { state: ov.state, card_id: card.id });
-  }
-  overlapLine(card, ov);
-}
-function overlapLine(card, ov) {
-  const meIn = ov.a.id === S.me.id || ov.b.id === S.me.id;
-  if (ov.state === 'agree' && meIn) {
-    firstLine('agree', 'You both want this one. It’s moving up.');
-  } else if (ov.state === 'split' && meIn) {
-    const other = ov.a.id === S.me.id ? ov.b : ov.a;
-    const otherAction = ov.a.id === S.me.id ? ov.bAction : ov.aAction;
-    const text = otherAction === 'pass'
-      ? displayName(other) + ' passed. You want this one. Leave a note?'
-      : displayName(other) + (otherAction === 'fasttrack' ? ' wants to fast-track this.' : ' likes this.') + ' You passed. Leave a note?';
-    firstLine('split', text, { action: { label: 'Add a note', fn: () => openNoteSheet(card) }, ms: 6000 });
   }
 }
 
@@ -537,7 +561,6 @@ function attachCardGestures(el, item) {
     else if (dx < -SWIPE_T && Math.abs(dx) > Math.abs(dy)) action = 'pass';
     if (!action) { el.style.transform = ''; return; }
     if (d.item.kind === 'signal' || S.readOnly) {
-      // Signal card: any swipe moves to the next card.
       if (action === 'pass' && S.feedIndex > 0) { el.style.transform = ''; goTo(S.feedIndex - 1); return; }
       exitThen(el, action, () => goTo(S.feedIndex + 1));
       return;
@@ -561,10 +584,10 @@ async function decide(action, via) {
   const card = item.card;
   const prev = myAction(card.id);
   const top0 = $('#card-stage .card[data-depth="0"]');
+  const advance = () => { if (S.feedIndex < S.items.length - 1) S.feedIndex += 1; renderFeed(); };
   if (prev === action) {
     // Same call again: nothing to record, just move on.
-    const next = () => { if (S.feedIndex < S.items.length - 1) S.feedIndex += 1; renderFeed(); };
-    return top0 ? exitThen(top0, action, next) : next();
+    return top0 ? exitThen(top0, action, advance) : advance();
   }
   const before = overlap(card.id);
   const nowIso = new Date().toISOString();
@@ -577,23 +600,17 @@ async function decide(action, via) {
   const ev = { id: 'local-' + Date.now(), card_id: card.id, member_id: S.me.id, action, source: 'portal', created_at: nowIso };
   S.events.push(ev);
 
-  const top = $('#card-stage .card[data-depth="0"]');
-  const advance = () => {
-    if (S.feedIndex < S.items.length - 1) S.feedIndex += 1;
-    renderFeed();
-  };
-  if (top) exitThen(top, action, advance); else advance();
+  const after = overlap(card.id);
+  const createsOverlap = after && (!before || before.state !== after.state);
+  // The swipe that creates an overlap reveals it straight away; the next
+  // card waits until the reveal closes.
+  const next = () => { if (createsOverlap) maybeReveal(card); advance(); };
+  if (top0) exitThen(top0, action, next); else next();
 
-  track('feed_swipe', { action, via: via || 'button', card_id: card.id, format: card.format, changed: !!prev && prev !== action });
+  track('feed_swipe', { action, via: via || 'button', card_id: card.id, format: card.format, series: card.series || undefined, changed: !!prev && prev !== action });
   if (prev && prev !== action) {
     track('decision_changed', { from: prev, to: action, card_id: card.id });
     firstLine('changed', 'Changed your mind? Swipe back anytime. We track the final call.');
-  }
-  const after = overlap(card.id);
-  if (after && (!before || before.state !== after.state)) {
-    seenOverlap.add(card.id + after.state);
-    track('overlap_seen', { state: after.state, card_id: card.id });
-    overlapLine(card, after);
   }
 
   const { error } = await sb.rpc('portal_decide', { p_card_id: card.id, p_action: action });
@@ -620,7 +637,7 @@ function openSourceSheet(card) {
     a.target = '_blank';
     a.rel = 'noopener noreferrer';
     body.append(a, h('div', 'sheet-pub', src.publisher || ''), h('div', 'sheet-url', url));
-    li.append(h('span', 'sheet-num', i + 1), body);
+    li.append(h('span', 'sheet-num gwm-center', i + 1), body);
     list.appendChild(li);
   });
   openScrim('src-sheet');
@@ -633,6 +650,8 @@ function closeScrim(id) {
 }
 
 // -- Notes ---------------------------------------------------------------------
+// A note goes to notes AND gets a hub_items row, so it appears in the Hub
+// (and only there).
 let noteCard = null;
 function openNoteSheet(card) {
   noteCard = card;
@@ -659,7 +678,13 @@ async function saveNote() {
   track('note_added', { card_id: noteCard.id, length: body.length });
   toast('Saved to your Hub.');
   firstLine('note', 'Your note is waiting in the Hub.');
-  if (S.view === 'feed') renderFeed();
+  const pos = slotForNewItem(S.hubItems, data.id);
+  const z = S.hubItems.reduce((m, i) => Math.max(m, i.z || 0), 0) + 1;
+  const hub = await sb.from('hub_items')
+    .insert({ company_id: S.company.id, kind: 'note', ref_id: data.id, x: pos.x, y: pos.y, rotation: pos.rotation, z, hidden: false, created_by: S.me.id })
+    .select('*').single();
+  if (hub.error) console.warn('[portal] hub item for note failed', hub.error.message);
+  else S.hubItems.push(hub.data);
 }
 
 // -- History -------------------------------------------------------------------
@@ -688,14 +713,16 @@ function renderHistory(tab) {
   groups.forEach(([cardId, evs]) => {
     const c = cardById.get(cardId);
     const box = h('div', 'hist-card fmt-' + c.format);
-    box.appendChild(h('p', 'hist-title', c.title));
+    const title = h('p', 'hist-title', c.title);
+    if (c.series) title.prepend(h('span', 'gwm-series-label', c.series));
+    box.appendChild(title);
     evs.slice().reverse().forEach((e) => {
       const m = eventMember(e.member_id);
       const row = h('div', 'hist-row');
       row.appendChild(avatarEl(m));
       const who = h('span');
-      who.appendChild(h('span', 'who', m.id === S.me.id ? 'You' : displayName(m)));
-      who.appendChild(h('span', 'pill ' + e.action, ACTION_LABEL[e.action]));
+      who.appendChild(h('span', 'who', nameOrYou(m)));
+      who.appendChild(h('span', 'pill gwm-center gwm-mono-tag ' + e.action, ACTION_LABEL[e.action]));
       if (e.source === 'sales') who.appendChild(h('span', 'src', ' · sales page'));
       row.appendChild(who);
       row.appendChild(h('span', 'when', fmtWhen(e.created_at)));
@@ -711,78 +738,148 @@ function renderHistory(tab) {
   ranked.forEach((x, i) => {
     const box = h('div', 'hist-card fmt-' + x.card.format);
     const row = h('div', 'upnext-item');
-    row.appendChild(h('span', 'upnext-rank', i + 1));
+    row.appendChild(h('span', 'upnext-rank gwm-center', i + 1));
     row.appendChild(h('span', 'hist-title', x.card.title));
+    const tags = h('span', 'upnext-tags');
+    if (x.pinned) tags.appendChild(h('span', 'gwm-marker', 'Moved up'));
     if (x.ov && x.ov.state === 'agree') {
-      const lab = h('span', 'ov-label agree');
+      const lab = h('span', 'ov-label gwm-center agree');
       const avs = h('span', 'avs');
       avs.append(avatarEl(x.ov.a), avatarEl(x.ov.b));
       lab.append(avs, document.createTextNode('Agree'));
-      row.appendChild(lab);
-    } else row.appendChild(h('span'));
+      tags.appendChild(lab);
+    }
+    row.appendChild(tags);
     box.appendChild(row);
     un.appendChild(box);
   });
 }
 
-// -- Library -------------------------------------------------------------------
+// -- Library: catalog mode (read-only fan) --------------------------------------
 function libArticles() {
   const rank = { live: 0, delivered: 0, approved_unwritten: 1 };
   return S.articles.slice().sort((a, b) =>
     (rank[a.status] - rank[b.status]) ||
-    String(b.delivered_at || b.created_at).localeCompare(String(a.delivered_at || a.created_at)));
+    String(b.delivered_at || b.requested_at || b.created_at).localeCompare(String(a.delivered_at || a.requested_at || a.created_at)));
 }
 function syncLibOrder() {
   const ids = libArticles().map((a) => a.id);
   S.libOrder = S.libOrder.filter((id) => ids.includes(id));
   ids.forEach((id) => { if (!S.libOrder.includes(id)) S.libOrder.push(id); });
 }
-const FAN = [0, 4, -5, 7, -8];
-function thickness(fmt) {
-  const n = fmt === 'pillar' ? 7 : fmt === 'insight' ? 3 : 1;
-  const s = [];
-  for (let k = 1; k <= n; k++) s.push(k + 'px ' + k + 'px 0 ' + (k % 2 ? '#FFFFFF' : '#DCD8CE'));
-  s.push('0 22px 40px -22px rgba(14,14,14,0.5)');
-  return s.join(',');
+// Hand of cards: the top card flat and centered; two per side peek out,
+// rotated 5 and 8 degrees, showing only their edges and spines.
+const FAN = [
+  { x: 0, r: 0 },
+  { x: 30, r: 5 }, { x: -30, r: -5 },
+  { x: 50, r: 8 }, { x: -50, r: -8 },
+];
+/** Delivery state line for a card. */
+function deliveryState(a) {
+  if (a.status === 'approved_unwritten') {
+    if (a.requested_at && a.deliver_by) {
+      const left = countdown(a.deliver_by);
+      return { kind: 'arriving', text: left ? 'Arriving in ' + left : 'Arriving any minute' };
+    }
+    return { kind: 'approved', text: 'Approved · not written yet' };
+  }
+  const when = fmtWhen(a.delivered_at || a.created_at);
+  const text = a.requested_at && a.delivered_at
+    ? 'Delivered in ' + hoursBetween(a.requested_at, a.delivered_at) + 'h · ' + when
+    : 'Delivered · ' + when;
+  return { kind: 'delivered', text };
 }
-function renderLibrary() {
+let countdownTimer = null;
+function stopCountdowns() { clearInterval(countdownTimer); countdownTimer = null; }
+function tickCountdowns() {
+  $all('#deck-stage [data-countdown]').forEach((el) => {
+    const a = S.articles.find((x) => x.id === el.dataset.countdown);
+    if (a) el.textContent = deliveryState(a).text;
+  });
+}
+function renderLibrary(opts) {
   syncLibOrder();
+  stopCountdowns();
   const stage = $('#deck-stage');
   stage.textContent = '';
   const byId = new Map(S.articles.map((a) => [a.id, a]));
   const order = S.libOrder.map((id) => byId.get(id)).filter(Boolean);
-  const delivered = order.filter((a) => a.status !== 'approved_unwritten').length;
-  $('#lib-count').textContent = order.length ? delivered + ' written · ' + (order.length - delivered) + ' approved' : '';
+  const written = order.filter((a) => a.status !== 'approved_unwritten').length;
+  $('#lib-count').textContent = order.length ? written + ' written · ' + (order.length - written) + ' approved' : '';
   $('#lib-nav').hidden = order.length < 2;
   if (!order.length) {
     stage.appendChild(h('p', 'lib-empty', 'Your articles land here as they’re written.'));
     return;
   }
-  const visible = order.slice(0, 5);
+  const visible = order.slice(0, FAN.length);
+  const els = [];
+  // Paint back to front so the top card is last and fully covers the rest.
   for (let i = visible.length - 1; i >= 0; i--) {
     const a = visible[i];
-    const b = h('div', 'book fmt-' + a.format + (a.status === 'approved_unwritten' ? ' ghost' : ''));
-    b.style.zIndex = String(10 - i);
-    b.style.transform = 'translate(' + (i * 7) + 'px,' + (i * -9) + 'px) rotate(' + FAN[i] + 'deg) scale(' + (1 - i * 0.035) + ')';
-    if (a.status !== 'approved_unwritten') b.style.boxShadow = thickness(a.format);
-    b.appendChild(h('span', 'card-format fmt-' + a.format, FMT_LABEL[a.format] || a.format));
-    b.appendChild(h('h3', 'book-title', a.title));
-    const meta = h('div', 'book-meta');
-    if (a.status === 'approved_unwritten') meta.appendChild(h('span', null, 'Approved · not written yet'));
-    else {
-      meta.appendChild(h('span', null, 'Delivered ' + fmtDate(a.delivered_at || a.created_at)));
-      if (a.status === 'live') meta.appendChild(h('span', 'live-tag', 'Live'));
+    const ghost = a.status === 'approved_unwritten';
+    const slot = FAN[i];
+    const tf = `translateX(${slot.x}px) rotate(${slot.r}deg)`;
+    const z = 20 - i * 2;
+    if (ghost) {
+      // The ghost trail: two faint dashed copies, 6px and 12px down-right.
+      [2, 1].forEach((k) => {
+        const t = h('div', `book-trail t${k} fmt-${a.format}`);
+        t.style.transform = `${tf} translate(${6 * k}px, ${6 * k}px)`;
+        t.style.zIndex = String(z - 1);
+        t.setAttribute('aria-hidden', 'true');
+        stage.appendChild(t);
+      });
     }
-    b.appendChild(meta);
+    const b = h('div', 'book fmt-' + a.format + (ghost ? ' ghost' : '') + (i === 0 ? ' top' : ' back'));
+    b.dataset.id = a.id;
+    b.style.transform = tf;
+    b.style.zIndex = String(z);
+    const head = h('div', 'book-head');
+    head.appendChild(h('span', 'card-format gwm-center gwm-mono-tag fmt-' + a.format, FMT_LABEL[a.format] || a.format));
+    const card = S.cards.find((c) => c.id === a.card_id);
+    if (card && card.series) head.appendChild(h('span', 'gwm-series-label', card.series));
+    if (a.status === 'live') head.appendChild(h('span', 'live-tag gwm-center gwm-mono-tag', 'Live'));
+    b.appendChild(head);
+    b.appendChild(h('h3', 'book-title', a.title));
+    const st = deliveryState(a);
+    if (st.kind === 'delivered') {
+      b.appendChild(h('span', 'book-stamp delivered gwm-center', st.text));
+    } else {
+      b.appendChild(h('span', 'book-stamp approved gwm-center', 'Approved'));
+      const line = h('span', 'book-state ' + st.kind, st.text);
+      if (st.kind === 'arriving') line.dataset.countdown = a.id;
+      b.appendChild(line);
+    }
     if (i === 0) {
-      b.classList.add('top');
       b.tabIndex = 0;
       b.setAttribute('role', 'button');
-      b.setAttribute('aria-label', (a.status === 'approved_unwritten' ? 'Approved, not written: ' : 'Open article: ') + a.title);
+      b.setAttribute('aria-label', (ghost ? 'Approved, not written: ' : 'Open article: ') + a.title + '. ' + st.text);
       attachBookGestures(b, a);
     } else b.setAttribute('aria-hidden', 'true');
     stage.appendChild(b);
+    els[i] = b;
   }
+  if (visible.some((a) => deliveryState(a).kind === 'arriving')) countdownTimer = setInterval(tickCountdowns, 30000);
+  if (opts && opts.fromRects) animateBooksFrom(opts.fromRects, els);
+}
+function animateBooksFrom(rects, els) {
+  if (prefersReduced) return;
+  els.forEach((el, n) => {
+    const from = el && rects[el.dataset.id];
+    if (!from) return;
+    const to = el.getBoundingClientRect();
+    const base = el.style.transform;
+    el.animate(
+      [{ transform: `translate(${from.left - to.left}px, ${from.top - to.top}px) scale(${from.width / Math.max(1, to.width)})` }, { transform: base }],
+      { duration: 640, easing: SPRING, delay: n * 40, composite: 'replace' },
+    );
+  });
+}
+/** Book rects, for the Hub to unstack from. */
+function libraryRects() {
+  const out = {};
+  $all('#deck-stage .book').forEach((b) => { out[b.dataset.id] = b.getBoundingClientRect(); });
+  return out;
 }
 function rotateLib(dir) {
   if (S.libOrder.length < 2) return;
@@ -790,35 +887,28 @@ function rotateLib(dir) {
   else S.libOrder.unshift(S.libOrder.pop());
   renderLibrary();
 }
+// Swiping the top card shuffles it to the back; a tap opens it. Nothing here
+// is grabbable or movable; that lives only in the Hub.
 function attachBookGestures(el, article) {
   let d = null;
   el.addEventListener('pointerdown', (e) => {
     if (e.button !== undefined && e.button !== 0) return;
     d = { id: e.pointerId, x0: e.clientX, y0: e.clientY, dx: 0, moved: false };
     try { el.setPointerCapture(e.pointerId); } catch (_) {}
-    el.classList.add('dragging');
   });
   el.addEventListener('pointermove', (e) => {
     if (!d || e.pointerId !== d.id) return;
     d.dx = e.clientX - d.x0;
-    const dy = e.clientY - d.y0;
-    if (!d.moved && Math.hypot(d.dx, dy) < 6) return;
+    if (!d.moved && Math.hypot(d.dx, e.clientY - d.y0) < 8) return;
     d.moved = true;
-    el.style.transform = 'translate(' + d.dx + 'px,0) rotate(' + (d.dx / 18) + 'deg)';
   });
   const up = (e) => {
     if (!d || e.pointerId !== d.id) return;
     const moved = d.moved, dx = d.dx;
     d = null;
-    el.classList.remove('dragging');
-    if (e.type === 'pointercancel') { renderLibrary(); return; }
+    if (e.type === 'pointercancel') return;
     if (!moved) { openArticle(article); return; }
-    if (Math.abs(dx) > 70) {
-      // Slide the top card out, then tuck it at the back of the hand.
-      el.style.transform = 'translate(' + (dx > 0 ? 120 : -120) + '%, 20px) rotate(' + (dx > 0 ? 16 : -16) + 'deg)';
-      el.style.opacity = '0';
-      setTimeout(() => rotateLib(1), prefersReduced ? 0 : 260);
-    } else renderLibrary();
+    if (Math.abs(dx) > 60) rotateLib(dx > 0 ? -1 : 1);
   };
   el.addEventListener('pointerup', up);
   el.addEventListener('pointercancel', up);
@@ -839,13 +929,16 @@ function wantsWritten(a) {
 function openGhost(a) {
   ghostArticle = a;
   track('ghost_tapped', { article_id: a.id, format: a.format });
-  // The sheet itself carries the first-time line, so just mark it seen.
   S.onb.lines = S.onb.lines || {};
   if (!S.onb.lines.ghost) { S.onb.lines.ghost = true; saveOnb(); }
   $('#ghost-sheet-fmt').textContent = FMT_LABEL[a.format] || a.format;
   $('#ghost-sheet-title').textContent = a.title;
+  const st = deliveryState(a);
+  const arriving = st.kind === 'arriving';
+  // A free pick in progress is already being written: say when, no Notify me.
+  $('#ghost-copy').textContent = arriving ? 'Being written now. ' + st.text + '.' : 'Approved, not written yet. Credits open soon.';
+  $('#notify-host').hidden = S.readOnly || arriving;
   const btn = $('#notify-btn');
-  $('#notify-host').hidden = S.readOnly;
   const done = wantsWritten(a);
   btn.disabled = done;
   btn.textContent = done ? 'You’re on the list' : 'Notify me';
@@ -871,7 +964,7 @@ const ALLOWED = new Set(['H1', 'H2', 'H3', 'H4', 'H5', 'H6', 'P', 'UL', 'OL', 'L
   'BLOCKQUOTE', 'CODE', 'PRE', 'BR', 'HR', 'TABLE', 'THEAD', 'TBODY', 'TR', 'TH', 'TD', 'FIGURE', 'FIGCAPTION', 'IMG']);
 const DROP = new Set(['SCRIPT', 'STYLE', 'IFRAME', 'OBJECT', 'EMBED', 'NOSCRIPT', 'TEMPLATE', 'SVG', 'FORM', 'INPUT', 'BUTTON', 'SELECT', 'TEXTAREA', 'LINK', 'META', 'TITLE', 'HEAD']);
 const BLOCKS = new Set(['H1', 'H2', 'H3', 'H4', 'H5', 'H6', 'P', 'UL', 'OL', 'LI', 'BLOCKQUOTE', 'PRE', 'TABLE', 'FIGURE', 'DIV', 'SECTION', 'ARTICLE', 'HR']);
-// Clean body_html: allow-listed tags only, no classes, no styles, safe links.
+/** Clean body_html: allow-listed tags only, no classes, no styles, safe links. */
 function cleanHtml(html) {
   const doc = new DOMParser().parseFromString('<div id="r">' + (html || '') + '</div>', 'text/html');
   const root = doc.getElementById('r');
@@ -928,9 +1021,9 @@ function openReader(a) {
   readerArticle = a;
   track('library_open', { article_id: a.id, status: a.status, format: a.format });
   const fmt = $('#reader-fmt');
-  fmt.className = 'card-format fmt-' + a.format;
+  fmt.className = 'card-format gwm-center gwm-mono-tag fmt-' + a.format;
   fmt.textContent = FMT_LABEL[a.format] || a.format;
-  $('#reader-date').textContent = 'Delivered ' + fmtDate(a.delivered_at || a.created_at);
+  $('#reader-date').textContent = deliveryState(a).text;
   $('#reader-title').textContent = a.title;
   const body = $('#reader-html');
   body.innerHTML = cleanHtml(a.body_html) || '<p>The full text is in the Google Doc.</p>';
@@ -997,16 +1090,25 @@ async function toggleLive() {
   renderLibrary();
 }
 
-// -- Hub -----------------------------------------------------------------------
+// -- Hub entry: pencil -> (invite) -> design mode --------------------------------
 function openHubFlow() {
-  track('hub_tapped', { members: S.members.length });
+  track('hub_tapped', { members: S.members.length, forced: S.forceHub || undefined });
   if (S.onb.library_glow && !S.onb.pencil_glow) { setFlag('pencil_glow'); $('#pencil-sticker').classList.remove('onb-glow'); }
   hideBubble();
-  if (S.members.length < 3 && !S.onb.hub_invite_seen) openInvite();
-  else openHub();
+  const forceInvite = S.forceHub === 'invite';
+  if (forceInvite || (S.members.length < 3 && !S.onb.hub_invite_seen)) openInvite();
+  else goHub();
+}
+function goHub() {
+  enterHub({ forceLocked: S.forceHub === 'locked', fromRects: libraryRects() });
+}
+function exitHub() {
+  const rects = articleRects();
+  go('library', { fromRects: rects });
 }
 function openInvite() {
   const seats = Math.min(2, 3 - S.members.length);
+  if (seats <= 0) { toast('Your portal already has 3 people.'); goHub(); return; }
   const wrap = $('#invite-fields');
   wrap.textContent = '';
   for (let i = 0; i < seats; i++) {
@@ -1020,6 +1122,9 @@ function openInvite() {
     lab.appendChild(input);
     wrap.appendChild(lab);
   }
+  $('#invite-sub').textContent = seats === 1
+    ? 'They’ll get a sign-in link. One seat left on your portal.'
+    : 'They’ll get a sign-in link. Up to 3 people per portal.';
   $('#invite-msg').textContent = ' ';
   $('#invite-msg').className = 'field-msg';
   $('#invite-btn').disabled = false;
@@ -1057,75 +1162,24 @@ async function submitInvite(e) {
   await refreshMembers();
   closeScrim('invite-modal');
   toast(sent ? (sent === 1 ? 'Invite sent.' : 'Invites sent.') : 'They’re already on your portal.');
-  openHub();
+  goHub();
 }
 function skipInvite() {
   setFlag('hub_invite_seen');
   closeScrim('invite-modal');
-  openHub();
+  goHub();
 }
 async function refreshMembers() {
-  const { data } = await sb.from('members').select('id,user_id,role,display_name,avatar_shape,created_at')
+  const { data } = await sb.from('members').select('id,user_id,role,display_name,avatar_shape,onboarding,created_at')
     .eq('company_id', S.company.id).order('created_at');
   if (data) S.members = data;
 }
-function openHub() {
-  const unlocked = !!S.company.hub_unlocked;
-  show('hub');
-  const canvas = $('#hub-canvas');
-  const items = $('#hub-items');
-  items.textContent = '';
-  const cardById = new Map(S.cards.map((c) => [c.id, c]));
-
-  const notes = S.notes.filter((n) => n.body !== WANTS_WRITTEN).map((n) => {
-    const s = h('div', 'sticker sticky-note');
-    s.appendChild(h('span', null, n.body));
-    const about = n.card_id && cardById.get(n.card_id);
-    if (about) s.appendChild(h('span', 'about', 'On: ' + about.title));
-    const who = h('span', 'who');
-    who.append(avatarEl(memberById(n.member_id)), document.createTextNode(displayName(memberById(n.member_id))));
-    s.appendChild(who);
-    return { id: n.id, el: s };
-  });
-  const books = libArticles().map((a) => {
-    const b = h('div', 'sticker mini-book fmt-' + a.format + (a.status === 'approved_unwritten' ? ' ghost' : ''));
-    b.appendChild(h('span', null, a.title));
-    b.appendChild(h('span', 'k', a.status === 'approved_unwritten' ? 'Approved' : a.status === 'live' ? 'Live' : 'Delivered'));
-    return { id: a.id, el: b };
-  });
-  const agrees = upNext().filter((x) => x.ov && x.ov.state === 'agree').slice(0, 3).map((x) => {
-    const c = h('div', 'sticker agree-card');
-    const lab = h('span', 'ov-label agree');
-    const avs = h('span', 'avs');
-    avs.append(avatarEl(x.ov.a), avatarEl(x.ov.b));
-    lab.append(avs, document.createTextNode('Agree'));
-    c.append(lab, h('span', null, x.card.title));
-    return { id: x.card.id, el: c };
-  });
-  // Interleave so the canvas reads as a mixed board, not three lists.
-  const all = [];
-  const lists = [notes, books, agrees];
-  for (let i = 0; lists.some((l) => i < l.length); i++) lists.forEach((l) => { if (l[i]) all.push(l[i]); });
-  all.forEach(({ id, el }) => {
-    const r = hash(id);
-    el.style.setProperty('--rot', ((r % 1100) / 100 - 5.5).toFixed(1) + 'deg');
-    el.style.setProperty('--dy', ((r >> 8) % 22 - 11) + 'px');
-    items.appendChild(el);
-  });
-  canvas.classList.toggle('locked', !unlocked);
-  canvas.classList.toggle('unlocked', unlocked);
-  canvas.classList.toggle('empty', !all.length);
-  $('#hub-line').textContent = unlocked
-    ? 'Coming soon: add stickers, links, and notes.'
-    : 'Your notes, articles, and ideas, in one place. Unlocks with your first credit pack.';
-  if (!unlocked) track('hub_locked_viewed', { items: all.length });
-}
 
 // -- Navigation ----------------------------------------------------------------
-function go(view) {
+function go(view, opts) {
   if (view === 'library') {
     if (!S.onb.library_glow && S.onb.feed_intro) { setFlag('library_glow'); $('#switch-library').classList.remove('onb-glow'); }
-    show('library'); renderLibrary();
+    show('library'); renderLibrary(opts);
   } else if (view === 'feed') {
     show('feed'); renderFeed();
   }
@@ -1161,12 +1215,37 @@ async function sendLink(e) {
     return;
   }
   // Same answer whether or not the email has a portal.
-  msg.textContent = 'Check your inbox. The link opens your portal.';
+  msg.textContent = ' ';
+  $('#sent-email').textContent = email;
+  $('#signin-form').hidden = true;
+  $('#signin-sent').hidden = false;
+}
+function resetSignin() {
+  $('#signin-sent').hidden = true;
+  $('#signin-form').hidden = false;
+  $('#signin-email').focus();
 }
 async function signOut() {
   try { await sb.auth.signOut(); } catch (_) {}
   try { ph.reset(); } catch (_) {}
   location.href = '/portal';
+}
+
+// -- Internal testing switches (internal companies only) -------------------------
+async function applySwitches() {
+  if (!S.company.is_internal) return;
+  const hub = PARAMS.get('hub');
+  if (hub === 'locked' || hub === 'invite') S.forceHub = hub;
+  if (PARAMS.get('onboarding') === 'reset') {
+    S.onb = {};
+    await saveOnb(true);
+    const p = new URLSearchParams(location.search);
+    p.delete('onboarding');
+    history.replaceState(null, '', location.pathname + (p.toString() ? '?' + p : ''));
+    toast('Onboarding reset.');
+  }
+  if (S.forceHub) $('#test-switch').hidden = false;
+  $('#test-switch').textContent = S.forceHub ? 'Testing: hub=' + S.forceHub : '';
 }
 
 // -- Load ----------------------------------------------------------------------
@@ -1179,17 +1258,18 @@ async function loadPortal(fromLink) {
   S.me = mine[0];
   S.onb = Object.assign({}, S.me.onboarding || {});
   const cid = S.me.company_id;
-  const [company, members, cards, decisions, events, signal, articles, notes] = await Promise.all([
-    sb.from('companies').select('id,slug,name,contact_first_name,subscription_status,subscription_ends_at,hub_unlocked').eq('id', cid).single(),
-    sb.from('members').select('id,user_id,role,display_name,avatar_shape,created_at').eq('company_id', cid).order('created_at'),
-    sb.from('cards').select('id,card_key,format,title,angle,evidence,tags,sources,drop_date,sort_order').eq('company_id', cid).order('sort_order'),
+  const [company, members, cards, decisions, events, signal, articles, notes, hubItems] = await Promise.all([
+    sb.from('companies').select('id,slug,name,contact_first_name,subscription_status,subscription_ends_at,hub_unlocked,is_internal').eq('id', cid).single(),
+    sb.from('members').select('id,user_id,role,display_name,avatar_shape,onboarding,created_at').eq('company_id', cid).order('created_at'),
+    sb.from('cards').select('id,card_key,format,series,title,angle,evidence,tags,sources,drop_date,sort_order').eq('company_id', cid).order('sort_order'),
     sb.from('decisions').select('card_id,member_id,action,updated_at').eq('company_id', cid),
     sb.from('swipe_events').select('id,card_id,member_id,action,source,created_at').eq('company_id', cid).order('created_at'),
     sb.from('signals').select('text,source,signal_date').eq('company_id', cid).order('signal_date', { ascending: false }).order('created_at', { ascending: false }).limit(1),
-    sb.from('articles').select('id,card_id,format,title,status,body_html,google_doc_url,delivered_at,live_at,created_at').eq('company_id', cid),
+    sb.from('articles').select('id,card_id,format,title,status,body_html,google_doc_url,requested_at,deliver_by,delivered_at,live_at,created_at').eq('company_id', cid),
     sb.from('notes').select('id,member_id,card_id,body,created_at').eq('company_id', cid).order('created_at'),
+    sb.from('hub_items').select('*').eq('company_id', cid),
   ]);
-  const failed = [company, members, cards, decisions, events, signal, articles, notes].find((r) => r.error);
+  const failed = [company, members, cards, decisions, events, signal, articles, notes, hubItems].find((r) => r.error);
   if (failed) throw failed.error;
   S.company = company.data;
   S.members = members.data;
@@ -1199,14 +1279,16 @@ async function loadPortal(fromLink) {
   S.signal = signal.data[0] || null;
   S.articles = articles.data;
   S.notes = notes.data;
+  S.hubItems = hubItems.data;
   const c = S.company;
   S.readOnly = c.subscription_status === 'canceled' && !!c.subscription_ends_at && new Date(c.subscription_ends_at) <= new Date();
   S.loaded = true;
+  await applySwitches();
 
   // Analytics: member id only, never email. Group by company slug.
   try {
     ph.identify(S.me.id, { role: S.me.role });
-    ph.group('company', c.slug, { name: c.name });
+    ph.group('company', c.slug, { name: c.name, internal: !!c.is_internal });
     ph.register({ slug: c.slug, surface: 'portal' });
   } catch (_) {}
   let loggedThisTab = false;
@@ -1220,7 +1302,7 @@ async function loadPortal(fromLink) {
   if (S.readOnly) {
     const line = $('#resub-line');
     line.hidden = false;
-    line.textContent = 'Your subscription ended ' + fmtDate(c.subscription_ends_at) + '. Your library stays here. ';
+    line.textContent = 'Your subscription ended ' + fmtDay(c.subscription_ends_at) + '. Your library stays here. ';
     const a = h('a', null, 'Resubscribe to reopen your feed.');
     a.href = '/' + encodeURIComponent(c.slug);
     line.appendChild(a);
@@ -1249,9 +1331,13 @@ async function boot() {
     $('#screen-loading .loading').textContent = 'The portal couldn’t load. Refresh to try again.';
     return;
   }
+  initHub({
+    get sb() { return sb; }, S, show, track, toast, firstLine, avatarEl, displayName, memberById,
+    libArticles, exitHub, FMT_LABEL, WANTS_WRITTEN,
+  });
   const { data } = await sb.auth.getSession();
   S.session = data.session;
-  if (location.hash && /access_token|error/.test(location.hash)) history.replaceState(null, '', location.pathname);
+  if (location.hash && /access_token|error/.test(location.hash)) history.replaceState(null, '', location.pathname + location.search);
   if (!S.session) {
     show('signin');
     if (authError) { $('#signin-msg').textContent = authError; $('#signin-msg').className = 'field-msg err'; }
@@ -1289,21 +1375,21 @@ document.addEventListener('click', (e) => {
     case 'lib-prev': return rotateLib(-1);
     case 'lib-next': return rotateLib(1);
     case 'hub': return openHubFlow();
-    case 'back-to-library': return go('library');
+    case 'back-to-library': return exitHub();
     case 'invite-skip': return skipInvite();
     case 'bubble-dismiss': return dismissBubble();
     case 'sign-out': return signOut();
+    case 'signin-again': return resetSignin();
   }
 });
 // Tap outside a sheet closes it.
-['src-sheet', 'note-sheet', 'ghost-sheet'].forEach((id) => {
+['src-sheet', 'note-sheet', 'ghost-sheet', 'hub-text-sheet'].forEach((id) => {
   $('#' + id).addEventListener('click', (e) => { if (e.target.id === id) closeScrim(id); });
 });
 $('#signin-form').addEventListener('submit', sendLink);
 $('#invite-form').addEventListener('submit', submitInvite);
 $('#note-input').addEventListener('input', (e) => {
-  const n = e.target.value.length;
-  $('#note-count').textContent = n + ' / ' + NOTE_MAX;
+  $('#note-count').textContent = e.target.value.length + ' / ' + NOTE_MAX;
   $('#note-save').disabled = !e.target.value.trim();
 });
 $('#note-save').addEventListener('click', saveNote);
@@ -1316,9 +1402,7 @@ $('#gdoc-link').addEventListener('click', () => readerArticle && track('gdoc_ope
 (function dotScrub() {
   const dots = $('#dots');
   let s = null;
-  dots.addEventListener('pointerdown', (e) => {
-    s = { id: e.pointerId, x0: e.clientX, moved: false, start: S.feedIndex };
-  });
+  dots.addEventListener('pointerdown', (e) => { s = { id: e.pointerId, x0: e.clientX, moved: false, start: S.feedIndex }; });
   dots.addEventListener('pointermove', (e) => {
     if (!s || e.pointerId !== s.id) return;
     if (!s.moved && Math.abs(e.clientX - s.x0) < 8) return;
@@ -1344,12 +1428,14 @@ $('#card-stage').addEventListener('touchend', () => setTimeout(() => document.bo
 
 document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape') {
+    if (isRevealOpen()) return closeReveal();
     if (!$('#reader').hidden) return closeScrim('reader');
-    ['src-sheet', 'note-sheet', 'ghost-sheet'].forEach((id) => closeScrim(id));
+    ['src-sheet', 'note-sheet', 'ghost-sheet', 'hub-text-sheet'].forEach((id) => closeScrim(id));
+    $('#hub-emoji-picker').hidden = true;
     if ($('#invite-modal').classList.contains('open')) skipInvite();
     return;
   }
-  if (e.target.closest('input, textarea') || !$('#reader').hidden || document.querySelector('.sheet-scrim.open, .modal-scrim.open')) return;
+  if (isRevealOpen() || e.target.closest('input, textarea') || !$('#reader').hidden || document.querySelector('.sheet-scrim.open, .modal-scrim.open')) return;
   if (S.view === 'feed' && e.key === 'ArrowLeft') { e.preventDefault(); goTo(S.feedIndex - 1, 'key'); }
   if (S.view === 'feed' && e.key === 'ArrowRight') { e.preventDefault(); goTo(S.feedIndex + 1, 'key'); }
   if (S.view === 'library' && e.key === 'ArrowRight') { e.preventDefault(); rotateLib(1); }
