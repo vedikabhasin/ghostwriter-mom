@@ -1,17 +1,26 @@
-// Minimal Supabase mock for stripe-webhook.test.mjs: auth admin (create/list
-// users), /otp (the mailer; MAILER=down makes it fail like an unverified
-// Resend domain), and PostgREST for companies, members, stripe_events.
+// Minimal Supabase + Stripe mock for stripe-webhook.test.mjs and
+// create-checkout.test.mjs: auth admin (create/list users, getUser by token),
+// /otp (the mailer; mailerDown makes it fail like an unverified Resend
+// domain), PostgREST for any table in `state` (eq. and in. filters, limit),
+// /rest/v1/rpc/<fn> (recorded in state.rpc, answered by state.rpcImpl), and a
+// fake Stripe API under /v1 (recorded in state.stripe, answered by
+// state.stripeImpl).
 import http from 'node:http';
 
 export function startMock(port, state) {
   const send = (res, code, body) => { res.writeHead(code, { 'content-type': 'application/json' }); res.end(body === undefined ? '' : JSON.stringify(body)); };
   const filter = (rows, u) => {
-    for (const [k, v] of u.searchParams) if (v.startsWith('eq.')) rows = rows.filter((r) => String(r[k]) === v.slice(3));
+    for (const [k, v] of u.searchParams) {
+      if (v.startsWith('eq.')) rows = rows.filter((r) => String(r[k]) === v.slice(3));
+      if (v.startsWith('in.(')) { const set = v.slice(4, -1).split(','); rows = rows.filter((r) => set.includes(String(r[k]))); }
+    }
+    if (u.searchParams.get('limit')) rows = rows.slice(0, +u.searchParams.get('limit'));
     return rows;
   };
   const server = http.createServer(async (req, res) => {
     let raw = ''; for await (const c of req) raw += c;
-    const body = raw ? JSON.parse(raw) : null;
+    const form = (req.headers['content-type'] || '').includes('x-www-form-urlencoded');
+    const body = !raw ? null : form ? Object.fromEntries(new URLSearchParams(raw)) : JSON.parse(raw);
     const u = new URL(req.url, 'http://x');
     const p = u.pathname;
     state.calls.push(req.method + ' ' + p);
@@ -23,6 +32,22 @@ export function startMock(port, state) {
       return send(res, 200, user);
     }
     if (p === '/auth/v1/admin/users') return send(res, 200, { users: state.users, aud: 'authenticated' });
+    if (p === '/auth/v1/user') {
+      const u0 = (state.tokens || {})[(req.headers.authorization || '').replace(/^Bearer\s+/i, '')];
+      return u0 ? send(res, 200, { ...u0, aud: 'authenticated' }) : send(res, 401, { msg: 'invalid JWT' });
+    }
+    if (p.startsWith('/v1/')) {
+      const call = { method: req.method, path: p, body };
+      (state.stripe = state.stripe || []).push(call);
+      const [code, out] = (state.stripeImpl && state.stripeImpl(call)) || [404, { error: { message: 'no route' } }];
+      return send(res, code, out);
+    }
+    if (p.startsWith('/rest/v1/rpc/')) {
+      const name = p.slice('/rest/v1/rpc/'.length);
+      (state.rpc = state.rpc || []).push({ name, body });
+      const impl = state.rpcImpl && state.rpcImpl[name];
+      return send(res, 200, impl ? impl(body) : null);
+    }
     if (p === '/auth/v1/otp') {
       state.otp.push(body.email);
       return state.mailerDown ? send(res, 500, { code: 'unexpected_failure', msg: 'Error sending magic link email' }) : send(res, 200, {});

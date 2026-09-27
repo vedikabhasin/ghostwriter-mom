@@ -37,7 +37,8 @@ export function vedikaDb(overrides = {}) {
     .map(([k, a], i) => ({ id: 'd' + i, company_id: CO, card_id: cardId(k), member_id: MEMBER, action: a, updated_at: iso(-2 * H) }));
   return {
     companies: [{ id: CO, slug: 'vedika-bhasin-ycfogw', name: 'Vedika Bhasin', contact_first_name: 'Vedika', is_internal: true,
-      subscription_status: 'active', subscription_ends_at: null, hub_unlocked: true, ...(overrides.company || {}) }],
+      subscription_status: 'active', subscription_ends_at: null, hub_unlocked: true, stripe_subscription_id: null, plan_subscription_id: null,
+      first_opened_at: '2026-09-27T18:47:47.473518+00:00', created_at: '2026-09-27T18:47:47.473518+00:00', ...(overrides.company || {}) }],
     members,
     cards: JSON_FEED.cards.map((c, i) => ({ id: cardId(c.id), company_id: CO, card_key: c.id, format: c.format, series: c.series, title: c.title,
       angle: c.angle, evidence: c.evidence, tags: c.tags || [], sources: c.sources || [], drop_date: '2026-09-27', sort_order: i })),
@@ -53,6 +54,8 @@ export function vedikaDb(overrides = {}) {
         body_html: null, google_doc_url: null, requested_at: null, deliver_by: null, delivered_at: null, live_at: null, created_at: iso(-3 * H) },
     ],
     notes: [],
+    credit_ledger: [],
+    pieces: [],
     hub_items: [
       { id: '31e4f1d2-dc70-4701-999b-8cbb2f5dd1bc', company_id: CO, kind: 'text', ref_id: null, body: RULES,   emoji: null, x: 24, y: 24,  rotation: 0, z: 2, hidden: false, created_by: null, updated_at: iso(-3 * H) },
       { id: 'e49f6c62-af3d-438d-8ee8-7adb49e6657f', company_id: CO, kind: 'text', ref_id: null, body: CADENCE, emoji: null, x: 24, y: 220, rotation: 0, z: 1, hidden: false, created_by: null, updated_at: iso(-3 * H) },

@@ -1,0 +1,14 @@
+# Supabase CLI project settings. Only the parts this repo depends on.
+project_id = "jeuupgmztwyialqatoel"
+
+# The project signs sessions with ES256 keys, which the platform verify_jwt
+# gate rejects with a 401 before the function runs. Every function here
+# checks its caller itself (admin.auth.getUser, or Stripe's signature).
+[functions.invite-member]
+verify_jwt = false
+
+[functions.stripe-webhook]
+verify_jwt = false
+
+[functions.create-checkout]
+verify_jwt = false

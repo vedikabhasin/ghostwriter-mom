@@ -7,6 +7,11 @@
 // An emoji pinned onto another item stores that item's id in ref_id and its
 // x/y relative to the item, so it travels with it. A free emoji has ref_id
 // null and canvas x/y. Only this view has grabbable, movable items.
+//
+// Access comes from the account (hub_access: a credit purchase with an active
+// $19, a Hub that was already open, or an internal portal). Locked, the
+// canvas is blurred and read-only under the lock modal; the header with seats
+// and Invite sits above both.
 // -----------------------------------------------------------------------------
 import { $, $all, h, hash, prefersReduced } from '/portal/lib.js';
 import { ICONS } from '/portal/avatars.js';
@@ -110,7 +115,7 @@ export function slotForNewItem(list, id) { return place(list, id); }
 // ---- enter / exit ---------------------------------------------------------------
 export async function enterHub({ forceLocked, fromRects }) {
   const S = app.S;
-  locked = !S.company.hub_unlocked || !!forceLocked;
+  locked = !app.hubOpen() || !!forceLocked;
   showHidden = false;
   placingEmoji = null;
   items = S.hubItems.map((i) => Object.assign({}, i));
@@ -174,7 +179,8 @@ function itemEl(i) {
   el.style.left = (+i.x) + 'px';
   el.style.top = (+i.y) + 'px';
   el.style.setProperty('--rot', (+i.rotation || 0) + 'deg');
-  el.style.zIndex = String(i.kind === 'emoji' && i.ref_id ? 50 : (i.z || 0));
+  // Hidden items (shown in unhide mode) always sit under visible ones.
+  el.style.zIndex = String(i.kind === 'emoji' && i.ref_id ? 50 : i.hidden ? 1 : 10 + (i.z || 0));
 
   if (i.kind === 'article') {
     const a = S.articles.find((x) => x.id === i.ref_id);
@@ -188,8 +194,9 @@ function itemEl(i) {
     if (card && card.series) head.appendChild(h('span', 'gwm-series-label', card.series));
     el.appendChild(head);
     el.appendChild(h('span', 'mb-title', a.title));
-    el.appendChild(h('span', 'mb-state', a.status === 'live' ? 'Live' : ghost ? 'Approved' : 'Delivered'));
+    el.appendChild(h('span', 'mb-state', a.status === 'live' ? 'Live' : ghost ? (app.writable(a) ? 'Ready to write' : 'Approved') : 'Delivered'));
     el.setAttribute('aria-label', 'Article: ' + a.title);
+    if (ghost && app.writable(a)) el.classList.add('writable');
   } else if (i.kind === 'note') {
     const n = S.notes.find((x) => x.id === i.ref_id);
     if (!n) return null;
@@ -240,6 +247,13 @@ function itemEl(i) {
 function openMenu(i, el) {
   $all('.hub-menu').forEach((m) => m.remove());
   const menu = h('div', 'hub-menu');
+  const a = i.kind === 'article' ? app.S.articles.find((x) => x.id === i.ref_id) : null;
+  if (a && app.writable(a)) {
+    const w = h('button', 'gwm-btn', 'Write this');
+    w.type = 'button';
+    w.addEventListener('click', (e) => { e.stopPropagation(); menu.remove(); app.openWrite(a); });
+    menu.appendChild(w);
+  }
   const b = h('button', 'gwm-btn', i.hidden ? 'Unhide' : 'Hide');
   b.type = 'button';
   b.addEventListener('click', (e) => { e.stopPropagation(); menu.remove(); setHidden(i, !i.hidden); });
@@ -300,7 +314,12 @@ async function onItemUp(e) {
   el.removeEventListener('pointercancel', onItemUp);
   el.classList.remove('dragging');
   el.style.translate = '';
-  if (!moved || e.type === 'pointercancel') { render(); return; }
+  if (!moved || e.type === 'pointercancel') {
+    // A tap on an approved, unwritten card opens "Write this".
+    const a = !moved && e.type !== 'pointercancel' && i.kind === 'article' ? app.S.articles.find((x) => x.id === i.ref_id) : null;
+    if (a && app.writable(a)) { app.openWrite(a); return; }
+    render(); return;
+  }
 
   const patch = { rotation: +i.rotation || 0, z: maxZ() + 1 };
   if (i.kind === 'emoji') {

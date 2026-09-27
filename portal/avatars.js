@@ -65,7 +65,7 @@ export function avatarSVG(member, size = 28) {
     `</svg>`;
 }
 
-// The Ghostwriter Mom pencil mascot — plain, no face. Mirrors the SVG that
+// The Ghostwriter Mom pencil mascot: plain, no face. Mirrors the SVG that
 // serves as the waitlist page cursor. Used as the Hub sticker on the portal;
 // shared so the two surfaces read as one product.
 export function pencilSVG(size = 88) {

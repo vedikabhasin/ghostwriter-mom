@@ -9,8 +9,14 @@
   "ok": true
  },
  {
-  "name": "login: \"Check your inbox.\" + 24 hours",
-  "ok": true
+  "name": "login: \"Check your inbox.\" + same answer for any email",
+  "ok": true,
+  "detail": "\n        ✉️\n        Check your inbox.\n        If vedikabhasin@gmail.com has a portal, a sign-in link and code are on their way.\n        \n          \n            \n            \n              \n              \n                Sign in →\n              \n            \n          \n           \n        \n        Use a different email\n      "
+ },
+ {
+  "name": "login: code input present, focused after send, numeric one-time-code (6 to 8 digits) + Sign in",
+  "ok": true,
+  "detail": "{\"focused\":true,\"inputmode\":\"numeric\",\"ac\":\"one-time-code\",\"pattern\":\"[0-9]*\",\"min\":6,\"max\":8,\"btn\":\"Sign in →\"}"
  },
  {
   "name": "login: signInWithOtp, shouldCreateUser false",
@@ -96,9 +102,24 @@
   "detail": "{\"end\":1140,\"props\":[\"offset\",\"easing\",\"composite\",\"opacity\",\"computedOffset\",\"transform\"]}"
  },
  {
+  "name": "reveal agree: card shows subtitle and sources, sized to content",
+  "ok": true,
+  "detail": "{\"sub\":true,\"src\":\"1 source\",\"slack\":12,\"glow\":0,\"flat\":true,\"bg\":\"radial-gradient(60% 50% at 50% 42%, rgb(184, 255, 113), color(srgb 0.855686 0.964706 0.732549) 58%, rgb(241, 240, 236) 100%), none\"}"
+ },
+ {
+  "name": "reveal agree: flat buttons, no rainbow glow",
+  "ok": true,
+  "detail": "{\"sub\":true,\"src\":\"1 source\",\"slack\":12,\"glow\":0,\"flat\":true,\"bg\":\"radial-gradient(60% 50% at 50% 42%, rgb(184, 255, 113), color(srgb 0.855686 0.964706 0.732549) 58%, rgb(241, 240, 236) 100%), none\"}"
+ },
+ {
+  "name": "reveal agree: hearts in the like token at full opacity",
+  "ok": true,
+  "detail": "{\"color\":\"rgb(184, 255, 113)\",\"opacity\":\"1\",\"like\":\"#B8FF71\"}"
+ },
+ {
   "name": "reveal agree: copy + buttons",
   "ok": true,
-  "detail": "LikedYouPostVBThe Parts Other Creators Build WithLikedblendbasesYou both want this one.Move it upKeep swiping"
+  "detail": "LikedYouPostVBThe Parts Other Creators Build WithMaking an effect is different from making the pieces effects are made from. The quietest work outlives the campaign.1 sourceLikedblendbasesYou both want this one.Move it upKeep swiping"
  },
  {
   "name": "reveal agree: floating hearts on screen",
@@ -118,9 +139,19 @@
   "detail": "{\"end\":1140,\"props\":[\"offset\",\"easing\",\"composite\",\"opacity\",\"computedOffset\",\"transform\"]}"
  },
  {
+  "name": "reveal split: card shows subtitle and sources, sized to content",
+  "ok": true,
+  "detail": "{\"sub\":true,\"src\":\"2 sources\",\"slack\":12,\"glow\":0,\"flat\":true,\"bg\":\"linear-gradient(90deg, rgb(184, 255, 113) 0px, rgb(184, 255, 113) 50%, rgb(255, 107, 92) 50%, rgb(255, 107, 92) 100%)\"}"
+ },
+ {
+  "name": "reveal split: flat buttons, no rainbow glow",
+  "ok": true,
+  "detail": "{\"sub\":true,\"src\":\"2 sources\",\"slack\":12,\"glow\":0,\"flat\":true,\"bg\":\"linear-gradient(90deg, rgb(184, 255, 113) 0px, rgb(184, 255, 113) 50%, rgb(255, 107, 92) 50%, rgb(255, 107, 92) 100%)\"}"
+ },
+ {
   "name": "reveal split: copy + buttons",
   "ok": true,
-  "detail": "LikedYouPostVBDesigning Overwhelm Without HarmPassedblendbasesYou two see this differently.Leave a noteKeep swiping"
+  "detail": "LikedYouPostVBDesigning Overwhelm Without HarmMaking people feel focus fatigue without making them sick. Empathy needs a way out.2 sourcesPassedblendbasesYou two see this differently.Leave a noteKeep swiping"
  },
  {
   "name": "reveal split: stamps Liked + Passed",
@@ -133,12 +164,12 @@
  {
   "name": "note: hub_items row kind note, created_by me",
   "ok": true,
-  "detail": "{\"id\":\"h1tpagbnbz5r\",\"ref_id\":\"ne5o6bd4lhid\",\"body\":null,\"emoji\":null,\"x\":548,\"y\":29,\"rotation\":0.7999999999999998,\"z\":3,\"hidden\":false,\"updated_at\":\"2026-09-27T19:20:22.977Z\",\"company_id\":\"b22beda7-45cf-486a-931e-d3b429619788\",\"kind\":\"note\",\"created_by\":\"9afe9458-e205-4209-96ec-9c8f6fab77c5\"}"
+  "detail": "{\"id\":\"hdfkf1vj4xa6\",\"ref_id\":\"n0f46vwa94ye7\",\"body\":null,\"emoji\":null,\"x\":538,\"y\":26,\"rotation\":-3,\"z\":3,\"hidden\":false,\"updated_at\":\"2026-09-27T23:29:53.378Z\",\"company_id\":\"b22beda7-45cf-486a-931e-d3b429619788\",\"kind\":\"note\",\"created_by\":\"9afe9458-e205-4209-96ec-9c8f6fab77c5\"}"
  },
  {
   "name": "note: placed next to the seeded rules notes",
   "ok": true,
-  "detail": "548,29"
+  "detail": "538,26"
  },
  {
   "name": "reveal timing: entrance <= 1.2s, transform + opacity only",
@@ -146,13 +177,28 @@
   "detail": "{\"end\":1140,\"props\":[\"offset\",\"easing\",\"composite\",\"opacity\",\"computedOffset\",\"transform\"]}"
  },
  {
+  "name": "reveal timing: card shows subtitle and sources, sized to content",
+  "ok": true,
+  "detail": "{\"sub\":true,\"src\":\"1 source\",\"slack\":12,\"glow\":0,\"flat\":true,\"bg\":\"linear-gradient(rgb(184, 255, 113) 0%, color(srgb 0.853137 0.950392 0.35902) 38%, rgb(245, 232, 74) 72%)\"}"
+ },
+ {
+  "name": "reveal timing: flat buttons, no rainbow glow",
+  "ok": true,
+  "detail": "{\"sub\":true,\"src\":\"1 source\",\"slack\":12,\"glow\":0,\"flat\":true,\"bg\":\"linear-gradient(rgb(184, 255, 113) 0%, color(srgb 0.853137 0.950392 0.35902) 38%, rgb(245, 232, 74) 72%)\"}"
+ },
+ {
   "name": "reveal timing: copy",
   "ok": true,
-  "detail": "SavedYouPostVBExistential Until I Met YouLikedblendbasesOne of you wants it now. One wants it later.Leave a noteKeep swiping"
+  "detail": "SavedYouPostVBExistential Until I Met YouTechnology doesn't exist without humans, and feels existential without them too. The machine finds joy in being seen.1 sourceLikedblendbasesOne of you wants it now. One wants it later.Leave a noteKeep swiping"
  },
  {
   "name": "reveal timing: clock hand",
   "ok": true
+ },
+ {
+  "name": "reveals: Agree, Split and Timing each have their own background",
+  "ok": true,
+  "detail": "{\"agree\":\"radial-gradient(60% 50% at 50% 42%, rgb(184, 255, 113), color(srgb 0.855686 0.964706 0.732549) 58%, rgb(241, 240, 236) 100%), none\",\"split\":\"linear-gradient(90deg, rgb(184, 255, 113) 0px, rgb(184, 255, 113) 50%, rgb(255, 107, 92) 50%, rgb(255, 107, 92) 100%)\",\"timing\":\"linear-gradient(rgb(184, 255, 113) 0%, color(srgb 0.853137 0.950392 0.35902) 38%, rgb(245, 232, 74) 72%)\"}"
  },
  {
   "name": "later view: split label + edge glow, no reveal",
@@ -171,6 +217,11 @@
   "ok": true
  },
  {
+  "name": "notes readable in Feed history on the card",
+  "ok": true,
+  "detail": "VBDesigning Overwhelm Without Harm\n\nYouLIKED\nSep 27, 11:29 PM\nblendbasesPASSED\nSep 27, 9:30 PM\n\n1 NOTE\n\nYOU · SEP 27\nGrok is my best proof of the way-out idea. "
+ },
+ {
   "name": "up next: vb-02 moved to the top",
   "ok": true,
   "detail": "1The Parts Other Creators Build WithMoved upAgree2Existential Until I Met You3Designing Overwhelm Without Harm"
@@ -178,7 +229,7 @@
  {
   "name": "library: top card flat, centered, fully opaque",
   "ok": true,
-  "detail": "{\"count\":3,\"topText\":\"POST\\nVB\\nI Design for the Moment AI Is Wrong\\nDELIVERED IN 19H · SEP 26, 7:20 PM\",\"topOpaque\":true,\"topFlat\":true,\"backsHidden\":true,\"backRot\":[-5,5],\"topZ\":20,\"backZ\":[16,18]}"
+  "detail": "{\"count\":3,\"topText\":\"POST\\nVB\\nI Design for the Moment AI Is Wrong\\nDELIVERED IN 19H · SEP 26, 11:29 PM\",\"topOpaque\":true,\"topFlat\":true,\"backsHidden\":true,\"backRot\":[-5,5],\"topZ\":20,\"backZ\":[16,18]}"
  },
  {
   "name": "library: back cards rotated 5-8 deg, content hidden, below the top",
@@ -188,7 +239,17 @@
  {
   "name": "library: vb-01 \"Delivered in 19h · <date>\"",
   "ok": true,
-  "detail": "POST\nVB\nI Design for the Moment AI Is Wrong\nDELIVERED IN 19H · SEP 26, 7:20 PM"
+  "detail": "POST\nVB\nI Design for the Moment AI Is Wrong\nDELIVERED IN 19H · SEP 26, 11:29 PM"
+ },
+ {
+  "name": "375px vb-01: status stamp on one line, inside the card",
+  "ok": true,
+  "detail": "[{\"text\":\"Delivered in 19h · Sep 26, 11:29 PM\",\"oneLine\":true,\"inside\":true,\"size\":\"8.25px\"}]"
+ },
+ {
+  "name": "library header: no credits line at 0 balance",
+  "ok": true,
+  "detail": "1 written · 2 approved"
  },
  {
   "name": "library vb-01: title contrast AA (>= 4.5)",
@@ -200,9 +261,14 @@
   "ok": true
  },
  {
-  "name": "library: bx-01 ghost, \"Approved\" stamp + \"Approved · not written yet\"",
+  "name": "library: bx-01 ghost, \"Approved\" stamp + chip \"Ready to write · 1 credit\"",
   "ok": true,
-  "detail": "POST\nBLENDXR\nThe Experienced Eyes Are Retiring\nAPPROVED\nAPPROVED · NOT WRITTEN YET"
+  "detail": "POST\nBLENDXR\nThe Experienced Eyes Are Retiring\nAPPROVED\nREADY TO WRITE · 1 CREDIT"
+ },
+ {
+  "name": "375px bx-01: status stamp on one line, inside the card",
+  "ok": true,
+  "detail": "[{\"text\":\"Ready to write · 1 credit\",\"oneLine\":true,\"inside\":true,\"size\":\"10.5px\"}]"
  },
  {
   "name": "ghost: opaque paper body, dashed border, two trails at 25%/12%",
@@ -219,7 +285,12 @@
   "ok": true
  },
  {
-  "name": "ghost tap: \"Approved, not written yet. Credits open soon.\" + Notify me",
+  "name": "ghost tap: \"Write this\" with a format choice, cost and 0 balance",
+  "ok": true,
+  "detail": "\n  \n    \n    \n      \n        Post\n        The Experienced Eyes Are Retiring\n      \n      ×\n    \n    Approved, not written yet.\n    \n      \n        Post · 1\n        Insight · 3\n        Pillar · 8\n      \n      1 credit. You have 0 credits.\n      Get credits\n       \n    \n    \n  \n"
+ },
+ {
+  "name": "internal account: credits are added by hand, no checkout",
   "ok": true
  },
  {
@@ -253,7 +324,7 @@
   "ok": true
  },
  {
-  "name": "first pencil tap: invite pop-up with one field (1 free seat)",
+  "name": "first pencil tap: invite pop-up with one field, \"One seat left.\"",
   "ok": true
  },
  {
@@ -281,12 +352,12 @@
  {
   "name": "drag: x/y saved on drop, last dragged comes to front",
   "ok": true,
-  "detail": "{\"x\":669,\"y\":358,\"z\":7,\"before\":{\"id\":\"h1lk6td30y1k\",\"ref_id\":\"553f5a86-290e-4a13-ad97-3e7fa29e6c5f\",\"body\":null,\"emoji\":null,\"x\":549,\"y\":268,\"rotation\":-3.3,\"z\":4,\"hidden\":false,\"updated_at\":\"2026-09-27T19:20:35.572Z\",\"company_id\":\"b22beda7-45cf-486a-931e-d3b429619788\",\"kind\":\"article\",\"created_by\":null}}"
+  "detail": "{\"x\":669,\"y\":358,\"z\":7,\"before\":{\"id\":\"hmc016m8di\",\"ref_id\":\"553f5a86-290e-4a13-ad97-3e7fa29e6c5f\",\"body\":null,\"emoji\":null,\"x\":549,\"y\":268,\"rotation\":-3.3,\"z\":4,\"hidden\":false,\"updated_at\":\"2026-09-27T23:30:05.939Z\",\"company_id\":\"b22beda7-45cf-486a-931e-d3b429619788\",\"kind\":\"article\",\"created_by\":null}}"
  },
  {
   "name": "pin: dropped onto an item stays attached (ref_id = item)",
   "ok": true,
-  "detail": "{\"id\":\"hqpx2st7fya\",\"ref_id\":\"h1lk6td30y1k\",\"body\":null,\"emoji\":\"🔥\",\"x\":42,\"y\":28,\"rotation\":0,\"z\":8,\"hidden\":false,\"updated_at\":\"2026-09-27T19:20:39.442Z\",\"company_id\":\"b22beda7-45cf-486a-931e-d3b429619788\",\"kind\":\"emoji\",\"created_by\":\"9afe9458-e205-4209-96ec-9c8f6fab77c5\"}"
+  "detail": "{\"id\":\"hjdo398yvqbj\",\"ref_id\":\"hmc016m8di\",\"body\":null,\"emoji\":\"🔥\",\"x\":42,\"y\":28,\"rotation\":0,\"z\":8,\"hidden\":false,\"updated_at\":\"2026-09-27T23:30:09.757Z\",\"company_id\":\"b22beda7-45cf-486a-931e-d3b429619788\",\"kind\":\"emoji\",\"created_by\":\"9afe9458-e205-4209-96ec-9c8f6fab77c5\"}"
  },
  {
   "name": "pin: rendered inside its item",
@@ -302,6 +373,10 @@
  },
  {
   "name": "show hidden: back at 30% with Unhide",
+  "ok": true
+ },
+ {
+  "name": "show hidden: hidden items sit under every visible item",
   "ok": true
  },
  {
@@ -453,9 +528,24 @@
   "detail": "{\"end\":1140,\"props\":[\"offset\",\"easing\",\"composite\",\"opacity\",\"computedOffset\",\"transform\"]}"
  },
  {
+  "name": "reveal agree: card shows subtitle and sources, sized to content",
+  "ok": true,
+  "detail": "{\"sub\":true,\"src\":\"1 source\",\"slack\":12,\"glow\":0,\"flat\":true,\"bg\":\"radial-gradient(60% 50% at 50% 42%, rgb(184, 255, 113), color(srgb 0.855686 0.964706 0.732549) 58%, rgb(241, 240, 236) 100%), none\"}"
+ },
+ {
+  "name": "reveal agree: flat buttons, no rainbow glow",
+  "ok": true,
+  "detail": "{\"sub\":true,\"src\":\"1 source\",\"slack\":12,\"glow\":0,\"flat\":true,\"bg\":\"radial-gradient(60% 50% at 50% 42%, rgb(184, 255, 113), color(srgb 0.855686 0.964706 0.732549) 58%, rgb(241, 240, 236) 100%), none\"}"
+ },
+ {
+  "name": "reveal agree: hearts in the like token at full opacity",
+  "ok": true,
+  "detail": "{\"color\":\"rgb(184, 255, 113)\",\"opacity\":\"1\",\"like\":\"#B8FF71\"}"
+ },
+ {
   "name": "reveal agree: copy + buttons",
   "ok": true,
-  "detail": "LikedYouPostVBThe Parts Other Creators Build WithLikedblendbasesYou both want this one.Move it upKeep swiping"
+  "detail": "LikedYouPostVBThe Parts Other Creators Build WithMaking an effect is different from making the pieces effects are made from. The quietest work outlives the campaign.1 sourceLikedblendbasesYou both want this one.Move it upKeep swiping"
  },
  {
   "name": "reveal agree: floating hearts on screen",
@@ -475,9 +565,19 @@
   "detail": "{\"end\":1140,\"props\":[\"offset\",\"easing\",\"composite\",\"opacity\",\"computedOffset\",\"transform\"]}"
  },
  {
+  "name": "reveal split: card shows subtitle and sources, sized to content",
+  "ok": true,
+  "detail": "{\"sub\":true,\"src\":\"2 sources\",\"slack\":12,\"glow\":0,\"flat\":true,\"bg\":\"linear-gradient(90deg, rgb(184, 255, 113) 0px, rgb(184, 255, 113) 50%, rgb(255, 107, 92) 50%, rgb(255, 107, 92) 100%)\"}"
+ },
+ {
+  "name": "reveal split: flat buttons, no rainbow glow",
+  "ok": true,
+  "detail": "{\"sub\":true,\"src\":\"2 sources\",\"slack\":12,\"glow\":0,\"flat\":true,\"bg\":\"linear-gradient(90deg, rgb(184, 255, 113) 0px, rgb(184, 255, 113) 50%, rgb(255, 107, 92) 50%, rgb(255, 107, 92) 100%)\"}"
+ },
+ {
   "name": "reveal split: copy + buttons",
   "ok": true,
-  "detail": "LikedYouPostVBDesigning Overwhelm Without HarmPassedblendbasesYou two see this differently.Leave a noteKeep swiping"
+  "detail": "LikedYouPostVBDesigning Overwhelm Without HarmMaking people feel focus fatigue without making them sick. Empathy needs a way out.2 sourcesPassedblendbasesYou two see this differently.Leave a noteKeep swiping"
  },
  {
   "name": "reveal split: stamps Liked + Passed",
@@ -489,13 +589,28 @@
   "detail": "{\"end\":1140,\"props\":[\"offset\",\"easing\",\"composite\",\"opacity\",\"computedOffset\",\"transform\"]}"
  },
  {
+  "name": "reveal timing: card shows subtitle and sources, sized to content",
+  "ok": true,
+  "detail": "{\"sub\":true,\"src\":\"1 source\",\"slack\":12,\"glow\":0,\"flat\":true,\"bg\":\"linear-gradient(rgb(184, 255, 113) 0%, color(srgb 0.853137 0.950392 0.35902) 38%, rgb(245, 232, 74) 72%)\"}"
+ },
+ {
+  "name": "reveal timing: flat buttons, no rainbow glow",
+  "ok": true,
+  "detail": "{\"sub\":true,\"src\":\"1 source\",\"slack\":12,\"glow\":0,\"flat\":true,\"bg\":\"linear-gradient(rgb(184, 255, 113) 0%, color(srgb 0.853137 0.950392 0.35902) 38%, rgb(245, 232, 74) 72%)\"}"
+ },
+ {
   "name": "reveal timing: copy",
   "ok": true,
-  "detail": "SavedYouPostVBExistential Until I Met YouLikedblendbasesOne of you wants it now. One wants it later.Leave a noteKeep swiping"
+  "detail": "SavedYouPostVBExistential Until I Met YouTechnology doesn't exist without humans, and feels existential without them too. The machine finds joy in being seen.1 sourceLikedblendbasesOne of you wants it now. One wants it later.Leave a noteKeep swiping"
  },
  {
   "name": "reveal timing: clock hand",
   "ok": true
+ },
+ {
+  "name": "reveals: Agree, Split and Timing each have their own background",
+  "ok": true,
+  "detail": "{\"agree\":\"radial-gradient(60% 50% at 50% 42%, rgb(184, 255, 113), color(srgb 0.855686 0.964706 0.732549) 58%, rgb(241, 240, 236) 100%), none\",\"split\":\"linear-gradient(90deg, rgb(184, 255, 113) 0px, rgb(184, 255, 113) 50%, rgb(255, 107, 92) 50%, rgb(255, 107, 92) 100%)\",\"timing\":\"linear-gradient(rgb(184, 255, 113) 0%, color(srgb 0.853137 0.950392 0.35902) 38%, rgb(245, 232, 74) 72%)\"}"
  },
  {
   "name": "later view: split label + edge glow, no reveal",
@@ -521,7 +636,7 @@
  {
   "name": "library: top card flat, centered, fully opaque",
   "ok": true,
-  "detail": "{\"count\":3,\"topText\":\"POST\\nVB\\nI Design for the Moment AI Is Wrong\\nDELIVERED IN 19H · SEP 26, 7:20 PM\",\"topOpaque\":true,\"topFlat\":true,\"backsHidden\":true,\"backRot\":[-5,5],\"topZ\":20,\"backZ\":[16,18]}"
+  "detail": "{\"count\":3,\"topText\":\"POST\\nVB\\nI Design for the Moment AI Is Wrong\\nDELIVERED IN 19H · SEP 26, 11:30 PM\",\"topOpaque\":true,\"topFlat\":true,\"backsHidden\":true,\"backRot\":[-5,5],\"topZ\":20,\"backZ\":[16,18]}"
  },
  {
   "name": "library: back cards rotated 5-8 deg, content hidden, below the top",
@@ -531,7 +646,17 @@
  {
   "name": "library: vb-01 \"Delivered in 19h · <date>\"",
   "ok": true,
-  "detail": "POST\nVB\nI Design for the Moment AI Is Wrong\nDELIVERED IN 19H · SEP 26, 7:20 PM"
+  "detail": "POST\nVB\nI Design for the Moment AI Is Wrong\nDELIVERED IN 19H · SEP 26, 11:30 PM"
+ },
+ {
+  "name": "desktop vb-01: status stamp on one line, inside the card",
+  "ok": true,
+  "detail": "[{\"text\":\"Delivered in 19h · Sep 26, 11:30 PM\",\"oneLine\":true,\"inside\":true,\"size\":\"10px\"}]"
+ },
+ {
+  "name": "library header: no credits line at 0 balance",
+  "ok": true,
+  "detail": "1 written · 2 approved"
  },
  {
   "name": "library vb-01: title contrast AA (>= 4.5)",
@@ -543,9 +668,14 @@
   "ok": true
  },
  {
-  "name": "library: bx-01 ghost, \"Approved\" stamp + \"Approved · not written yet\"",
+  "name": "library: bx-01 ghost, \"Approved\" stamp + chip \"Ready to write · 1 credit\"",
   "ok": true,
-  "detail": "POST\nBLENDXR\nThe Experienced Eyes Are Retiring\nAPPROVED\nAPPROVED · NOT WRITTEN YET"
+  "detail": "POST\nBLENDXR\nThe Experienced Eyes Are Retiring\nAPPROVED\nREADY TO WRITE · 1 CREDIT"
+ },
+ {
+  "name": "desktop bx-01: status stamp on one line, inside the card",
+  "ok": true,
+  "detail": "[{\"text\":\"Ready to write · 1 credit\",\"oneLine\":true,\"inside\":true,\"size\":\"10.5px\"}]"
  },
  {
   "name": "ghost: opaque paper body, dashed border, two trails at 25%/12%",
@@ -562,7 +692,12 @@
   "ok": true
  },
  {
-  "name": "ghost tap: \"Approved, not written yet. Credits open soon.\" + Notify me",
+  "name": "ghost tap: \"Write this\" with a format choice, cost and 0 balance",
+  "ok": true,
+  "detail": "\n  \n    \n    \n      \n        Post\n        The Experienced Eyes Are Retiring\n      \n      ×\n    \n    Approved, not written yet.\n    \n      \n        Post · 1\n        Insight · 3\n        Pillar · 8\n      \n      1 credit. You have 0 credits.\n      Get credits\n       \n    \n    \n  \n"
+ },
+ {
+  "name": "internal account: credits are added by hand, no checkout",
   "ok": true
  },
  {
@@ -596,7 +731,7 @@
   "ok": true
  },
  {
-  "name": "first pencil tap: invite pop-up with one field (1 free seat)",
+  "name": "first pencil tap: invite pop-up with one field, \"One seat left.\"",
   "ok": true
  },
  {
@@ -620,12 +755,12 @@
  {
   "name": "drag: x/y saved on drop, last dragged comes to front",
   "ok": true,
-  "detail": "{\"x\":669,\"y\":122,\"z\":6,\"before\":{\"id\":\"hftovunzeljn\",\"ref_id\":\"553f5a86-290e-4a13-ad97-3e7fa29e6c5f\",\"body\":null,\"emoji\":null,\"x\":549,\"y\":32,\"rotation\":-3.3,\"z\":3,\"hidden\":false,\"updated_at\":\"2026-09-27T19:20:57.932Z\",\"company_id\":\"b22beda7-45cf-486a-931e-d3b429619788\",\"kind\":\"article\",\"created_by\":null}}"
+  "detail": "{\"x\":669,\"y\":122,\"z\":6,\"before\":{\"id\":\"hhyg2mehluv4\",\"ref_id\":\"553f5a86-290e-4a13-ad97-3e7fa29e6c5f\",\"body\":null,\"emoji\":null,\"x\":549,\"y\":32,\"rotation\":-3.3,\"z\":3,\"hidden\":false,\"updated_at\":\"2026-09-27T23:30:27.997Z\",\"company_id\":\"b22beda7-45cf-486a-931e-d3b429619788\",\"kind\":\"article\",\"created_by\":null}}"
  },
  {
   "name": "pin: dropped onto an item stays attached (ref_id = item)",
   "ok": true,
-  "detail": "{\"id\":\"hsyov8nvaeua\",\"ref_id\":\"hftovunzeljn\",\"body\":null,\"emoji\":\"🔥\",\"x\":42,\"y\":28,\"rotation\":0,\"z\":7,\"hidden\":false,\"updated_at\":\"2026-09-27T19:21:01.764Z\",\"company_id\":\"b22beda7-45cf-486a-931e-d3b429619788\",\"kind\":\"emoji\",\"created_by\":\"9afe9458-e205-4209-96ec-9c8f6fab77c5\"}"
+  "detail": "{\"id\":\"hgn6412q2cob\",\"ref_id\":\"hhyg2mehluv4\",\"body\":null,\"emoji\":\"🔥\",\"x\":42,\"y\":28,\"rotation\":0,\"z\":7,\"hidden\":false,\"updated_at\":\"2026-09-27T23:30:31.813Z\",\"company_id\":\"b22beda7-45cf-486a-931e-d3b429619788\",\"kind\":\"emoji\",\"created_by\":\"9afe9458-e205-4209-96ec-9c8f6fab77c5\"}"
  },
  {
   "name": "pin: rendered inside its item",
@@ -641,6 +776,10 @@
  },
  {
   "name": "show hidden: back at 30% with Unhide",
+  "ok": true
+ },
+ {
+  "name": "show hidden: hidden items sit under every visible item",
   "ok": true
  },
  {
@@ -717,8 +856,9 @@
   "ok": true
  },
  {
-  "name": "?hub=locked: overlay copy",
-  "ok": true
+  "name": "?hub=locked: lock modal copy",
+  "ok": true,
+  "detail": "\n      \n        Your Hub opens with your first credit pack.\n        It’s where drafts, edits, and your team’s notes come together.\n        Start with 5 credits\n        Back to Library\n      \n    "
  },
  {
   "name": "?hub=locked: real items auto-laid (books + rules notes), no writes",
@@ -755,9 +895,280 @@
   "detail": "{\"running\":0,\"cls\":\"reveal rv-agree rv-static\"}"
  },
  {
+  "name": "locked $19: Library is open, header \"1 written · 3 approved\", no credits line",
+  "ok": true,
+  "detail": "1 written · 3 approved"
+ },
+ {
+  "name": "locked $19 delivered: status stamp on one line, inside the card",
+  "ok": true,
+  "detail": "[{\"text\":\"Delivered in 19h · Sep 26, 6:30 AM\",\"oneLine\":true,\"inside\":true,\"size\":\"8px\"}]"
+ },
+ {
+  "name": "locked $19: approved card chip \"Ready to write · 3 credits\"",
+  "ok": true,
+  "detail": "Ready to write · 3 credits"
+ },
+ {
+  "name": "locked $19 ready chip: status stamp on one line, inside the card",
+  "ok": true,
+  "detail": "[{\"text\":\"Ready to write · 3 credits\",\"oneLine\":true,\"inside\":true,\"size\":\"10.25px\"}]"
+ },
+ {
+  "name": "write this: format defaults to the card (insight), cost updates live",
+  "ok": true,
+  "detail": "insight | 3 credits. You have 0 credits. | 8 credits. You have 0 credits."
+ },
+ {
+  "name": "write this: not enough credits -> \"Get credits\"",
+  "ok": true
+ },
+ {
+  "name": "never bought: Starter checkout, \"5 credits · $495\", \"Your $19 counts toward this.\"",
+  "ok": true,
+  "detail": "\n  \n    \n    \n      \n        Credits\n        Start with 5 credits\n      \n      ×\n    \n    Starter5 credits · $495Your $19 counts toward this.Continue to checkout\n     \n  \n"
+ },
+ {
+  "name": "Starter: create-checkout(starter), first purchase gets the $19 coupon",
+  "ok": true,
+  "detail": "https://checkout.stripe.test/starter?q=1&coupon=first"
+ },
+ {
+  "name": "first Hub tap: invite pop-up, two fields, \"Two seats left.\"",
+  "ok": true
+ },
+ {
+  "name": "invite errors: one message per code, never the generic line",
+  "ok": true,
+  "detail": "{\"invalid\":\"That email doesn’t look right.\",\"self\":\"That’s you. Invite someone else.\",\"seat\":\"All 3 seats are taken.\",\"already\":\"They’re already on your portal.\",\"invalidSrv\":\"That email doesn’t look right.\",\"selfSrv\":\"That’s you. Invite someone else.\",\"failed\":\"We couldn’t send that invite. Try again in a minute.\"}"
+ },
+ {
+  "name": "locked Hub: blurred canvas, lock modal, no toolbar",
+  "ok": true,
+  "detail": "{\"blur\":true,\"modal\":true,\"text\":\"Your Hub opens with your first credit pack.\\n\\nIt’s where drafts, edits, and your team’s notes come together.\\n\\nStart with 5 credits\\nBack to Library\",\"toolbar\":true,\"invite\":true,\"ghosts\":2}"
+ },
+ {
+  "name": "locked Hub: modal copy + \"Start with 5 credits\" + \"Back to Library\"",
+  "ok": true,
+  "detail": "Your Hub opens with your first credit pack.\n\nIt’s where drafts, edits, and your team’s notes come together.\n\nStart with 5 credits\nBack to Library"
+ },
+ {
+  "name": "locked Hub: header Invite + 2 empty-seat ghosts, never under the blur or modal",
+  "ok": true,
+  "detail": "{\"blur\":true,\"modal\":true,\"text\":\"Your Hub opens with your first credit pack.\\n\\nIt’s where drafts, edits, and your team’s notes come together.\\n\\nStart with 5 credits\\nBack to Library\",\"toolbar\":true,\"invite\":true,\"ghosts\":2}"
+ },
+ {
+  "name": "locked Hub: nothing written to the canvas",
+  "ok": true
+ },
+ {
+  "name": "Hub header Invite opens the same pop-up",
+  "ok": true
+ },
+ {
+  "name": "invite sent from the Hub header: members row added, seats update, still in the Hub",
+  "ok": true,
+  "detail": "{\"seats\":2,\"ghosts\":1,\"invite\":true}"
+ },
+ {
+  "name": "lock modal \"Start with 5 credits\" opens the Starter checkout step",
+  "ok": true
+ },
+ {
+  "name": "last 2 cards: the remaining dots pulse once",
+  "ok": true
+ },
+ {
+  "name": "stack thins: one fewer layer on each of the last 2 cards",
+  "ok": true,
+  "detail": "3,3,3,2,1"
+ },
+ {
+  "name": "caught up: face-down stack of 5, first real next-week format face-up",
+  "ok": true,
+  "detail": "{\"text\":\"INSIGHT\\n\\n5 new on Tuesday, Sep 29\\n\\nIN 1D 0H\\n\\n+\\nLee hasn’t seen 5 of these.\\nSeat 3 is open. Invite someone who decides content.\",\"stack\":5,\"faceUp\":\"Insight\"}"
+ },
+ {
+  "name": "caught up: \"5 new on Tuesday, Sep 29\" (drop day = weekday first opened) with a live countdown",
+  "ok": true,
+  "detail": "INSIGHT\n\n5 new on Tuesday, Sep 29\n\nIN 1D 0H\n\n+\nLee hasn’t seen 5 of these.\nSeat 3 is open. Invite someone who decides content."
+ },
+ {
+  "name": "caught up: a line per seat with cards left, an invite line per open seat",
+  "ok": true,
+  "detail": "INSIGHT\n\n5 new on Tuesday, Sep 29\n\nIN 1D 0H\n\n+\nLee hasn’t seen 5 of these.\nSeat 3 is open. Invite someone who decides content."
+ },
+ {
+  "name": "tapping a seat line only highlights that seat",
+  "ok": true,
+  "detail": "Lee"
+ },
+ {
+  "name": "open-seat line opens the same invite pop-up, \"One seat left.\"",
+  "ok": true
+ },
+ {
+  "name": "locked $19: no page errors",
+  "ok": true,
+  "detail": ""
+ },
+ {
+  "name": "credits: header \"1 written · 3 approved · 25 credits\"",
+  "ok": true,
+  "detail": "1 written · 3 approved · 25 credits"
+ },
+ {
+  "name": "notes readable on the card in the Library",
+  "ok": true
+ },
+ {
+  "name": "enough credits: \"Write this · 8 credits\"",
+  "ok": true
+ },
+ {
+  "name": "spend: one piece, 8 credits from the soonest-expiring grant, by this seat",
+  "ok": true,
+  "detail": "[{\"id\":\"l2\",\"company_id\":\"a2000000-0000-0000-0000-000000000001\",\"delta\":-8,\"kind\":\"spend\",\"grant_id\":\"g-plan\",\"piece_id\":\"pc0\",\"created_by\":\"a1000000-0000-0000-0000-000000000001\"}]"
+ },
+ {
+  "name": "after spend: card shows \"Arriving in <countdown>\", header 17 credits",
+  "ok": true,
+  "detail": "PillarUptime Is a Staffing ProblemApprovedArriving in 24h 0m"
+ },
+ {
+  "name": "second piece: card shows \"Queued\"",
+  "ok": true
+ },
+ {
+  "name": "credits account: first Hub tap still offers the last seat",
+  "ok": true
+ },
+ {
+  "name": "credit purchase + active $19: Hub unlocked",
+  "ok": true
+ },
+ {
+  "name": "Hub: approved, unwritten cards marked \"Ready to write\"",
+  "ok": true
+ },
+ {
+  "name": "Hub: tapping it opens the same \"Write this\"",
+  "ok": true
+ },
+ {
+  "name": "bought before: plan and top-up offered, no Starter",
+  "ok": true,
+  "detail": "\n  \n    \n    \n      \n        Credits\n        You have 0 credits.\n      \n      ×\n    \n    Plan20 credits a month · $2,000Unused credits carry over one month.Start the planTop-up$125 per credit−3+Buy 3 credits · $375\n     \n  \n"
+ },
+ {
+  "name": "top-up quantity picker: default = credits missing, total updates",
+  "ok": true
+ },
+ {
+  "name": "top-up: create-checkout(topup, 5), no coupon after the first purchase",
+  "ok": true,
+  "detail": "https://checkout.stripe.test/topup?q=5&coupon=none"
+ },
+ {
+  "name": "back from checkout: \"Payment received\", then the new balance, URL cleaned",
+  "ok": true
+ },
+ {
+  "name": "credits account: no page errors",
+  "ok": true,
+  "detail": ""
+ },
+ {
+  "name": "RPR: Feed open (canceled but not ended), 10 new cards",
+  "ok": true,
+  "detail": "10 cards · 10 unread"
+ },
+ {
+  "name": "RPR caught up (UTC viewer): first opened on a Friday -> \"5 new on Friday, Oct 2\"",
+  "ok": true,
+  "detail": "5 new on Friday, Oct 2In 4d 0h+++You haven’t seen 10 of these.Seat 2 is open. Invite someone who decides content.Seat 3 is open. Invite someone who decides content.Seat 4 is open. Invite someone who decides content."
+ },
+ {
+  "name": "RPR caught up: the test seat has cards left, seats 2 to 4 open, no invented face-up card",
+  "ok": true,
+  "detail": "5 new on Friday, Oct 2In 4d 0h+++You haven’t seen 10 of these.Seat 2 is open. Invite someone who decides content.Seat 3 is open. Invite someone who decides content.Seat 4 is open. Invite someone who decides content."
+ },
+ {
+  "name": "RPR Library: empty shelf, no credits line",
+  "ok": true
+ },
+ {
+  "name": "RPR: first Hub tap -> invite pop-up, \"Three seats left.\" (seat_limit 4, one test seat)",
+  "ok": true
+ },
+ {
+  "name": "RPR Hub: locked with the lock modal, Invite in the header",
+  "ok": true
+ },
+ {
+  "name": "RPR credits: \"Resume your $19 to buy credits\", ends Oct 25, one button",
+  "ok": true,
+  "detail": "\n  \n    \n    \n      \n        Credits\n        Resume your $19 to buy credits\n      \n      ×\n    \n    Your $19 portalEnds Oct 25Resume it and it keeps renewing as before. No new charge today.Resume my $19\n     \n  \n"
+ },
+ {
+  "name": "Resume: same subscription resumed (no new $19), then straight into the Starter checkout with the coupon",
+  "ok": true,
+  "detail": "resume,starter https://checkout.stripe.test/starter?q=1&coupon=first"
+ },
+ {
+  "name": "RPR: no page errors",
+  "ok": true,
+  "detail": ""
+ },
+ {
+  "name": "drop day in the viewer's timezone: Tokyo sees a Saturday -> Monday (Monday, Oct 5)",
+  "ok": true,
+  "detail": "5 new on Monday, Oct 5"
+ },
+ {
+  "name": "375x568: \"Swipe to shuffle. Tap to open.\" sits above the Feed/Library switch, uncovered",
+  "ok": true,
+  "detail": "{\"hintBottom\":480,\"hintTop\":468,\"swTop\":500,\"visible\":true,\"bookBottom\":412.640625}"
+ },
+ {
+  "name": "375x568 delivered: status stamp on one line, inside the card",
+  "ok": true,
+  "detail": "[{\"text\":\"Delivered in 19h · Sep 26, 6:31 AM\",\"oneLine\":true,\"inside\":true,\"size\":\"7.5px\"}]"
+ },
+ {
+  "name": "375x667: \"Swipe to shuffle. Tap to open.\" sits above the Feed/Library switch, uncovered",
+  "ok": true,
+  "detail": "{\"hintBottom\":579,\"hintTop\":567,\"swTop\":599,\"visible\":true,\"bookBottom\":473.375}"
+ },
+ {
+  "name": "375x667 delivered: status stamp on one line, inside the card",
+  "ok": true,
+  "detail": "[{\"text\":\"Delivered in 19h · Sep 26, 6:31 AM\",\"oneLine\":true,\"inside\":true,\"size\":\"8px\"}]"
+ },
+ {
+  "name": "375x812: \"Swipe to shuffle. Tap to open.\" sits above the Feed/Library switch, uncovered",
+  "ok": true,
+  "detail": "{\"hintBottom\":724,\"hintTop\":712,\"swTop\":744,\"visible\":true,\"bookBottom\":545.875}"
+ },
+ {
+  "name": "375x812 delivered: status stamp on one line, inside the card",
+  "ok": true,
+  "detail": "[{\"text\":\"Delivered in 19h · Sep 26, 6:31 AM\",\"oneLine\":true,\"inside\":true,\"size\":\"8px\"}]"
+ },
+ {
+  "name": "1280x700: \"Swipe to shuffle. Tap to open.\" sits above the Feed/Library switch, uncovered",
+  "ok": true,
+  "detail": "{\"hintBottom\":612,\"hintTop\":600,\"swTop\":632,\"visible\":true,\"bookBottom\":539.5}"
+ },
+ {
+  "name": "1280x700 delivered: status stamp on one line, inside the card",
+  "ok": true,
+  "detail": "[{\"text\":\"Delivered in 19h · Sep 26, 6:31 AM\",\"oneLine\":true,\"inside\":true,\"size\":\"9.75px\"}]"
+ },
+ {
   "name": "blendbases: Agree reveal on first view of vb-02 (You + vedikabhasin)",
   "ok": true,
-  "detail": "LikedYouPostVBThe Parts Other Creators Build WithLikedvedikabhasinYou both want this one.Move it upKeep swiping"
+  "detail": "LikedYouPostVBThe Parts Other Creators Build WithMaking an effect is different from making the pieces effects are made from. The quietest work outlives the campaign.1 sourceLikedvedikabhasinYou both want this one.Move it upKeep swiping"
  },
  {
   "name": "blendbases: Split from the other side (You passed, vedikabhasin liked)",
@@ -777,6 +1188,42 @@
  },
  {
   "name": "blendbases: no page errors",
+  "ok": true,
+  "detail": ""
+ },
+ {
+  "name": "code: bad code shows the error and stays on sign-in",
+  "ok": true
+ },
+ {
+  "name": "code: spaces stripped from a pasted code",
+  "ok": true
+ },
+ {
+  "name": "code: button enabled again after a failed check",
+  "ok": true
+ },
+ {
+  "name": "code: \"Use a different email\" returns to the email form and clears the code",
+  "ok": true
+ },
+ {
+  "name": "code: verifyOtp called with the sent email, the code and type email",
+  "ok": true,
+  "detail": "{\"email\":\"vedikabhasin@gmail.com\",\"token\":\"123456\",\"type\":\"email\",\"gotrue_meta_security\":{}}"
+ },
+ {
+  "name": "code: lands on the feed, portal started once",
+  "ok": true,
+  "detail": "company loads: 1"
+ },
+ {
+  "name": "sign out: local scope only",
+  "ok": true,
+  "detail": "/auth/v1/logout?scope=local"
+ },
+ {
+  "name": "code: no page errors",
   "ok": true,
   "detail": ""
  }
