@@ -22,10 +22,22 @@
 <div class="bg-tint format" id="tint-format" aria-hidden="true"></div>
 <div class="bg-tint action" id="tint-action" aria-hidden="true"></div>
 
+<!-- Desk objects for the sign-in page (waitlist visual identity). Placed at
+     the edges only; the form column never sits under one. -->
+<div class="desk" id="desk" aria-hidden="true">
+  <span class="desk-obj d-pin">&#128204;</span>
+  <span class="desk-obj d-clip">&#128206;</span>
+  <span class="desk-obj d-notebook">&#128211;</span>
+  <span class="desk-obj d-coffee">&#9749;</span>
+  <span class="desk-obj d-pen">&#128394;&#65039;</span>
+  <span class="desk-stamp">Draft<br>Approved</span>
+</div>
+
 <main class="shell" id="shell">
   <header class="topbar">
     <div class="brandmark">Ghostwriter Mom<span class="reg">&reg;</span></div>
     <div class="topbar-right">
+      <span class="gwm-marker test-switch" id="test-switch" hidden></span>
       <span class="company-name" id="company-name"></span>
       <button type="button" class="btn-ghost tiny" data-action="sign-out" id="sign-out-btn" hidden>Sign out</button>
     </div>
@@ -37,27 +49,37 @@
   </section>
 
   <!-- SIGN IN -->
-  <section class="screen center" id="screen-signin">
-    <p class="eyebrow">Your portal</p>
-    <h1 class="hello">Welcome <em>back</em>.</h1>
-    <form class="signin-form" id="signin-form" novalidate>
-      <label class="field" for="signin-email">
-        <input type="email" id="signin-email" name="email" placeholder="you@work.com"
-               autocomplete="email" inputmode="email" required aria-label="Email">
-      </label>
-      <p class="field-msg" id="signin-msg" aria-live="polite">&nbsp;</p>
-      <span class="btn-glow-host">
-        <span class="btn-glow" aria-hidden="true"></span>
-        <button type="submit" class="btn btn-primary" id="signin-btn">
-          Send me a link <span class="arr" aria-hidden="true">&#8594;</span>
-        </button>
-      </span>
-    </form>
+  <section class="screen login" id="screen-signin">
+    <div class="wordmark">Ghostwriter Mom<span class="reg">&reg;</span></div>
+    <div class="login-hero">
+      <p class="eyebrow gwm-mono-tag">Your portal</p>
+      <h1 class="headline">Welcome <em>back</em>.</h1>
+      <form class="capture" id="signin-form" novalidate>
+        <div class="login-field">
+          <input type="email" id="signin-email" name="email" placeholder="you@work.com"
+                 autocomplete="email" inputmode="email" required aria-label="Email">
+          <span class="join-host">
+            <span class="join-glow" aria-hidden="true"></span>
+            <button type="submit" class="join gwm-btn" id="signin-btn">
+              Send me a link <span class="arr gwm-center" aria-hidden="true">&#8594;</span>
+            </button>
+          </span>
+        </div>
+        <p class="field-msg" id="signin-msg" aria-live="polite">&nbsp;</p>
+      </form>
+      <div class="signin-sent" id="signin-sent" hidden role="status" aria-live="polite">
+        <span class="envelope" aria-hidden="true">&#9993;&#65039;</span>
+        <p class="sent-head">Check your inbox.</p>
+        <p class="sent-sub">We sent a sign-in link to <strong id="sent-email"></strong>. The link works for 24 hours.</p>
+        <button type="button" class="btn-ghost" data-action="signin-again">Use a different email</button>
+      </div>
+    </div>
+    <div class="login-foot gwm-mono-tag">Ghostwriter Mom &copy; 2026</div>
   </section>
 
   <!-- NO MEMBERSHIP -->
   <section class="screen center" id="screen-nolink">
-    <p class="eyebrow">Your portal</p>
+    <p class="eyebrow gwm-mono-tag">Your portal</p>
     <p class="big-copy">This email isn't linked to a portal yet. Reply to your Ghostwriter Mom email.</p>
     <button type="button" class="btn-ghost" data-action="sign-out">Use a different email</button>
   </section>
@@ -69,25 +91,26 @@
       <button type="button" class="btn-ghost" data-action="show-history">History</button>
     </div>
     <div class="card-stage" id="card-stage" aria-live="polite"></div>
+    <p class="caught-up gwm-center gwm-mono-tag" id="caught-up" hidden>All caught up</p>
     <div class="dots-wrap">
-      <button type="button" class="dot-nav" data-action="feed-prev" aria-label="Previous card">&#8249;</button>
+      <button type="button" class="dot-nav gwm-center" data-action="feed-prev" aria-label="Previous card">&#8249;</button>
       <div class="dots" id="dots" role="tablist" aria-label="Cards"></div>
-      <button type="button" class="dot-nav" data-action="feed-next" aria-label="Next card">&#8250;</button>
+      <button type="button" class="dot-nav gwm-center" data-action="feed-next" aria-label="Next card">&#8250;</button>
     </div>
     <div class="feed-controls" id="feed-controls" aria-label="Card actions">
-      <button type="button" class="ctl ctl-pass lg" data-decide="pass" aria-label="Pass on this card">
+      <button type="button" class="ctl ctl-pass lg gwm-center" data-decide="pass" aria-label="Pass on this card">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
         <span class="ctl-label">Pass</span>
       </button>
-      <button type="button" class="ctl ctl-save sm" data-decide="save" aria-label="Save this card for later">
+      <button type="button" class="ctl ctl-save sm gwm-center" data-decide="save" aria-label="Save this card for later">
         <svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 3h12a1 1 0 0 1 1 1v18l-7-4-7 4V4a1 1 0 0 1 1-1z"/></svg>
         <span class="ctl-label">Save</span>
       </button>
-      <button type="button" class="ctl ctl-super sm" data-decide="fasttrack" aria-label="Fast-track this card">
-        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.4 7 .7-5.3 4.8 1.6 6.9L12 17.3 5.8 20.8l1.6-6.9L2 9.1l7-.7z"/></svg>
+      <button type="button" class="ctl ctl-fasttrack sm gwm-center" data-decide="fasttrack" aria-label="Fast-track this card">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M13 2L4 14h7l-1 8 9-12h-7l1-8z"/></svg>
         <span class="ctl-label">Fast&#8209;track</span>
       </button>
-      <button type="button" class="ctl ctl-like lg" data-decide="like" aria-label="Like this card">
+      <button type="button" class="ctl ctl-like lg gwm-center" data-decide="like" aria-label="Like this card">
         <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 21s-7-4.35-10-9.5C.5 8 2.7 4 6.5 4c2 0 3.5 1 5.5 3 2-2 3.5-3 5.5-3 3.8 0 6 4 4.5 7.5C19 16.65 12 21 12 21z"/></svg>
         <span class="ctl-label">Like</span>
       </button>
@@ -97,42 +120,59 @@
   <!-- HISTORY -->
   <section class="screen" id="screen-history">
     <div class="feed-top">
-      <span class="eyebrow">History</span>
+      <span class="eyebrow gwm-mono-tag">History</span>
       <button type="button" class="btn-ghost" data-action="close-history">Back to feed</button>
     </div>
     <div class="hist-tabs" role="tablist" aria-label="History views">
-      <button type="button" class="hist-tab active" role="tab" aria-selected="true"  data-tab="log">Decisions</button>
-      <button type="button" class="hist-tab"        role="tab" aria-selected="false" data-tab="upnext">Up next</button>
+      <button type="button" class="hist-tab gwm-center gwm-mono-tag active" role="tab" aria-selected="true"  data-tab="log">Decisions</button>
+      <button type="button" class="hist-tab gwm-center gwm-mono-tag"        role="tab" aria-selected="false" data-tab="upnext">Up next</button>
     </div>
     <div id="history-log" role="tabpanel"></div>
     <div id="history-upnext" role="tabpanel" hidden></div>
   </section>
 
-  <!-- LIBRARY -->
+  <!-- LIBRARY (catalog mode) -->
   <section class="screen" id="screen-library">
     <p class="resub-line" id="resub-line" hidden></p>
     <div class="feed-top">
-      <span class="eyebrow">Library</span>
+      <span class="eyebrow gwm-mono-tag">Library</span>
       <span class="feed-count" id="lib-count"></span>
     </div>
     <div class="deck-stage" id="deck-stage"></div>
     <div class="dots-wrap lib-nav" id="lib-nav">
-      <button type="button" class="dot-nav" data-action="lib-prev" aria-label="Previous article">&#8249;</button>
-      <span class="lib-hint">Swipe to shuffle. Tap to open.</span>
-      <button type="button" class="dot-nav" data-action="lib-next" aria-label="Next article">&#8250;</button>
+      <button type="button" class="dot-nav gwm-center" data-action="lib-prev" aria-label="Previous article">&#8249;</button>
+      <span class="lib-hint gwm-mono-tag">Swipe to shuffle. Tap to open.</span>
+      <button type="button" class="dot-nav gwm-center" data-action="lib-next" aria-label="Next article">&#8250;</button>
     </div>
     <button type="button" class="pencil-sticker" id="pencil-sticker" data-action="hub" aria-label="Open your Hub"></button>
   </section>
 
-  <!-- HUB -->
-  <section class="screen" id="screen-hub">
-    <div class="hub-canvas" id="hub-canvas">
-      <div class="hub-items" id="hub-items"></div>
-      <div class="hub-overlay" id="hub-overlay">
-        <div class="hub-overlay-panel">
-          <p class="hub-line" id="hub-line"></p>
-          <button type="button" class="btn btn-secondary" data-action="back-to-library">Back to Library</button>
-        </div>
+  <!-- HUB (the Library's design mode) -->
+  <section class="screen" id="screen-hub" aria-label="Hub">
+    <div class="hub-scroll" id="hub-scroll">
+      <div class="hub-canvas" id="hub-canvas"></div>
+    </div>
+    <p class="hub-hint gwm-center" id="hub-hint" hidden></p>
+    <div class="hub-emoji-picker" id="hub-emoji-picker" role="menu" aria-label="Pick a pin" hidden>
+      <button type="button" class="gwm-center" role="menuitem" data-emoji="📌" aria-label="Pushpin">&#128204;</button>
+      <button type="button" class="gwm-center" role="menuitem" data-emoji="⭐" aria-label="Star">&#11088;</button>
+      <button type="button" class="gwm-center" role="menuitem" data-emoji="🔥" aria-label="Fire">&#128293;</button>
+      <button type="button" class="gwm-center" role="menuitem" data-emoji="💡" aria-label="Idea">&#128161;</button>
+      <button type="button" class="gwm-center" role="menuitem" data-emoji="❓" aria-label="Question">&#10067;</button>
+      <button type="button" class="gwm-center" role="menuitem" data-emoji="✅" aria-label="Done">&#9989;</button>
+      <button type="button" class="gwm-center" role="menuitem" data-emoji="👀" aria-label="Eyes">&#128064;</button>
+      <button type="button" class="gwm-center" role="menuitem" data-emoji="🎯" aria-label="Target">&#127919;</button>
+    </div>
+    <div class="hub-toolbar" id="hub-toolbar" role="toolbar" aria-label="Hub tools">
+      <button type="button" class="hub-tool gwm-center" data-hub="text" aria-label="Add a text note"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M5 6V4h14v2M12 4v16M9 20h6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+      <button type="button" class="hub-tool gwm-center" data-hub="pin" aria-label="Add an emoji pin">&#128204;</button>
+      <button type="button" class="hub-tool gwm-center" data-hub="hidden" aria-label="Show hidden items" aria-pressed="false"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="3" fill="currentColor"/></svg></button>
+      <button type="button" class="hub-done gwm-center" data-hub="done">Done</button>
+    </div>
+    <div class="hub-overlay" id="hub-overlay" hidden>
+      <div class="hub-overlay-panel">
+        <p class="hub-line">Your notes, articles, and ideas, in one place. Unlocks with your first credit pack.</p>
+        <button type="button" class="btn btn-secondary gwm-btn" data-action="back-to-library">Back to Library</button>
       </div>
     </div>
   </section>
@@ -140,14 +180,17 @@
 
 <!-- Bottom switch: Feed / Library -->
 <nav class="switch" id="switch" aria-label="Portal sections" hidden>
-  <button type="button" class="switch-btn" data-go="feed" id="switch-feed">Feed</button>
-  <button type="button" class="switch-btn" data-go="library" id="switch-library">Library</button>
+  <button type="button" class="switch-btn gwm-center gwm-mono-tag" data-go="feed" id="switch-feed">Feed</button>
+  <button type="button" class="switch-btn gwm-center gwm-mono-tag" data-go="library" id="switch-library">Library</button>
 </nav>
+
+<!-- Overlap reveal -->
+<div class="reveal" id="reveal" role="dialog" aria-modal="true" hidden></div>
 
 <!-- Onboarding bubble -->
 <div class="bubble" id="bubble" role="status" hidden>
   <span class="bubble-text" id="bubble-text"></span>
-  <button type="button" class="bubble-x" data-action="bubble-dismiss" aria-label="Dismiss">&times;</button>
+  <button type="button" class="bubble-x gwm-center" data-action="bubble-dismiss" aria-label="Dismiss">&times;</button>
 </div>
 
 <!-- Toast -->
@@ -162,7 +205,7 @@
         <p class="sheet-h">Sources</p>
         <p class="sheet-t" id="src-sheet-title"></p>
       </div>
-      <button type="button" class="sheet-close" data-close="src-sheet" aria-label="Close sources">&times;</button>
+      <button type="button" class="sheet-close gwm-center" data-close="src-sheet" aria-label="Close sources">&times;</button>
     </div>
     <ol class="sheet-list" id="src-sheet-list"></ol>
   </div>
@@ -177,7 +220,7 @@
         <p class="sheet-h">Add a note</p>
         <p class="sheet-t" id="note-sheet-title"></p>
       </div>
-      <button type="button" class="sheet-close" data-close="note-sheet" aria-label="Close">&times;</button>
+      <button type="button" class="sheet-close gwm-center" data-close="note-sheet" aria-label="Close">&times;</button>
     </div>
     <label class="note-field" for="note-input">
       <textarea id="note-input" maxlength="280" rows="4" placeholder="What should the team know?" aria-label="Note"></textarea>
@@ -186,7 +229,31 @@
       <span class="note-count" id="note-count">0 / 280</span>
       <span class="btn-glow-host inline">
         <span class="btn-glow" aria-hidden="true"></span>
-        <button type="button" class="btn btn-primary" id="note-save">Save note</button>
+        <button type="button" class="btn btn-primary gwm-btn" id="note-save">Save note</button>
+      </span>
+    </div>
+  </div>
+</div>
+
+<!-- Hub text-note sheet -->
+<div class="sheet-scrim" id="hub-text-sheet" role="dialog" aria-modal="true" aria-label="Add a text note">
+  <div class="sheet-panel">
+    <div class="sheet-grabber" aria-hidden="true"></div>
+    <div class="sheet-head">
+      <div>
+        <p class="sheet-h">Text note</p>
+        <p class="sheet-t">Add it to the canvas</p>
+      </div>
+      <button type="button" class="sheet-close gwm-center" data-close="hub-text-sheet" aria-label="Close">&times;</button>
+    </div>
+    <label class="note-field" for="hub-text-input">
+      <textarea id="hub-text-input" maxlength="280" rows="4" placeholder="A rule, an idea, a reminder" aria-label="Text note"></textarea>
+    </label>
+    <div class="note-foot">
+      <span class="note-count" id="hub-text-count">0 / 280</span>
+      <span class="btn-glow-host inline">
+        <span class="btn-glow" aria-hidden="true"></span>
+        <button type="button" class="btn btn-primary gwm-btn" id="hub-text-save">Add to Hub</button>
       </span>
     </div>
   </div>
@@ -201,12 +268,12 @@
         <p class="sheet-h" id="ghost-sheet-fmt"></p>
         <p class="sheet-t" id="ghost-sheet-title"></p>
       </div>
-      <button type="button" class="sheet-close" data-close="ghost-sheet" aria-label="Close">&times;</button>
+      <button type="button" class="sheet-close gwm-center" data-close="ghost-sheet" aria-label="Close">&times;</button>
     </div>
-    <p class="ghost-copy">Approved, not written yet. Credits open soon.</p>
+    <p class="ghost-copy" id="ghost-copy">Approved, not written yet. Credits open soon.</p>
     <span class="btn-glow-host" id="notify-host">
       <span class="btn-glow" aria-hidden="true"></span>
-      <button type="button" class="btn btn-primary" id="notify-btn">Notify me</button>
+      <button type="button" class="btn btn-primary gwm-btn" id="notify-btn">Notify me</button>
     </span>
   </div>
 </div>
@@ -214,7 +281,7 @@
 <!-- Reader -->
 <div class="reader" id="reader" role="dialog" aria-modal="true" aria-labelledby="reader-title" hidden>
   <div class="reader-bar">
-    <button type="button" class="sheet-close" data-close="reader" aria-label="Close article">&times;</button>
+    <button type="button" class="sheet-close gwm-center" data-close="reader" aria-label="Close article">&times;</button>
     <span class="card-format" id="reader-fmt"></span>
     <span class="reader-date" id="reader-date"></span>
   </div>
@@ -225,9 +292,9 @@
   <div class="reader-actions">
     <span class="btn-glow-host inline">
       <span class="btn-glow" aria-hidden="true"></span>
-      <button type="button" class="btn btn-primary" id="copy-web">Copy for web</button>
+      <button type="button" class="btn btn-primary gwm-btn" id="copy-web">Copy for web</button>
     </span>
-    <a class="btn btn-secondary" id="gdoc-link" target="_blank" rel="noopener noreferrer" hidden>Google Doc</a>
+    <a class="btn btn-secondary gwm-btn" id="gdoc-link" target="_blank" rel="noopener noreferrer" hidden>Google Doc</a>
     <button type="button" class="live-toggle" id="live-toggle" role="switch" aria-checked="false">
       <span class="live-knob" aria-hidden="true"></span><span class="live-label">Mark live</span>
     </button>
@@ -244,7 +311,7 @@
       <p class="field-msg" id="invite-msg" aria-live="polite">&nbsp;</p>
       <span class="btn-glow-host">
         <span class="btn-glow" aria-hidden="true"></span>
-        <button type="submit" class="btn btn-primary" id="invite-btn">Invite <span class="arr" aria-hidden="true">&#8594;</span></button>
+        <button type="submit" class="btn btn-primary gwm-btn" id="invite-btn">Invite <span class="arr gwm-center" aria-hidden="true">&#8594;</span></button>
       </span>
     </form>
     <button type="button" class="btn-ghost center-btn" data-action="invite-skip">Skip for now</button>

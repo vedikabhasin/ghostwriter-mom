@@ -1,9 +1,7 @@
 // In-test stand-in for the Supabase REST / Auth / Functions endpoints the
 // portal calls. Enforces the same access rules as the RLS policies and
 // portal_* RPCs (company scoping, own-member writes, 3-seat cap).
-import { USERS } from './fixture.mjs';
-
-export function createMock(db) {
+export function createMock(db, USERS) {
   const log = [];
   const userFor = (req) => USERS[(req.headers()['authorization'] || '').replace(/^Bearer\s+/i, '')] || null;
   const myMemberships = (uid) => db.members.filter((m) => m.user_id === uid);
@@ -42,7 +40,7 @@ export function createMock(db) {
     return rows;
   }
 
-  async function handle(route) {
+  async function handleInner(route) {
     const req = route.request();
     const url = new URL(req.url());
     const path = url.pathname;
@@ -123,12 +121,31 @@ export function createMock(db) {
       db.notes.push(...rows);
       return json(route, 201, single ? rows[0] : rows);
     }
+    if (method === 'POST' && table === 'hub_items') {
+      const rows = (Array.isArray(body) ? body : [body]).map((r) => {
+        const mem = r.created_by ? db.members.find((x) => x.id === r.created_by) : null;
+        if (!cos.has(r.company_id) || (r.created_by && (!mem || mem.user_id !== user.id))) throw new Error('rls');
+        return { id: 'h' + Math.random().toString(36).slice(2), ref_id: null, body: null, emoji: null, x: 0, y: 0, rotation: 0, z: 0, hidden: false, updated_at: new Date().toISOString(), ...r };
+      });
+      db.hub_items.push(...rows);
+      return json(route, 201, single ? rows[0] : rows);
+    }
+    if (method === 'PATCH' && table === 'hub_items') {
+      const rows = applyFilters(visible(), url.searchParams);
+      rows.forEach((r) => Object.assign(r, body));
+      return route.fulfill({ status: 204, headers: { 'access-control-allow-origin': '*' } });
+    }
     if (method === 'PATCH' && table === 'members') {
       const rows = applyFilters(visible(), url.searchParams).filter((r) => r.user_id === user.id);
       rows.forEach((r) => Object.assign(r, body));
       return route.fulfill({ status: 204, headers: { 'access-control-allow-origin': '*' } });
     }
     return json(route, 403, { message: 'new row violates row-level security policy' });
+  }
+  // A thrown 'rls' (or anything else) answers like PostgREST does.
+  async function handle(route) {
+    try { return await handleInner(route); }
+    catch (e) { return json(route, 403, { code: '42501', message: 'new row violates row-level security policy (' + e.message + ')' }); }
   }
   return { handle, log, db };
 }

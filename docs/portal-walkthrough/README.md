@@ -1,98 +1,107 @@
-# Portal walkthrough (Session B)
+# Portal walkthrough: Vedika Bhasin (Session B)
 
-Two test members on RPR (`rpr-k7m2qx`). **Sam** (member) walks the whole flow on
-a 375px phone, then again on desktop. **Patrick** (owner) checks the split from
-the other side. Every screenshot here comes from `tests/portal/walkthrough.mjs`,
-which also runs **84 checks**. The last run passed all 84 (`shots/results.json`).
+The Vedika Bhasin portal (`vedika-bhasin-ycfogw`, `is_internal = true`) walked
+through as **vedikabhasin@gmail.com** (owner) at 375px and on desktop, then from
+the other side as **blendbases@gmail.com** (member). Every screenshot comes from
+`tests/portal/walkthrough.mjs`, which also runs **178 checks**. The last run passed
+all 178 (`shots/results.json`).
 
-| Test member | Email | Role | Avatar |
-|---|---|---|---|
-| Patrick | `vedikabhasin+rpr-owner@gmail.com` | owner (display name falls back to `contact_first_name`) | ghost (yellow) |
-| Sam | `vedikabhasinwork@gmail.com` | member | blob (violet) |
-
-Both exist in the live project now (`supabase/seed/portal_test_rpr.sql`).
-Remove them with `supabase/seed/portal_test_rpr_cleanup.sql`.
+The test data is the live Vedika rows: the same article ids, series, statuses and
+decisions, and the two seeded Hub notes (`tests/portal/fixture-vedika.mjs`).
+Times are relative to the run: vb-01 was delivered 19h after it was requested,
+and vb-05 is due in about 14h 20m.
 
 ## How this was tested
 
-- **Database (live project).** I impersonated Sam in SQL (`set role authenticated`
-  plus JWT claims) inside transactions that roll back.
-  - Allowed: reading the company's rows, `portal_decide` upserting and returning
-    the previous action, `portal_set_live` toggling, Sam's own note, and Sam's
-    own `onboarding`.
-  - Blocked: a note as Patrick, direct `decisions` inserts, direct `articles`
-    updates, Mark live on a ghost article, an outsider, the anon role, a bad
-    action, and all writes once a canceled subscription has ended.
-- **`invite-member`.** `tests/portal/invite-member.sh` runs the real function
-  under Deno against a local Auth + PostgREST mock. All 9 checks pass: no token,
-  not a member, invalid email, self-invite, more than 2 emails, seat limit, a
-  successful invite (members row, avatar, redirect), and full.
-- **UI.** Playwright drives Chromium against this repo. This container can't
-  reach `*.supabase.co`, esm.sh, or PostHog, so the test intercepts them:
-  - Supabase requests go to `tests/portal/sb-mock.mjs`, seeded with the exact
-    rows the seed script leaves on RPR. It enforces the same rules as the
-    RLS policies and RPCs.
-  - The esm.sh import is served a local bundle of the same supabase-js 2.45.0,
-    so the auth and query client is the real one.
+- Playwright drives Chromium against this repo. The container can't reach
+  `*.supabase.co`, esm.sh or PostHog, so the test intercepts them:
+  - Supabase goes to `tests/portal/sb-mock.mjs`, which enforces the same rules as
+    the RLS policies and RPCs, including the `hub_items` insert policy.
+  - esm.sh serves a local bundle of the same supabase-js 2.45.0.
   - PostHog calls are read back from the stub queue.
+- Layout rules are measured, not eyeballed:
+  - Peek cards match the front card's width, center and transform-origin, offset 6px/12px.
+  - At least 16px between card, dots, actions and switch.
+  - The glow stays off the dot slider.
+  - AA contrast on Library titles, and no pixels from the cards behind showing through the front card.
+  - Reveal entrances finish within 1.2s and animate only transform and opacity.
+  - Desk objects never sit behind the login form.
+- Not covered here: real email delivery, and the portal against the live API from
+  a browser.
 
-  What this doesn't cover: real email delivery, and the portal running against
-  the live API from a browser. See "Try it for real" below.
-
-## Phone (375 × 812)
-
-| | |
-|---|---|
-| ![](shots/m01-signin.jpg) **Sign in.** One field. `signInWithOtp` with `shouldCreateUser: false`, redirecting to `/portal` (checked). | ![](shots/m02-link-sent.jpg) Same answer whether or not the email has a portal. |
-| ![](shots/m03-feed-signal-onboarding.jpg) **Link lands signed in** (`portal_login` via link). The signal is the first card. "10 cards · 7 unread". Onboarding step 1. | ![](shots/m04-library-glow.jpg) Step 2: glow on the Library switch. |
-| ![](shots/m05-agree.jpg) **Agree** (green): Patrick liked on the sales page, Sam liked. "New this week" on the latest drop. First Agree line. | ![](shots/m06-split.jpg) **Split** (pink): Patrick fast-tracked, Sam passed. Sam's stamp reads "Passed". First Split line: "Patrick wants to fast-track this. You passed. Leave a note?" |
-| ![](shots/m07-note-sheet.jpg) **Add a note** (max 280). | ![](shots/m08-note-saved.jpg) "Saved to your Hub." Then the first-note line (`m08b`). |
-| ![](shots/m09-timing.jpg) **Timing** (yellow): Patrick liked, Sam saved. Buttons sit at 25% opacity at rest (checked). Orange Refresh marker. | ![](shots/m10-changed-line.jpg) Sam changes save to like. The decision is upserted and a `swipe_event` (source `portal`) appended. First changed-decision line. |
-| ![](shots/m11-drag-like.jpg) A real drag: the stamp tracks the gesture, and release records the like. | ![](shots/m12-sources.jpg) Source chips and bottom sheet, same as the sales page. |
-| ![](shots/m13-history.jpg) **History**: every card, every member's action, dated. Sales-page swipes (member_id null) show as Patrick. | ![](shots/m14-upnext.jpg) **Up next**: Agree cards rank first. |
-| ![](shots/m15-library.jpg) **Library**: a hand of cards. Pillar has the thick page edge and spine; ghosts are outlined. Step 3: the pencil glows. | ![](shots/m16-library-rotated.jpg) A swipe sends the top card to the back of the loop. |
-| ![](shots/m17-ghost.jpg) **Ghost card**: "Approved, not written yet. Credits open soon." No prices. | ![](shots/m18-notified.jpg) Notify me: `article_interest`, plus a `wants_written` note. |
-| ![](shots/m19-reader.jpg) **Reader** for `body_html`, with classes and styles stripped. | ![](shots/m20-copied.jpg) **Copy for web**: text/html and text/plain, headings kept (`shots/copied.html.txt`). |
-| ![](shots/m21-marked-live.jpg) **Mark live** sets `status` and `live_at` (it also toggles back, checked). First live line. | ![](shots/m22-library-live.jpg) "Live" tag in the deck. |
-| ![](shots/m23-invite.jpg) **First pencil tap** with 2 of 3 seats taken: one field, invalid email caught. | ![](shots/m24-hub-locked.jpg) **Locked Hub**: Sam's note, 3 book cards, and the top Agree cards, blurred under the overlay. |
-
-## Desktop (1280 × 860)
+## 1. Feed with series labels
 
 | | |
 |---|---|
-| ![](shots/d01-feed.jpg) Arrow keys move between cards. | ![](shots/d02-feed-split-hover.jpg) Hover and focus brighten the buttons. The note shows on the card. |
-| ![](shots/d03-library.jpg) | ![](shots/d04-reader.jpg) |
-| ![](shots/d05-hub-locked.jpg) "Skip for now" opens the Hub. | |
+| ![](shots/m03-feed-signal-onboarding.jpg) Signal first, no content in the peeks. Onboarding step 1. | ![](shots/m04-feed-series.jpg) `VB` series label next to the format pill. "Add a note" is outlined with a pencil. |
+| ![](shots/m05-feed-blendxr.jpg) `BlendXR` series. | ![](shots/d04-feed-series.jpg) Desktop. |
 
-## Edge states
+## 2. Overlap reveals
+
+Each reveal fires once per card per member, the first time the card is seen, and
+immediately for the member whose swipe creates the overlap. After that the card
+shows the usual dot and label (`m10`).
 
 | | |
 |---|---|
-| ![](shots/e01-no-membership.jpg) Signed in, no membership. | ![](shots/e02-expired-link.jpg) Expired link. |
-| ![](shots/e03-readonly-library.jpg) Canceled and past `subscription_ends_at`: read-only Library plus the resubscribe line. No switch, no pencil. | ![](shots/e04-readonly-reader.jpg) Read-only reader: no Mark live. |
-| ![](shots/e05-hub-unlocked.jpg) `hub_unlocked = true` with 3 members: the pencil goes straight in, unblurred, with the "Coming soon" line. | ![](shots/e06-owner-split.jpg) Patrick's side of the split: "Sam passed. You want this one. Leave a note?" His sales-page swipe counts as his own. |
+| ![](shots/m06-reveal-agree.jpg) **vb-02 like → Agree.** Radial burst and floating hearts. "Move it up" pins the card to the top of Up next (`m11`). | ![](shots/m07-reveal-split.jpg) **vb-03 like → Split.** Diagonal two-color background; the avatars pull apart. |
+| ![](shots/m09-reveal-timing.jpg) **vb-04 save → Timing.** Yellow wash and clock-hand sweep. | ![](shots/s04-reveal-reduced-motion.jpg) Reduced motion: the same overlay, static. |
+| ![](shots/d06-reveal-agree.jpg) Desktop Agree. | ![](shots/d07-reveal-split.jpg) Desktop Split. |
+
+## 3. A note from the Split reveal
+
+| | |
+|---|---|
+| ![](shots/m08-note-from-reveal.jpg) "Leave a note". Saved to `notes` **and** as a `hub_items` row (kind `note`). | ![](shots/m18-hub-drag-pin.jpg) The note in the Hub with author avatar and linked card title, placed in the free slot next to the seeded rules notes. It never appears on the feed card. |
+
+## 4. Library fan
+
+| | |
+|---|---|
+| ![](shots/m12-library-delivered.jpg) **vb-01** "Delivered in 19h · Sep 26, 7:15 PM". Top card flat; two cards per side at ±5–8°. Pencil glows (onboarding). | ![](shots/m14-library-countdown.jpg) **vb-05** live countdown "Arriving in 14h 18m" (ticks every 30s). |
+| ![](shots/m13-library-ghost.jpg) **bx-01** ghost: paper body, dashed teal border, "Approved" stamp, two dashed trails. | ![](shots/m15-library-live.jpg) After Mark live: small ink "Live" tag. |
+
+## 5. Hub
+
+| | |
+|---|---|
+| ![](shots/m16-invite.jpg) First pencil tap with 2 of 3 seats: invite pop-up. | ![](shots/m17-hub.jpg) The fan unstacks onto the canvas. Seeded Rules and Cadence notes keep their positions. First-Hub line. |
+| ![](shots/m18-hub-drag-pin.jpg) Drag saves x, y, rotation and z; 🔥 pinned onto an article travels with it. | ![](shots/m19-hub-show-hidden.jpg) Cadence hidden, then shown with "Show hidden" at 30% with Unhide. |
+| ![](shots/m20-done-library.jpg) Done: the items fly back into the fan. | ![](shots/d17-hub.jpg) Desktop Hub. |
+
+## 6. Internal switches
+
+| | |
+|---|---|
+| ![](shots/s01-hub-locked.jpg) `?hub=locked`: blurred canvas, overlay copy, Back to Library. Nothing is written. | ![](shots/s02-hub-invite.jpg) `?hub=invite`: "One seat left on your portal." |
+| ![](shots/s03-onboarding-reset.jpg) `?onboarding=reset`: flags cleared and saved, param removed, first-visit bubble again. | A non-internal company ignores the switches (checked). |
+
+## 7. blendbases, from the other side
+
+| | |
+|---|---|
+| ![](shots/b01-agree-other-side.jpg) Agree on first view of vb-02. | ![](shots/b02-split-other-side.jpg) Split: "You" passed, vedikabhasin liked. |
+| ![](shots/b03-hub-other-side.jpg) Vedika's note in the shared Hub. | |
+
+## 8. Login
+
+| | |
+|---|---|
+| ![](shots/m01-login.jpg) "YOUR PORTAL" / "Welcome *back*." Desk objects stay at the edges. | ![](shots/m02-login-sent.jpg) After "Send me a link": "Check your inbox.", envelope, "The link works for 24 hours." |
 
 ## PostHog
 
-Identify uses `member.id` only; `group('company', slug)`. No email appears in any call (checked).
-Captured in the run: `portal_login, feed_swipe, decision_changed, dot_jump, overlap_seen,
-note_added, library_open, article_copied, gdoc_opened, marked_live, ghost_tapped,
-article_interest, hub_tapped, invite_sent, hub_locked_viewed` (`shots/posthog-calls.json`,
-which is written just before the `gdoc_opened` click).
+Identify uses `member.id` only; no email appears in any call (checked). Events
+captured include `feed_swipe`, `overlap_seen`, `moved_up`, `library_open`,
+`marked_live`, `hub_tapped`, `hub_opened`, `hub_item_moved`, `hub_pin_added` and
+`hub_item_hidden` (`shots/posthog-calls.json`).
 
 ## Run it again
 
 ```bash
 npm install
-node tests/portal/walkthrough.mjs          # UI: screenshots here, exit 1 on any failed check
-bash tests/portal/invite-member.sh         # edge function under Deno (npx deno works)
-npm i --no-save stripe@14.25.0 && node tests/portal/stripe-webhook.test.mjs   # webhook under Deno, signed events
+node tests/portal/walkthrough.mjs          # UI: screenshots here, exits 1 on any failed check
+bash tests/portal/invite-member.sh         # edge function under Deno
+npm i --no-save stripe@14.25.0 && node tests/portal/stripe-webhook.test.mjs
+node validate-feeds.js
 ```
-
-## Try it for real
-
-1. Deploy (Netlify). `/portal` is rewritten in `netlify.toml`.
-2. Supabase Auth → URL Configuration must list `https://www.ghostwriter.mom/portal`
-   (see the root README). The default mailer only sends to your team's addresses,
-   so use custom SMTP or your own address.
-3. Open `/portal`, enter `vedikabhasinwork@gmail.com` (Sam), and follow the link.
