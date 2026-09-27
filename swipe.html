@@ -2668,32 +2668,53 @@ body.dir-save  .ctl-save{
     refreshSpotsAsync();
   }
 
-  // ---- Signals: paint the text, hunt for a query in quotes, wrap the
-  // competitor's name (from signal.source) in a blurred span. Uses
-  // textContent throughout so a mis-authored signal can't inject markup.
+  // ---- Signals tile copy.
+  // Preferred shape: "For 'X', AI cites ████ instead of you." — synthesized
+  // from the signal by extracting the first quoted query and the token
+  // immediately after "cites ". Falls back to the raw signal.text with the
+  // competitor's name blurred inline when either piece can't be extracted.
+  // textContent everywhere so a mis-authored signal can't inject markup.
   function renderBlurredSignal(el, sig){
     el.textContent = '';
-    var text   = String(sig.text || '');
-    var source = String(sig.source || '').trim();
-    // Extract the first quoted query for a "For 'X'" preamble if the caller
-    // wants one. For now we just repaint the full sentence with the
-    // competitor's name blurred wherever it appears.
-    if(!source){ el.textContent = text; return; }
-    var lower = text.toLowerCase();
-    var target = source.toLowerCase();
-    var i = lower.indexOf(target);
-    if(i === -1){
-      // Nothing to blur — dump the full sentence untouched.
-      el.textContent = text;
+    var text = String(sig.text || '');
+    var query = null;
+    var m = text.match(/['"‘“]([^'"’”]+)['"’”]/);
+    if(m) query = m[1];
+    // "cites <word or two>" — capture up to the next terminator.
+    var competitor = null;
+    var c = text.match(/cites\s+([A-Z][^\s.,;:!?]*(?:\s+[A-Z][^\s.,;:!?]*)?)/);
+    if(c) competitor = c[1];
+    if(query && competitor){
+      el.appendChild(document.createTextNode("For '"));
+      var q = document.createElement('span'); q.textContent = query;
+      el.appendChild(q);
+      el.appendChild(document.createTextNode("', AI cites "));
+      var blur = document.createElement('span');
+      blur.className = 'blur-name';
+      blur.textContent = competitor;
+      blur.setAttribute('aria-label', 'competitor name');
+      el.appendChild(blur);
+      el.appendChild(document.createTextNode(' instead of you.'));
       return;
     }
-    el.appendChild(document.createTextNode(text.slice(0, i)));
-    var blur = document.createElement('span');
-    blur.className = 'blur-name';
-    blur.textContent = text.slice(i, i + source.length);
-    blur.setAttribute('aria-label', 'competitor name');
-    el.appendChild(blur);
-    el.appendChild(document.createTextNode(text.slice(i + source.length)));
+    // Fallback: repaint the raw sentence, blur the extracted competitor if
+    // we found one; otherwise dump text as-is.
+    if(competitor){
+      var lower = text.toLowerCase();
+      var target = competitor.toLowerCase();
+      var i = lower.indexOf(target);
+      if(i !== -1){
+        el.appendChild(document.createTextNode(text.slice(0, i)));
+        var b2 = document.createElement('span');
+        b2.className = 'blur-name';
+        b2.textContent = text.slice(i, i + competitor.length);
+        b2.setAttribute('aria-label', 'competitor name');
+        el.appendChild(b2);
+        el.appendChild(document.createTextNode(text.slice(i + competitor.length)));
+        return;
+      }
+    }
+    el.textContent = text;
   }
 
   // ---- Feed-tile seat preview: build a real card from this client's deck
