@@ -177,8 +177,9 @@ export function createMock(db, USERS) {
       const a = db.articles.find((x) => x.id === body.p_article_id && cos.has(x.company_id));
       if (!a) return json(route, 400, { message: 'unknown article' });
       if (!canWrite(a.company_id)) return json(route, 403, { message: 'subscription ended' });
-      if (!['delivered', 'live'].includes(a.status)) return json(route, 400, { message: 'article not delivered yet' });
-      a.status = body.p_live ? 'live' : 'delivered';
+      if (a.status !== 'delivered') return json(route, 400, { message: 'article not delivered yet' });
+      // Match migration 8's portal_set_live: status stays 'delivered'; toggle
+      // just flips live_at.
       a.live_at = body.p_live ? (a.live_at || new Date().toISOString()) : null;
       return json(route, 200, { id: a.id, status: a.status, live_at: a.live_at });
     }

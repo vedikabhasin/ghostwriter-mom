@@ -378,13 +378,8 @@ for (const mobile of [true, false]) {
   await shot(page, `${tag}13-library-ghost`);
   await page.click('.book.top');
   await page.waitForSelector('#ghost-sheet.open');
-  const gs = await page.textContent('#ghost-sheet');
-  check('ghost tap: "Write this" with a format choice, cost and 0 balance', gs.includes('Approved, not written yet.') && await page.locator('#write-box:visible').count() === 1 &&
-    (await page.textContent('#write-cost')) === '1 credit. You have 0 credits.' && (await page.textContent('#write-btn')) === 'Get credits', gs);
-  await page.click('#write-btn');
-  await page.waitForSelector('#credits-sheet.open');
-  check('internal account: credits are added by hand, no checkout', (await page.textContent('#credits-sheet')).includes('Credits on this portal are added by hand in Supabase.'));
-  await page.click('[data-close="credits-sheet"]');
+  check('ghost tap: "Requested. Waiting to be written.", no credit UI', (await page.textContent('#ghost-sheet')).includes('Requested. Waiting to be written.') && await page.locator('#write-box:visible').count() === 0);
+  await page.click('[data-close="ghost-sheet"]');
   await page.click('[data-action="lib-next"]');
   await wait(400);
   const vb5 = await page.locator('.book.top').innerText();
@@ -398,7 +393,7 @@ for (const mobile of [true, false]) {
   await page.waitForSelector('#reader:not([hidden])');
   check('reader: date line uses the delivery stamp', (await page.textContent('#reader-date')).startsWith('Delivered in 19h'));
   await page.click('#live-toggle'); await wait(300);
-  check('mark live: status live', db.articles[0].status === 'live');
+  check('mark live: live_at stamped', !!db.articles[0].live_at);
   await page.click('[data-close="reader"]');
   await wait(300);
   check('library: small ink "Live" tag', await page.locator('.book.top .live-tag').count() === 1);

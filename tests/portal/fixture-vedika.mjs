@@ -48,9 +48,9 @@ export function vedikaDb(overrides = {}) {
     articles: [
       { id: '553f5a86-290e-4a13-ad97-3e7fa29e6c5f', company_id: CO, card_id: cardId('vb-01'), format: 'post', title: 'I Design for the Moment AI Is Wrong', status: 'delivered',
         body_html: VB01_BODY, google_doc_url: null, requested_at: iso(-43 * H), deliver_by: null, delivered_at: iso(-24 * H), live_at: null, created_at: iso(-43 * H) },
-      { id: 'd4579ee5-34dc-4065-b21d-97013b252f02', company_id: CO, card_id: cardId('vb-05'), format: 'post', title: 'The Most Useful Page Says What Not to Do', status: 'approved_unwritten',
+      { id: 'd4579ee5-34dc-4065-b21d-97013b252f02', company_id: CO, card_id: cardId('vb-05'), format: 'post', title: 'The Most Useful Page Says What Not to Do', status: 'writing',
         body_html: null, google_doc_url: null, requested_at: iso(-9.6 * H), deliver_by: iso(14.3 * H), delivered_at: null, live_at: null, created_at: iso(-9.6 * H) },
-      { id: '8add2b56-951c-460c-a674-27bee47f4954', company_id: CO, card_id: cardId('bx-01'), format: 'post', title: 'The Experienced Eyes Are Retiring', status: 'approved_unwritten',
+      { id: '8add2b56-951c-460c-a674-27bee47f4954', company_id: CO, card_id: cardId('bx-01'), format: 'post', title: 'The Experienced Eyes Are Retiring', status: 'requested',
         body_html: null, google_doc_url: null, requested_at: null, deliver_by: null, delivered_at: null, live_at: null, created_at: iso(-3 * H) },
     ],
     notes: [],

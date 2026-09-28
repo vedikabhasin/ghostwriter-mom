@@ -497,12 +497,17 @@ body.dir-save  .ctl-save{
 }
 
 .info-btn{
-  position:fixed; left:14px; bottom:calc(14px + env(safe-area-inset-bottom, 0px));
-  width:36px; height:36px; border-radius:50%;
-  background:rgba(255,255,255,0.9);
+  /* Top-right corner, above the safe-area inset. Anchored to the viewport
+     top instead of the bottom because on short viewports the bottom edge is
+     where the feed controls (pass/save/fast/like) live, and the fixed button
+     used to overlap them. Top-right sits above the feed-top row's history
+     button, which slides left thanks to .feed-top's padding-right below. */
+  position:fixed; right:12px; top:calc(12px + env(safe-area-inset-top, 0px));
+  width:32px; height:32px; border-radius:50%;
+  background:rgba(255,255,255,0.92);
   border:1px solid rgba(14,14,14,0.14);
   color:var(--ink);
-  font-family:var(--font-accent); font-style:italic; font-weight:700; font-size:18px; line-height:1;
+  font-family:var(--font-accent); font-style:italic; font-weight:700; font-size:16px; line-height:1;
   cursor:pointer; -webkit-tap-highlight-color:transparent;
   box-shadow:0 6px 18px -8px rgba(14,14,14,0.28);
   z-index:40;
@@ -510,6 +515,9 @@ body.dir-save  .ctl-save{
 }
 .info-btn:hover{transform:scale(1.06);}
 .info-btn:focus-visible{outline:2px solid var(--ink); outline-offset:2px;}
+/* Reserve room for the info-btn on the feed screen's header row so its
+   History button never sits under the fixed circle at any width. */
+.feed-top{ padding-right:44px; }
 .info-scrim{
   position:fixed; inset:0; z-index:60;
   background:rgba(14,14,14,0.35);
@@ -1096,6 +1104,13 @@ body.dir-save  .ctl-save{
   background:rgba(255,107,92,0.18); color:var(--pass-ink);
 }
 
+/* Call-mode: replaces the price-block. One small mono line above the CTA
+   ("Early clients shape what the portal builds next. · Up to 3 seats."). */
+.call-line{
+  font-family:var(--font-mono); font-size:11.5px; letter-spacing:0.06em;
+  color:#333; margin:12px 0 4px; text-align:center; max-width:34ch;
+}
+
 /* Signal — competitor name blurred but the shape stays. */
 .blur-name{
   color:transparent;
@@ -1370,21 +1385,25 @@ body.dir-save  .ctl-save{
       </div>
     </div>
 
-    <div class="price-block">
+    <div class="price-block" id="price-block" hidden>
       <p class="price-headline"><span data-slot="price-early"></span>/month</p>
       <p class="seat-line">Up to 3 seats &middot; Early clients keep this price.</p>
       <p class="spots-line" id="spots-line" hidden></p>
     </div>
 
+    <p class="call-line" id="call-line" hidden>
+      Early clients shape what the portal builds next. &middot; Up to 3 seats.
+    </p>
+
     <span class="btn-glow-host" id="cta-glow">
       <span class="btn-glow" aria-hidden="true"></span>
       <button type="button" class="btn btn-primary" data-action="portal-cta" id="portal-cta-btn">
-        <span id="portal-cta-label">Keep your portal &middot; $19/month</span>
+        <span id="portal-cta-label">Open your portal &middot; 15-minute walkthrough</span>
         <span class="arr" aria-hidden="true">&#8594;</span>
       </button>
     </span>
     <p class="offer-fine" id="cta-fine">
-      Cancel anytime. Your free article lands <span data-slot="dropWeekday"></span> either way.
+      Your free article lands <span data-slot="dropWeekday"></span> either way.
     </p>
     <p class="waitlist-ack" id="waitlist-ack">Noted. I'll be in touch.</p>
 
@@ -1541,7 +1560,8 @@ body.dir-save  .ctl-save{
   //    (REPLACE_ME) or the file is missing, the adapter transparently falls
   //    back to the legacy /clients/*.json path so the site still functions
   //    while you're wiring things up.
-  var runtime = { supabaseUrl: '', supabaseAnonKey: '', posthogKey: '', posthogHost: 'https://us.i.posthog.com' };
+  var runtime = { supabaseUrl: '', supabaseAnonKey: '', posthogKey: '', posthogHost: 'https://us.i.posthog.com',
+                  bookingUrl: 'https://cal.com/vedika/ghostwriter-mom' };
   var supabase = null;
 
   // -- PostHog (only initialized once runtime.json loads).
@@ -1678,6 +1698,9 @@ body.dir-save  .ctl-save{
       signal:           rpc.signal || null,
       firstOpenedAt: rpc.first_opened_at || null,
       showScarcity:  rpc.show_scarcity === true,
+      // 'call' (walkthrough) or 'checkout' (Stripe). Default 'call' — the DB
+      // default matches, but a stale JSON fallback shouldn't leak checkout UI.
+      unlockMode:    rpc.unlock_mode === 'checkout' ? 'checkout' : 'call',
       cards: (rpc.cards || []).map(function(c){
         return {
           id:       c.card_key,
@@ -2663,9 +2686,38 @@ body.dir-save  .ctl-save{
       }
     }
 
-    // Spots + CTA — render immediately from cached value, then refresh from RPC.
-    renderSpotsAndCta();
-    refreshSpotsAsync();
+    // CTA — one of two modes.
+    //   'call'     : hide price/spots UI, show the walkthrough copy + BOOKING_URL.
+    //   'checkout' : keep the original Stripe + spots-line flow (unchanged).
+    var unlockMode = (client && client.unlockMode) || 'call';
+    if(unlockMode === 'checkout'){
+      renderSpotsAndCta();
+      refreshSpotsAsync();
+    } else {
+      renderCallModeCta();
+    }
+  }
+
+  // Call-mode confirmation CTA. Hides the price-block entirely; shows a small
+  // "Early clients shape what the portal builds next. · Up to 3 seats." line
+  // above the button, then a walkthrough CTA that links to BOOKING_URL.
+  function renderCallModeCta(){
+    var price = document.getElementById('price-block');
+    var spots = document.getElementById('spots-line');
+    var line  = document.getElementById('call-line');
+    var btn   = document.getElementById('portal-cta-btn');
+    var lbl   = document.getElementById('portal-cta-label');
+    var fine  = document.getElementById('cta-fine');
+    var ack   = document.getElementById('waitlist-ack');
+    var host  = document.getElementById('cta-glow');
+    if(price) price.hidden = true;
+    if(spots) spots.hidden = true;
+    if(line)  line.hidden  = false;
+    if(lbl)   lbl.textContent = 'Open your portal · 15-minute walkthrough';
+    if(btn)   btn.disabled = false;
+    if(host)  host.classList.remove('glow-off');
+    if(ack)   ack.classList.remove('on');
+    if(fine)  fine.style.display = '';
   }
 
   // ---- Signals tile copy.
@@ -2929,8 +2981,26 @@ body.dir-save  .ctl-save{
     return d;
   }
 
-  // -- Portal CTA — Stripe or waitlist depending on spots ------------------
+  // -- Portal CTA — walkthrough call (default) or Stripe checkout ----------
   function portalCta(){
+    var unlockMode = (client && client.unlockMode) || 'call';
+    if(unlockMode === 'call'){
+      // Walkthrough: PostHog event + open BOOKING_URL in a new tab, carrying
+      // slug (and email, when we have one) as Cal.com metadata.
+      var props = { slug: SLUG };
+      if(state.emailProvided) props.email = state.emailProvided;
+      ph.capture('cta_walkthrough_clicked', props);
+      state.events.push({ action:'cta_walkthrough_clicked', cardId:'', timestamp:new Date().toISOString() });
+      saveState();
+      var base = (runtime && runtime.bookingUrl) || 'https://cal.com/vedika/ghostwriter-mom';
+      var qs = 'metadata%5Bslug%5D=' + encodeURIComponent(SLUG);
+      if(state.emailProvided) qs += '&email=' + encodeURIComponent(state.emailProvided);
+      var sep = base.indexOf('?') === -1 ? '?' : '&';
+      window.open(base + sep + qs, '_blank', 'noopener,noreferrer');
+      return;
+    }
+
+    // Checkout mode (only used when a company is explicitly flipped in the DB).
     var full = spotsLeft <= 0;
     if(full){
       if(state.waitlistJoined) return;
@@ -2942,8 +3012,6 @@ body.dir-save  .ctl-save{
       }
       return;
     }
-    // Unlock — go to Stripe. Fire the PostHog event synchronously so it lands
-    // even though we're about to leave the page.
     logEvent('', 'unlock_clicked');
     var url = client && client.stripeLink19;
     if(!url){ alert('Checkout link is not configured yet for this client.'); return; }
@@ -3180,7 +3248,8 @@ body.dir-save  .ctl-save{
              referral_sent:'Referred',
              portal_interest:'Portal interest',
              source_opened:'Opened source',
-             checkout_clicked:'Went to checkout'})[a] || a;
+             checkout_clicked:'Went to checkout',
+             cta_walkthrough_clicked:'Booked walkthrough'})[a] || a;
   }
   function labelForEvent(a){
     if(a === 'direction_viewed')    return 'Direction shown';
@@ -3192,6 +3261,7 @@ body.dir-save  .ctl-save{
     if(a === 'referral_sent')       return 'Referral sent';
     if(a === 'source_opened')       return 'Source opened';
     if(a === 'checkout_clicked')    return 'Opened Stripe';
+    if(a === 'cta_walkthrough_clicked') return 'Opened walkthrough booking';
     return 'Session event';
   }
   function fmtWhen(iso){

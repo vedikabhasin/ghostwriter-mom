@@ -1,9 +1,19 @@
-# Supabase CLI project settings. Only the parts this repo depends on.
+# Supabase project config.
+#
+# Every edge function below runs with verify_jwt = false. This is intentional:
+# our Auth JWTs are ES256 (asymmetric), and the runtime JWT gate rejects them
+# because the Deno platform image only verifies HS256. Turning verification on
+# makes every real signed-in call to these functions fail with 401 before it
+# ever reaches our handler, so each function checks its caller itself
+# (admin.auth.getUser(bearer) with the service role, or Stripe's signature for
+# the webhook).
+#
+# Do NOT flip any of these to true without first switching the project to
+# HS256 or wiring an asymmetric-verify shim into the runtime. The functions
+# will stop accepting real portal sessions the moment you do.
+
 project_id = "jeuupgmztwyialqatoel"
 
-# The project signs sessions with ES256 keys, which the platform verify_jwt
-# gate rejects with a 401 before the function runs. Every function here
-# checks its caller itself (admin.auth.getUser, or Stripe's signature).
 [functions.invite-member]
 verify_jwt = false
 

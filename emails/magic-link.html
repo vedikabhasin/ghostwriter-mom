@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Your Ghostwriter Mom sign-in</title>
+</head>
+<body style="margin:0;padding:0;background:#F4F1EA;-webkit-text-size-adjust:100%;">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#F4F1EA;">
+    <tr>
+      <td align="center" style="padding:48px 20px;">
+        <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="520" style="max-width:520px;width:100%;background:#FDFAF2;border:1px solid #E4DED0;border-radius:14px;">
+          <tr>
+            <td style="padding:36px 40px 8px 40px;font:400 15px/22px 'Inter',system-ui,-apple-system,'Helvetica Neue',Arial,sans-serif;color:#0E0E0E;">
+              <div style="font-family:'Palatino','Palatino Linotype','Book Antiqua',Georgia,serif;font-style:italic;font-weight:400;font-size:30px;line-height:1.15;color:#0E0E0E;letter-spacing:-0.01em;">
+                Your sign-in link
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding:12px 40px 8px 40px;font:400 15px/22px 'Inter',system-ui,-apple-system,'Helvetica Neue',Arial,sans-serif;color:#3B3B3B;">
+              One click to open your portal. Your swipes, your directions, your writing.
+            </td>
+          </tr>
+          <tr>
+            <td style="padding:24px 40px 4px 40px;">
+              <a href="{{ .ConfirmationURL }}" style="display:inline-block;background:#B8FF71;color:#0E0E0E;text-decoration:none;font:600 15px/1 'Inter',system-ui,-apple-system,'Helvetica Neue',Arial,sans-serif;padding:14px 22px;border-radius:10px;border:1px solid #0E0E0E;">
+                Open your portal
+              </a>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding:20px 40px 8px 40px;font:400 13px/20px 'Inter',system-ui,-apple-system,'Helvetica Neue',Arial,sans-serif;color:#5D5D5D;">
+              This link expires in 60 minutes and only works once. If you didn't ask for it, you can ignore it.
+            </td>
+          </tr>
+          <tr>
+            <td style="padding:12px 40px 36px 40px;font:400 12px/18px 'Inter',system-ui,-apple-system,'Helvetica Neue',Arial,sans-serif;color:#8A8272;">
+              Or paste this into your browser:<br>
+              <span style="word-break:break-all;color:#5D5D5D;">{{ .ConfirmationURL }}</span>
+            </td>
+          </tr>
+          <tr>
+            <td align="center" style="padding:0 40px 28px 40px;font:400 12px/18px 'Inter',system-ui,-apple-system,'Helvetica Neue',Arial,sans-serif;color:#8A8272;">
+              Ghostwriter Mom
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
