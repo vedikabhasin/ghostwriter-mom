@@ -179,7 +179,7 @@ function itemEl(i) {
   if (i.kind === 'article') {
     const a = S.articles.find((x) => x.id === i.ref_id);
     if (!a) return null;
-    const ghost = a.status === 'approved_unwritten';
+    const ghost = a.status === 'requested' || a.status === 'writing';
     el.classList.add('mini-book', 'fmt-' + a.format);
     if (ghost) el.classList.add('ghost');
     const head = h('div', 'mb-head');
@@ -188,7 +188,7 @@ function itemEl(i) {
     if (card && card.series) head.appendChild(h('span', 'gwm-series-label', card.series));
     el.appendChild(head);
     el.appendChild(h('span', 'mb-title', a.title));
-    el.appendChild(h('span', 'mb-state', a.status === 'live' ? 'Live' : ghost ? 'Approved' : 'Delivered'));
+    el.appendChild(h('span', 'mb-state', a.live_at ? 'Live' : ghost ? 'Approved' : 'Delivered'));
     el.setAttribute('aria-label', 'Article: ' + a.title);
   } else if (i.kind === 'note') {
     const n = S.notes.find((x) => x.id === i.ref_id);

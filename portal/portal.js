@@ -24,6 +24,21 @@ const FMT_LABEL = { pillar: 'Pillar', insight: 'Insight', post: 'Post' };
 const SPRING = 'cubic-bezier(0.34,1.56,0.64,1)';
 const PARAMS = new URLSearchParams(location.search);
 
+// Credits are frozen for the call-mode pivot. Every credit-numbered chip, copy
+// line, and admin panel is gated on this constant; flip when the credits flow
+// is thawed. Nothing that reads it should assume a schema — the flag is the
+// only source of truth.
+const CREDITS_ENABLED = false;
+
+// New article-workflow states after migration 20260928000008_call_mode.sql:
+//   requested  = an owner asked for this card to be written (no clock yet)
+//   writing    = the 24-hour clock is running
+//   delivered  = written and in the Library
+// Kept as helpers so the render code doesn't sprinkle status strings around.
+const STATUSES_GHOST = new Set(['requested', 'writing']);
+const isGhostStatus = (s) => STATUSES_GHOST.has(s);
+const isLive        = (a) => !!a && !!a.live_at;
+
 // -- State --------------------------------------------------------------------
 let runtime = { supabaseUrl: '', supabaseAnonKey: '', posthogKey: '', posthogHost: 'https://us.i.posthog.com' };
 let sb = null;
@@ -757,9 +772,10 @@ function renderHistory(tab) {
 
 // -- Library: catalog mode (read-only fan) --------------------------------------
 function libArticles() {
-  const rank = { live: 0, delivered: 0, approved_unwritten: 1 };
+  // Delivered first (whether live or not), then writing, then requested.
+  const rank = { delivered: 0, writing: 1, requested: 2 };
   return S.articles.slice().sort((a, b) =>
-    (rank[a.status] - rank[b.status]) ||
+    ((rank[a.status] ?? 3) - (rank[b.status] ?? 3)) ||
     String(b.delivered_at || b.requested_at || b.created_at).localeCompare(String(a.delivered_at || a.requested_at || a.created_at)));
 }
 function syncLibOrder() {
@@ -776,12 +792,12 @@ const FAN = [
 ];
 /** Delivery state line for a card. */
 function deliveryState(a) {
-  if (a.status === 'approved_unwritten') {
-    if (a.requested_at && a.deliver_by) {
-      const left = countdown(a.deliver_by);
-      return { kind: 'arriving', text: left ? 'Arriving in ' + left : 'Arriving any minute' };
-    }
-    return { kind: 'approved', text: 'Approved · not written yet' };
+  if (a.status === 'writing') {
+    const left = a.deliver_by ? countdown(a.deliver_by) : null;
+    return { kind: 'arriving', text: left ? 'Arriving in ' + left : 'Arriving any minute' };
+  }
+  if (a.status === 'requested') {
+    return { kind: 'requested', text: 'Requested · waiting to be written' };
   }
   const when = fmtWhen(a.delivered_at || a.created_at);
   const text = a.requested_at && a.delivered_at
@@ -804,8 +820,8 @@ function renderLibrary(opts) {
   stage.textContent = '';
   const byId = new Map(S.articles.map((a) => [a.id, a]));
   const order = S.libOrder.map((id) => byId.get(id)).filter(Boolean);
-  const written = order.filter((a) => a.status !== 'approved_unwritten').length;
-  $('#lib-count').textContent = order.length ? written + ' written · ' + (order.length - written) + ' approved' : '';
+  const written = order.filter((a) => a.status === 'delivered').length;
+  $('#lib-count').textContent = order.length ? written + ' written · ' + (order.length - written) + ' waiting' : '';
   $('#lib-nav').hidden = order.length < 2;
   if (!order.length) {
     stage.appendChild(h('p', 'lib-empty', 'Your articles land here as they’re written.'));
@@ -816,7 +832,7 @@ function renderLibrary(opts) {
   // Paint back to front so the top card is last and fully covers the rest.
   for (let i = visible.length - 1; i >= 0; i--) {
     const a = visible[i];
-    const ghost = a.status === 'approved_unwritten';
+    const ghost = isGhostStatus(a.status);
     const slot = FAN[i];
     const tf = `translateX(${slot.x}px) rotate(${slot.r}deg)`;
     const z = 20 - i * 2;
@@ -838,7 +854,7 @@ function renderLibrary(opts) {
     head.appendChild(h('span', 'card-format gwm-center gwm-mono-tag fmt-' + a.format, FMT_LABEL[a.format] || a.format));
     const card = S.cards.find((c) => c.id === a.card_id);
     if (card && card.series) head.appendChild(h('span', 'gwm-series-label', card.series));
-    if (a.status === 'live') head.appendChild(h('span', 'live-tag gwm-center gwm-mono-tag', 'Live'));
+    if (isLive(a)) head.appendChild(h('span', 'live-tag gwm-center gwm-mono-tag', 'Live'));
     b.appendChild(head);
     b.appendChild(h('h3', 'book-title', a.title));
     const st = deliveryState(a);
@@ -917,7 +933,7 @@ function attachBookGestures(el, article) {
   });
 }
 function openArticle(a) {
-  if (a.status === 'approved_unwritten') return openGhost(a);
+  if (isGhostStatus(a.status)) return openGhost(a);
   openReader(a);
 }
 
@@ -936,7 +952,13 @@ function openGhost(a) {
   const st = deliveryState(a);
   const arriving = st.kind === 'arriving';
   // A free pick in progress is already being written: say when, no Notify me.
-  $('#ghost-copy').textContent = arriving ? 'Being written now. ' + st.text + '.' : 'Approved, not written yet. Credits open soon.';
+  // Credits are frozen (CREDITS_ENABLED). Under the call-mode pivot every card
+  // that reaches this sheet is either arriving (writing) or requested/approved
+  // but not yet started; no "credit pack" copy renders while the flag is off.
+  const waitingCopy = CREDITS_ENABLED
+    ? 'Approved, not written yet. Credits open soon.'
+    : 'Approved. Waiting to be written.';
+  $('#ghost-copy').textContent = arriving ? 'Being written now. ' + st.text + '.' : waitingCopy;
   $('#notify-host').hidden = S.readOnly || arriving;
   const btn = $('#notify-btn');
   const done = wantsWritten(a);
@@ -1035,7 +1057,7 @@ function openReader(a) {
   $('#copy-web').disabled = !a.body_html;
   const lt = $('#live-toggle');
   lt.hidden = S.readOnly;
-  lt.setAttribute('aria-checked', a.status === 'live' ? 'true' : 'false');
+  lt.setAttribute('aria-checked', isLive(a) ? 'true' : 'false');
   const r = $('#reader');
   r.hidden = false;
   r.scrollTop = 0;
@@ -1073,7 +1095,7 @@ async function toggleLive() {
   const a = readerArticle;
   if (!a || S.readOnly) return;
   const lt = $('#live-toggle');
-  const goLive = a.status !== 'live';
+  const goLive = !isLive(a);
   lt.setAttribute('aria-checked', goLive ? 'true' : 'false');
   lt.disabled = true;
   const { data, error } = await sb.rpc('portal_set_live', { p_article_id: a.id, p_live: goLive });
@@ -1083,6 +1105,7 @@ async function toggleLive() {
     toast('That didn’t save. Try again.');
     return;
   }
+  // portal_set_live only stamps live_at now (status stays 'delivered').
   a.status = data.status;
   a.live_at = data.live_at;
   track('marked_live', { article_id: a.id, live: goLive });
@@ -1259,7 +1282,7 @@ async function loadPortal(fromLink) {
   S.onb = Object.assign({}, S.me.onboarding || {});
   const cid = S.me.company_id;
   const [company, members, cards, decisions, events, signal, articles, notes, hubItems] = await Promise.all([
-    sb.from('companies').select('id,slug,name,contact_first_name,subscription_status,subscription_ends_at,hub_unlocked,is_internal').eq('id', cid).single(),
+    sb.from('companies').select('id,slug,name,contact_first_name,subscription_status,subscription_ends_at,portal_access_until,unlock_mode,hub_unlocked,is_internal').eq('id', cid).single(),
     sb.from('members').select('id,user_id,role,display_name,avatar_shape,onboarding,created_at').eq('company_id', cid).order('created_at'),
     sb.from('cards').select('id,card_key,format,series,title,angle,evidence,tags,sources,drop_date,sort_order').eq('company_id', cid).order('sort_order'),
     sb.from('decisions').select('card_id,member_id,action,updated_at').eq('company_id', cid),
@@ -1281,7 +1304,12 @@ async function loadPortal(fromLink) {
   S.notes = notes.data;
   S.hubItems = hubItems.data;
   const c = S.company;
-  S.readOnly = c.subscription_status === 'canceled' && !!c.subscription_ends_at && new Date(c.subscription_ends_at) <= new Date();
+  // Mirror of the portal_active(company_id) SQL function: any one of these
+  // signals opens the portal, otherwise it's read-only.
+  const portalActive = !!c.is_internal
+    || c.subscription_status === 'active'
+    || (c.portal_access_until && new Date(c.portal_access_until) > new Date());
+  S.readOnly = !portalActive;
   S.loaded = true;
   await applySwitches();
 
@@ -1302,8 +1330,13 @@ async function loadPortal(fromLink) {
   if (S.readOnly) {
     const line = $('#resub-line');
     line.hidden = false;
-    line.textContent = 'Your subscription ended ' + fmtDay(c.subscription_ends_at) + '. Your library stays here. ';
-    const a = h('a', null, 'Resubscribe to reopen your feed.');
+    // Two ways to land here: a canceled Stripe subscription with a firm end
+    // date, or a call-mode client whose portal_access_until has lapsed.
+    const endedOn = c.subscription_ends_at || c.portal_access_until;
+    line.textContent = endedOn
+      ? 'Your portal closed ' + fmtDay(endedOn) + '. Your library stays here. '
+      : 'Your portal is read-only. Your library stays here. ';
+    const a = h('a', null, 'Reopen your feed.');
     a.href = '/' + encodeURIComponent(c.slug);
     line.appendChild(a);
     $('#pencil-sticker').hidden = true;

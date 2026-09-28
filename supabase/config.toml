@@ -1,0 +1,20 @@
+# Supabase project config.
+#
+# The two edge functions below both verify_jwt = false. This is intentional:
+# our Auth JWTs are ES256 (asymmetric), and the runtime JWT gate rejects them
+# because the Deno platform image only verifies HS256. Turning verification on
+# makes every real signed-in call to these functions fail with 401 before it
+# ever reaches our handler, so we verify the session inside the function
+# instead (admin.auth.getUser(bearer) with the service role).
+#
+# Do NOT flip either of these to true without first switching the project to
+# HS256 or wiring an asymmetric-verify shim into the runtime — the functions
+# will stop accepting real portal sessions the moment you do.
+
+project_id = "jeuupgmztwyialqatoel"
+
+[functions.invite-member]
+verify_jwt = false
+
+[functions.stripe-webhook]
+verify_jwt = false

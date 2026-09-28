@@ -327,7 +327,7 @@ for (const mobile of [true, false]) {
   await shot(page, `${tag}13-library-ghost`);
   await page.click('.book.top');
   await page.waitForSelector('#ghost-sheet.open');
-  check('ghost tap: "Approved, not written yet. Credits open soon." + Notify me', (await page.textContent('#ghost-sheet')).includes('Approved, not written yet. Credits open soon.') && await page.locator('#notify-btn:visible').count() === 1);
+  check('ghost tap: "Approved. Waiting to be written." + Notify me', (await page.textContent('#ghost-sheet')).includes('Approved. Waiting to be written.') && await page.locator('#notify-btn:visible').count() === 1);
   await page.click('[data-close="ghost-sheet"]');
   await page.click('[data-action="lib-next"]');
   await wait(400);
@@ -342,7 +342,7 @@ for (const mobile of [true, false]) {
   await page.waitForSelector('#reader:not([hidden])');
   check('reader: date line uses the delivery stamp', (await page.textContent('#reader-date')).startsWith('Delivered in 19h'));
   await page.click('#live-toggle'); await wait(300);
-  check('mark live: status live', db.articles[0].status === 'live');
+  check('mark live: live_at stamped', !!db.articles[0].live_at);
   await page.click('[data-close="reader"]');
   await wait(300);
   check('library: small ink "Live" tag', await page.locator('.book.top .live-tag').count() === 1);
@@ -493,7 +493,7 @@ console.log('\n=== Internal switches (375px)');
   await p.page.waitForSelector('#screen-hub.on');
   await wait(900);
   check('?hub=locked: locked canvas, frosted overlay, no toolbar', await p.page.locator('#hub-canvas.locked').count() === 1 && await p.page.locator('#hub-overlay:not([hidden])').count() === 1 && await p.page.locator('#hub-toolbar[hidden]').count() === 1);
-  check('?hub=locked: overlay copy', (await p.page.textContent('#hub-overlay')).includes('Your notes, articles, and ideas, in one place. Unlocks with your first credit pack.'));
+  check('?hub=locked: overlay copy', (await p.page.textContent('#hub-overlay')).includes('Your notes, articles, and ideas, in one place.'));
   check('?hub=locked: real items auto-laid (books + rules notes), no writes', await p.page.locator('#hub-canvas .kind-article').count() === 3 && await p.page.locator('#hub-canvas .kind-text').count() === 2 && p.mock.db.hub_items.length === 2);
   await shot(p.page, 's01-hub-locked');
   await p.page.click('[data-action="back-to-library"]');
