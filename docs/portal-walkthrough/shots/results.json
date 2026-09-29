@@ -38,7 +38,7 @@
  {
   "name": "375px signal: peek cards share width, center, height, origin; offset 6/12px; no content",
   "ok": true,
-  "detail": "{\"peekOk\":true,\"gap1\":16,\"gap2\":16,\"gap3\":59.765625,\"dotOnTop\":true,\"depths\":3}"
+  "detail": "{\"peekOk\":true,\"gap1\":16,\"gap2\":16,\"gap3\":18,\"dotOnTop\":true,\"depths\":3}"
  },
  {
   "name": "375px signal: card -> dots >= 16px",
@@ -53,7 +53,7 @@
  {
   "name": "375px signal: actions -> switch >= 16px (switch never covers content)",
   "ok": true,
-  "detail": "59.8"
+  "detail": "18.0"
  },
  {
   "name": "375px signal: card glow does not cover the dot slider",
@@ -62,7 +62,7 @@
  {
   "name": "375px: feed tooltip never covers the card footer",
   "ok": true,
-  "detail": "{\"bubbleTop\":606.6371459960938,\"cardBottom\":532.234375,\"over\":false}"
+  "detail": "{\"bubbleTop\":656.1097412109375,\"cardBottom\":582,\"over\":false}"
  },
  {
   "name": "onboarding: glow on Library after Feed",
@@ -75,7 +75,7 @@
  {
   "name": "375px card: peek cards share width, center, height, origin; offset 6/12px; no content",
   "ok": true,
-  "detail": "{\"peekOk\":true,\"gap1\":16,\"gap2\":16,\"gap3\":39.75,\"dotOnTop\":true,\"depths\":3}"
+  "detail": "{\"peekOk\":true,\"gap1\":16,\"gap2\":16,\"gap3\":18,\"dotOnTop\":true,\"depths\":3}"
  },
  {
   "name": "375px card: card -> dots >= 16px",
@@ -90,7 +90,7 @@
  {
   "name": "375px card: actions -> switch >= 16px (switch never covers content)",
   "ok": true,
-  "detail": "39.8"
+  "detail": "18.0"
  },
  {
   "name": "375px card: card glow does not cover the dot slider",
@@ -98,6 +98,24 @@
  },
  {
   "name": "feed: buttons faint at rest (25%)",
+  "ok": true
+ },
+ {
+  "name": "feed: every card the same fixed height (sales-page size, fitted above the switch)",
+  "ok": true,
+  "detail": "472,472,472,472 want 472"
+ },
+ {
+  "name": "feed: one \"Sources · N\" button, no chips; proof scrolls inside a 132px frame",
+  "ok": true,
+  "detail": "{\"btn\":\"SOURCES\\n1\",\"chips\":0,\"proof\":\"auto\",\"max\":\"132px\"}"
+ },
+ {
+  "name": "feed: dragging on the proof never swipes",
+  "ok": true
+ },
+ {
+  "name": "feed: Sources button opens the sheet with every source",
   "ok": true
  },
  {
@@ -173,7 +191,7 @@
  {
   "name": "split note: hub_items row kind note, created_by me",
   "ok": true,
-  "detail": "{\"id\":\"hnjy07y1ap9\",\"ref_id\":\"nl85o3l7kz5i\",\"body\":null,\"emoji\":null,\"x\":543,\"y\":19,\"rotation\":-1.5,\"z\":3,\"hidden\":false,\"updated_at\":\"2026-09-29T00:35:35.928Z\",\"company_id\":\"b22beda7-45cf-486a-931e-d3b429619788\",\"kind\":\"note\",\"created_by\":\"9afe9458-e205-4209-96ec-9c8f6fab77c5\"}"
+  "detail": "{\"id\":\"hebn9lru6cpa\",\"ref_id\":\"n9tbywudeyc\",\"body\":null,\"emoji\":null,\"x\":552,\"y\":21,\"rotation\":-3.3,\"z\":3,\"hidden\":false,\"updated_at\":\"2026-09-29T01:42:55.716Z\",\"company_id\":\"b22beda7-45cf-486a-931e-d3b429619788\",\"kind\":\"note\",\"created_by\":\"9afe9458-e205-4209-96ec-9c8f6fab77c5\"}"
  },
  {
   "name": "reveal timing: entrance <= 1.2s, transform + opacity only",
@@ -246,7 +264,7 @@
  {
   "name": "Request it: request_card with the card's format, REQUESTED by me",
   "ok": true,
-  "detail": "{\"id\":\"art-3\",\"company_id\":\"b22beda7-45cf-486a-931e-d3b429619788\",\"card_id\":\"838e0b01-8a12-4284-881e-914cb9b84110\",\"format\":\"post\",\"title\":\"Three Questions, Eight Answers, 54.8M Views\",\"status\":\"requested\",\"body_html\":null,\"google_doc_url\":null,\"requested_at\":\"2026-09-29T00:35:51.298Z\",\"requested_by\":\"9afe9458-e205-4209-96ec-9c8f6fab77c5\",\"deliver_by\":null,\"delivered_at\":null,\"live_at\":null,\"created_at\":\"2026-09-29T00:35:51.298Z\"}"
+  "detail": "{\"id\":\"art-3\",\"company_id\":\"b22beda7-45cf-486a-931e-d3b429619788\",\"card_id\":\"838e0b01-8a12-4284-881e-914cb9b84110\",\"format\":\"post\",\"title\":\"Three Questions, Eight Answers, 54.8M Views\",\"status\":\"requested\",\"body_html\":null,\"google_doc_url\":null,\"requested_at\":\"2026-09-29T01:43:11.228Z\",\"requested_by\":\"9afe9458-e205-4209-96ec-9c8f6fab77c5\",\"deliver_by\":null,\"delivered_at\":null,\"live_at\":null,\"created_at\":\"2026-09-29T01:43:11.228Z\"}"
  },
  {
   "name": "Request it: portal-request form posted (company, slug, card_title, format, requester)",
@@ -272,7 +290,7 @@
  {
   "name": "notes readable on card detail in Feed history",
   "ok": true,
-  "detail": "VBDesigning Overwhelm Without Harm\n\nYouLIKED\nSep 29, 12:35 AM\nblendbasesPASSED\nSep 28, 10:36 PM\n\n1 NOTE\n\nYOU · SEP 29\nLiked because Grok is my best proof of the"
+  "detail": "VBDesigning Overwhelm Without Harm\n\nYouLIKED\nSep 29, 1:42 AM\nblendbasesPASSED\nSep 28, 11:43 PM\n\n1 NOTE\n\nYOU · SEP 29\nLiked because Grok is my best proof of the "
  },
  {
   "name": "Up next: vb-02 moved to the top",
@@ -287,7 +305,7 @@
  {
   "name": "library: top card flat, centered, fully opaque",
   "ok": true,
-  "detail": "{\"topText\":\"POST\\nVB\\nDELIVERED\\nI Design for the Moment AI Is Wrong\\nDELIVERED IN 19H · SEP 28, 12:35 AM\",\"topOpaque\":true,\"topFlat\":true,\"backsHidden\":true,\"backRot\":[-8,8,-5,5],\"topZ\":20,\"backZ\":[12,14,16,18],\"tag\":\"Delivered\",\"tagCenter\":true}"
+  "detail": "{\"topText\":\"POST\\nVB\\nDELIVERED\\nI Design for the Moment AI Is Wrong\\nDELIVERED IN 19H · SEP 28, 1:42 AM\",\"topOpaque\":true,\"topFlat\":true,\"backsHidden\":true,\"backRot\":[-8,8,-5,5],\"topZ\":20,\"backZ\":[12,14,16,18],\"tag\":\"Delivered\",\"tagCenter\":true}"
  },
  {
   "name": "library: back cards rotated 5-8 deg, content hidden, below the top",
@@ -297,12 +315,12 @@
  {
   "name": "DELIVERED tag (mono, centered) + \"DELIVERED IN 19H · {Mon D, h:mm AM}\"",
   "ok": true,
-  "detail": "POST\nVB\nDELIVERED\nI Design for the Moment AI Is Wrong\nDELIVERED IN 19H · SEP 28, 12:35 AM"
+  "detail": "POST\nVB\nDELIVERED\nI Design for the Moment AI Is Wrong\nDELIVERED IN 19H · SEP 28, 1:42 AM"
  },
  {
   "name": "375px DELIVERED: status stamp on one line, inside the card",
   "ok": true,
-  "detail": "[{\"text\":\"Delivered in 19h · Sep 28, 12:35 AM\",\"oneLine\":true,\"inside\":true,\"size\":\"8.5px\"}]"
+  "detail": "[{\"text\":\"Delivered in 19h · Sep 28, 1:42 AM\",\"oneLine\":true,\"inside\":true,\"size\":\"8.75px\"}]"
  },
  {
   "name": "library vb-01: title contrast AA (>= 4.5)",
@@ -410,7 +428,7 @@
  {
   "name": "requested from the Hub: the card item became the article in place",
   "ok": true,
-  "detail": "{\"id\":\"h2bwshfes2lq\",\"ref_id\":\"art-5\",\"body\":null,\"emoji\":null,\"x\":548,\"y\":739,\"rotation\":-2.9,\"z\":10,\"hidden\":false,\"updated_at\":\"2026-09-29T00:35:59.956Z\",\"company_id\":\"b22beda7-45cf-486a-931e-d3b429619788\",\"kind\":\"article\",\"created_by\":null}"
+  "detail": "{\"id\":\"h5spmw8kkgbd\",\"ref_id\":\"art-5\",\"body\":null,\"emoji\":null,\"x\":548,\"y\":739,\"rotation\":-2.9,\"z\":10,\"hidden\":false,\"updated_at\":\"2026-09-29T01:43:20.593Z\",\"company_id\":\"b22beda7-45cf-486a-931e-d3b429619788\",\"kind\":\"article\",\"created_by\":null}"
  },
  {
   "name": "drag: x/y saved on drop, comes to front",
@@ -518,7 +536,7 @@
  {
   "name": "desktop signal: peek cards share width, center, height, origin; offset 6/12px; no content",
   "ok": true,
-  "detail": "{\"peekOk\":true,\"gap1\":16,\"gap2\":16,\"gap3\":78.8125,\"dotOnTop\":true,\"depths\":3}"
+  "detail": "{\"peekOk\":true,\"gap1\":16,\"gap2\":16,\"gap3\":18,\"dotOnTop\":true,\"depths\":3}"
  },
  {
   "name": "desktop signal: card -> dots >= 16px",
@@ -533,7 +551,7 @@
  {
   "name": "desktop signal: actions -> switch >= 16px (switch never covers content)",
   "ok": true,
-  "detail": "78.8"
+  "detail": "18.0"
  },
  {
   "name": "desktop signal: card glow does not cover the dot slider",
@@ -542,7 +560,7 @@
  {
   "name": "desktop: feed tooltip never covers the card footer",
   "ok": true,
-  "detail": "{\"bubbleTop\":638.0366821289062,\"cardBottom\":557.1875,\"over\":false}"
+  "detail": "{\"bubbleTop\":710.8357543945312,\"cardBottom\":630,\"over\":false}"
  },
  {
   "name": "onboarding: glow on Library after Feed",
@@ -555,7 +573,7 @@
  {
   "name": "desktop card: peek cards share width, center, height, origin; offset 6/12px; no content",
   "ok": true,
-  "detail": "{\"peekOk\":true,\"gap1\":16,\"gap2\":16,\"gap3\":59.21875,\"dotOnTop\":true,\"depths\":3}"
+  "detail": "{\"peekOk\":true,\"gap1\":16,\"gap2\":16,\"gap3\":18,\"dotOnTop\":true,\"depths\":3}"
  },
  {
   "name": "desktop card: card -> dots >= 16px",
@@ -570,7 +588,7 @@
  {
   "name": "desktop card: actions -> switch >= 16px (switch never covers content)",
   "ok": true,
-  "detail": "59.2"
+  "detail": "18.0"
  },
  {
   "name": "desktop card: card glow does not cover the dot slider",
@@ -578,6 +596,24 @@
  },
  {
   "name": "feed: buttons faint at rest (25%)",
+  "ok": true
+ },
+ {
+  "name": "feed: every card the same fixed height (sales-page size, fitted above the switch)",
+  "ok": true,
+  "detail": "520,520,520,520 want 520"
+ },
+ {
+  "name": "feed: one \"Sources · N\" button, no chips; proof scrolls inside a 132px frame",
+  "ok": true,
+  "detail": "{\"btn\":\"SOURCES\\n1\",\"chips\":0,\"proof\":\"auto\",\"max\":\"132px\"}"
+ },
+ {
+  "name": "feed: dragging on the proof never swipes",
+  "ok": true
+ },
+ {
+  "name": "feed: Sources button opens the sheet with every source",
   "ok": true
  },
  {
@@ -703,7 +739,7 @@
  {
   "name": "Request it: request_card with the card's format, REQUESTED by me",
   "ok": true,
-  "detail": "{\"id\":\"art-3\",\"company_id\":\"b22beda7-45cf-486a-931e-d3b429619788\",\"card_id\":\"838e0b01-8a12-4284-881e-914cb9b84110\",\"format\":\"post\",\"title\":\"Three Questions, Eight Answers, 54.8M Views\",\"status\":\"requested\",\"body_html\":null,\"google_doc_url\":null,\"requested_at\":\"2026-09-29T00:36:16.094Z\",\"requested_by\":\"9afe9458-e205-4209-96ec-9c8f6fab77c5\",\"deliver_by\":null,\"delivered_at\":null,\"live_at\":null,\"created_at\":\"2026-09-29T00:36:16.094Z\"}"
+  "detail": "{\"id\":\"art-3\",\"company_id\":\"b22beda7-45cf-486a-931e-d3b429619788\",\"card_id\":\"838e0b01-8a12-4284-881e-914cb9b84110\",\"format\":\"post\",\"title\":\"Three Questions, Eight Answers, 54.8M Views\",\"status\":\"requested\",\"body_html\":null,\"google_doc_url\":null,\"requested_at\":\"2026-09-29T01:43:39.719Z\",\"requested_by\":\"9afe9458-e205-4209-96ec-9c8f6fab77c5\",\"deliver_by\":null,\"delivered_at\":null,\"live_at\":null,\"created_at\":\"2026-09-29T01:43:39.719Z\"}"
  },
  {
   "name": "Request it: portal-request form posted (company, slug, card_title, format, requester)",
@@ -739,7 +775,7 @@
  {
   "name": "library: top card flat, centered, fully opaque",
   "ok": true,
-  "detail": "{\"topText\":\"POST\\nVB\\nDELIVERED\\nI Design for the Moment AI Is Wrong\\nDELIVERED IN 19H · SEP 28, 12:36 AM\",\"topOpaque\":true,\"topFlat\":true,\"backsHidden\":true,\"backRot\":[-8,8,-5,5],\"topZ\":20,\"backZ\":[12,14,16,18],\"tag\":\"Delivered\",\"tagCenter\":true}"
+  "detail": "{\"topText\":\"POST\\nVB\\nDELIVERED\\nI Design for the Moment AI Is Wrong\\nDELIVERED IN 19H · SEP 28, 1:43 AM\",\"topOpaque\":true,\"topFlat\":true,\"backsHidden\":true,\"backRot\":[-8,8,-5,5],\"topZ\":20,\"backZ\":[12,14,16,18],\"tag\":\"Delivered\",\"tagCenter\":true}"
  },
  {
   "name": "library: back cards rotated 5-8 deg, content hidden, below the top",
@@ -749,12 +785,12 @@
  {
   "name": "DELIVERED tag (mono, centered) + \"DELIVERED IN 19H · {Mon D, h:mm AM}\"",
   "ok": true,
-  "detail": "POST\nVB\nDELIVERED\nI Design for the Moment AI Is Wrong\nDELIVERED IN 19H · SEP 28, 12:36 AM"
+  "detail": "POST\nVB\nDELIVERED\nI Design for the Moment AI Is Wrong\nDELIVERED IN 19H · SEP 28, 1:43 AM"
  },
  {
   "name": "desktop DELIVERED: status stamp on one line, inside the card",
   "ok": true,
-  "detail": "[{\"text\":\"Delivered in 19h · Sep 28, 12:36 AM\",\"oneLine\":true,\"inside\":true,\"size\":\"10px\"}]"
+  "detail": "[{\"text\":\"Delivered in 19h · Sep 28, 1:43 AM\",\"oneLine\":true,\"inside\":true,\"size\":\"10px\"}]"
  },
  {
   "name": "library vb-01: title contrast AA (>= 4.5)",
@@ -858,7 +894,7 @@
  {
   "name": "requested from the Hub: the card item became the article in place",
   "ok": true,
-  "detail": "{\"id\":\"hjup84tc9hy\",\"ref_id\":\"art-5\",\"body\":null,\"emoji\":null,\"x\":288,\"y\":503,\"rotation\":-2.9,\"z\":8,\"hidden\":false,\"updated_at\":\"2026-09-29T00:36:24.209Z\",\"company_id\":\"b22beda7-45cf-486a-931e-d3b429619788\",\"kind\":\"article\",\"created_by\":null}"
+  "detail": "{\"id\":\"hxr9dom7svb8\",\"ref_id\":\"art-5\",\"body\":null,\"emoji\":null,\"x\":288,\"y\":503,\"rotation\":-2.9,\"z\":8,\"hidden\":false,\"updated_at\":\"2026-09-29T01:43:48.258Z\",\"company_id\":\"b22beda7-45cf-486a-931e-d3b429619788\",\"kind\":\"article\",\"created_by\":null}"
  },
  {
   "name": "drag: x/y saved on drop, comes to front",
@@ -1021,7 +1057,7 @@
  {
   "name": "Acme 375x812: feed tooltip never covers the card footer",
   "ok": true,
-  "detail": "{\"bubbleTop\":620.8086547851562,\"cardBottom\":532.234375,\"over\":false}"
+  "detail": "{\"bubbleTop\":666.150634765625,\"cardBottom\":582,\"over\":false}"
  },
  {
   "name": "window open: no banner",
@@ -1035,7 +1071,7 @@
  {
   "name": "Feed history shows the 5 claimed swipes (sales page, now the owner's)",
   "ok": true,
-  "detail": "[\"YouSAVED · SALES PAGE\\nSep 26, 4:36 PM\",\"YouLIKED · SALES PAGE\\nSep 26, 3:36 PM\",\"YouPASSED · SALES PAGE\\nSep 26, 2:36 PM\",\"YouFAST-TRACK · SALES PAGE\\nSep 26, 1:36 PM\",\"YouLIKED · SALES PAGE\\nSep 26, 12:36 PM\"]"
+  "detail": "[\"YouSAVED · SALES PAGE\\nSep 26, 5:43 PM\",\"YouLIKED · SALES PAGE\\nSep 26, 4:43 PM\",\"YouPASSED · SALES PAGE\\nSep 26, 3:43 PM\",\"YouFAST-TRACK · SALES PAGE\\nSep 26, 2:43 PM\",\"YouLIKED · SALES PAGE\\nSep 26, 1:43 PM\"]"
  },
  {
   "name": "liked ones are UP NEXT (the fast-tracked one is already writing)",
@@ -1050,7 +1086,7 @@
  {
   "name": "Acme DELIVERED: status stamp on one line, inside the card",
   "ok": true,
-  "detail": "[{\"text\":\"Delivered in 19h · Sep 27, 7:36 AM\",\"oneLine\":true,\"inside\":true,\"size\":\"8.25px\"}]"
+  "detail": "[{\"text\":\"Delivered in 19h · Sep 27, 8:43 AM\",\"oneLine\":true,\"inside\":true,\"size\":\"8.25px\"}]"
  },
  {
   "name": "format defaults to the card's (pillar)",
@@ -1059,7 +1095,7 @@
  {
   "name": "request_card with the chosen format, requested by Dana",
   "ok": true,
-  "detail": "{\"id\":\"art-2\",\"company_id\":\"a2000000-0000-0000-0000-000000000001\",\"card_id\":\"a3000000-0000-0000-0000-000000000000\",\"format\":\"insight\",\"title\":\"Robots That Ask Before They Move\",\"status\":\"requested\",\"body_html\":null,\"google_doc_url\":null,\"requested_at\":\"2026-09-29T00:36:39.179Z\",\"requested_by\":\"a1000000-0000-0000-0000-000000000001\",\"deliver_by\":null,\"delivered_at\":null,\"live_at\":null,\"created_at\":\"2026-09-29T00:36:39.179Z\"}"
+  "detail": "{\"id\":\"art-2\",\"company_id\":\"a2000000-0000-0000-0000-000000000001\",\"card_id\":\"a3000000-0000-0000-0000-000000000000\",\"format\":\"insight\",\"title\":\"Robots That Ask Before They Move\",\"status\":\"requested\",\"body_html\":null,\"google_doc_url\":null,\"requested_at\":\"2026-09-29T01:44:03.899Z\",\"requested_by\":\"a1000000-0000-0000-0000-000000000001\",\"deliver_by\":null,\"delivered_at\":null,\"live_at\":null,\"created_at\":\"2026-09-29T01:44:03.899Z\"}"
  },
  {
   "name": "portal-request: company, slug, card_title, format, requester_name, requester_email",
@@ -1082,7 +1118,7 @@
  {
   "name": "empty feed: paper card with a faint grid, \"5 new on Tuesday, Oct 6\" (real next-drop count) + live countdown",
   "ok": true,
-  "detail": "5 new on Tuesday, Oct 6\n\nIN 6D 23H\n\n+\nLee hasn’t seen 5 of these.\n+\nSeat 3 is open."
+  "detail": "5 new on Tuesday, Oct 6\n\nIN 6D 22H\n\n+\nLee hasn’t seen 5 of these.\n+\nSeat 3 is open."
  },
  {
   "name": "empty feed: \"Lee hasn’t seen 5 of these.\" with Lee's avatar, and \"Seat 3 is open.\" dashed",
@@ -1263,7 +1299,7 @@
  {
   "name": "375x600: feed tooltip never covers the card footer",
   "ok": true,
-  "detail": "{\"bubbleTop\":584,\"cardBottom\":490,\"over\":false}"
+  "detail": "{\"bubbleTop\":598.5618286132812,\"cardBottom\":510,\"over\":false}"
  },
  {
   "name": "375x600: \"Swipe to shuffle. Tap to open.\" above the Feed/Library switch, uncovered",
@@ -1273,12 +1309,12 @@
  {
   "name": "375x600 DELIVERED: status stamp on one line, inside the card",
   "ok": true,
-  "detail": "[{\"text\":\"Delivered in 19h · Sep 27, 7:37 AM\",\"oneLine\":true,\"inside\":true,\"size\":\"8.25px\"}]"
+  "detail": "[{\"text\":\"Delivered in 19h · Sep 27, 8:44 AM\",\"oneLine\":true,\"inside\":true,\"size\":\"8.25px\"}]"
  },
  {
   "name": "375x667: feed tooltip never covers the card footer",
   "ok": true,
-  "detail": "{\"bubbleTop\":578.56982421875,\"cardBottom\":490,\"over\":false}"
+  "detail": "{\"bubbleTop\":598.5864868164062,\"cardBottom\":510,\"over\":false}"
  },
  {
   "name": "375x667: \"Swipe to shuffle. Tap to open.\" above the Feed/Library switch, uncovered",
@@ -1288,12 +1324,17 @@
  {
   "name": "375x667 DELIVERED: status stamp on one line, inside the card",
   "ok": true,
-  "detail": "[{\"text\":\"Delivered in 19h · Sep 27, 7:37 AM\",\"oneLine\":true,\"inside\":true,\"size\":\"8.25px\"}]"
+  "detail": "[{\"text\":\"Delivered in 19h · Sep 27, 8:44 AM\",\"oneLine\":true,\"inside\":true,\"size\":\"8.25px\"}]"
  },
  {
   "name": "375x812: feed tooltip never covers the card footer",
   "ok": true,
-  "detail": "{\"bubbleTop\":620.8131103515625,\"cardBottom\":532.234375,\"over\":false}"
+  "detail": "{\"bubbleTop\":662.8585815429688,\"cardBottom\":582,\"over\":false}"
+ },
+ {
+  "name": "375x812: swipe buttons clear the Feed/Library switch without scrolling (card 472px)",
+  "ok": true,
+  "detail": "{\"ctl\":734,\"sw\":744,\"card\":472}"
  },
  {
   "name": "375x812: \"Swipe to shuffle. Tap to open.\" above the Feed/Library switch, uncovered",
@@ -1303,12 +1344,12 @@
  {
   "name": "375x812 DELIVERED: status stamp on one line, inside the card",
   "ok": true,
-  "detail": "[{\"text\":\"Delivered in 19h · Sep 27, 7:37 AM\",\"oneLine\":true,\"inside\":true,\"size\":\"8.25px\"}]"
+  "detail": "[{\"text\":\"Delivered in 19h · Sep 27, 8:44 AM\",\"oneLine\":true,\"inside\":true,\"size\":\"8.25px\"}]"
  },
  {
   "name": "1280x700: feed tooltip never covers the card footer",
   "ok": true,
-  "detail": "{\"bubbleTop\":574.1663818359375,\"cardBottom\":490,\"over\":false}"
+  "detail": "{\"bubbleTop\":590.8491821289062,\"cardBottom\":510,\"over\":false}"
  },
  {
   "name": "1280x700: \"Swipe to shuffle. Tap to open.\" above the Feed/Library switch, uncovered",
@@ -1318,7 +1359,7 @@
  {
   "name": "1280x700 DELIVERED: status stamp on one line, inside the card",
   "ok": true,
-  "detail": "[{\"text\":\"Delivered in 19h · Sep 27, 7:37 AM\",\"oneLine\":true,\"inside\":true,\"size\":\"10px\"}]"
+  "detail": "[{\"text\":\"Delivered in 19h · Sep 27, 8:44 AM\",\"oneLine\":true,\"inside\":true,\"size\":\"10px\"}]"
  },
  {
   "name": "blendbases: \"Two yeses\" on first view of vb-02 (You + vedikabhasin)",

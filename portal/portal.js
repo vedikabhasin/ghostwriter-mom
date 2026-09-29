@@ -23,7 +23,6 @@ import { initHub, enterHub, refreshHub, articleRects, slotForNewItem } from '/po
 const SUPABASE_JS = 'https://esm.sh/@supabase/supabase-js@2.45.0';
 const SWIPE_T = 90;
 const VERT_T = 100;
-const CHIP_LIMIT = 3;
 const NOTE_MAX = 280;
 const WANTS_WRITTEN = 'wants_written';
 // What Stripe charges (display only; the prices live in Stripe).
@@ -83,6 +82,8 @@ function initPosthog() {
 // -- Views --------------------------------------------------------------------
 function show(view) {
   S.view = view;
+  // An interrupted swipe can leave these on and the next view unscrollable.
+  document.body.classList.remove('is-dragging', 'touching', 'dir-like', 'dir-pass', 'dir-save', 'dir-fasttrack');
   document.body.setAttribute('data-view', view);
   $all('.screen').forEach((s) => s.classList.toggle('on', s.id === 'screen-' + view));
   $('#switch').hidden = !(S.loaded && (view === 'feed' || view === 'library'));
@@ -685,19 +686,17 @@ function buildFeedCard(item, depth) {
     el.appendChild(nb);
   }
 
+  // One "Sources · N" button per card (as on the sales page) opens the sheet.
   const sources = Array.isArray(c.sources) ? c.sources : [];
   if (sources.length) {
     const sw = h('div', 'card-sources');
-    sw.appendChild(h('span', 'card-sources-label', 'Sources'));
-    sources.slice(0, CHIP_LIMIT).forEach((src, i) => sw.appendChild(sourceChip(src, i + 1, c)));
-    if (sources.length > CHIP_LIMIT) {
-      const more = h('button', 'src-chip more gwm-center', '+' + (sources.length - CHIP_LIMIT));
-      more.type = 'button';
-      more.setAttribute('aria-label', 'Open all sources');
-      stopDrag(more);
-      more.addEventListener('click', (e) => { e.stopPropagation(); openSourceSheet(c); });
-      sw.appendChild(more);
-    }
+    const b = h('button', 'src-btn');
+    b.type = 'button';
+    b.setAttribute('aria-label', 'Open ' + sources.length + (sources.length === 1 ? ' source.' : ' sources.'));
+    b.append(h('span', 'src-btn-label', 'Sources'), h('span', 'src-btn-count', sources.length));
+    stopDrag(b);
+    b.addEventListener('click', (e) => { e.stopPropagation(); openSourceSheet(c); });
+    sw.appendChild(b);
     el.appendChild(sw);
   }
 
@@ -716,18 +715,6 @@ function buildFeedCard(item, depth) {
     attachCardGestures(el, item);
   }
   return el;
-}
-function sourceChip(src, num, card) {
-  const b = h('button', 'src-chip');
-  b.type = 'button';
-  b.setAttribute('aria-label', 'Source ' + num + ': ' + (src.publisher || '') + '. Open list of sources.');
-  const n = h('span', 'num gwm-center', num);
-  const i0 = h('span', 'mono-init gwm-center', String(src.publisher || '?').trim().charAt(0).toUpperCase() || '?');
-  const p = h('span', 'pub', src.publisher || '');
-  b.append(n, i0, p);
-  stopDrag(b);
-  b.addEventListener('click', (e) => { e.stopPropagation(); openSourceSheet(card); });
-  return b;
 }
 function stopDrag(el) {
   ['pointerdown', 'pointermove', 'pointerup', 'touchstart', 'mousedown'].forEach((t) =>
@@ -794,7 +781,8 @@ let drag = null;
 function attachCardGestures(el, item) {
   el.addEventListener('pointerdown', (e) => {
     if (e.button !== undefined && e.button !== 0) return;
-    if (e.target.closest('button, a')) return;
+    // Scrolling the proof or tapping Sources never starts a swipe.
+    if (e.target.closest('button, a, .src-btn, .proof')) return;
     try { el.setPointerCapture(e.pointerId); } catch (_) {}
     drag = { id: e.pointerId, x0: e.clientX, y0: e.clientY, dx: 0, dy: 0, el, item, moved: false };
     el.classList.add('dragging');
@@ -976,7 +964,8 @@ function renderHistory(tab) {
   const log = $('#history-log');
   log.textContent = '';
   const byCard = new Map();
-  S.events.forEach((e) => {
+  // Card-level decisions only (like, pass, save, fast-track).
+  S.events.filter((e) => e.card_id && ACTION_LABEL[e.action]).forEach((e) => {
     if (!byCard.has(e.card_id)) byCard.set(e.card_id, []);
     byCard.get(e.card_id).push(e);
   });

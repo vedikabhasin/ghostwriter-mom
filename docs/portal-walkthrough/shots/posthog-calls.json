@@ -45,6 +45,33 @@
   "dot_jump",
   {
    "surface": "portal",
+   "to_index": 9,
+   "via": "tap"
+  }
+ ],
+ [
+  "capture",
+  "dot_jump",
+  {
+   "surface": "portal",
+   "to_index": 10,
+   "via": "tap"
+  }
+ ],
+ [
+  "capture",
+  "dot_jump",
+  {
+   "surface": "portal",
+   "to_index": 16,
+   "via": "tap"
+  }
+ ],
+ [
+  "capture",
+  "dot_jump",
+  {
+   "surface": "portal",
    "to_index": 2,
    "via": "tap"
   }

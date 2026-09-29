@@ -211,7 +211,13 @@ body[data-view="signin"] .desk{display:block;}
 .card{
   position:absolute; top:0; left:0; right:0; margin:0 auto;
   width:100%; max-width:400px;
-  min-height:clamp(380px, 52vh, 500px);
+  /* Fixed height, same as the sales page: every card is the same size, so
+     swipe reach and reading rhythm stay predictable. Long proof scrolls
+     inside .proof. The portal also has the Feed/Library switch under the
+     buttons, so on shorter phones the card gives up only what it needs for
+     the buttons to stay above the switch (never under 400px). */
+  --card-h:clamp(460px, 62vh, 560px);
+  height:max(400px, min(var(--card-h), calc(100dvh - var(--card-room, 340px))));
   padding:22px 22px 20px;
   display:flex; flex-direction:column; gap:12px;
   border-radius:var(--radius-card);
@@ -268,7 +274,13 @@ body[data-view="signin"] .desk{display:block;}
 .card-title{font-family:var(--font-display); font-weight:800; font-size:clamp(20px, 5.4vw, 26px); line-height:1.15; letter-spacing:-0.018em; margin:2px 0 0; text-wrap:balance;}
 .card-angle{font-size:15px; line-height:1.5; margin:0;}
 /* Proof box: same as the sales page's card-evidence. */
-.proof{font-family:var(--font-mono); font-size:12px; line-height:1.5; color:#333; background:rgba(14,14,14,0.045); border-radius:10px; padding:12px; margin:0;}
+.proof{font-family:var(--font-mono); font-size:12px; line-height:1.5; color:#333; background:rgba(14,14,14,0.045); border-radius:10px; padding:12px; margin:0;
+  max-height:132px; flex:0 1 auto; min-height:0; overflow-y:auto; overscroll-behavior:contain;
+  scrollbar-width:thin; scrollbar-color:rgba(14,14,14,0.24) transparent; -webkit-overflow-scrolling:touch; touch-action:pan-y;}
+.proof::-webkit-scrollbar{width:6px; height:6px;}
+.proof::-webkit-scrollbar-track{background:transparent;}
+.proof::-webkit-scrollbar-thumb{background:rgba(14,14,14,0.16); border-radius:3px;}
+.proof:hover::-webkit-scrollbar-thumb{background:rgba(14,14,14,0.28);}
 .proof::before{content:"Proof: "; font-weight:700; color:var(--ink);}
 .card-tags{display:flex; flex-wrap:wrap; align-items:center; gap:6px;}
 .card-tag{font-family:var(--font-mono); font-size:10px; letter-spacing:0.04em; color:#333; background:rgba(14,14,14,0.06); padding:3px 8px; border-radius:999px;}
@@ -294,6 +306,16 @@ body[data-view="signin"] .desk{display:block;}
 .signal-hint{font-family:var(--font-mono); font-size:10.5px; letter-spacing:0.08em; text-transform:uppercase; color:var(--ink-soft);}
 
 .card-sources{display:flex; align-items:center; flex-wrap:wrap; gap:6px; margin-top:auto; padding-top:8px; border-top:1px dashed rgba(14,14,14,0.14);}
+.src-btn{display:inline-flex; align-items:center; gap:8px; padding:6px 10px 6px 12px; border-radius:999px; cursor:pointer;
+  background:rgba(255,255,255,0.92); border:1px solid rgba(14,14,14,0.14); -webkit-tap-highlight-color:transparent; touch-action:manipulation;
+  font-family:var(--font-mono); font-size:11px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--ink);
+  transition:transform 180ms var(--ease), background 180ms var(--ease), border-color 180ms var(--ease);}
+.src-btn:hover{background:var(--white); border-color:rgba(14,14,14,0.28); transform:translateY(-1px);}
+.src-btn:active{transform:translateY(0);}
+.src-btn:focus-visible{outline:2px solid var(--ink); outline-offset:2px;}
+.src-btn-label{line-height:1;}
+.src-btn-count{display:inline-flex; align-items:center; justify-content:center; min-width:18px; height:18px; padding:0 6px;
+  background:var(--ink); color:var(--white); border-radius:999px; font-size:10px; font-weight:800; letter-spacing:0;}
 .card-sources-label{font-family:var(--font-mono); font-size:10px; letter-spacing:0.12em; text-transform:uppercase; color:var(--ink-soft); font-weight:700; margin-right:2px;}
 .src-chip{display:inline-flex; align-items:center; gap:6px; padding:5px 10px 5px 5px; border-radius:999px; line-height:1;
   background:rgba(255,255,255,0.92); border:1px solid rgba(14,14,14,0.14); cursor:pointer;

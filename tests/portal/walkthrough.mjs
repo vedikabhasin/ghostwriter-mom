@@ -327,6 +327,25 @@ for (const mobile of [true, false]) {
   await wait(250);
   check('feed: buttons faint at rest (25%)', Math.abs(Number(await page.$eval('.ctl-like', (b) => getComputedStyle(b).opacity)) - 0.25) < 0.02);
   await shot(page, `${tag}04-feed-series`);
+  // Card size and footer, as on the sales page.
+  const heights = [];
+  for (const key of ['vb-01', 'vb-07', 'bx-03', 'vb-12']) { await dotTo(page, title(db, key)); heights.push(Math.round((await top(page).boundingBox()).height)); }
+  const vh = mobile ? 812 : 860;
+  const want = Math.round(Math.max(400, Math.min(Math.min(560, Math.max(460, vh * 0.62)), vh - 340)));
+  check('feed: every card the same fixed height (sales-page size, fitted above the switch)', new Set(heights).size === 1 && heights[0] === want, heights.join(',') + ' want ' + want);
+  const foot = await top(page).evaluate((c) => ({ btn: (c.querySelector('.card-sources .src-btn') || {}).innerText, chips: c.querySelectorAll('.src-chip').length,
+    proof: getComputedStyle(c.querySelector('.proof')).overflowY, max: getComputedStyle(c.querySelector('.proof')).maxHeight }));
+  check('feed: one "Sources · N" button, no chips; proof scrolls inside a 132px frame', /^SOURCES\s*\d+$/i.test(foot.btn) && foot.chips === 0 && foot.proof === 'auto' && foot.max === '132px', JSON.stringify(foot));
+  const pr = await top(page).locator('.proof').boundingBox();
+  const decBefore = db.decisions.length;
+  await page.mouse.move(pr.x + pr.width / 2, pr.y + pr.height / 2); await page.mouse.down();
+  for (let i = 1; i <= 8; i++) await page.mouse.move(pr.x + pr.width / 2 + i * 25, pr.y + pr.height / 2);
+  await page.mouse.up(); await wait(400);
+  check('feed: dragging on the proof never swipes', db.decisions.length === decBefore && await page.locator('#reveal:not([hidden])').count() === 0);
+  await top(page).locator('.src-btn').click();
+  await page.waitForSelector('#src-sheet.open');
+  check('feed: Sources button opens the sheet with every source', await page.locator('#src-sheet-list li').count() === db.cards.find((c) => c.card_key === 'vb-12').sources.length);
+  await page.click('[data-close="src-sheet"]');
 
   // §5 Reveals.
   const revealBgs = {};
@@ -1038,6 +1057,13 @@ for (const [w, hgt] of [[375, 600], [375, 667], [375, 812], [1280, 700]]) {
   await p.page.waitForSelector('#bubble:not([hidden])');
   await tooltipClear(p.page, `${w}x${hgt}`);
   await dismissBubbles(p.page);
+  const fit = await p.page.evaluate(() => {
+    const sw = document.getElementById('switch').getBoundingClientRect();
+    const ctl = Math.max(...Array.from(document.querySelectorAll('#feed-controls .ctl, #feed-controls .ctl-label')).map((x) => x.getBoundingClientRect().bottom));
+    return { ctl: Math.round(ctl), sw: Math.round(sw.top), card: Math.round(document.querySelector('#card-stage .card[data-depth="0"]').getBoundingClientRect().height) };
+  });
+  if (hgt >= 800) check(`${w}x${hgt}: swipe buttons clear the Feed/Library switch without scrolling (card ${fit.card}px)`, fit.ctl <= fit.sw - 4, JSON.stringify(fit));
+  if (hgt === 812) await shot(p.page, 'l02-feed-812');
   await p.page.click('#switch-library');
   await p.page.waitForSelector('#screen-library.on');
   await dismissBubbles(p.page);
