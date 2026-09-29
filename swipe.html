@@ -335,22 +335,15 @@ body.is-dragging{overflow:hidden; touch-action:none;}
   font-family:var(--font-mono); font-size:12px; line-height:1.5;
   color:#333; background:rgba(14,14,14,0.045);
   border-radius:10px; padding:12px; margin:0; position:relative;
-  /* Fixed frame across every card. When the proof body is longer than the
-     frame, it scrolls internally with a thin, self-hiding scrollbar so the
-     card outline stays consistent. */
-  max-height:132px; overflow-y:auto; overscroll-behavior:contain;
-  scrollbar-width:thin; scrollbar-color:rgba(14,14,14,0.24) transparent;
-  -webkit-overflow-scrolling:touch;
-  touch-action:pan-y;
+  /* Preview only: first two sentences + ellipsis. Tapping opens a modal
+     with the full proof and sources — see openProofModal(). No internal
+     scroll here so the swipe gesture works over the entire card body. */
+  cursor:pointer;
+  -webkit-tap-highlight-color:rgba(14,14,14,0.06);
+  transition:background 180ms var(--ease);
 }
-.card-evidence::-webkit-scrollbar{ width:6px; height:6px; }
-.card-evidence::-webkit-scrollbar-track{ background:transparent; }
-.card-evidence::-webkit-scrollbar-thumb{
-  background:rgba(14,14,14,0.16); border-radius:3px;
-  transition:background 200ms var(--ease);
-}
-/* Hover/touch keeps it slightly darker; idle it stays low-contrast. */
-.card-evidence:hover::-webkit-scrollbar-thumb{ background:rgba(14,14,14,0.28); }
+.card-evidence:hover{ background:rgba(14,14,14,0.075); }
+.card-evidence:focus-visible{ outline:2px solid var(--ink); outline-offset:2px; }
 .card-evidence::before{content:"Proof: "; font-weight:700; color:var(--ink);}
 .card-tags{display:flex; flex-wrap:wrap; gap:6px;}
 .card-tag{
@@ -488,11 +481,44 @@ body.is-dragging{overflow:hidden; touch-action:none;}
 .card[data-depth="0"].hint-h .ghost-hand{animation:ghost-swipe-h 1800ms var(--ease) infinite;}
 .card[data-depth="0"].hint-d .ghost-hand{animation:ghost-swipe-d 1600ms var(--ease) infinite;}
 .card[data-depth="0"].hint-u .ghost-hand{animation:ghost-swipe-u 1600ms var(--ease) infinite;}
+.card[data-depth="0"].hint-all .ghost-hand{animation:ghost-swipe-all 3200ms var(--ease) infinite;}
 @keyframes ghost-still  { 0%,100% {transform:translate(0,0);} }
 @keyframes ghost-swipe-h{ 0%,10% {transform:translateX(0);} 35% {transform:translateX(38px);} 45%{transform:translateX(0);} 70% {transform:translateX(-38px);} 90% {transform:translateX(0);} }
 @keyframes ghost-swipe-d{ 0%,10% {transform:translateY(0);} 55% {transform:translateY(32px);} 90% {transform:translateY(0);} }
 @keyframes ghost-swipe-u{ 0%,10% {transform:translateY(0);} 55% {transform:translateY(-32px);} 90% {transform:translateY(0);} }
-.ghost-arrows{opacity:0.8;}
+/* Combined onboarding: cycle through all four directions so every arrow on
+   the compass is demonstrated. */
+@keyframes ghost-swipe-all{
+  0%,6%   { transform:translate(0,0); }
+  18%     { transform:translateX(30px); }
+  25%     { transform:translate(0,0); }
+  37%     { transform:translateX(-30px); }
+  44%     { transform:translate(0,0); }
+  56%     { transform:translateY(-26px); }
+  63%     { transform:translate(0,0); }
+  75%     { transform:translateY(26px); }
+  85%,100%{ transform:translate(0,0); }
+}
+.ghost-arrows{opacity:0.85;}
+.ghost-arrows.all{ opacity:1; }
+/* Four-direction legend on the combined onboarding hint. */
+.ghost-legend{
+  display:grid; grid-template-columns:repeat(4, auto); gap:2px 14px;
+  justify-content:center; align-items:center;
+  font-family:var(--font-mono); font-size:11px; letter-spacing:0.06em;
+  color:rgba(255,255,255,0.92); font-weight:600;
+  margin-top:2px;
+}
+.ghost-legend span{
+  display:inline-flex; align-items:center; gap:5px; white-space:nowrap;
+}
+.ghost-legend b{
+  font-family:var(--font-mono); font-weight:800; font-size:14px; line-height:1;
+  color:#fff;
+}
+@media (max-width:340px){
+  .ghost-legend{ grid-template-columns:repeat(2, auto); row-gap:6px; }
+}
 
 /* Feed controls */
 .feed-controls{
@@ -632,6 +658,19 @@ body.dir-save  .ctl-save{
 }
 .sheet-close:hover{background:rgba(14,14,14,0.05);}
 .sheet-list{list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:8px;}
+/* Full-proof modal: mono body block, then a "Sources" divider, then the
+   same source list the source sheet uses. */
+.proof-modal-body{
+  font-family:var(--font-mono); font-size:13px; line-height:1.55;
+  color:var(--ink); background:rgba(14,14,14,0.045);
+  border-radius:12px; padding:14px 16px; margin:0;
+  white-space:pre-wrap; word-break:break-word;
+}
+.proof-modal-sources-head{
+  margin:16px 0 8px !important;
+  padding-top:12px;
+  border-top:1px dashed rgba(14,14,14,0.14);
+}
 .sheet-item{
   display:grid; grid-template-columns:26px 1fr; gap:10px 12px;
   padding:10px; border-radius:12px;
@@ -1645,6 +1684,25 @@ body.dir-save  .ctl-save{
   </div>
 </div>
 
+<!-- Proof modal: full proof plus the sources list at the bottom. Tap on any
+     card's .card-evidence preview opens it. Source clicks behave identically
+     to the source sheet (external link + source_opened telemetry). -->
+<div class="sheet-scrim" id="proof-modal" role="dialog" aria-modal="true" aria-label="Full proof">
+  <div class="sheet-panel">
+    <div class="sheet-grabber" aria-hidden="true"></div>
+    <div class="sheet-head">
+      <div>
+        <p class="sheet-h">Proof</p>
+        <p class="sheet-t" id="proof-modal-title"></p>
+      </div>
+      <button type="button" class="sheet-close" data-action="close-proof-modal" aria-label="Close proof">&times;</button>
+    </div>
+    <p class="proof-modal-body" id="proof-modal-body"></p>
+    <p class="sheet-h proof-modal-sources-head">Sources</p>
+    <ol class="sheet-list" id="proof-modal-sources"></ol>
+  </div>
+</div>
+
 <div class="modal-scrim" id="email-modal" role="dialog" aria-modal="true" aria-label="Where should I send it">
   <div class="modal-panel">
     <button type="button" class="modal-close" data-action="close-email-modal" aria-label="Close">&times;</button>
@@ -2250,7 +2308,21 @@ body.dir-save  .ctl-save{
     }
     el.querySelector('[data-slot="title"]').textContent    = String(card.title || '');
     el.querySelector('[data-slot="angle"]').textContent    = String(card.angle || '');
-    el.querySelector('[data-slot="evidence"]').textContent = String(card.evidence || '');
+    // Proof preview: first two sentences + " …" if truncated. Full proof
+    // lives in the modal opened by tapping the block.
+    var evidenceEl = el.querySelector('[data-slot="evidence"]');
+    evidenceEl.textContent = truncateProof(card.evidence);
+    evidenceEl.setAttribute('role', 'button');
+    evidenceEl.setAttribute('tabindex', '0');
+    evidenceEl.setAttribute('aria-label', 'Open full proof and sources');
+    stopChipDragPropagation(evidenceEl, card);
+    evidenceEl.addEventListener('click', function(e){
+      e.stopPropagation(); e.preventDefault();
+      openProofModal(card);
+    });
+    evidenceEl.addEventListener('keydown', function(e){
+      if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); openProofModal(card); }
+    });
     var tagWrap = el.querySelector('[data-slot="tags"]');
     displayTags.forEach(function(t){
       var s = document.createElement('span'); s.className = 'card-tag'; s.textContent = String(t);
@@ -2318,38 +2390,44 @@ body.dir-save  .ctl-save{
   function shortPub(s){ return String(s || '').trim(); }
 
   // -- Onboarding hints ----------------------------------------------------
+  // One combined hint on the FIRST card only, covering all four gestures.
+  // Backwards-compat: any card the visitor already dismissed in the older
+  // sequential model (h/d/u) still counts as "hint seen".
   function attachOnboardingHint(){
     var top = document.querySelector('.card[data-depth="0"]');
     if(!top) return;
-    if(state.cardIndex >= ONBOARDING_MAX) return;
-    var kind = state.cardIndex === 0 ? 'h'
-             : state.cardIndex === 1 ? 'd'
-             :                         'u';
-    if(state.onboardingDone[kind]) return;
+    if(state.cardIndex !== 0) return;
+    if(onboardingSeen()) return;
     var hint = top.querySelector('.ghost-hint');
     if(!hint) return;
     hint.hidden = false;
     hint.textContent = '';
     var row = document.createElement('div'); row.className = 'ghost-row';
     row.appendChild(makeHand());
-    row.appendChild(makeArrows(kind));
+    row.appendChild(makeAllArrows());
     hint.appendChild(row);
-    var txt = document.createElement('div');
-    txt.textContent =
-      kind === 'h' ? 'Swipe right to like. Left to pass.'
-    : kind === 'd' ? 'Swipe down to save for later.'
-    :                'Swipe up to fast-track. This builds your direction now.';
-    hint.appendChild(txt);
-    top.classList.add('hint-visible', 'hint-' + kind);
+    var legend = document.createElement('div');
+    legend.className = 'ghost-legend';
+    legend.innerHTML =
+      '<span><b>&larr;</b> Pass</span>' +
+      '<span><b>&rarr;</b> Like</span>' +
+      '<span><b>&darr;</b> Save</span>' +
+      '<span><b>&uarr;</b> Fast-track</span>';
+    hint.appendChild(legend);
+    top.classList.add('hint-visible', 'hint-all');
+  }
+  function onboardingSeen(){
+    // Any of the old flags being set means the visitor has seen a swipe
+    // hint before — don't nag them again.
+    var d = state.onboardingDone || {};
+    return !!(d.all || d.h || d.d || d.u);
   }
   function stopOnboardingHint(top){
     if(!top) return;
-    top.classList.remove('hint-visible','hint-h','hint-d','hint-u');
-    var kind = state.cardIndex === 0 ? 'h'
-             : state.cardIndex === 1 ? 'd'
-             : state.cardIndex === 2 ? 'u' : null;
-    if(kind && !state.onboardingDone[kind]){
-      state.onboardingDone[kind] = true;
+    top.classList.remove('hint-visible','hint-all','hint-h','hint-d','hint-u');
+    if(!state.onboardingDone) state.onboardingDone = {};
+    if(!state.onboardingDone.all){
+      state.onboardingDone.all = true;
       saveState();
     }
   }
@@ -2363,13 +2441,23 @@ body.dir-save  .ctl-save{
       '</svg>';
     return s;
   }
-  function makeArrows(kind){
-    var s = document.createElement('span'); s.className = 'ghost-arrows';
-    var svg =
-      kind === 'h' ? '<svg viewBox="0 0 32 12" width="42" height="14"><path d="M2 6h28M24 2l4 4-4 4M2 6l4-4M2 6l4 4" stroke="#fff" stroke-width="1.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>'
-    : kind === 'd' ? '<svg viewBox="0 0 12 30" width="14" height="34"><path d="M6 2v26M2 22l4 4 4-4" stroke="#fff" stroke-width="1.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>'
-    :                '<svg viewBox="0 0 12 30" width="14" height="34"><path d="M6 28V2M2 8l4-4 4 4" stroke="#fff" stroke-width="1.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>';
-    s.innerHTML = svg;
+  function makeAllArrows(){
+    // Compass rose: four arrows radiating from a center dot so the full
+    // gesture vocabulary reads at a glance.
+    var s = document.createElement('span'); s.className = 'ghost-arrows all';
+    s.innerHTML =
+      '<svg viewBox="0 0 36 36" width="46" height="46" aria-hidden="true">' +
+        // up (fast-track)
+        '<path d="M18 6v10M14 10l4-4 4 4" stroke="#fff" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>' +
+        // down (save)
+        '<path d="M18 30V20M14 26l4 4 4-4" stroke="#fff" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>' +
+        // left (pass)
+        '<path d="M6 18h10M10 14l-4 4 4 4" stroke="#fff" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>' +
+        // right (like)
+        '<path d="M30 18H20M26 14l4 4-4 4" stroke="#fff" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>' +
+        // center dot
+        '<circle cx="18" cy="18" r="1.6" fill="#fff"/>' +
+      '</svg>';
     return s;
   }
 
@@ -3745,6 +3833,73 @@ body.dir-save  .ctl-save{
     if(srcSheet) srcSheet.classList.add('open');
   }
   function closeSourceSheet(){ if(srcSheet) srcSheet.classList.remove('open'); }
+
+  // Preview truncation: keep the first two sentences of the proof; append " …"
+  // when we cut anything. Sentence endings are . ! or ? followed by whitespace
+  // or end-of-string. If the text has no sentence boundary in the first ~180
+  // characters, fall back to a plain character cutoff so the block never
+  // outgrows the card frame.
+  function truncateProof(text){
+    var s = String(text || '').trim();
+    if(!s) return '';
+    var m = s.match(/[^.!?]+[.!?]+(\s+|$)/g);
+    if(m && m.length > 2){
+      return m.slice(0, 2).join('').trim() + ' …';
+    }
+    // No sentence boundary or all in one long block: chop by chars.
+    if(s.length > 180){
+      var cut = s.slice(0, 180);
+      // step back to the last space so we don't chop a word.
+      var sp = cut.lastIndexOf(' ');
+      if(sp > 120) cut = cut.slice(0, sp);
+      return cut.trim() + ' …';
+    }
+    return s;
+  }
+
+  // Full-proof modal — the tap target on every card's proof preview. Shows
+  // the full evidence text and the card's sources at the bottom. Source
+  // clicks fire source_opened telemetry, same as the source sheet.
+  var proofModal = document.getElementById('proof-modal');
+  function openProofModal(card){
+    if(!card || !proofModal) return;
+    var titleEl = document.getElementById('proof-modal-title');
+    var bodyEl  = document.getElementById('proof-modal-body');
+    var srcEl   = document.getElementById('proof-modal-sources');
+    var srcHead = document.querySelector('.proof-modal-sources-head');
+    if(titleEl) titleEl.textContent = String(card.title || '');
+    if(bodyEl)  bodyEl.textContent  = String(card.evidence || '');
+    var sources = Array.isArray(card.sources) ? card.sources : [];
+    if(srcEl){
+      srcEl.textContent = '';
+      sources.forEach(function(src, i){
+        var li = document.createElement('li'); li.className = 'sheet-item';
+        var n  = document.createElement('span'); n.className = 'sheet-num'; n.textContent = String(i + 1);
+        var body = document.createElement('div'); body.className = 'sheet-body';
+        var a = document.createElement('a'); a.className = 'sheet-title-link';
+        a.href = String(src.url || '#');
+        a.target = '_blank'; a.rel = 'noopener noreferrer';
+        a.textContent = String(src.title || src.url || '');
+        a.addEventListener('click', function(){
+          logEvent(card.id, 'source_opened', { url: String(src.url || '') });
+        });
+        var pub = document.createElement('div'); pub.className = 'sheet-pub';
+        pub.textContent = String(src.publisher || '');
+        var url = document.createElement('div'); url.className = 'sheet-url';
+        url.textContent = String(src.url || '');
+        body.appendChild(a); body.appendChild(pub); body.appendChild(url);
+        li.appendChild(n); li.appendChild(body);
+        srcEl.appendChild(li);
+      });
+    }
+    if(srcHead) srcHead.hidden = !sources.length;
+    if(srcEl)   srcEl.hidden   = !sources.length;
+    proofModal.classList.add('open');
+  }
+  function closeProofModal(){ if(proofModal) proofModal.classList.remove('open'); }
+  if(proofModal){
+    proofModal.addEventListener('click', function(e){ if(e.target === proofModal) closeProofModal(); });
+  }
   if(srcSheet){
     srcSheet.addEventListener('click', function(e){ if(e.target === srcSheet) closeSourceSheet(); });
   }
@@ -4005,6 +4160,7 @@ body.dir-save  .ctl-save{
       case 'show-info':           openInfo(); return;
       case 'close-info':          closeInfo(); return;
       case 'close-src-sheet':     closeSourceSheet(); return;
+      case 'close-proof-modal':   closeProofModal(); return;
       case 'close-email-modal':   closeEmailModal(); return;
       case 'email-modal-submit':  submitEmailModal(); return;
       case 'keep-swiping':
