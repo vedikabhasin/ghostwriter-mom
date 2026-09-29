@@ -329,22 +329,23 @@ body.is-dragging{overflow:hidden; touch-action:none;}
   color:var(--ink); margin:2px 0 0; text-wrap:balance;
 }
 .card-angle{
+  /* Two-line preview; a tap opens the detail sheet with the full text. The
+     card itself is fully swipeable — no internal scroll. */
   font-size:15px; line-height:1.5; color:var(--ink); margin:0;
+  display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical;
+  overflow:hidden;
+  cursor:pointer;
 }
 .card-evidence{
   font-family:var(--font-mono); font-size:12px; line-height:1.5;
   color:#333; background:rgba(14,14,14,0.045);
   border-radius:10px; padding:12px; margin:0; position:relative;
-  /* Preview only: first two sentences + ellipsis. Tapping opens a modal
-     with the full proof and sources — see openProofModal(). No internal
-     scroll here so the swipe gesture works over the entire card body. */
   cursor:pointer;
-  -webkit-tap-highlight-color:rgba(14,14,14,0.06);
-  transition:background 180ms var(--ease);
+  /* Two-line clamp — tap opens the detail sheet for the full body. */
+  display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical;
+  overflow:hidden;
 }
-.card-evidence:hover{ background:rgba(14,14,14,0.075); }
-.card-evidence:focus-visible{ outline:2px solid var(--ink); outline-offset:2px; }
-.card-evidence::before{content:"Proof: "; font-weight:700; color:var(--ink);}
+.card-evidence .proof-label{ font-weight:700; color:var(--ink); }
 .card-tags{display:flex; flex-wrap:wrap; gap:6px;}
 .card-tag{
   font-family:var(--font-mono); font-size:10px; letter-spacing:0.04em;
@@ -461,9 +462,10 @@ body.is-dragging{overflow:hidden; touch-action:none;}
   100% {transform:translateY(-120vh) scale(0.94); opacity:0;}
 }
 
-/* Onboarding ghost hand overlay */
+/* Onboarding ghost hand overlay. Anchored above the sources footer so the
+   Sources button and dashed divider stay visible while the hint plays. */
 .ghost-hint{
-  position:absolute; inset:auto 0 18px 0;
+  position:absolute; inset:auto 0 76px 0;
   display:flex; flex-direction:column; align-items:center; gap:8px;
   padding:14px 16px; margin:0 16px;
   background:rgba(14,14,14,0.85);
@@ -479,46 +481,12 @@ body.is-dragging{overflow:hidden; touch-action:none;}
 .ghost-row{display:flex; align-items:center; gap:8px;}
 .ghost-hand{width:28px; height:28px; display:inline-block; animation:ghost-still 1s var(--ease) infinite;}
 .card[data-depth="0"].hint-h .ghost-hand{animation:ghost-swipe-h 1800ms var(--ease) infinite;}
-.card[data-depth="0"].hint-d .ghost-hand{animation:ghost-swipe-d 1600ms var(--ease) infinite;}
-.card[data-depth="0"].hint-u .ghost-hand{animation:ghost-swipe-u 1600ms var(--ease) infinite;}
-.card[data-depth="0"].hint-all .ghost-hand{animation:ghost-swipe-all 3200ms var(--ease) infinite;}
+.card[data-depth="0"].hint-v .ghost-hand{animation:ghost-swipe-v 1800ms var(--ease) infinite;}
 @keyframes ghost-still  { 0%,100% {transform:translate(0,0);} }
 @keyframes ghost-swipe-h{ 0%,10% {transform:translateX(0);} 35% {transform:translateX(38px);} 45%{transform:translateX(0);} 70% {transform:translateX(-38px);} 90% {transform:translateX(0);} }
-@keyframes ghost-swipe-d{ 0%,10% {transform:translateY(0);} 55% {transform:translateY(32px);} 90% {transform:translateY(0);} }
-@keyframes ghost-swipe-u{ 0%,10% {transform:translateY(0);} 55% {transform:translateY(-32px);} 90% {transform:translateY(0);} }
-/* Combined onboarding: cycle through all four directions so every arrow on
-   the compass is demonstrated. */
-@keyframes ghost-swipe-all{
-  0%,6%   { transform:translate(0,0); }
-  18%     { transform:translateX(30px); }
-  25%     { transform:translate(0,0); }
-  37%     { transform:translateX(-30px); }
-  44%     { transform:translate(0,0); }
-  56%     { transform:translateY(-26px); }
-  63%     { transform:translate(0,0); }
-  75%     { transform:translateY(26px); }
-  85%,100%{ transform:translate(0,0); }
-}
-.ghost-arrows{opacity:0.85;}
-.ghost-arrows.all{ opacity:1; }
-/* Four-direction legend on the combined onboarding hint. */
-.ghost-legend{
-  display:grid; grid-template-columns:repeat(4, auto); gap:2px 14px;
-  justify-content:center; align-items:center;
-  font-family:var(--font-mono); font-size:11px; letter-spacing:0.06em;
-  color:rgba(255,255,255,0.92); font-weight:600;
-  margin-top:2px;
-}
-.ghost-legend span{
-  display:inline-flex; align-items:center; gap:5px; white-space:nowrap;
-}
-.ghost-legend b{
-  font-family:var(--font-mono); font-weight:800; font-size:14px; line-height:1;
-  color:#fff;
-}
-@media (max-width:340px){
-  .ghost-legend{ grid-template-columns:repeat(2, auto); row-gap:6px; }
-}
+/* Vertical wiggle: up first, back, then down, matching the H rhythm. */
+@keyframes ghost-swipe-v{ 0%,10% {transform:translateY(0);} 35% {transform:translateY(-30px);} 45%{transform:translateY(0);} 70% {transform:translateY(30px);} 90% {transform:translateY(0);} }
+.ghost-arrows{opacity:0.8;}
 
 /* Feed controls */
 .feed-controls{
@@ -658,19 +626,6 @@ body.dir-save  .ctl-save{
 }
 .sheet-close:hover{background:rgba(14,14,14,0.05);}
 .sheet-list{list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:8px;}
-/* Full-proof modal: mono body block, then a "Sources" divider, then the
-   same source list the source sheet uses. */
-.proof-modal-body{
-  font-family:var(--font-mono); font-size:13px; line-height:1.55;
-  color:var(--ink); background:rgba(14,14,14,0.045);
-  border-radius:12px; padding:14px 16px; margin:0;
-  white-space:pre-wrap; word-break:break-word;
-}
-.proof-modal-sources-head{
-  margin:16px 0 8px !important;
-  padding-top:12px;
-  border-top:1px dashed rgba(14,14,14,0.14);
-}
 .sheet-item{
   display:grid; grid-template-columns:26px 1fr; gap:10px 12px;
   padding:10px; border-radius:12px;
@@ -697,6 +652,22 @@ body.dir-save  .ctl-save{
 .sheet-url{
   font-family:var(--font-mono); font-size:11px; color:#5a5a5a;
   word-break:break-all;
+}
+/* Card-detail sheet body: full description, full proof, tags, sources. */
+.detail-panel{ padding-bottom:26px; }
+.detail-body{ display:flex; flex-direction:column; gap:14px; }
+.detail-angle{
+  font-size:15px; line-height:1.5; color:var(--ink); margin:0;
+}
+.detail-evidence{
+  font-family:var(--font-mono); font-size:12.5px; line-height:1.55;
+  color:#333; background:rgba(14,14,14,0.045);
+  border-radius:10px; padding:12px 14px; margin:0;
+}
+.detail-tags{ display:flex; flex-wrap:wrap; gap:6px; margin:0; }
+.detail-sources-h{
+  font-family:var(--font-mono); font-size:10.5px; letter-spacing:0.14em; text-transform:uppercase;
+  color:#4a4a4a; font-weight:700; margin:2px 0 0;
 }
 
 /* -----------------------------------------------------------------------------
@@ -1220,17 +1191,53 @@ body.dir-save  .ctl-save{
     repeating-linear-gradient(90deg, transparent 0 19px, rgba(14,14,14,0.06) 19px 20px);
   opacity:0.6;
 }
-/* Scattered sketched items — pillar purple, semi-blurry, hand-drawn feel. */
-.pd-hub-scatter{
-  position:absolute; inset:0; pointer-events:none;
-  color:var(--f-pillar-ink);
+/* Scattered Hub items in the portal's own visual language. Slightly blurred
+   so they read as future content, tightly clustered around the pencil. */
+.pd-hub-scatter{ position:absolute; inset:0; pointer-events:none; }
+.pd-hub-item{
+  position:absolute; opacity:0.5;
+  filter:blur(0.5px);
+  transform-origin:center;
 }
-.pd-hub-blur{
-  position:absolute;
-  opacity:0.35;
-  filter:blur(0.6px);
+/* Yellow sticky note. */
+.pd-hub-sticky{
+  width:56px; height:56px; padding:8px 8px 0;
+  background:var(--save, #F5E84A);
+  border:1px solid rgba(14,14,14,0.14);
+  border-radius:4px;
+  display:flex; flex-direction:column; gap:4px;
+  box-shadow:0 6px 12px -8px rgba(14,14,14,0.35);
 }
-.pd-hub-blur.small{ opacity:0.28; }
+.pd-hub-sticky.sm{ width:48px; height:48px; padding:7px 7px 0; gap:3px; }
+.pd-hub-sticky-line{
+  display:block; height:3px; border-radius:2px;
+  background:rgba(14,14,14,0.42);
+}
+/* Article card, dashed border in insight blue. */
+.pd-hub-articlecard{
+  width:64px; height:52px; padding:6px 8px;
+  background:#fff;
+  border:1.5px dashed var(--f-insight);
+  border-radius:6px;
+  display:flex; flex-direction:column; gap:5px;
+  box-shadow:0 6px 12px -8px rgba(14,14,14,0.28);
+}
+.pd-hub-cardpill{
+  display:inline-block; width:24px; height:8px; border-radius:999px;
+  background:var(--f-insight);
+}
+.pd-hub-cardline{
+  display:block; height:3px; border-radius:2px;
+  background:rgba(14,14,14,0.32);
+}
+/* Avatar bubble. */
+.pd-hub-avatar{
+  width:34px; height:34px; border-radius:50%;
+  background:#fff; border:1.5px solid rgba(14,14,14,0.14);
+  display:inline-flex; align-items:center; justify-content:center;
+  box-shadow:0 4px 10px -6px rgba(14,14,14,0.3);
+  overflow:hidden;
+}
 /* Pencil + lock at center. */
 .pd-hub-pencil{ position:relative; z-index:2; }
 .pd-hub-lock{
@@ -1670,36 +1677,23 @@ body.dir-save  .ctl-save{
   </div>
 </div>
 
-<div class="sheet-scrim" id="src-sheet" role="dialog" aria-modal="true" aria-label="Sources">
-  <div class="sheet-panel">
+<div class="sheet-scrim" id="src-sheet" role="dialog" aria-modal="true" aria-label="Card detail">
+  <div class="sheet-panel detail-panel">
     <div class="sheet-grabber" aria-hidden="true"></div>
     <div class="sheet-head">
       <div>
-        <p class="sheet-h">Sources</p>
+        <p class="sheet-h" id="detail-fmt"></p>
         <p class="sheet-t" id="src-sheet-title"></p>
       </div>
-      <button type="button" class="sheet-close" data-action="close-src-sheet" aria-label="Close sources">&times;</button>
+      <button type="button" class="sheet-close" data-action="close-src-sheet" aria-label="Close">&times;</button>
     </div>
-    <ol class="sheet-list" id="src-sheet-list"></ol>
-  </div>
-</div>
-
-<!-- Proof modal: full proof plus the sources list at the bottom. Tap on any
-     card's .card-evidence preview opens it. Source clicks behave identically
-     to the source sheet (external link + source_opened telemetry). -->
-<div class="sheet-scrim" id="proof-modal" role="dialog" aria-modal="true" aria-label="Full proof">
-  <div class="sheet-panel">
-    <div class="sheet-grabber" aria-hidden="true"></div>
-    <div class="sheet-head">
-      <div>
-        <p class="sheet-h">Proof</p>
-        <p class="sheet-t" id="proof-modal-title"></p>
-      </div>
-      <button type="button" class="sheet-close" data-action="close-proof-modal" aria-label="Close proof">&times;</button>
+    <div class="detail-body">
+      <p class="detail-angle" id="detail-angle"></p>
+      <div class="detail-evidence" id="detail-evidence"></div>
+      <div class="detail-tags" id="detail-tags"></div>
+      <p class="detail-sources-h">Sources</p>
+      <ol class="sheet-list" id="src-sheet-list"></ol>
     </div>
-    <p class="proof-modal-body" id="proof-modal-body"></p>
-    <p class="sheet-h proof-modal-sources-head">Sources</p>
-    <ol class="sheet-list" id="proof-modal-sources"></ol>
   </div>
 </div>
 
@@ -1738,7 +1732,7 @@ body.dir-save  .ctl-save{
   var SUPER_THRESHOLD = 100;
   var SAVE_THRESHOLD  = 100;
   var VISIBLE_DEPTH   = 3;
-  var ONBOARDING_MAX  = 3;
+  var ONBOARDING_MAX  = 2;
   var CHIP_LIMIT      = 3;
   var DAY_MS          = 24 * 60 * 60 * 1000;
   // spotsTotal is fixed at 10 by product spec. spotsLeft is fetched live from
@@ -2020,7 +2014,7 @@ body.dir-save  .ctl-save{
     screen:'loading', cardIndex:0,
     liked:[], passed:[], saved:[], superLiked:null,
     events:[], paid:false,
-    onboardingDone:{ h:false, d:false, u:false },
+    onboardingDone:{ h:false, v:false },
     approved:false, approvedAtIso:'', deliverByIso:'',
     freePickCardId:'',
     emailProvided:'', waitlistJoined:false
@@ -2037,7 +2031,7 @@ body.dir-save  .ctl-save{
         state.saved      = s.saved      || [];
         state.superLiked = s.superLiked || null;
         state.events     = s.events     || [];
-        state.onboardingDone = s.onboardingDone || { h:false, d:false, u:false };
+        state.onboardingDone = s.onboardingDone || { h:false, v:false };
         state.approved       = !!s.approved;
         state.approvedAtIso  = s.approvedAtIso || '';
         state.deliverByIso   = s.deliverByIso  || '';
@@ -2307,30 +2301,30 @@ body.dir-save  .ctl-save{
       seriesEl.hidden = false;
     }
     el.querySelector('[data-slot="title"]').textContent    = String(card.title || '');
-    el.querySelector('[data-slot="angle"]').textContent    = String(card.angle || '');
-    // Proof preview: first two sentences + " …" if truncated. Full proof
-    // lives in the modal opened by tapping the block.
-    var evidenceEl = el.querySelector('[data-slot="evidence"]');
-    evidenceEl.textContent = truncateProof(card.evidence);
-    evidenceEl.setAttribute('role', 'button');
-    evidenceEl.setAttribute('tabindex', '0');
-    evidenceEl.setAttribute('aria-label', 'Open full proof and sources');
-    stopChipDragPropagation(evidenceEl, card);
-    evidenceEl.addEventListener('click', function(e){
-      e.stopPropagation(); e.preventDefault();
-      openProofModal(card);
-    });
-    evidenceEl.addEventListener('keydown', function(e){
-      if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); openProofModal(card); }
-    });
+    var angleEl = el.querySelector('[data-slot="angle"]');
+    angleEl.textContent = String(card.angle || '');
+    // Proof block: inline "Proof:" label + text, clamped to 2 lines by CSS.
+    var evEl = el.querySelector('[data-slot="evidence"]');
+    evEl.textContent = '';
+    var proofLbl = document.createElement('span');
+    proofLbl.className = 'proof-label'; proofLbl.textContent = 'Proof: ';
+    evEl.appendChild(proofLbl);
+    evEl.appendChild(document.createTextNode(String(card.evidence || '')));
+    // Tap on angle or proof opens the detail sheet. Click only fires on a
+    // real tap (no significant pointer movement), so a swipe that starts on
+    // these blocks still turns into a card swipe rather than opening the
+    // sheet. No stopPropagation here.
+    if(depth === 0){
+      var openDetail = function(e){ e.stopPropagation(); openCardDetail(card); };
+      angleEl.addEventListener('click', openDetail);
+      evEl.addEventListener('click', openDetail);
+    }
     var tagWrap = el.querySelector('[data-slot="tags"]');
     displayTags.forEach(function(t){
       var s = document.createElement('span'); s.className = 'card-tag'; s.textContent = String(t);
       tagWrap.appendChild(s);
     });
-    // Single "Sources" button — opens the sheet with the full list. The
-    // per-source chip row is retired; every card now shows the same slim
-    // control regardless of source count.
+    // Single "Sources" button — opens the SAME detail sheet.
     var sourceWrap = el.querySelector('[data-slot="sources"]');
     var sources = Array.isArray(card.sources) ? card.sources : [];
     if(sources.length){
@@ -2390,44 +2384,41 @@ body.dir-save  .ctl-save{
   function shortPub(s){ return String(s || '').trim(); }
 
   // -- Onboarding hints ----------------------------------------------------
-  // One combined hint on the FIRST card only, covering all four gestures.
-  // Backwards-compat: any card the visitor already dismissed in the older
-  // sequential model (h/d/u) still counts as "hint seen".
+  // Two steps only:
+  //   Step 1 (card 0):  horizontal arrows + "Swipe right to like. Left to pass."
+  //   Step 2 (card 1):  vertical arrows (up + down) on the same card +
+  //                     "Swipe up to fast-track. Down to save."
   function attachOnboardingHint(){
     var top = document.querySelector('.card[data-depth="0"]');
     if(!top) return;
-    if(state.cardIndex !== 0) return;
-    if(onboardingSeen()) return;
+    if(state.cardIndex >= ONBOARDING_MAX) return;
+    var kind = state.cardIndex === 0 ? 'h'
+             : state.cardIndex === 1 ? 'v'
+             :                          null;
+    if(!kind) return;
+    if(state.onboardingDone[kind]) return;
     var hint = top.querySelector('.ghost-hint');
     if(!hint) return;
     hint.hidden = false;
     hint.textContent = '';
     var row = document.createElement('div'); row.className = 'ghost-row';
     row.appendChild(makeHand());
-    row.appendChild(makeAllArrows());
+    row.appendChild(makeArrows(kind));
     hint.appendChild(row);
-    var legend = document.createElement('div');
-    legend.className = 'ghost-legend';
-    legend.innerHTML =
-      '<span><b>&larr;</b> Pass</span>' +
-      '<span><b>&rarr;</b> Like</span>' +
-      '<span><b>&darr;</b> Save</span>' +
-      '<span><b>&uarr;</b> Fast-track</span>';
-    hint.appendChild(legend);
-    top.classList.add('hint-visible', 'hint-all');
-  }
-  function onboardingSeen(){
-    // Any of the old flags being set means the visitor has seen a swipe
-    // hint before — don't nag them again.
-    var d = state.onboardingDone || {};
-    return !!(d.all || d.h || d.d || d.u);
+    var txt = document.createElement('div');
+    txt.textContent =
+      kind === 'h' ? 'Swipe right to like. Left to pass.'
+    :                'Swipe up to fast-track. Down to save.';
+    hint.appendChild(txt);
+    top.classList.add('hint-visible', 'hint-' + kind);
   }
   function stopOnboardingHint(top){
     if(!top) return;
-    top.classList.remove('hint-visible','hint-all','hint-h','hint-d','hint-u');
-    if(!state.onboardingDone) state.onboardingDone = {};
-    if(!state.onboardingDone.all){
-      state.onboardingDone.all = true;
+    top.classList.remove('hint-visible','hint-h','hint-v','hint-d','hint-u');
+    var kind = state.cardIndex === 0 ? 'h'
+             : state.cardIndex === 1 ? 'v' : null;
+    if(kind && !state.onboardingDone[kind]){
+      state.onboardingDone[kind] = true;
       saveState();
     }
   }
@@ -2441,23 +2432,15 @@ body.dir-save  .ctl-save{
       '</svg>';
     return s;
   }
-  function makeAllArrows(){
-    // Compass rose: four arrows radiating from a center dot so the full
-    // gesture vocabulary reads at a glance.
-    var s = document.createElement('span'); s.className = 'ghost-arrows all';
-    s.innerHTML =
-      '<svg viewBox="0 0 36 36" width="46" height="46" aria-hidden="true">' +
-        // up (fast-track)
-        '<path d="M18 6v10M14 10l4-4 4 4" stroke="#fff" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>' +
-        // down (save)
-        '<path d="M18 30V20M14 26l4 4 4-4" stroke="#fff" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>' +
-        // left (pass)
-        '<path d="M6 18h10M10 14l-4 4 4 4" stroke="#fff" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>' +
-        // right (like)
-        '<path d="M30 18H20M26 14l4 4-4 4" stroke="#fff" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>' +
-        // center dot
-        '<circle cx="18" cy="18" r="1.6" fill="#fff"/>' +
-      '</svg>';
+  function makeArrows(kind){
+    var s = document.createElement('span'); s.className = 'ghost-arrows a-' + kind;
+    // Horizontal: double-headed arrow. Vertical: double-headed arrow (up+down)
+    // sharing the same spine so both directions read as one gesture.
+    var svg =
+      kind === 'h'
+        ? '<svg viewBox="0 0 32 12" width="42" height="14"><path d="M2 6h28M24 2l4 4-4 4M2 6l4-4M2 6l4 4" stroke="#fff" stroke-width="1.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+        : '<svg viewBox="0 0 12 34" width="14" height="38"><path d="M6 2v30M2 8l4-4 4 4M2 26l4 4 4-4" stroke="#fff" stroke-width="1.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+    s.innerHTML = svg;
     return s;
   }
 
@@ -2466,11 +2449,17 @@ body.dir-save  .ctl-save{
   function attachGestures(el){ el.addEventListener('pointerdown', onDown); }
   function onDown(e){
     if(e.button !== undefined && e.button !== 0) return;
-    if(e.target.closest('button, a, .src-chip, .src-btn, .card-evidence')) return;
+    // Buttons + links suppress swipe start (they're small tap targets). The
+    // angle and proof are large blocks; they still take swipes but tap-only
+    // clicks fire their own openCardDetail handlers.
+    if(e.target.closest('button, a, .src-chip, .src-btn')) return;
     var el = e.currentTarget;
     stopOnboardingHint(el);
     try{ el.setPointerCapture(e.pointerId); }catch(_){}
-    drag = { id:e.pointerId, x0:e.clientX, y0:e.clientY, dx:0, dy:0, el:el, moved:false };
+    // Remember the original target so a click-without-drag can open the
+    // detail sheet even when setPointerCapture redirects the click event
+    // to the card. onUp checks e.target below.
+    drag = { id:e.pointerId, x0:e.clientX, y0:e.clientY, dx:0, dy:0, el:el, moved:false, originTarget: e.target };
     el.classList.add('dragging');
     document.body.classList.add('is-dragging');
     el.addEventListener('pointermove',   onMove);
@@ -2517,13 +2506,25 @@ body.dir-save  .ctl-save{
   function onCancel(){ if(!drag) return; drag.el.style.transform=''; endDrag(drag.el); drag=null; }
   function onUp(){
     if(!drag) return;
-    var el = drag.el, dx = drag.dx, dy = drag.dy;
+    var el = drag.el, dx = drag.dx, dy = drag.dy, origin = drag.originTarget;
     endDrag(el); drag = null;
     if(dy < -SUPER_THRESHOLD && Math.abs(dx) < SWIPE_THRESHOLD * 1.2) return doAction('super');
     if(dy >  SAVE_THRESHOLD  && Math.abs(dy) > Math.abs(dx))          return doAction('save');
     if(dx >  SWIPE_THRESHOLD && Math.abs(dx) > Math.abs(dy))          return doAction('like');
     if(dx < -SWIPE_THRESHOLD && Math.abs(dx) > Math.abs(dy))          return doAction('pass');
     el.style.transform = '';
+    // Tap-without-drag on the angle or proof opens the detail sheet.
+    // setPointerCapture can suppress the natural click on the child element,
+    // so we route through the origin target explicitly. Threshold matches a
+    // finger tap: under 6px movement.
+    if(Math.abs(dx) < 6 && Math.abs(dy) < 6 && origin){
+      var tapTarget = origin.closest && origin.closest('.card-angle, .card-evidence');
+      if(tapTarget){
+        var cardKey = el.getAttribute('data-card-id');
+        var full = cardKey ? findFull(cardKey) : null;
+        if(full) openCardDetail(full);
+      }
+    }
   }
 
   function doAction(action){
@@ -3598,41 +3599,33 @@ body.dir-save  .ctl-save{
     var grid = document.createElement('div'); grid.className = 'pd-hub-grid';
     host.appendChild(grid);
 
-    // Scattered sketched items. All hand-drawn feeling SVG outlines in the
-    // portal's pillar-purple, blurred slightly so they read as future items.
+    // Scattered items in the portal Hub's own visual language: yellow sticky
+    // notes with text lines, a dashed article card, and a small monster
+    // avatar dot. Tightly clustered around the pencil so the tile reads as
+    // "this is what your Hub becomes" rather than a random doodle.
     var scatter = document.createElement('div'); scatter.className = 'pd-hub-scatter';
     scatter.innerHTML =
-      // top-left sticky note
-      '<svg class="pd-hub-blur" style="left:8%;  top:12%;  transform:rotate(-6deg);" width="46" height="46" viewBox="0 0 46 46" aria-hidden="true">' +
-        '<path d="M5 6 Q4 4 8 5 L34 5 Q37 4 37 8 L37 36 Q38 40 34 39 L8 39 Q5 40 5 36 Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>' +
-        '<circle cx="16" cy="18" r="1.6" fill="currentColor"/><circle cx="24" cy="18" r="1.6" fill="currentColor"/>' +
-      '</svg>' +
-      // top-right sticky note (smaller, tilted)
-      '<svg class="pd-hub-blur" style="right:10%; top:8%;   transform:rotate(8deg);" width="38" height="38" viewBox="0 0 38 38" aria-hidden="true">' +
-        '<path d="M4 5 L30 5 L33 8 L33 31 L4 31 Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>' +
-        '<path d="M27 5 L30 5 L33 8 L27 8 Z" fill="currentColor" fill-opacity="0.2"/>' +
-      '</svg>' +
-      // right-mid: text box with lines
-      '<svg class="pd-hub-blur" style="right:6%;  top:44%;  transform:rotate(-4deg);" width="60" height="42" viewBox="0 0 60 42" aria-hidden="true">' +
-        '<rect x="4" y="4" width="52" height="34" rx="4" fill="none" stroke="currentColor" stroke-width="1.8"/>' +
-        '<line x1="10" y1="14" x2="46" y2="14" stroke="currentColor" stroke-width="1.4"/>' +
-        '<line x1="10" y1="22" x2="42" y2="22" stroke="currentColor" stroke-width="1.4"/>' +
-        '<line x1="10" y1="30" x2="34" y2="30" stroke="currentColor" stroke-width="1.4"/>' +
-      '</svg>' +
-      // bottom-left book (open pages)
-      '<svg class="pd-hub-blur" style="left:6%;   bottom:10%; transform:rotate(4deg);" width="56" height="40" viewBox="0 0 56 40" aria-hidden="true">' +
-        '<path d="M4 8 Q14 4 28 8 Q42 4 52 8 L52 34 Q42 30 28 34 Q14 30 4 34 Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>' +
-        '<line x1="28" y1="8" x2="28" y2="34" stroke="currentColor" stroke-width="1.6"/>' +
-      '</svg>' +
-      // bottom-right star sticker
-      '<svg class="pd-hub-blur" style="right:16%; bottom:8%;  transform:rotate(-10deg);" width="38" height="38" viewBox="0 0 38 38" aria-hidden="true">' +
-        '<path d="M19 4 L23 15 L34 15 L25 22 L28 33 L19 26 L10 33 L13 22 L4 15 L15 15 Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>' +
-      '</svg>' +
-      // small circle sticker under top-left
-      '<svg class="pd-hub-blur small" style="left:22%;  bottom:30%; transform:rotate(0);" width="26" height="26" viewBox="0 0 26 26" aria-hidden="true">' +
-        '<circle cx="13" cy="13" r="9" fill="none" stroke="currentColor" stroke-width="1.8"/>' +
-        '<path d="M8 13 L12 17 L18 10" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>' +
-      '</svg>';
+      // top-left yellow sticky note with text lines
+      '<div class="pd-hub-item pd-hub-sticky" style="left:14%; top:14%; transform:rotate(-6deg);">' +
+        '<span class="pd-hub-sticky-line" style="width:70%;"></span>' +
+        '<span class="pd-hub-sticky-line" style="width:52%;"></span>' +
+        '<span class="pd-hub-sticky-line" style="width:38%;"></span>' +
+      '</div>' +
+      // top-right dashed article card (portal Library style)
+      '<div class="pd-hub-item pd-hub-articlecard" style="right:14%; top:12%; transform:rotate(5deg);">' +
+        '<span class="pd-hub-cardpill"></span>' +
+        '<span class="pd-hub-cardline" style="width:78%;"></span>' +
+        '<span class="pd-hub-cardline" style="width:56%;"></span>' +
+      '</div>' +
+      // bottom-left second sticky (smaller)
+      '<div class="pd-hub-item pd-hub-sticky sm" style="left:16%; bottom:14%; transform:rotate(4deg);">' +
+        '<span class="pd-hub-sticky-line" style="width:60%;"></span>' +
+        '<span class="pd-hub-sticky-line" style="width:44%;"></span>' +
+      '</div>' +
+      // bottom-right avatar bubble (portal monster style)
+      '<div class="pd-hub-item pd-hub-avatar" style="right:18%; bottom:18%; transform:rotate(-4deg);">' +
+        avatarSvg('ghost', 26) +
+      '</div>';
     host.appendChild(scatter);
 
     var pencilWrap = document.createElement('div'); pencilWrap.className = 'pd-hub-pencil';
@@ -3802,83 +3795,50 @@ body.dir-save  .ctl-save{
     renderSpotsAndCta();
   }
 
-  // -- Source sheet --------------------------------------------------------
+  // -- Card detail sheet ---------------------------------------------------
+  // One sheet for the full description, full proof, tags, and clickable
+  // sources. Opened from the card's angle, proof block, or Sources button;
+  // openSourceSheet remains as a compatibility alias.
   var srcSheet = document.getElementById('src-sheet');
-  function openSourceSheet(card){
+  function openCardDetail(card){
+    if(!srcSheet || !card) return;
+    var fmt = String(card.format || 'post').toLowerCase();
+    var fmtLabel = fmt === 'pillar' ? 'Pillar' : (fmt === 'insight' ? 'Insight' : 'Post');
+    var fmtEl   = document.getElementById('detail-fmt');
     var titleEl = document.getElementById('src-sheet-title');
+    var angleEl = document.getElementById('detail-angle');
+    var evEl    = document.getElementById('detail-evidence');
+    var tagsEl  = document.getElementById('detail-tags');
     var listEl  = document.getElementById('src-sheet-list');
-    if(!titleEl || !listEl || !card) return;
-    titleEl.textContent = String(card.title || '');
-    listEl.textContent  = '';
-    (card.sources || []).forEach(function(src, i){
-      var li = document.createElement('li'); li.className = 'sheet-item';
-      var n  = document.createElement('span'); n.className = 'sheet-num'; n.textContent = String(i + 1);
-      var body = document.createElement('div'); body.className = 'sheet-body';
-      var a = document.createElement('a'); a.className = 'sheet-title-link';
-      a.href = String(src.url || '#');
-      a.target = '_blank';
-      a.rel = 'noopener noreferrer';
-      a.textContent = String(src.title || src.url || '');
-      a.addEventListener('click', function(){
-        logEvent(card.id, 'source_opened', { url: String(src.url || '') });
-      });
-      var pub = document.createElement('div'); pub.className = 'sheet-pub';
-      pub.textContent = String(src.publisher || '');
-      var url = document.createElement('div'); url.className = 'sheet-url';
-      url.textContent = String(src.url || '');
-      body.appendChild(a); body.appendChild(pub); body.appendChild(url);
-      li.appendChild(n); li.appendChild(body);
-      listEl.appendChild(li);
-    });
-    if(srcSheet) srcSheet.classList.add('open');
-  }
-  function closeSourceSheet(){ if(srcSheet) srcSheet.classList.remove('open'); }
-
-  // Preview truncation: keep the first two sentences of the proof; append " …"
-  // when we cut anything. Sentence endings are . ! or ? followed by whitespace
-  // or end-of-string. If the text has no sentence boundary in the first ~180
-  // characters, fall back to a plain character cutoff so the block never
-  // outgrows the card frame.
-  function truncateProof(text){
-    var s = String(text || '').trim();
-    if(!s) return '';
-    var m = s.match(/[^.!?]+[.!?]+(\s+|$)/g);
-    if(m && m.length > 2){
-      return m.slice(0, 2).join('').trim() + ' …';
-    }
-    // No sentence boundary or all in one long block: chop by chars.
-    if(s.length > 180){
-      var cut = s.slice(0, 180);
-      // step back to the last space so we don't chop a word.
-      var sp = cut.lastIndexOf(' ');
-      if(sp > 120) cut = cut.slice(0, sp);
-      return cut.trim() + ' …';
-    }
-    return s;
-  }
-
-  // Full-proof modal — the tap target on every card's proof preview. Shows
-  // the full evidence text and the card's sources at the bottom. Source
-  // clicks fire source_opened telemetry, same as the source sheet.
-  var proofModal = document.getElementById('proof-modal');
-  function openProofModal(card){
-    if(!card || !proofModal) return;
-    var titleEl = document.getElementById('proof-modal-title');
-    var bodyEl  = document.getElementById('proof-modal-body');
-    var srcEl   = document.getElementById('proof-modal-sources');
-    var srcHead = document.querySelector('.proof-modal-sources-head');
+    if(fmtEl)   fmtEl.textContent   = fmtLabel;
     if(titleEl) titleEl.textContent = String(card.title || '');
-    if(bodyEl)  bodyEl.textContent  = String(card.evidence || '');
-    var sources = Array.isArray(card.sources) ? card.sources : [];
-    if(srcEl){
-      srcEl.textContent = '';
-      sources.forEach(function(src, i){
+    if(angleEl) angleEl.textContent = String(card.angle || '');
+    if(evEl){
+      evEl.textContent = '';
+      var lbl = document.createElement('span'); lbl.className = 'proof-label'; lbl.textContent = 'Proof: ';
+      evEl.appendChild(lbl);
+      evEl.appendChild(document.createTextNode(String(card.evidence || '')));
+    }
+    if(tagsEl){
+      tagsEl.textContent = '';
+      var tags = Array.isArray(card.tags) ? card.tags : [];
+      tags.forEach(function(t){
+        var v = String(t);
+        if(!v || v.toLowerCase() === 'refresh') return;
+        var s = document.createElement('span'); s.className = 'card-tag'; s.textContent = v;
+        tagsEl.appendChild(s);
+      });
+    }
+    if(listEl){
+      listEl.textContent = '';
+      (card.sources || []).forEach(function(src, i){
         var li = document.createElement('li'); li.className = 'sheet-item';
         var n  = document.createElement('span'); n.className = 'sheet-num'; n.textContent = String(i + 1);
         var body = document.createElement('div'); body.className = 'sheet-body';
         var a = document.createElement('a'); a.className = 'sheet-title-link';
         a.href = String(src.url || '#');
-        a.target = '_blank'; a.rel = 'noopener noreferrer';
+        a.target = '_blank';
+        a.rel = 'noopener noreferrer';
         a.textContent = String(src.title || src.url || '');
         a.addEventListener('click', function(){
           logEvent(card.id, 'source_opened', { url: String(src.url || '') });
@@ -3889,17 +3849,14 @@ body.dir-save  .ctl-save{
         url.textContent = String(src.url || '');
         body.appendChild(a); body.appendChild(pub); body.appendChild(url);
         li.appendChild(n); li.appendChild(body);
-        srcEl.appendChild(li);
+        listEl.appendChild(li);
       });
     }
-    if(srcHead) srcHead.hidden = !sources.length;
-    if(srcEl)   srcEl.hidden   = !sources.length;
-    proofModal.classList.add('open');
+    srcSheet.classList.add('open');
   }
-  function closeProofModal(){ if(proofModal) proofModal.classList.remove('open'); }
-  if(proofModal){
-    proofModal.addEventListener('click', function(e){ if(e.target === proofModal) closeProofModal(); });
-  }
+  // Compat: old callers.
+  function openSourceSheet(card){ openCardDetail(card); }
+  function closeSourceSheet(){ if(srcSheet) srcSheet.classList.remove('open'); }
   if(srcSheet){
     srcSheet.addEventListener('click', function(e){ if(e.target === srcSheet) closeSourceSheet(); });
   }
@@ -4160,7 +4117,6 @@ body.dir-save  .ctl-save{
       case 'show-info':           openInfo(); return;
       case 'close-info':          closeInfo(); return;
       case 'close-src-sheet':     closeSourceSheet(); return;
-      case 'close-proof-modal':   closeProofModal(); return;
       case 'close-email-modal':   closeEmailModal(); return;
       case 'email-modal-submit':  submitEmailModal(); return;
       case 'keep-swiping':
