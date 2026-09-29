@@ -13,6 +13,7 @@
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Ghostwriter Mom | Waitlist">
 <meta name="twitter:description" content="A content portal for technical companies. Early access is invite only.">
+<link rel="stylesheet" href="/shared/desk.css">
 <style>
 @import url('/styles/tokens.css');
 @import url('https://fonts.googleapis.com/css2?family=Inter+Tight:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&display=swap');
@@ -43,9 +44,9 @@ body{
   min-height:100vh; min-height:100dvh; overflow-x:hidden;
   cursor:var(--pencil),auto;
 }
-body,a,button,input,.frag{cursor:var(--pencil),auto;}
+body,a,button,input{cursor:var(--pencil),auto;}
 @media (hover:none) and (pointer:coarse){
-  body,a,button,input,.frag{cursor:auto;}
+  body,a,button,input{cursor:auto;}
 }
 
 .grain{position:fixed;inset:0;pointer-events:none;z-index:0;opacity:0.7;mix-blend-mode:multiply;
@@ -115,110 +116,11 @@ body,a,button,input,.frag{cursor:var(--pencil),auto;}
 
 .footer{font-family:var(--mono);font-size:clamp(9px,1.4vw,11px);letter-spacing:0.16em;text-transform:uppercase;color:var(--ink-soft);text-align:left;width:100%;max-width:640px;}
 
-/* ---------- scattered fragments ---------- */
-#frags{position:fixed;inset:0;z-index:5;pointer-events:none;}
-.frag{position:absolute;pointer-events:auto;touch-action:none;user-select:none;-webkit-user-select:none;
-  will-change:transform,opacity;opacity:0;
-  transform:
-    translate(var(--sx,0px), var(--sy,0px))
-    translate(var(--mx,0px), var(--my,0px))
-    rotate(var(--rot,0deg))
-    scale(var(--scl,1));
-  transition:filter 360ms var(--ease);
-}
-.frag:hover:not(.dragging){filter:brightness(1.04);}
-.frag.dragging{transition:none;}
-
-.card{background:var(--white);border:1px solid rgba(14,14,14,0.07);border-radius:var(--radius-card);
-  box-shadow:0 22px 50px -34px rgba(14,14,14,0.55);}
-.mono{font-family:var(--mono);letter-spacing:0.04em;color:var(--ink-soft);}
-.uline{text-decoration:underline;text-underline-offset:2px;}
-
-/* stats bar card */
-.f-stats{padding:clamp(8px,1.1vw,13px) clamp(11px,1.6vw,18px);display:flex;align-items:center;gap:clamp(10px,1.7vw,22px);font-family:var(--mono);
-  font-size:clamp(9px,1vw,11px);letter-spacing:0.05em;color:var(--ink);text-transform:uppercase;}
-.f-stats b{font-weight:700;}
-.f-pill{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:999px;font-family:var(--font-body);
-  font-size:11px;font-weight:600;text-transform:none;letter-spacing:0;}
-.f-pill.ghost{border:1px solid rgba(14,14,14,0.16);background:var(--white);color:var(--ink);}
-.f-pill.solid{background:#15402E;color:#fff;border:none;}
-
-/* post card */
-.f-post{width:clamp(170px,21vw,270px);padding:clamp(12px,1.3vw,17px) clamp(12px,1.4vw,18px) clamp(11px,1.2vw,15px);}
-.f-post .ph{display:flex;align-items:center;gap:8px;font-family:var(--font-display);font-weight:800;
-  font-size:11px;letter-spacing:0.02em;text-transform:uppercase;color:var(--ink);margin-bottom:8px;}
-.f-post .ph .mk{width:14px;height:14px;border-radius:4px;flex:0 0 14px;}
-.f-post .body{font-family:var(--font-body);font-size:clamp(11px,1.05vw,13px);line-height:1.5;color:var(--ink);margin:0 0 10px;}
-.f-post .body .at{color:#2563eb;font-weight:600;}
-.f-post .when{font-family:var(--mono);font-size:9px;letter-spacing:0.08em;text-transform:uppercase;
-  color:var(--grey-body);margin-bottom:10px;}
-.f-statrow{display:flex;align-items:center;gap:clamp(12px,1.5vw,20px);padding-top:10px;border-top:1px solid rgba(14,14,14,0.07);
-  font-family:var(--mono);font-size:10px;color:var(--ink-soft);}
-.f-statrow span{display:inline-flex;align-items:center;gap:5px;}
-.f-statrow svg{width:12px;height:12px;}
-
-/* sliver cards */
-.f-sliver{width:clamp(108px,12vw,150px);padding:12px 14px;font-family:var(--font-body);font-size:clamp(11px,1.05vw,13px);color:var(--ink);line-height:1.45;}
-.f-sliver .mono{font-size:9.5px;text-transform:uppercase;margin-bottom:6px;display:block;}
-
-/* profile composer */
-.f-profile{width:clamp(180px,20vw,250px);padding:12px 14px 11px;}
-.f-profile .top{display:flex;align-items:center;gap:8px;margin-bottom:8px;}
-.f-profile .av{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#15402E,#3a7a57);flex:0 0 28px;}
-.f-profile .nm{font-family:var(--font-display);font-weight:800;font-size:11px;text-transform:uppercase;letter-spacing:0.02em;}
-.f-profile .hd{font-family:var(--mono);font-size:9px;color:var(--grey-body);}
-.f-profile .quote{font-size:clamp(11px,1.1vw,13px);line-height:1.5;color:var(--ink);margin:0 0 10px;}
-.f-compose{display:flex;align-items:center;gap:8px;border:1px solid rgba(14,14,14,0.1);border-radius:999px;
-  padding:6px 6px 6px 12px;font-family:var(--mono);font-size:9.5px;color:var(--grey-body);text-transform:uppercase;letter-spacing:0.06em;}
-.f-compose .send{margin-left:auto;width:22px;height:22px;border-radius:50%;background:var(--ink-pill);color:#fff;
-  display:inline-flex;align-items:center;justify-content:center;font-size:11px;flex:0 0 22px;}
-
-/* tool icons cluster */
-.f-tools{display:flex;align-items:center;gap:6px;background:var(--white);border:1px solid rgba(14,14,14,0.07);
-  border-radius:999px;padding:6px 8px;box-shadow:0 18px 40px -30px rgba(14,14,14,0.5);}
-.f-tools button{border:none;background:transparent;width:32px;height:32px;border-radius:50%;
-  display:inline-flex;align-items:center;justify-content:center;color:var(--ink-soft);cursor:inherit;}
-.f-tools button:hover{background:var(--canvas-alt);}
-.f-tools svg{width:14px;height:14px;}
-
-/* stationery SVG objects */
-.obj{filter:drop-shadow(0 14px 14px rgba(14,14,14,0.22));}
-.obj svg{display:block;width:clamp(54px,8vw,110px);height:auto;}
-
-/* emoji-based office supplies */
-.f-emoji{font-size:clamp(24px,3.4vw,46px);line-height:1;filter:drop-shadow(0 12px 14px rgba(14,14,14,0.22));
-  user-select:none;-webkit-user-select:none;}
-.f-emoji.sm{font-size:clamp(18px,2.5vw,32px);}
-.f-emoji.lg{font-size:clamp(30px,4.2vw,54px);}
-
-/* extras */
-.f-tape{width:clamp(54px,6vw,84px);aspect-ratio:88/54;background:linear-gradient(180deg,rgba(255,235,120,0.7),rgba(255,210,80,0.55));
-  border:1px solid rgba(180,140,20,0.35);border-radius:6px;
-  box-shadow:0 14px 28px -16px rgba(14,14,14,0.4);}
-.f-tape::before,.f-tape::after{content:"";position:absolute;top:0;bottom:0;width:8px;
-  background:repeating-linear-gradient(90deg,rgba(180,140,20,0.45) 0 2px,transparent 2px 5px);}
-.f-tape::before{left:0;} .f-tape::after{right:0;}
-
-.f-stamp{width:clamp(70px,7vw,98px);padding:7px 9px;background:#fff;border:2px dashed rgba(220,60,60,0.7);
-  font-family:var(--mono);font-size:clamp(8.5px,1vw,10px);letter-spacing:0.12em;text-transform:uppercase;
-  color:#c0392b;text-align:center;box-shadow:0 12px 22px -14px rgba(14,14,14,0.4);line-height:1.2;}
-
-/* responsive frag visibility */
-@media (max-width:479px){
-  .frag.hide-xs{display:none;}
-  /* Phone: shrink the surviving 5 emojis so they read as accents, not clutter. */
-  .f-emoji.sm{font-size:clamp(15px,4vw,22px);}
-}
-@media (max-width:767px){
-  .frag.hide-sm{display:none;}
-}
-@media (max-width:1023px){
-  .frag.hide-md{display:none;}
-}
+/* Desk-layer styles live in /shared/desk.css, imported at the top of the
+   head. Everything here concerns only the waitlist's own content column. */
 
 @keyframes glow-breathe{0%,100%{opacity:0.78;transform:scale(1)}50%{opacity:0.97;transform:scale(1.04)}}
 @media(prefers-reduced-motion:reduce){
-  .frag{opacity:1!important;}
   *,*::before,*::after{animation-duration:0.001ms!important;animation-iteration-count:1!important;transition-duration:0.001ms!important;}
 }
 </style>
@@ -240,112 +142,35 @@ body,a,button,input,.frag{cursor:var(--pencil),auto;}
       <input type="hidden" id="submitted-tz" name="submitted-tz" value="">
       <p hidden><label>Don't fill this out: <input name="bot-field"></label></p>
       <div class="field">
-        <input id="email" name="email" type="email" placeholder="vedika@ghostwriter.mom" autocomplete="email" inputmode="email" required aria-label="Email address">
+        <input id="email" name="email" type="email" placeholder="you@company.com" autocomplete="email" inputmode="email" required aria-label="Email address">
         <span class="join-host">
           <span class="join-glow" aria-hidden="true"></span>
-          <button class="join" type="submit">Join the waitlist <span class="arr" aria-hidden="true">&#8594;</span></button>
+          <button class="join" type="submit">Request an invite <span class="arr" aria-hidden="true">&#8594;</span></button>
         </span>
       </div>
       <p class="err" id="wl-err">&nbsp;</p>
-      <p class="ack" id="wl-ack">On the list. I'll reach out when the next spot opens.</p>
+      <p class="ack" id="wl-ack">You're on the list. Invites go out in small batches.</p>
     </form>
   </section>
 
   <div class="footer">Ghostwriter Mom &copy; <span id="year"></span></div>
 </main>
 
-<div id="frags">
-
-  <!--
-    Every fragment is an emoji or the DRAFT APPROVED stamp — no more
-    hand-drawn SVG vectors. Phone shows five small emojis (paperclip,
-    linked clip, pushpin, pen, coffee); everything else carries hide-sm
-    and only appears from 480px up.
-  -->
-
-  <!-- Phone-visible: 5 small emojis. No hide-sm. -->
-  <div class="frag f-emoji sm" data-fid="emoji-paperclip-tl" data-def='{"top":"22vh","left":"1vw","rot":"-22deg"}' data-depth="10">&#128206;</div>
-  <div class="frag f-emoji sm" data-fid="emoji-linkclip-bl"  data-def='{"bottom":"24vh","left":"1vw","rot":"28deg"}' data-depth="10">&#128391;&#65039;</div>
-  <div class="frag f-emoji sm" data-fid="emoji-pushpin-top"  data-def='{"top":"1vh","left":"46%","rot":"8deg"}' data-depth="6">&#128204;</div>
-  <div class="frag f-emoji sm" data-fid="emoji-pen-br"       data-def='{"bottom":"22vh","right":"3vw","rot":"34deg"}' data-depth="10">&#128394;&#65039;</div>
-  <div class="frag f-emoji sm" data-fid="emoji-coffee-right" data-def='{"top":"58vh","right":"1vw","rot":"-6deg"}' data-depth="12">&#9749;</div>
-
-  <!-- Desktop-only: memo, notepad, notebook, scroll, DRAFT APPROVED stamp. -->
-  <div class="frag f-emoji hide-sm" data-fid="emoji-memo-bottom" data-def='{"bottom":"4vh","left":"24%","rot":"-9deg"}' data-depth="9">&#128221;</div>
-  <div class="frag f-emoji hide-sm" data-fid="emoji-notepad-tr"  data-def='{"top":"40vh","right":"7vw","rot":"12deg"}' data-depth="10">&#128210;</div>
-  <div class="frag f-emoji hide-sm" data-fid="emoji-notebook-mid" data-def='{"top":"56vh","right":"8vw","rot":"-18deg"}' data-depth="11">&#128211;</div>
-  <div class="frag f-emoji hide-sm" data-fid="emoji-scroll-left" data-def='{"top":"68vh","left":"1vw","rot":"16deg"}' data-depth="8">&#128220;</div>
-  <div class="frag f-stamp hide-sm" data-fid="stamp-tl"          data-def='{"bottom":"30vh","left":"1vw","rot":"-6deg"}' data-depth="8">Draft<br>Approved</div>
-
-</div>
+<!--
+  The desk layer (floating stationery) is mounted from /shared/desk.js so
+  the waitlist, the sales-page intro, and the portal login all render from
+  one source. Everything appended into #desk-mount is aria-hidden and
+  pointer-events:none.
+-->
+<div id="desk-mount"></div>
+<script type="module">
+  import { mountDesk } from '/shared/desk.js';
+  mountDesk(document.getElementById('desk-mount'), { density: 'full' });
+</script>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 <script>
 (function(){
-  const layer = document.getElementById('frags');
-  const frags = Array.from(layer.querySelectorAll('.frag'));
-  const KEY = 'gwm-frag-pos-v2';
-  let saved = {};
-  try{ saved = JSON.parse(localStorage.getItem(KEY)||'{}'); }catch(e){}
-  function persist(){ try{ localStorage.setItem(KEY, JSON.stringify(saved)); }catch(e){} }
-
-  // place each fragment at its data-def (or saved px coords from a previous drag)
-  function placeFrag(el){
-    let def={}; try{ def = JSON.parse(el.dataset.def||'{}'); }catch(e){}
-    const p = saved[el.dataset.fid];
-    if(p){
-      el.style.left = p.x+'px'; el.style.top = p.y+'px';
-      el.style.right='auto'; el.style.bottom='auto';
-    } else {
-      if(def.left!=null) el.style.left = def.left;
-      if(def.top!=null) el.style.top = def.top;
-      if(def.right!=null) el.style.right = def.right;
-      if(def.bottom!=null) el.style.bottom = def.bottom;
-    }
-    if(def.rot) el.style.setProperty('--rot', def.rot);
-  }
-  frags.forEach(placeFrag);
-
-  // drag engine
-  let z = 10;
-  function startDrag(e){
-    const el = e.currentTarget;
-    if(!el.setPointerCapture) return;
-    try{ el.setPointerCapture(e.pointerId); }catch(_){}
-    el.classList.add('dragging');
-    el.dataset.usermoved = '1';
-    el.style.zIndex = ++z;
-    // freeze mouse-parallax + entrance offsets
-    el.style.setProperty('--mx', '0px');
-    el.style.setProperty('--my', '0px');
-    el.style.setProperty('--sx', '0px');
-    el.style.setProperty('--sy', '0px');
-    el.style.setProperty('--scl', '1');
-    const r = el.getBoundingClientRect();
-    el.style.left = r.left+'px'; el.style.top = r.top+'px';
-    el.style.right='auto'; el.style.bottom='auto';
-    const ox = e.clientX - r.left, oy = e.clientY - r.top;
-    function move(ev){
-      let nx = ev.clientX - ox, ny = ev.clientY - oy;
-      nx = Math.max(-r.width*0.6, Math.min(window.innerWidth - r.width*0.4, nx));
-      ny = Math.max(-r.height*0.4, Math.min(window.innerHeight - r.height*0.4, ny));
-      el.style.left = nx+'px'; el.style.top = ny+'px';
-    }
-    function up(ev){
-      el.classList.remove('dragging');
-      try{ el.releasePointerCapture(e.pointerId); }catch(_){}
-      el.removeEventListener('pointermove', move);
-      el.removeEventListener('pointerup', up);
-      el.removeEventListener('pointercancel', up);
-      saved[el.dataset.fid] = { x: parseFloat(el.style.left), y: parseFloat(el.style.top) };
-      persist();
-    }
-    el.addEventListener('pointermove', move);
-    el.addEventListener('pointerup', up);
-    el.addEventListener('pointercancel', up);
-  }
-  frags.forEach(el => el.addEventListener('pointerdown', startDrag));
-
   // Footer year
   const yearEl = document.getElementById('year');
   if(yearEl) yearEl.textContent = String(new Date().getFullYear());
@@ -395,38 +220,9 @@ body,a,button,input,.frag{cursor:var(--pencil),auto;}
     emailEl.value = '';
   });
 
-  // GSAP entrance for frags + text animations on headline/lede
+  // Text animations only (frag entrance moved into /shared/desk.js).
   const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-  if(!hasGSAP || reduce){
-    // Static fallback — GSAP blocked by CSP, offline, or reduced-motion.
-    frags.forEach(el => { el.style.opacity = '1'; });
-    return;
-  }
-
-  // ---- dispersion entrance: pulled toward center, then settles at rest ----
-  const cx = window.innerWidth/2, cy = window.innerHeight/2;
-  const data = frags.map(el => {
-    const r = el.getBoundingClientRect();
-    return { el, dx: (r.left + r.width/2) - cx, dy: (r.top + r.height/2) - cy };
-  });
-  data.forEach(d => {
-    gsap.set(d.el, { '--sx': `${(-d.dx*0.75).toFixed(1)}px`, '--sy': `${(-d.dy*0.75).toFixed(1)}px`, '--scl': 0.6, opacity: 0 });
-  });
-  gsap.to(data.map(d=>d.el), {
-    '--sx': '0px', '--sy': '0px', '--scl': 1, opacity: 1,
-    duration: 1.0, ease: 'power3.out',
-    stagger: { each: 0.055, from: 'random' }
-  });
-  // hard fallback if rAF is throttled
-  setTimeout(() => {
-    data.forEach(d => {
-      d.el.style.opacity = '1';
-      d.el.style.setProperty('--sx', '0px');
-      d.el.style.setProperty('--sy', '0px');
-      d.el.style.setProperty('--scl', '1');
-    });
-  }, 1.0 * 1000 + data.length * 55 + 400);
+  if(!hasGSAP || reduce) return;
 
   // ---- text animations: word-by-word reveal on headline, fade on lede ----
   function splitWords(el){

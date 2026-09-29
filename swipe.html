@@ -132,7 +132,8 @@ body.is-dragging{overflow:hidden; touch-action:none;}
 @keyframes btn-glow-breathe{0%,100%{opacity:0.78; transform:scale(1);} 50%{opacity:0.97; transform:scale(1.04);}}
 
 /* -----------------------------------------------------------------------------
-   INTRO SCREEN
+   INTRO SCREEN — shared visual layer with the waitlist + portal login.
+   Desk fragments are mounted from /shared/desk.js at density=light.
    ----------------------------------------------------------------------------- */
 .intro-eyebrow{
   font-family:var(--font-mono); font-size:11px; letter-spacing:0.14em; text-transform:uppercase;
@@ -144,30 +145,37 @@ body.is-dragging{overflow:hidden; touch-action:none;}
   color:var(--ink); margin:8px 0 4px; text-wrap:balance;
 }
 .intro-company{
+  /* Company name in ink, not the previous #4a4a4a gray. */
   font-family:var(--font-display); font-weight:700;
-  font-size:clamp(15px, 4vw, 18px); color:#4a4a4a; margin:0 0 10px;
+  font-size:clamp(15px, 4vw, 18px); color:var(--ink); margin:0 0 10px;
 }
 .intro-offer{
-  background:rgba(255,255,255,0.72);
+  background:rgba(255,255,255,0.85);
   -webkit-backdrop-filter:blur(22px) saturate(140%);
   backdrop-filter:blur(22px) saturate(140%);
-  border:1px solid rgba(255,255,255,0.6);
-  border-radius:18px; padding:14px 16px;
+  border:1px solid rgba(255,255,255,0.7);
+  border-radius:18px; padding:16px 18px;
   font-size:14.5px; line-height:1.55; color:var(--ink);
   box-shadow:0 12px 30px -20px rgba(14,14,14,0.28), inset 0 1px 0 rgba(255,255,255,0.85);
-  isolation:isolate; margin:8px 0 4px;
+  isolation:isolate; margin:8px 0 14px;
 }
 .intro-offer strong{font-weight:700;}
 
 /* -----------------------------------------------------------------------------
    ONE-WORD ITALIC IN HEADLINES
    Palatino italic + display font at negative letter-spacing kisses the next
-   word ("yourswipes"). Reset letter-spacing on em and pad the trailing edge.
+   word ("yourswipes"). Reset letter-spacing on em and pad the trailing edge
+   for the direction headline. The intro headline puts a period directly
+   after the italic name ("Hi Patrick."), so it zeroes the trailing pad
+   AND uses a small negative kern so the period sits tight to the name.
    ----------------------------------------------------------------------------- */
-.intro-hello em,
 .dir-title-head em{
   font-family:var(--font-accent); font-style:italic; font-weight:700;
   letter-spacing:0; margin-inline-end:0.18em;
+}
+.intro-hello em{
+  font-family:var(--font-accent); font-style:italic; font-weight:700;
+  letter-spacing:0; margin-inline-end:-0.06em;
 }
 
 /* -----------------------------------------------------------------------------
@@ -1387,6 +1395,38 @@ body.dir-save  .ctl-save{
 .history-meta .a{display:inline-block; padding:2px 6px; border-radius:999px; margin-left:4px;}
 .history-empty{padding:16px; text-align:center; color:#333; font-family:var(--font-mono); font-size:12px;}
 
+/* Per-row source pills — Perplexity-style compact chips beneath each Log
+   entry. Numbered, publisher-labelled, link out to the source URL. */
+.history-src-row{
+  grid-column:1 / -1;
+  display:flex; flex-wrap:wrap; gap:5px;
+  margin-top:6px;
+}
+.history-src-chip{
+  display:inline-flex; align-items:center; gap:5px;
+  padding:2px 8px 2px 3px;
+  border-radius:999px;
+  background:rgba(255,255,255,0.9);
+  border:1px solid rgba(14,14,14,0.12);
+  color:var(--ink); text-decoration:none;
+  font-family:var(--font-body); font-size:11px; font-weight:600;
+  line-height:1.4;
+  transition:background 180ms var(--ease), border-color 180ms var(--ease);
+}
+.history-src-chip:hover{ background:#fff; border-color:rgba(14,14,14,0.28); }
+.history-src-n{
+  width:16px; height:16px; border-radius:50%;
+  display:inline-flex; align-items:center; justify-content:center;
+  background:var(--ink-pill, #0E0E0E); color:#fff;
+  font-family:var(--font-mono); font-size:9px; font-weight:800; line-height:1;
+}
+.history-src-p{ color:#333; }
+.history-src-more{
+  padding:2px 8px; border-radius:999px;
+  background:rgba(14,14,14,0.06); color:#333;
+  font-family:var(--font-mono); font-size:10px; font-weight:700;
+}
+
 .src-view{display:flex; flex-direction:column; gap:14px;}
 .src-group{
   border:1px solid rgba(14,14,14,0.08); border-radius:14px;
@@ -1458,6 +1498,20 @@ body.dir-save  .ctl-save{
 </head>
 <body>
 
+<!-- Shared desk layer (waitlist / sales intro / portal login). Mounted at
+     density=light and only visible while the intro screen is on. -->
+<link rel="stylesheet" href="/shared/desk.css">
+<style>
+  body:not(.on-intro) .gwm-desk{ display:none; }
+  /* Push the desk behind the shell so cards + buttons stay above it. */
+  .gwm-desk{ z-index:0; }
+</style>
+<div id="desk-mount"></div>
+<script type="module">
+  import { mountDesk } from '/shared/desk.js';
+  mountDesk(document.getElementById('desk-mount'), { density: 'light' });
+</script>
+
 <!-- -----------------------------------------------------------------------------
      Netlify Forms declaration
      - approvals:       fires alongside submit_approval RPC so Vedika still
@@ -1507,16 +1561,14 @@ body.dir-save  .ctl-save{
 
   <!-- INTRO -->
   <section class="screen" id="screen-intro">
-    <p class="intro-eyebrow">Q1 feed for</p>
+    <p class="intro-eyebrow"><span data-slot="deckCount"></span> DIRECTIONS FOR</p>
     <p class="intro-company" data-slot="companyName"></p>
-    <h1 class="intro-hello">Hi <em data-slot="contactFirstName"></em>.</h1>
-    <p class="intro-offer">
-      <strong>Swipe free.</strong> <span data-slot="offerText"></span>
-    </p>
+    <h1 class="intro-hello">Hi <em data-slot="contactFirstName">there</em>.</h1>
+    <p class="intro-offer" id="intro-offer"></p>
     <span class="btn-glow-host">
       <span class="btn-glow" aria-hidden="true"></span>
       <button type="button" class="btn btn-primary" data-action="start">
-        Start <span class="arr" aria-hidden="true">&#8594;</span>
+        Deal me in <span class="arr" aria-hidden="true">&#8594;</span>
       </button>
     </span>
   </section>
@@ -2092,6 +2144,8 @@ body.dir-save  .ctl-save{
       var el = document.getElementById('screen-' + id);
       if(el) el.classList.add('on');
       state.screen = id;
+      // Toggle the body class so the shared desk layer only paints on intro.
+      document.body.classList.toggle('on-intro', id === 'intro');
       // Land at the top of the new screen. Without this a tall direction list
       // can render mid-scroll if the previous screen was scrolled down.
       try{ window.scrollTo({ top: 0, behavior: 'auto' }); }catch(_){}
@@ -2201,8 +2255,27 @@ body.dir-save  .ctl-save{
   }
   function onClientReady(){
     $all('[data-slot="companyName"]').forEach(function(el){ el.textContent = client.companyName; });
-    $all('[data-slot="contactFirstName"]').forEach(function(el){ el.textContent = client.contactFirstName; });
+    // Greeting: use the contact's first name in italic; fall back to "there".
+    var greetName = (client.contactFirstName || '').trim() || 'there';
+    $all('[data-slot="contactFirstName"]').forEach(function(el){ el.textContent = greetName; });
     $all('[data-slot="offerText"]').forEach(function(el){ el.textContent = String(client.offerText || ''); });
+    // Deck size in the eyebrow ("{N} DIRECTIONS FOR"). Reads from the loaded
+    // feed so 5-card decks render 5, 10-card decks render 10.
+    var deckN = (client.cards && client.cards.length) || 0;
+    $all('[data-slot="deckCount"]').forEach(function(el){ el.textContent = String(deckN); });
+    // Intro card copy — computed so {N} and {Company} carry the real values.
+    var introEl = document.getElementById('intro-offer');
+    if(introEl){
+      introEl.textContent = '';
+      var lead = document.createElement('strong');
+      lead.textContent = 'Ghostwriter Mom turns search and AI-citation gaps into technical articles.';
+      introEl.appendChild(lead);
+      introEl.appendChild(document.createTextNode(
+        ' These ' + deckN + ' directions come from where ' + (client.companyName || 'you') +
+        ' ranks and who AI cites instead. Swipe to keep or pass. Pick one and ' +
+        "it's written free, in your inbox within 24 hours."
+      ));
+    }
     var sig = client.signal || {};
     // Signal text lives on the confirmation Signals tile now — renderConfirmation
     // handles blurring the competitor name so we don't paint it here.
@@ -3977,6 +4050,36 @@ body.dir-save  .ctl-save{
         var a = document.createElement('span'); a.className = 'a a-' + ev.action; a.textContent = labelForAction(ev.action);
         m.appendChild(when); m.appendChild(a);
         li.appendChild(t); li.appendChild(m);
+        // Sources under each row — Perplexity-style publisher pills that
+        // open the URL in a new tab. Same source_opened logging as the
+        // card-detail sheet.
+        var srcs = (card && Array.isArray(card.sources)) ? card.sources : [];
+        if(srcs.length){
+          var srcRow = document.createElement('div'); srcRow.className = 'history-src-row';
+          srcs.slice(0, 5).forEach(function(src, i){
+            if(!src) return;
+            var url = String(src.url || '').trim();
+            var pub = String(src.publisher || url).trim();
+            var chip = document.createElement('a');
+            chip.className = 'history-src-chip';
+            chip.href = url || '#';
+            chip.target = '_blank';
+            chip.rel   = 'noopener noreferrer';
+            var n = document.createElement('span'); n.className = 'history-src-n'; n.textContent = String(i + 1);
+            var p = document.createElement('span'); p.className = 'history-src-p'; p.textContent = shortPub(pub);
+            chip.appendChild(n); chip.appendChild(p);
+            chip.addEventListener('click', function(){
+              logEvent(card.id, 'source_opened', { url: url });
+            });
+            srcRow.appendChild(chip);
+          });
+          if(srcs.length > 5){
+            var more = document.createElement('span'); more.className = 'history-src-more';
+            more.textContent = '+' + (srcs.length - 5);
+            srcRow.appendChild(more);
+          }
+          li.appendChild(srcRow);
+        }
         list.appendChild(li);
       });
     }
