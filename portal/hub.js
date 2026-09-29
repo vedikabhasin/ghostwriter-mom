@@ -4,14 +4,16 @@
 // hub_items rows (migration 6) hold everything on the canvas:
 //   article  ref_id -> articles.id          note  ref_id -> notes.id
 //   text     body                           emoji emoji glyph
+//   card     ref_id -> cards.id, an UP NEXT card (migration 13); it becomes
+//            the article in place once someone requests it
 // An emoji pinned onto another item stores that item's id in ref_id and its
 // x/y relative to the item, so it travels with it. A free emoji has ref_id
 // null and canvas x/y. Only this view has grabbable, movable items.
 //
-// Access comes from the account (hub_access: a credit purchase with an active
-// $19, a Hub that was already open, or an internal portal). Locked, the
-// canvas is blurred and read-only under the lock modal; the header with seats
-// and Invite sits above both.
+// Access comes from the account (hub_access: internal, hub_unlocked, or any
+// credit grant). Locked, the canvas shows only the company's own items (or an
+// empty grid), blurred and read-only under the lock modal; the header with
+// seats and Invite sits above both.
 // -----------------------------------------------------------------------------
 import { $, $all, h, hash, prefersReduced } from '/portal/lib.js';
 import { ICONS } from '/portal/avatars.js';
@@ -54,7 +56,7 @@ export function initHub(api) {
 // ---- layout -------------------------------------------------------------------
 // Footprint per kind (matches portal.css), so a wide text note blocks every
 // grid cell it covers, not just the one its corner sits in.
-const SIZE = { article: [150, 196], note: [200, 190], text: [340, 200], emoji: [40, 40] };
+const SIZE = { article: [150, 196], card: [150, 196], note: [200, 190], text: [340, 200], emoji: [40, 40] };
 function occupied(list) {
   const cells = new Set();
   list.filter((i) => i.kind !== 'emoji' || !i.ref_id).forEach((i) => {
@@ -85,12 +87,28 @@ function place(list, id) {
 }
 function maxZ() { return items.reduce((m, i) => Math.max(m, i.z || 0), 0); }
 
-/** Every article and note gets a canvas row. Locked: virtual rows, no writes. */
+/** Every article, UP NEXT card and note gets a canvas row. Locked: virtual
+ *  rows, no writes. A card row whose card has since been requested turns
+ *  into that article's row, in place. */
 async function ensureItems() {
   const S = app.S;
-  const have = new Set(items.filter((i) => i.ref_id && (i.kind === 'article' || i.kind === 'note')).map((i) => i.kind + ':' + i.ref_id));
+  for (const it of items.filter((i) => i.kind === 'card')) {
+    const a = app.articleFor(it.ref_id);
+    if (!a || items.some((x) => x.kind === 'article' && x.ref_id === a.id)) continue;
+    it.kind = 'article';
+    it.ref_id = a.id;
+    if (!locked && !String(it.id).startsWith('virtual-')) {
+      const { error } = await app.sb.from('hub_items').update({ kind: 'article', ref_id: a.id, updated_at: new Date().toISOString() }).eq('id', it.id);
+      if (error) console.warn('[hub] card to article failed', error.message);
+      else syncState(it);
+    }
+  }
+  const have = new Set(items.filter((i) => i.ref_id && i.kind !== 'emoji').map((i) => i.kind + ':' + i.ref_id));
   const missing = [];
-  app.libArticles().forEach((a) => { if (!have.has('article:' + a.id)) missing.push({ kind: 'article', ref_id: a.id }); });
+  app.libEntries().forEach((e) => {
+    if (e.article) { if (!have.has('article:' + e.article.id)) missing.push({ kind: 'article', ref_id: e.article.id }); }
+    else if (!have.has('card:' + e.card_id)) missing.push({ kind: 'card', ref_id: e.card_id });
+  });
   S.notes.filter((n) => n.body !== app.WANTS_WRITTEN).forEach((n) => { if (!have.has('note:' + n.id)) missing.push({ kind: 'note', ref_id: n.id }); });
   if (!missing.length) return;
   const rows = [];
@@ -106,7 +124,7 @@ async function ensureItems() {
   const { data, error } = await app.sb.from('hub_items').insert(rows).select('*');
   if (error) { console.warn('[hub] auto-create failed', error.message); rows.forEach((r, i) => items.push(Object.assign({ id: 'virtual-' + i }, r))); return; }
   items.push(...data);
-  S.hubItems = items;
+  S.hubItems = items.map((i) => Object.assign({}, i));
 }
 
 /** Where a new note from the Feed lands: the next free cell. */
@@ -116,6 +134,7 @@ export function slotForNewItem(list, id) { return place(list, id); }
 export async function enterHub({ forceLocked, fromRects }) {
   const S = app.S;
   locked = !app.hubOpen() || !!forceLocked;
+  $('#hub-canvas').classList.toggle('locked', locked);
   showHidden = false;
   placingEmoji = null;
   items = S.hubItems.map((i) => Object.assign({}, i));
@@ -136,6 +155,13 @@ export async function enterHub({ forceLocked, fromRects }) {
   }
 }
 
+/** Re-read the app state (after a request) without the entry animation. */
+export async function refreshHub() {
+  items = app.S.hubItems.map((i) => Object.assign({}, i));
+  await ensureItems();
+  render();
+}
+
 /** Rects of the article items, for the Library to animate back from. */
 export function articleRects() {
   const out = {};
@@ -152,9 +178,23 @@ function render() {
   visible.filter((i) => i.kind !== 'emoji' || !i.ref_id).forEach((i) => { w = Math.max(w, +i.x + 300); hgt = Math.max(hgt, +i.y + 320); });
   canvas.style.width = Math.max(w, window.innerWidth, 1080) + 'px';
   canvas.style.height = Math.max(hgt, window.innerHeight - 60, 860) + 'px';
+  // Unhide mode: a hidden item that would overlap a visible one is shown in
+  // the next free cell instead (display only), so it never covers anything.
+  const shown = new Map();
+  if (showHidden) {
+    const solid = visible.filter((i) => !i.hidden && !(i.kind === 'emoji' && i.ref_id));
+    const taken = solid.slice();
+    visible.filter((i) => i.hidden && !(i.kind === 'emoji' && i.ref_id)).forEach((i) => {
+      if (solid.some((v) => overlaps(i, v))) {
+        const p = place(taken, i.id);
+        shown.set(i.id, p);
+        taken.push(Object.assign({}, i, p));
+      } else taken.push(i);
+    });
+  }
   const byId = new Map();
   visible.filter((i) => !(i.kind === 'emoji' && i.ref_id)).forEach((i) => {
-    const el = itemEl(i);
+    const el = itemEl(shown.has(i.id) ? Object.assign({}, i, shown.get(i.id)) : i);
     if (!el) return;
     byId.set(i.id, el);
     canvas.appendChild(el);
@@ -171,6 +211,10 @@ function render() {
   $('[data-hub="hidden"]').setAttribute('aria-pressed', showHidden ? 'true' : 'false');
 }
 
+function overlaps(a, b) {
+  const [aw, ah] = SIZE[a.kind] || [200, 200], [bw, bh] = SIZE[b.kind] || [200, 200];
+  return +a.x < +b.x + bw && +b.x < +a.x + aw && +a.y < +b.y + bh && +b.y < +a.y + ah;
+}
 function itemEl(i) {
   const S = app.S;
   const el = h('div', 'hub-item kind-' + i.kind + (i.hidden ? ' is-hidden' : ''));
@@ -182,21 +226,20 @@ function itemEl(i) {
   // Hidden items (shown in unhide mode) always sit under visible ones.
   el.style.zIndex = String(i.kind === 'emoji' && i.ref_id ? 50 : i.hidden ? 1 : 10 + (i.z || 0));
 
-  if (i.kind === 'article') {
-    const a = S.articles.find((x) => x.id === i.ref_id);
-    if (!a) return null;
-    const ghost = a.status === 'approved_unwritten';
-    el.classList.add('mini-book', 'fmt-' + a.format);
-    if (ghost) el.classList.add('ghost');
+  if (i.kind === 'article' || i.kind === 'card') {
+    const e = hubEntry(i);
+    if (!e) return null;
+    const ghost = e.status !== 'delivered';
+    el.classList.add('mini-book', 'fmt-' + e.format);
+    if (ghost) el.classList.add('ghost', 'tappable');
     const head = h('div', 'mb-head');
-    head.appendChild(h('span', 'card-format gwm-center gwm-mono-tag fmt-' + a.format, app.FMT_LABEL[a.format] || a.format));
-    const card = S.cards.find((c) => c.id === a.card_id);
-    if (card && card.series) head.appendChild(h('span', 'gwm-series-label', card.series));
+    head.appendChild(h('span', 'card-format gwm-center gwm-mono-tag fmt-' + e.format, app.FMT_LABEL[e.format] || e.format));
+    if (e.card && e.card.series) head.appendChild(h('span', 'gwm-series-label', e.card.series));
     el.appendChild(head);
-    el.appendChild(h('span', 'mb-title', a.title));
-    el.appendChild(h('span', 'mb-state', a.status === 'live' ? 'Live' : ghost ? (app.writable(a) ? 'Ready to write' : 'Approved') : 'Delivered'));
-    el.setAttribute('aria-label', 'Article: ' + a.title);
-    if (ghost && app.writable(a)) el.classList.add('writable');
+    el.appendChild(h('span', 'mb-title', e.title));
+    const live = e.article && e.article.live_at;
+    el.appendChild(h('span', 'mb-state status-tag gwm-center gwm-mono-tag st-' + e.status, live ? 'Live' : app.STATUS_TAG[e.status]));
+    el.setAttribute('aria-label', app.STATUS_TAG[e.status] + ': ' + e.title);
   } else if (i.kind === 'note') {
     const n = S.notes.find((x) => x.id === i.ref_id);
     if (!n) return null;
@@ -244,14 +287,26 @@ function itemEl(i) {
   return el;
 }
 
+/** Library entry for an article or card item; null if it no longer is one
+ *  (a card nobody likes any more). */
+function hubEntry(i) {
+  const S = app.S;
+  if (i.kind === 'article') {
+    const a = S.articles.find((x) => x.id === i.ref_id);
+    return a ? app.entryOf(a) : null;
+  }
+  if (app.articleFor(i.ref_id)) return null;
+  const up = app.upNext().find((x) => x.card.id === i.ref_id);
+  return up ? app.upNextEntry(up.card) : null;
+}
 function openMenu(i, el) {
   $all('.hub-menu').forEach((m) => m.remove());
   const menu = h('div', 'hub-menu');
-  const a = i.kind === 'article' ? app.S.articles.find((x) => x.id === i.ref_id) : null;
-  if (a && app.writable(a)) {
-    const w = h('button', 'gwm-btn', 'Write this');
+  const e = (i.kind === 'article' || i.kind === 'card') ? hubEntry(i) : null;
+  if (e && e.status === 'up_next') {
+    const w = h('button', 'gwm-btn', 'Request this');
     w.type = 'button';
-    w.addEventListener('click', (e) => { e.stopPropagation(); menu.remove(); app.openWrite(a); });
+    w.addEventListener('click', (ev) => { ev.stopPropagation(); menu.remove(); app.openEntry(e); });
     menu.appendChild(w);
   }
   const b = h('button', 'gwm-btn', i.hidden ? 'Unhide' : 'Hide');
@@ -315,9 +370,9 @@ async function onItemUp(e) {
   el.classList.remove('dragging');
   el.style.translate = '';
   if (!moved || e.type === 'pointercancel') {
-    // A tap on an approved, unwritten card opens "Write this".
-    const a = !moved && e.type !== 'pointercancel' && i.kind === 'article' ? app.S.articles.find((x) => x.id === i.ref_id) : null;
-    if (a && app.writable(a)) { app.openWrite(a); return; }
+    // A tap on a card that isn't delivered opens its detail (Request this).
+    const en = !moved && e.type !== 'pointercancel' && (i.kind === 'article' || i.kind === 'card') ? hubEntry(i) : null;
+    if (en && en.status !== 'delivered') { app.openEntry(en); return; }
     render(); return;
   }
 

@@ -73,7 +73,7 @@ const grant = async (co, n, product, expires, source) => (await one(
   `insert into credit_ledger (company_id, delta, kind, product, expires_at, source_id) values ($1, $2, 'grant', $3, $4, $5) returning id`,
   [co, n, product, expires, source || null])).id;
 const article = async (cardId, format, title) => (await one(
-  `insert into articles (company_id, card_id, format, title, status) values ($1, $2, $3, $4, 'approved_unwritten') returning id`,
+  `insert into articles (company_id, card_id, format, title, status) values ($1, $2, $3, $4, 'requested') returning id`,
   [CO, cardId, format, title])).id;
 const balance = async (co) => (await one('select credit_balance($1) as b', [co || CO])).b;
 const reset = () => db.exec(`reset role; delete from credit_ledger; delete from pieces; delete from articles;`);
@@ -87,14 +87,14 @@ console.log('\n=== first_opened_at');
   check('backfill: companies.created_at otherwise', by.quiet === '2026-09-03T10:00:00.000Z', by);
   await db.exec(`update companies set first_opened_at = null where slug = 'quiet'`);
   await db.exec(`reset role; set role anon;`);
-  await q(`select get_feed('quiet')`);
+  await q(`select bump_first_opened_at('quiet')`);
   await asService();
   const t1 = (await one(`select first_opened_at from companies where slug = 'quiet'`)).first_opened_at;
   await db.exec(`set role anon;`);
-  await q(`select get_feed('quiet')`);
+  await q(`select bump_first_opened_at('quiet')`);
   await asService();
   const t2 = (await one(`select first_opened_at from companies where slug = 'quiet'`)).first_opened_at;
-  check('get_feed (sales page) stamps first_opened_at once, then leaves it', !!t1 && +t1 === +t2);
+  check('bump_first_opened_at (sales page) stamps first_opened_at once, then leaves it', !!t1 && +t1 === +t2);
   await asUser(U.a);
   await q(`select portal_account($1)`, [CO]);
   await asService();
@@ -192,7 +192,7 @@ console.log('\n=== pieces and queue');
   const bad = await fails(`update pieces set status = 'queued' where id = $1`, [p2.id]);
   check('status can only move forward', !!bad);
   await asUser(U.a);
-  const free = await (async () => { await asService(); const id = (await one(`insert into articles (company_id, card_id, format, title, status, requested_at, deliver_by) values ($1, $2, 'post', 'Free pick', 'approved_unwritten', now(), now() + interval '24 hours') returning id`, [CO, '30000000-0000-0000-0000-000000000005'])).id; await asUser(U.a); return id; })();
+  const free = await (async () => { await asService(); const id = (await one(`insert into articles (company_id, card_id, format, title, status, requested_at, deliver_by) values ($1, $2, 'post', 'Free pick', 'writing', now(), now() + interval '24 hours') returning id`, [CO, '30000000-0000-0000-0000-000000000005'])).id; await asUser(U.a); return id; })();
   const fr = await fails(`select spend_credits($1, 'post')`, [free]);
   check('the free article is not a credit spend', /not writable/.test(fr || ''), fr);
   await asUser(U.x);
@@ -266,17 +266,21 @@ console.log('\n=== Hub access and RLS');
   await reset();
   await db.exec(`update companies set hub_unlocked = false, is_internal = false, subscription_status = 'active' where id = '${CO}'`);
   const h = async () => (await one(`select hub_access($1) as h`, [CO])).h;
-  check('$19 only: Hub locked', (await h()) === false);
-  await grant(CO, 5, 'starter', null, 'cs_s');
-  check('first credit purchase + active $19: Hub open', (await h()) === true);
+  check('active portal, no credits: Hub locked', (await h()) === false);
+  await db.exec(`update companies set subscription_status = 'none', portal_access_until = now() + interval '30 days' where id = '${CO}'`);
+  check('30-day window alone: Hub locked', (await h()) === false);
+  await grant(CO, 2, 'manual', null, 'by_hand');
+  check('a credit grant (manual too): Hub open', (await h()) === true);
   await q(`select credits_expire_all($1, 'x')`, [CO]);
   check('stays open at 0 balance', (await h()) === true && (await balance()) === 0);
-  await db.exec(`update companies set subscription_status = 'canceled' where id = '${CO}'`);
-  check('$19 cancelled: Hub locked again', (await h()) === false);
+  await db.exec(`update companies set portal_access_until = now() - interval '1 day' where id = '${CO}'`);
+  check('window closed: Hub stays open once credits were added', (await h()) === true);
+  await reset();
   await db.exec(`update companies set hub_unlocked = true where id = '${CO}'`);
   check('hub_unlocked (open today) stays open', (await h()) === true);
   await db.exec(`update companies set hub_unlocked = false, is_internal = true where id = '${CO}'`);
   check('internal: always open', (await h()) === true);
+  await db.exec(`update companies set portal_access_until = null where id = '${CO}'`);
   await db.exec(`update companies set is_internal = false, subscription_status = 'active' where id = '${CO}'`);
 
   await db.exec(`update companies set subscription_status = 'none' where id = '${CO3}'`);
@@ -290,15 +294,56 @@ console.log('\n=== Hub access and RLS');
   // A locked company: notes still reach the Hub, canvas edits do not.
   await asService();
   await db.exec(`update companies set subscription_status = 'active', hub_unlocked = false where id = '${CO2}'`);
+  await db.exec(`delete from credit_ledger where company_id = '${CO2}'`);
   await asUser(U.x);
   const note = await fails(`insert into hub_items (company_id, kind, ref_id) values ($1, 'note', gen_random_uuid())`, [CO2]);
   const text = await fails(`insert into hub_items (company_id, kind, body) values ($1, 'text', 'hi')`, [CO2]);
   check('locked Hub: a note still gets its hub_items row', note === null, note);
   check('locked Hub: text, pins and moves are refused', !!text);
+  await asService();
+  await grant(CO, 5, 'starter', null, 'cs_s2');
   await asUser(U.a);
   const acc = (await one(`select portal_account($1) as a`, [CO])).a;
-  check('portal_account: balance, costs, access for the caller', acc.costs.post === 1 && acc.costs.insight === 3 && acc.costs.pillar === 8 && acc.costs.call === null && acc.hub_access === true && acc.ever_bought === true && acc.starter_bought === true, acc);
+  check('portal_account: balance, costs, access for the caller', acc.costs.post === 1 && acc.costs.insight === 3 && acc.costs.pillar === 8 && acc.costs.call === null && acc.hub_access === true && acc.ever_bought === true && acc.starter_bought === true && acc.portal_active === true && acc.unlock_mode === 'call', acc);
   await asService();
+}
+
+console.log('\n=== call mode: window, swipes, requests, clock');
+{
+  await reset();
+  await db.exec(`update companies set is_internal = false, subscription_status = 'none', portal_access_until = now() + interval '30 days' where id = '${CO}'`);
+  const act = async () => (await one(`select portal_active($1) as a`, [CO])).a;
+  check('portal_access_until in the future: active', (await act()) === true);
+  await asUser(U.a);
+  const r1 = (await one(`select request_card($1, 'insight') as r`, ['30000000-0000-0000-0000-000000000003'])).r;
+  check('request_card: requested, format, requester', r1.status === 'requested' && r1.format === 'insight' && r1.requested_by === MA && !!r1.requested_at, r1);
+  await asUser(U.b);
+  const r2 = (await one(`select request_card($1) as r`, ['30000000-0000-0000-0000-000000000003'])).r;
+  check('request_card twice: same row, first requester kept', r2.id === r1.id && r2.requested_by === MA, r2);
+  await asService();
+  await db.exec(`update articles set status = 'writing' where id = '${r1.id}'`);
+  const w = await one(`select deliver_by, requested_at from articles where id = $1`, [r1.id]);
+  check('moving to writing by hand starts the 24h clock', Math.round((new Date(w.deliver_by) - Date.now()) / 36e5) === 24, w);
+  await db.exec(`update articles set status = 'delivered' where id = '${r1.id}'`);
+  check('moving to delivered stamps delivered_at', !!(await one(`select delivered_at from articles where id = $1`, [r1.id])).delivered_at);
+  await asUser(U.a);
+  const again = await fails(`select request_card($1)`, ['30000000-0000-0000-0000-000000000003']);
+  check('a delivered card cannot be requested again', /already delivered/.test(again || ''), again);
+  await asService();
+  await db.exec(`update companies set portal_access_until = now() - interval '1 minute' where id = '${CO}'`);
+  check('window passed: not active', (await act()) === false);
+  await asUser(U.a);
+  const closed = await fails(`select request_card($1)`, ['30000000-0000-0000-0000-000000000004']);
+  const swipe = await fails(`select portal_decide($1, 'like')`, ['30000000-0000-0000-0000-000000000004']);
+  const note = await fails(`insert into notes (company_id, card_id, member_id, body) values ($1, $2, $3, 'still here')`, [CO, '30000000-0000-0000-0000-000000000004', MA]);
+  check('expired: request_card refused', /portal closed/.test(closed || ''), closed);
+  check('expired: swiping still works', swipe === null, swipe);
+  check('expired: notes still work', note === null, note);
+  await asUser(U.x);
+  const outsider = await fails(`select request_card($1)`, ['30000000-0000-0000-0000-000000000004']);
+  check('another company cannot request your card', /not a member/.test(outsider || ''), outsider);
+  await asService();
+  await db.exec(`update companies set subscription_status = 'active', portal_access_until = null where id = '${CO}'`);
 }
 
 const failed = results.filter((r) => !r).length;

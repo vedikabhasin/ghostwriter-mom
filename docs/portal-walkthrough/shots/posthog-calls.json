@@ -28,7 +28,7 @@
   {
    "surface": "portal",
    "via": "link",
-   "read_only": false
+   "expired": false
   }
  ],
  [
@@ -45,7 +45,25 @@
   "dot_jump",
   {
    "surface": "portal",
-   "to_index": 3,
+   "to_index": 9,
+   "via": "tap"
+  }
+ ],
+ [
+  "capture",
+  "dot_jump",
+  {
+   "surface": "portal",
+   "to_index": 10,
+   "via": "tap"
+  }
+ ],
+ [
+  "capture",
+  "dot_jump",
+  {
+   "surface": "portal",
+   "to_index": 16,
    "via": "tap"
   }
  ],
@@ -127,7 +145,7 @@
   {
    "surface": "portal",
    "card_id": "c1b7cb8e-d1c0-45f8-9517-b338338282e6",
-   "length": 82
+   "length": 56
   }
  ],
  [
@@ -155,10 +173,53 @@
  ],
  [
   "capture",
-  "reveal_dismissed",
+  "note_added",
   {
    "surface": "portal",
-   "state": "timing"
+   "card_id": "c2975be9-dfa9-4215-a215-9fa21087b1ea",
+   "length": 40
+  }
+ ],
+ [
+  "capture",
+  "dot_jump",
+  {
+   "surface": "portal",
+   "to_index": 8,
+   "via": "tap"
+  }
+ ],
+ [
+  "capture",
+  "feed_swipe",
+  {
+   "surface": "portal",
+   "action": "fasttrack",
+   "via": "button",
+   "card_id": "838e0b01-8a12-4284-881e-914cb9b84110",
+   "format": "post",
+   "series": "VB",
+   "changed": false
+  }
+ ],
+ [
+  "capture",
+  "overlap_seen",
+  {
+   "surface": "portal",
+   "state": "now",
+   "card_id": "838e0b01-8a12-4284-881e-914cb9b84110",
+   "reveal": true
+  }
+ ],
+ [
+  "capture",
+  "card_requested",
+  {
+   "surface": "portal",
+   "card_id": "838e0b01-8a12-4284-881e-914cb9b84110",
+   "format": "post",
+   "via": "reveal"
   }
  ],
  [
@@ -172,21 +233,30 @@
  ],
  [
   "capture",
-  "ghost_tapped",
+  "card_detail_opened",
   {
    "surface": "portal",
-   "article_id": "8add2b56-951c-460c-a674-27bee47f4954",
+   "status": "requested",
    "format": "post"
   }
  ],
  [
   "capture",
-  "credits_opened",
+  "card_detail_opened",
   {
    "surface": "portal",
-   "need": 1,
-   "active": true,
-   "ever_bought": false
+   "status": "up_next",
+   "format": "post"
+  }
+ ],
+ [
+  "capture",
+  "card_requested",
+  {
+   "surface": "portal",
+   "card_id": "3d3b288d-6792-4168-ae25-ccc5e66760ce",
+   "format": "post",
+   "via": "library"
   }
  ],
  [
@@ -222,7 +292,8 @@
   "invite_opened",
   {
    "surface": "portal",
-   "seats_left": 1
+   "seats_left": 1,
+   "from": "library"
   }
  ],
  [
@@ -230,7 +301,26 @@
   "hub_opened",
   {
    "surface": "portal",
-   "items": 6
+   "items": 11
+  }
+ ],
+ [
+  "capture",
+  "card_detail_opened",
+  {
+   "surface": "portal",
+   "status": "up_next",
+   "format": "post"
+  }
+ ],
+ [
+  "capture",
+  "card_requested",
+  {
+   "surface": "portal",
+   "card_id": "c2975be9-dfa9-4215-a215-9fa21087b1ea",
+   "format": "post",
+   "via": "hub"
   }
  ],
  [
@@ -252,14 +342,6 @@
  ],
  [
   "capture",
-  "hub_item_moved",
-  {
-   "surface": "portal",
-   "kind": "article"
-  }
- ],
- [
-  "capture",
   "hub_item_hidden",
   {
    "surface": "portal",
@@ -276,14 +358,6 @@
  ],
  [
   "capture",
-  "hub_text_added",
-  {
-   "surface": "portal",
-   "length": 37
-  }
- ],
- [
-  "capture",
   "hub_tapped",
   {
    "surface": "portal",
@@ -296,7 +370,7 @@
   "hub_opened",
   {
    "surface": "portal",
-   "items": 8
+   "items": 12
   }
  ]
 ]

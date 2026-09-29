@@ -1,22 +1,22 @@
 [
  {
-  "name": "login: eyebrow YOUR PORTAL, headline \"Welcome back.\"",
+  "name": "login: waitlist identity, \"Welcome back.\", button \"Send me a link\"",
   "ok": true,
-  "detail": "{\"overlaps\":false,\"eyebrow\":\"Your portal\",\"headline\":\"Welcome back.\"}"
+  "detail": "{\"overlaps\":false,\"eyebrow\":\"Your portal\",\"headline\":\"Welcome back.\",\"btn\":\"Send me a link →\"}"
  },
  {
   "name": "login: desk objects never behind the form, headline, wordmark or footer",
   "ok": true
  },
  {
-  "name": "login: \"Check your inbox.\" + same answer for any email",
+  "name": "login: same card now reads \"Check your inbox. The link and the code work for 24 hours.\"",
   "ok": true,
-  "detail": "\n        ✉️\n        Check your inbox.\n        If vedikabhasin@gmail.com has a portal, a sign-in link and code are on their way.\n        \n          \n            \n            \n              \n              \n                Sign in →\n              \n            \n          \n           \n        \n        Use a different email\n      "
+  "detail": "{\"head\":\"Check your inbox. The link and the code work for 24 hours.\",\"label\":\"Or enter the code from your email\",\"btn\":\"Sign in →\",\"focused\":true,\"pattern\":null,\"max\":-1,\"formHidden\":true}"
  },
  {
-  "name": "login: code input present, focused after send, numeric one-time-code (6 to 8 digits) + Sign in",
+  "name": "login: code field \"Or enter the code from your email\" + \"Sign in\", focused, any length",
   "ok": true,
-  "detail": "{\"focused\":true,\"inputmode\":\"numeric\",\"ac\":\"one-time-code\",\"pattern\":\"[0-9]*\",\"min\":6,\"max\":8,\"btn\":\"Sign in →\"}"
+  "detail": "{\"head\":\"Check your inbox. The link and the code work for 24 hours.\",\"label\":\"Or enter the code from your email\",\"btn\":\"Sign in →\",\"focused\":true,\"pattern\":null,\"max\":-1,\"formHidden\":true}"
  },
  {
   "name": "login: signInWithOtp, shouldCreateUser false",
@@ -32,9 +32,13 @@
   "detail": "17 cards · 17 unread"
  },
  {
+  "name": "internal portal: no closed-window banner",
+  "ok": true
+ },
+ {
   "name": "375px signal: peek cards share width, center, height, origin; offset 6/12px; no content",
   "ok": true,
-  "detail": "{\"peekOk\":true,\"gap1\":16,\"gap2\":16,\"gap3\":59.765625,\"dotOnTop\":true,\"depths\":3}"
+  "detail": "{\"peekOk\":true,\"gap1\":16,\"gap2\":16,\"gap3\":18,\"dotOnTop\":true,\"depths\":3}"
  },
  {
   "name": "375px signal: card -> dots >= 16px",
@@ -49,11 +53,16 @@
  {
   "name": "375px signal: actions -> switch >= 16px (switch never covers content)",
   "ok": true,
-  "detail": "59.8"
+  "detail": "18.0"
  },
  {
   "name": "375px signal: card glow does not cover the dot slider",
   "ok": true
+ },
+ {
+  "name": "375px: feed tooltip never covers the card footer",
+  "ok": true,
+  "detail": "{\"bubbleTop\":656.1097412109375,\"cardBottom\":582,\"over\":false}"
  },
  {
   "name": "onboarding: glow on Library after Feed",
@@ -61,13 +70,12 @@
  },
  {
   "name": "feed: series label next to the format pill (VB)",
-  "ok": true,
-  "detail": "PostVBNew this week"
+  "ok": true
  },
  {
   "name": "375px card: peek cards share width, center, height, origin; offset 6/12px; no content",
   "ok": true,
-  "detail": "{\"peekOk\":true,\"gap1\":16,\"gap2\":16,\"gap3\":39.75,\"dotOnTop\":true,\"depths\":3}"
+  "detail": "{\"peekOk\":true,\"gap1\":16,\"gap2\":16,\"gap3\":18,\"dotOnTop\":true,\"depths\":3}"
  },
  {
   "name": "375px card: card -> dots >= 16px",
@@ -82,7 +90,7 @@
  {
   "name": "375px card: actions -> switch >= 16px (switch never covers content)",
   "ok": true,
-  "detail": "39.8"
+  "detail": "18.0"
  },
  {
   "name": "375px card: card glow does not cover the dot slider",
@@ -93,7 +101,21 @@
   "ok": true
  },
  {
-  "name": "feed: BlendXR series label",
+  "name": "feed: every card the same fixed height (sales-page size, fitted above the switch)",
+  "ok": true,
+  "detail": "472,472,472,472 want 472"
+ },
+ {
+  "name": "feed: one \"Sources · N\" button, no chips; proof scrolls inside a 132px frame",
+  "ok": true,
+  "detail": "{\"btn\":\"SOURCES\\n1\",\"chips\":0,\"proof\":\"auto\",\"max\":\"132px\"}"
+ },
+ {
+  "name": "feed: dragging on the proof never swipes",
+  "ok": true
+ },
+ {
+  "name": "feed: Sources button opens the sheet with every source",
   "ok": true
  },
  {
@@ -102,36 +124,34 @@
   "detail": "{\"end\":1140,\"props\":[\"offset\",\"easing\",\"composite\",\"opacity\",\"computedOffset\",\"transform\"]}"
  },
  {
-  "name": "reveal agree: card shows subtitle and sources, sized to content",
+  "name": "reveal agree: card shows format, title, subtitle and \"{n} sources\", sized to content",
   "ok": true,
-  "detail": "{\"sub\":true,\"src\":\"1 source\",\"slack\":12,\"glow\":0,\"flat\":true,\"bg\":\"radial-gradient(60% 50% at 50% 42%, rgb(184, 255, 113), color(srgb 0.855686 0.964706 0.732549) 58%, rgb(241, 240, 236) 100%), none\"}"
+  "detail": "{\"fmt\":true,\"title\":true,\"sub\":true,\"src\":\"1 source\",\"slack\":12,\"glow\":0,\"flat\":true,\"faces\":2,\"bg\":\"radial-gradient(60% 50% at 50% 42%, rgb(184, 255, 113), color(srgb 0.855686 0.964706 0.732549) 58%, rgb(241, 240, 236) 100%), none\",\"buttons\":[\"Move it up\",\"Keep swiping\"]}"
  },
  {
-  "name": "reveal agree: flat buttons, no rainbow glow",
+  "name": "reveal agree: flat buttons, no glow; both avatars keep their faces",
   "ok": true,
-  "detail": "{\"sub\":true,\"src\":\"1 source\",\"slack\":12,\"glow\":0,\"flat\":true,\"bg\":\"radial-gradient(60% 50% at 50% 42%, rgb(184, 255, 113), color(srgb 0.855686 0.964706 0.732549) 58%, rgb(241, 240, 236) 100%), none\"}"
+  "detail": "{\"fmt\":true,\"title\":true,\"sub\":true,\"src\":\"1 source\",\"slack\":12,\"glow\":0,\"flat\":true,\"faces\":2,\"bg\":\"radial-gradient(60% 50% at 50% 42%, rgb(184, 255, 113), color(srgb 0.855686 0.964706 0.732549) 58%, rgb(241, 240, 236) 100%), none\",\"buttons\":[\"Move it up\",\"Keep swiping\"]}"
  },
  {
-  "name": "reveal agree: hearts in the like token at full opacity",
+  "name": "reveal agree: secondary is \"Keep swiping\"",
   "ok": true,
-  "detail": "{\"color\":\"rgb(184, 255, 113)\",\"opacity\":\"1\",\"like\":\"#B8FF71\"}"
+  "detail": "[\"Move it up\",\"Keep swiping\"]"
  },
  {
-  "name": "reveal agree: copy + buttons",
+  "name": "reveal both liked: \"Two yeses. Next in line.\" / Move it up",
   "ok": true,
-  "detail": "LikedYouPostVBThe Parts Other Creators Build WithMaking an effect is different from making the pieces effects are made from. The quietest work outlives the campaign.1 sourceLikedblendbasesYou both want this one.Move it upKeep swiping"
+  "detail": "LikedYouPostVBThe Parts Other Creators Build WithMaking an effect is different from making the pieces effects are made from. The quietest work outlives the campaign.1 sourceLikedblendbasesTwo yeses. Next in line.Move it upKeep swiping"
  },
  {
-  "name": "reveal agree: floating hearts on screen",
-  "ok": true
+  "name": "reveal both liked: particles in the like token, full opacity",
+  "ok": true,
+  "detail": "{\"color\":\"rgb(184, 255, 113)\",\"opacity\":\"1\",\"token\":\"#B8FF71\",\"n\":12}"
  },
  {
-  "name": "reveal agree: both stamps",
-  "ok": true
- },
- {
-  "name": "move it up: pinned for the team",
-  "ok": true
+  "name": "Move it up: pinned first for the team",
+  "ok": true,
+  "detail": "[\"3d3b288d-6792-4168-ae25-ccc5e66760ce\"]"
  },
  {
   "name": "reveal split: entrance <= 1.2s, transform + opacity only",
@@ -139,37 +159,39 @@
   "detail": "{\"end\":1140,\"props\":[\"offset\",\"easing\",\"composite\",\"opacity\",\"computedOffset\",\"transform\"]}"
  },
  {
-  "name": "reveal split: card shows subtitle and sources, sized to content",
+  "name": "reveal split: card shows format, title, subtitle and \"{n} sources\", sized to content",
   "ok": true,
-  "detail": "{\"sub\":true,\"src\":\"2 sources\",\"slack\":12,\"glow\":0,\"flat\":true,\"bg\":\"linear-gradient(90deg, rgb(184, 255, 113) 0px, rgb(184, 255, 113) 50%, rgb(255, 107, 92) 50%, rgb(255, 107, 92) 100%)\"}"
+  "detail": "{\"fmt\":true,\"title\":true,\"sub\":true,\"src\":\"2 sources\",\"slack\":12,\"glow\":0,\"flat\":true,\"faces\":2,\"bg\":\"linear-gradient(90deg, rgb(184, 255, 113) 0px, rgb(184, 255, 113) 50%, rgb(255, 107, 92) 50%, rgb(255, 107, 92) 100%)\",\"buttons\":[\"Make your case\",\"Keep swiping\"]}"
  },
  {
-  "name": "reveal split: flat buttons, no rainbow glow",
+  "name": "reveal split: flat buttons, no glow; both avatars keep their faces",
   "ok": true,
-  "detail": "{\"sub\":true,\"src\":\"2 sources\",\"slack\":12,\"glow\":0,\"flat\":true,\"bg\":\"linear-gradient(90deg, rgb(184, 255, 113) 0px, rgb(184, 255, 113) 50%, rgb(255, 107, 92) 50%, rgb(255, 107, 92) 100%)\"}"
+  "detail": "{\"fmt\":true,\"title\":true,\"sub\":true,\"src\":\"2 sources\",\"slack\":12,\"glow\":0,\"flat\":true,\"faces\":2,\"bg\":\"linear-gradient(90deg, rgb(184, 255, 113) 0px, rgb(184, 255, 113) 50%, rgb(255, 107, 92) 50%, rgb(255, 107, 92) 100%)\",\"buttons\":[\"Make your case\",\"Keep swiping\"]}"
  },
  {
-  "name": "reveal split: copy + buttons",
+  "name": "reveal split: secondary is \"Keep swiping\"",
   "ok": true,
-  "detail": "LikedYouPostVBDesigning Overwhelm Without HarmMaking people feel focus fatigue without making them sick. Empathy needs a way out.2 sourcesPassedblendbasesYou two see this differently.Leave a noteKeep swiping"
+  "detail": "[\"Make your case\",\"Keep swiping\"]"
  },
  {
-  "name": "reveal split: stamps Liked + Passed",
-  "ok": true
- },
- {
-  "name": "note: saved to notes with card_id",
-  "ok": true
- },
- {
-  "name": "note: hub_items row kind note, created_by me",
+  "name": "reveal split: \"Split decision. Best note wins.\" / Make your case, stamps Liked + Passed",
   "ok": true,
-  "detail": "{\"id\":\"hdfkf1vj4xa6\",\"ref_id\":\"n0f46vwa94ye7\",\"body\":null,\"emoji\":null,\"x\":538,\"y\":26,\"rotation\":-3,\"z\":3,\"hidden\":false,\"updated_at\":\"2026-09-27T23:29:53.378Z\",\"company_id\":\"b22beda7-45cf-486a-931e-d3b429619788\",\"kind\":\"note\",\"created_by\":\"9afe9458-e205-4209-96ec-9c8f6fab77c5\"}"
+  "detail": "LikedYouPostVBDesigning Overwhelm Without HarmMaking people feel focus fatigue without making them sick. Empathy needs a way out.2 sourcesPassedblendbasesSplit decision. Best note wins.Make your caseKeep swiping"
  },
  {
-  "name": "note: placed next to the seeded rules notes",
+  "name": "Make your case: note prefilled \"Liked because \" (my swipe), cursor at the end, nothing to save yet",
   "ok": true,
-  "detail": "538,26"
+  "detail": "{\"v\":\"Liked because \",\"s\":14,\"focused\":true,\"save\":true}"
+ },
+ {
+  "name": "split note: saved to notes with the card",
+  "ok": true,
+  "detail": "Liked because Grok is my best proof of the way-out idea."
+ },
+ {
+  "name": "split note: hub_items row kind note, created_by me",
+  "ok": true,
+  "detail": "{\"id\":\"hebn9lru6cpa\",\"ref_id\":\"n9tbywudeyc\",\"body\":null,\"emoji\":null,\"x\":552,\"y\":21,\"rotation\":-3.3,\"z\":3,\"hidden\":false,\"updated_at\":\"2026-09-29T01:42:55.716Z\",\"company_id\":\"b22beda7-45cf-486a-931e-d3b429619788\",\"kind\":\"note\",\"created_by\":\"9afe9458-e205-4209-96ec-9c8f6fab77c5\"}"
  },
  {
   "name": "reveal timing: entrance <= 1.2s, transform + opacity only",
@@ -177,35 +199,84 @@
   "detail": "{\"end\":1140,\"props\":[\"offset\",\"easing\",\"composite\",\"opacity\",\"computedOffset\",\"transform\"]}"
  },
  {
-  "name": "reveal timing: card shows subtitle and sources, sized to content",
+  "name": "reveal timing: card shows format, title, subtitle and \"{n} sources\", sized to content",
   "ok": true,
-  "detail": "{\"sub\":true,\"src\":\"1 source\",\"slack\":12,\"glow\":0,\"flat\":true,\"bg\":\"linear-gradient(rgb(184, 255, 113) 0%, color(srgb 0.853137 0.950392 0.35902) 38%, rgb(245, 232, 74) 72%)\"}"
+  "detail": "{\"fmt\":true,\"title\":true,\"sub\":true,\"src\":\"1 source\",\"slack\":12,\"glow\":0,\"flat\":true,\"faces\":2,\"bg\":\"linear-gradient(rgb(184, 255, 113) 0%, color(srgb 0.853137 0.950392 0.35902) 38%, rgb(245, 232, 74) 72%)\",\"buttons\":[\"Say when\",\"Keep swiping\"]}"
  },
  {
-  "name": "reveal timing: flat buttons, no rainbow glow",
+  "name": "reveal timing: flat buttons, no glow; both avatars keep their faces",
   "ok": true,
-  "detail": "{\"sub\":true,\"src\":\"1 source\",\"slack\":12,\"glow\":0,\"flat\":true,\"bg\":\"linear-gradient(rgb(184, 255, 113) 0%, color(srgb 0.853137 0.950392 0.35902) 38%, rgb(245, 232, 74) 72%)\"}"
+  "detail": "{\"fmt\":true,\"title\":true,\"sub\":true,\"src\":\"1 source\",\"slack\":12,\"glow\":0,\"flat\":true,\"faces\":2,\"bg\":\"linear-gradient(rgb(184, 255, 113) 0%, color(srgb 0.853137 0.950392 0.35902) 38%, rgb(245, 232, 74) 72%)\",\"buttons\":[\"Say when\",\"Keep swiping\"]}"
  },
  {
-  "name": "reveal timing: copy",
+  "name": "reveal timing: secondary is \"Keep swiping\"",
   "ok": true,
-  "detail": "SavedYouPostVBExistential Until I Met YouTechnology doesn't exist without humans, and feels existential without them too. The machine finds joy in being seen.1 sourceLikedblendbasesOne of you wants it now. One wants it later.Leave a noteKeep swiping"
+  "detail": "[\"Say when\",\"Keep swiping\"]"
  },
  {
-  "name": "reveal timing: clock hand",
+  "name": "reveal save vs like: \"Same yes, different week.\" / Say when",
+  "ok": true,
+  "detail": "SavedYouPostVBExistential Until I Met YouTechnology doesn't exist without humans, and feels existential without them too. The machine finds joy in being seen.1 sourceLikedblendbasesSame yes, different week.Say whenKeep swiping"
+ },
+ {
+  "name": "Say when: note prefilled \"Hold this for \"",
   "ok": true
  },
  {
-  "name": "reveals: Agree, Split and Timing each have their own background",
-  "ok": true,
-  "detail": "{\"agree\":\"radial-gradient(60% 50% at 50% 42%, rgb(184, 255, 113), color(srgb 0.855686 0.964706 0.732549) 58%, rgb(241, 240, 236) 100%), none\",\"split\":\"linear-gradient(90deg, rgb(184, 255, 113) 0px, rgb(184, 255, 113) 50%, rgb(255, 107, 92) 50%, rgb(255, 107, 92) 100%)\",\"timing\":\"linear-gradient(rgb(184, 255, 113) 0%, color(srgb 0.853137 0.950392 0.35902) 38%, rgb(245, 232, 74) 72%)\"}"
- },
- {
-  "name": "later view: split label + edge glow, no reveal",
+  "name": "timing note saved with a hub_items row",
   "ok": true
  },
  {
-  "name": "later view: color-coded dot",
+  "name": "reveal now: entrance <= 1.2s, transform + opacity only",
+  "ok": true,
+  "detail": "{\"end\":1140,\"props\":[\"offset\",\"easing\",\"composite\",\"opacity\",\"computedOffset\",\"transform\"]}"
+ },
+ {
+  "name": "reveal now: card shows format, title, subtitle and \"{n} sources\", sized to content",
+  "ok": true,
+  "detail": "{\"fmt\":true,\"title\":true,\"sub\":true,\"src\":\"1 source\",\"slack\":12,\"glow\":0,\"flat\":true,\"faces\":2,\"bg\":\"radial-gradient(60% 50% at 50% 42%, rgb(255, 180, 90), color(srgb 0.967059 0.847059 0.696471) 58%, rgb(241, 240, 236) 100%), none\",\"buttons\":[\"Request it\",\"Keep swiping\"]}"
+ },
+ {
+  "name": "reveal now: flat buttons, no glow; both avatars keep their faces",
+  "ok": true,
+  "detail": "{\"fmt\":true,\"title\":true,\"sub\":true,\"src\":\"1 source\",\"slack\":12,\"glow\":0,\"flat\":true,\"faces\":2,\"bg\":\"radial-gradient(60% 50% at 50% 42%, rgb(255, 180, 90), color(srgb 0.967059 0.847059 0.696471) 58%, rgb(241, 240, 236) 100%), none\",\"buttons\":[\"Request it\",\"Keep swiping\"]}"
+ },
+ {
+  "name": "reveal now: secondary is \"Keep swiping\"",
+  "ok": true,
+  "detail": "[\"Request it\",\"Keep swiping\"]"
+ },
+ {
+  "name": "reveal both fast-tracked: \"You both want it now. Lock it in.\" / Request it",
+  "ok": true,
+  "detail": "Fast-trackYouPostVBThree Questions, Eight Answers, 54.8M ViewsThe smallest logic can feel personal. Depth doesn't need complexity.1 sourceFast-trackblendbasesYou both want it now. Lock it in.Request itKeep swiping"
+ },
+ {
+  "name": "reveal both fast-tracked: particles in the fasttrack token, full opacity",
+  "ok": true,
+  "detail": "{\"color\":\"rgb(255, 180, 90)\",\"opacity\":\"1\",\"token\":\"#FFB45A\",\"n\":12}"
+ },
+ {
+  "name": "reveals: four different backgrounds (like sunburst, fasttrack sunburst, halves, fade)",
+  "ok": true,
+  "detail": "{\"agree\":\"radial-gradient(60% 50% at 50% 42%, rgb(184, 255, 113), color(srgb 0.855686 0.964706 0.732549) 58%, rgb(241, 240, 236) 100%), none\",\"split\":\"linear-gradient(90deg, rgb(184, 255, 113) 0px, rgb(184, 255, 113) 50%, rgb(255, 107, 92) 50%, rgb(255, 107, 92) 100%)\",\"timing\":\"linear-gradient(rgb(184, 255, 113) 0%, color(srgb 0.853137 0.950392 0.35902) 38%, rgb(245, 232, 74) 72%)\",\"now\":\"radial-gradient(60% 50% at 50% 42%, rgb(255, 180, 90), color(srgb 0.967059 0.847059 0.696471) 58%, rgb(241, 240, 236) 100%), none\"}"
+ },
+ {
+  "name": "Request it: request_card with the card's format, REQUESTED by me",
+  "ok": true,
+  "detail": "{\"id\":\"art-3\",\"company_id\":\"b22beda7-45cf-486a-931e-d3b429619788\",\"card_id\":\"838e0b01-8a12-4284-881e-914cb9b84110\",\"format\":\"post\",\"title\":\"Three Questions, Eight Answers, 54.8M Views\",\"status\":\"requested\",\"body_html\":null,\"google_doc_url\":null,\"requested_at\":\"2026-09-29T01:43:11.228Z\",\"requested_by\":\"9afe9458-e205-4209-96ec-9c8f6fab77c5\",\"deliver_by\":null,\"delivered_at\":null,\"live_at\":null,\"created_at\":\"2026-09-29T01:43:11.228Z\"}"
+ },
+ {
+  "name": "Request it: portal-request form posted (company, slug, card_title, format, requester)",
+  "ok": true,
+  "detail": "{\"form-name\":\"portal-request\",\"company\":\"Vedika Bhasin\",\"slug\":\"vedika-bhasin-ycfogw\",\"card_title\":\"Three Questions, Eight Answers, 54.8M Views\",\"format\":\"post\",\"requester_name\":\"vedikabhasin\",\"requester_email\":\"vedikabhasin@gmail.com\"}"
+ },
+ {
+  "name": "later view: split label, no reveal",
+  "ok": true
+ },
+ {
+  "name": "later view: color-coded dots for all four",
   "ok": true
  },
  {
@@ -217,39 +288,39 @@
   "ok": true
  },
  {
-  "name": "notes readable in Feed history on the card",
+  "name": "notes readable on card detail in Feed history",
   "ok": true,
-  "detail": "VBDesigning Overwhelm Without Harm\n\nYouLIKED\nSep 27, 11:29 PM\nblendbasesPASSED\nSep 27, 9:30 PM\n\n1 NOTE\n\nYOU · SEP 27\nGrok is my best proof of the way-out idea. "
+  "detail": "VBDesigning Overwhelm Without Harm\n\nYouLIKED\nSep 29, 1:42 AM\nblendbasesPASSED\nSep 28, 11:43 PM\n\n1 NOTE\n\nYOU · SEP 29\nLiked because Grok is my best proof of the "
  },
  {
-  "name": "up next: vb-02 moved to the top",
+  "name": "Up next: vb-02 moved to the top",
   "ok": true,
   "detail": "1The Parts Other Creators Build WithMoved upAgree2Existential Until I Met You3Designing Overwhelm Without Harm"
  },
  {
+  "name": "Library header \"1 DELIVERED · 3 UP NEXT · 2 REQUESTED\"",
+  "ok": true,
+  "detail": "{\"t\":\"1 delivered · 3 up next · 2 requested\",\"tt\":\"uppercase\"}"
+ },
+ {
   "name": "library: top card flat, centered, fully opaque",
   "ok": true,
-  "detail": "{\"count\":3,\"topText\":\"POST\\nVB\\nI Design for the Moment AI Is Wrong\\nDELIVERED IN 19H · SEP 26, 11:29 PM\",\"topOpaque\":true,\"topFlat\":true,\"backsHidden\":true,\"backRot\":[-5,5],\"topZ\":20,\"backZ\":[16,18]}"
+  "detail": "{\"topText\":\"POST\\nVB\\nDELIVERED\\nI Design for the Moment AI Is Wrong\\nDELIVERED IN 19H · SEP 28, 1:42 AM\",\"topOpaque\":true,\"topFlat\":true,\"backsHidden\":true,\"backRot\":[-8,8,-5,5],\"topZ\":20,\"backZ\":[12,14,16,18],\"tag\":\"Delivered\",\"tagCenter\":true}"
  },
  {
   "name": "library: back cards rotated 5-8 deg, content hidden, below the top",
   "ok": true,
-  "detail": "[-5,5]"
+  "detail": "[-8,8,-5,5]"
  },
  {
-  "name": "library: vb-01 \"Delivered in 19h · <date>\"",
+  "name": "DELIVERED tag (mono, centered) + \"DELIVERED IN 19H · {Mon D, h:mm AM}\"",
   "ok": true,
-  "detail": "POST\nVB\nI Design for the Moment AI Is Wrong\nDELIVERED IN 19H · SEP 26, 11:29 PM"
+  "detail": "POST\nVB\nDELIVERED\nI Design for the Moment AI Is Wrong\nDELIVERED IN 19H · SEP 28, 1:42 AM"
  },
  {
-  "name": "375px vb-01: status stamp on one line, inside the card",
+  "name": "375px DELIVERED: status stamp on one line, inside the card",
   "ok": true,
-  "detail": "[{\"text\":\"Delivered in 19h · Sep 26, 11:29 PM\",\"oneLine\":true,\"inside\":true,\"size\":\"8.25px\"}]"
- },
- {
-  "name": "library header: no credits line at 0 balance",
-  "ok": true,
-  "detail": "1 written · 2 approved"
+  "detail": "[{\"text\":\"Delivered in 19h · Sep 28, 1:42 AM\",\"oneLine\":true,\"inside\":true,\"size\":\"8.75px\"}]"
  },
  {
   "name": "library vb-01: title contrast AA (>= 4.5)",
@@ -261,58 +332,70 @@
   "ok": true
  },
  {
-  "name": "library: bx-01 ghost, \"Approved\" stamp + chip \"Ready to write · 1 credit\"",
+  "name": "WRITING tag + live countdown \"ARRIVING IN 14H {m}M\"",
   "ok": true,
-  "detail": "POST\nBLENDXR\nThe Experienced Eyes Are Retiring\nAPPROVED\nREADY TO WRITE · 1 CREDIT"
+  "detail": "POST\nVB\nWRITING\nThe Most Useful Page Says What Not to Do\nARRIVING IN 14H 18M"
  },
  {
-  "name": "375px bx-01: status stamp on one line, inside the card",
+  "name": "375px WRITING: status stamp on one line, inside the card",
   "ok": true,
-  "detail": "[{\"text\":\"Ready to write · 1 credit\",\"oneLine\":true,\"inside\":true,\"size\":\"10.5px\"}]"
+  "detail": "[{\"text\":\"Arriving in 14h 18m\",\"oneLine\":true,\"inside\":true,\"size\":\"10.5px\"}]"
  },
  {
-  "name": "ghost: opaque paper body, dashed border, two trails at 25%/12%",
+  "name": "REQUESTED tag + \"Requested by vedikabhasin · {Mon D}\"",
   "ok": true,
-  "detail": "{\"dashed\":true,\"bg\":\"253,252,248,1\",\"trails\":[0.12,0.12,0.25,0.25]}"
+  "detail": "POST\nVB\nREQUESTED\nThree Questions, Eight Answers, 54.8M Views\nREQUESTED BY VEDIKABHASIN · SEP 29"
  },
  {
-  "name": "library bx-01: title contrast AA (>= 4.5)",
+  "name": "REQUESTED card detail: \"Requested by {Name} · {Mon D}. Vedika confirms timing.\"",
   "ok": true,
-  "detail": "18.8"
+  "detail": "\n  \n    \n    \n      \n        Post\n        Three Questions, Eight Answers, 54.8M Views\n      \n      ×\n    \n    Requested\n    Requested by vedikabhasin · Sep 29. Vedika confirms timing.\n    \n      \n        Post\n        Insight\n        Pillar\n      \n      \n      Request this\n       \n    \n    \n  \n"
  },
  {
-  "name": "library bx-01: nothing from behind shows through the front card",
-  "ok": true
- },
- {
-  "name": "ghost tap: \"Write this\" with a format choice, cost and 0 balance",
+  "name": "UP NEXT tag on a liked, unrequested card",
   "ok": true,
-  "detail": "\n  \n    \n    \n      \n        Post\n        The Experienced Eyes Are Retiring\n      \n      ×\n    \n    Approved, not written yet.\n    \n      \n        Post · 1\n        Insight · 3\n        Pillar · 8\n      \n      1 credit. You have 0 credits.\n      Get credits\n       \n    \n    \n  \n"
+  "detail": "POST\nVB\nUP NEXT\nThe Parts Other Creators Build With\nTAP TO REQUEST"
  },
  {
-  "name": "internal account: credits are added by hand, no checkout",
-  "ok": true
- },
- {
-  "name": "library: vb-05 live countdown \"Arriving in 14h 20m\"",
-  "ok": true,
-  "detail": "POST\nVB\nThe Most Useful Page Says What Not to Do\nAPPROVED\nARRIVING IN 14H 18M"
- },
- {
-  "name": "library vb-05: title contrast AA (>= 4.5)",
+  "name": "library vb-02 up next: title contrast AA (>= 4.5)",
   "ok": true,
   "detail": "18.8"
  },
  {
-  "name": "library vb-05: nothing from behind shows through the front card",
+  "name": "library vb-02 up next: nothing from behind shows through the front card",
   "ok": true
+ },
+ {
+  "name": "UP NEXT sheet: \"Request this\", format preselected to the card's, no credits",
+  "ok": true,
+  "detail": "{\"fmt\":\"post\",\"btn\":\"Request this\",\"disabled\":false,\"cost\":false,\"text\":\"POST\\n\\nThe Parts Other Creators Build With\\n\\n×\\nUP NEXT\\n\\nLiked, not requested yet.\\n\\nPOST\\nINSIGHT\\nPILLAR\\nRequest this\"}"
+ },
+ {
+  "name": "Request this: one tap, stamp lands, sheet reads \"Requested by {Name} · {Mon D}. Vedika confirms timing.\"",
+  "ok": true,
+  "detail": "{\"stamp\":true,\"copy\":\"Requested by vedikabhasin · Sep 29. Vedika confirms timing.\",\"box\":true}"
+ },
+ {
+  "name": "Request this: portal-request form posted once",
+  "ok": true,
+  "detail": "[{\"form-name\":\"portal-request\",\"company\":\"Vedika Bhasin\",\"slug\":\"vedika-bhasin-ycfogw\",\"card_title\":\"The Parts Other Creators Build With\",\"format\":\"post\",\"requester_name\":\"vedikabhasin\",\"requester_email\":\"vedikabhasin@gmail.com\"}]"
+ },
+ {
+  "name": "Library header updates without a reload: \"1 delivered · 2 up next · 3 requested\"",
+  "ok": true,
+  "detail": "1 delivered · 2 up next · 3 requested"
+ },
+ {
+  "name": "no \"Approved\", \"Ready to write\" or \"Approved, not written yet\" anywhere",
+  "ok": true,
+  "detail": ""
  },
  {
   "name": "reader: date line uses the delivery stamp",
   "ok": true
  },
  {
-  "name": "mark live: status live",
+  "name": "mark live: live_at stamped",
   "ok": true
  },
  {
@@ -320,79 +403,56 @@
   "ok": true
  },
  {
-  "name": "library: never shows notes, pins, or Hub layout",
-  "ok": true
- },
- {
-  "name": "first pencil tap: invite pop-up with one field, \"One seat left.\"",
-  "ok": true
- },
- {
-  "name": "hub unlocked: 3 books + seeded texts + notes, toolbar",
+  "name": "first Hub tap: \"Who else decides your content?\" / \"They’ll get a sign-in link. One seat left on your portal.\"",
   "ok": true,
-  "detail": "{\"books\":3,\"notes\":1,\"texts\":2,\"locked\":false,\"toolbar\":true}"
+  "detail": "{\"title\":\"Who else decides your content?\",\"sub\":\"They’ll get a sign-in link. One seat left on your portal.\",\"fields\":1,\"ghosts\":1,\"seats\":2}"
  },
  {
-  "name": "hub: auto-created article rows saved",
-  "ok": true
- },
- {
-  "name": "hub: seeded text items keep their positions",
-  "ok": true
- },
- {
-  "name": "first Hub entry line",
+  "name": "Hub unlocked: 5 articles, 2 UP NEXT cards, the 2 texts, notes, toolbar",
   "ok": true,
-  "detail": "Drag anything. Pin what matters. Tap Done to go back."
+  "detail": "{\"books\":5,\"cards\":2,\"notes\":2,\"texts\":2,\"locked\":false,\"toolbar\":true}"
  },
  {
-  "name": "hub note: author avatar + linked card title",
+  "name": "Hub: card rows saved as kind card",
   "ok": true
  },
  {
-  "name": "drag: x/y saved on drop, last dragged comes to front",
+  "name": "Hub note: author avatar + linked card title",
+  "ok": true
+ },
+ {
+  "name": "Hub card menu on UP NEXT: \"Request this\"",
   "ok": true,
-  "detail": "{\"x\":669,\"y\":358,\"z\":7,\"before\":{\"id\":\"hmc016m8di\",\"ref_id\":\"553f5a86-290e-4a13-ad97-3e7fa29e6c5f\",\"body\":null,\"emoji\":null,\"x\":549,\"y\":268,\"rotation\":-3.3,\"z\":4,\"hidden\":false,\"updated_at\":\"2026-09-27T23:30:05.939Z\",\"company_id\":\"b22beda7-45cf-486a-931e-d3b429619788\",\"kind\":\"article\",\"created_by\":null}}"
+  "detail": "[\"Request this\",\"Hide\"]"
  },
  {
-  "name": "pin: dropped onto an item stays attached (ref_id = item)",
+  "name": "requested from the Hub: the card item became the article in place",
   "ok": true,
-  "detail": "{\"id\":\"hjdo398yvqbj\",\"ref_id\":\"hmc016m8di\",\"body\":null,\"emoji\":\"🔥\",\"x\":42,\"y\":28,\"rotation\":0,\"z\":8,\"hidden\":false,\"updated_at\":\"2026-09-27T23:30:09.757Z\",\"company_id\":\"b22beda7-45cf-486a-931e-d3b429619788\",\"kind\":\"emoji\",\"created_by\":\"9afe9458-e205-4209-96ec-9c8f6fab77c5\"}"
+  "detail": "{\"id\":\"h5spmw8kkgbd\",\"ref_id\":\"art-5\",\"body\":null,\"emoji\":null,\"x\":548,\"y\":739,\"rotation\":-2.9,\"z\":10,\"hidden\":false,\"updated_at\":\"2026-09-29T01:43:20.593Z\",\"company_id\":\"b22beda7-45cf-486a-931e-d3b429619788\",\"kind\":\"article\",\"created_by\":null}"
  },
  {
-  "name": "pin: rendered inside its item",
+  "name": "drag: x/y saved on drop, comes to front",
   "ok": true
  },
  {
-  "name": "pin: travels with its item",
+  "name": "pin: dropped onto an item stays attached",
   "ok": true
  },
  {
-  "name": "hide: item disappears and is saved hidden",
+  "name": "hide: saved hidden",
   "ok": true
  },
  {
-  "name": "show hidden: back at 30% with Unhide",
-  "ok": true
+  "name": "unhide mode: hidden items never cover visible ones (moved clear, and under)",
+  "ok": true,
+  "detail": "{\"hidden\":1,\"overlaps\":false,\"under\":true}"
  },
  {
-  "name": "show hidden: hidden items sit under every visible item",
+  "name": "unhide mode: the display move is not saved",
   "ok": true
  },
  {
   "name": "unhide: saved visible",
-  "ok": true
- },
- {
-  "name": "text note: added to the canvas",
-  "ok": true
- },
- {
-  "name": "only the Hub has grabbable items",
-  "ok": true
- },
- {
-  "name": "Done returns to the catalog fan",
   "ok": true
  },
  {
@@ -409,6 +469,14 @@
  },
  {
   "name": "posthog: moved_up",
+  "ok": true
+ },
+ {
+  "name": "posthog: card_requested",
+  "ok": true
+ },
+ {
+  "name": "posthog: card_detail_opened",
   "ok": true
  },
  {
@@ -437,6 +505,10 @@
  },
  {
   "name": "posthog: hub_item_hidden",
+  "ok": true
+ },
+ {
+  "name": "posthog: note_added",
   "ok": true
  },
  {
@@ -458,9 +530,13 @@
   "detail": "17 cards · 17 unread"
  },
  {
+  "name": "internal portal: no closed-window banner",
+  "ok": true
+ },
+ {
   "name": "desktop signal: peek cards share width, center, height, origin; offset 6/12px; no content",
   "ok": true,
-  "detail": "{\"peekOk\":true,\"gap1\":16,\"gap2\":16,\"gap3\":78.8125,\"dotOnTop\":true,\"depths\":3}"
+  "detail": "{\"peekOk\":true,\"gap1\":16,\"gap2\":16,\"gap3\":18,\"dotOnTop\":true,\"depths\":3}"
  },
  {
   "name": "desktop signal: card -> dots >= 16px",
@@ -475,11 +551,16 @@
  {
   "name": "desktop signal: actions -> switch >= 16px (switch never covers content)",
   "ok": true,
-  "detail": "78.8"
+  "detail": "18.0"
  },
  {
   "name": "desktop signal: card glow does not cover the dot slider",
   "ok": true
+ },
+ {
+  "name": "desktop: feed tooltip never covers the card footer",
+  "ok": true,
+  "detail": "{\"bubbleTop\":710.8357543945312,\"cardBottom\":630,\"over\":false}"
  },
  {
   "name": "onboarding: glow on Library after Feed",
@@ -487,13 +568,12 @@
  },
  {
   "name": "feed: series label next to the format pill (VB)",
-  "ok": true,
-  "detail": "PostVBNew this week"
+  "ok": true
  },
  {
   "name": "desktop card: peek cards share width, center, height, origin; offset 6/12px; no content",
   "ok": true,
-  "detail": "{\"peekOk\":true,\"gap1\":16,\"gap2\":16,\"gap3\":59.21875,\"dotOnTop\":true,\"depths\":3}"
+  "detail": "{\"peekOk\":true,\"gap1\":16,\"gap2\":16,\"gap3\":18,\"dotOnTop\":true,\"depths\":3}"
  },
  {
   "name": "desktop card: card -> dots >= 16px",
@@ -508,7 +588,7 @@
  {
   "name": "desktop card: actions -> switch >= 16px (switch never covers content)",
   "ok": true,
-  "detail": "59.2"
+  "detail": "18.0"
  },
  {
   "name": "desktop card: card glow does not cover the dot slider",
@@ -519,7 +599,21 @@
   "ok": true
  },
  {
-  "name": "feed: BlendXR series label",
+  "name": "feed: every card the same fixed height (sales-page size, fitted above the switch)",
+  "ok": true,
+  "detail": "520,520,520,520 want 520"
+ },
+ {
+  "name": "feed: one \"Sources · N\" button, no chips; proof scrolls inside a 132px frame",
+  "ok": true,
+  "detail": "{\"btn\":\"SOURCES\\n1\",\"chips\":0,\"proof\":\"auto\",\"max\":\"132px\"}"
+ },
+ {
+  "name": "feed: dragging on the proof never swipes",
+  "ok": true
+ },
+ {
+  "name": "feed: Sources button opens the sheet with every source",
   "ok": true
  },
  {
@@ -528,36 +622,34 @@
   "detail": "{\"end\":1140,\"props\":[\"offset\",\"easing\",\"composite\",\"opacity\",\"computedOffset\",\"transform\"]}"
  },
  {
-  "name": "reveal agree: card shows subtitle and sources, sized to content",
+  "name": "reveal agree: card shows format, title, subtitle and \"{n} sources\", sized to content",
   "ok": true,
-  "detail": "{\"sub\":true,\"src\":\"1 source\",\"slack\":12,\"glow\":0,\"flat\":true,\"bg\":\"radial-gradient(60% 50% at 50% 42%, rgb(184, 255, 113), color(srgb 0.855686 0.964706 0.732549) 58%, rgb(241, 240, 236) 100%), none\"}"
+  "detail": "{\"fmt\":true,\"title\":true,\"sub\":true,\"src\":\"1 source\",\"slack\":12,\"glow\":0,\"flat\":true,\"faces\":2,\"bg\":\"radial-gradient(60% 50% at 50% 42%, rgb(184, 255, 113), color(srgb 0.855686 0.964706 0.732549) 58%, rgb(241, 240, 236) 100%), none\",\"buttons\":[\"Move it up\",\"Keep swiping\"]}"
  },
  {
-  "name": "reveal agree: flat buttons, no rainbow glow",
+  "name": "reveal agree: flat buttons, no glow; both avatars keep their faces",
   "ok": true,
-  "detail": "{\"sub\":true,\"src\":\"1 source\",\"slack\":12,\"glow\":0,\"flat\":true,\"bg\":\"radial-gradient(60% 50% at 50% 42%, rgb(184, 255, 113), color(srgb 0.855686 0.964706 0.732549) 58%, rgb(241, 240, 236) 100%), none\"}"
+  "detail": "{\"fmt\":true,\"title\":true,\"sub\":true,\"src\":\"1 source\",\"slack\":12,\"glow\":0,\"flat\":true,\"faces\":2,\"bg\":\"radial-gradient(60% 50% at 50% 42%, rgb(184, 255, 113), color(srgb 0.855686 0.964706 0.732549) 58%, rgb(241, 240, 236) 100%), none\",\"buttons\":[\"Move it up\",\"Keep swiping\"]}"
  },
  {
-  "name": "reveal agree: hearts in the like token at full opacity",
+  "name": "reveal agree: secondary is \"Keep swiping\"",
   "ok": true,
-  "detail": "{\"color\":\"rgb(184, 255, 113)\",\"opacity\":\"1\",\"like\":\"#B8FF71\"}"
+  "detail": "[\"Move it up\",\"Keep swiping\"]"
  },
  {
-  "name": "reveal agree: copy + buttons",
+  "name": "reveal both liked: \"Two yeses. Next in line.\" / Move it up",
   "ok": true,
-  "detail": "LikedYouPostVBThe Parts Other Creators Build WithMaking an effect is different from making the pieces effects are made from. The quietest work outlives the campaign.1 sourceLikedblendbasesYou both want this one.Move it upKeep swiping"
+  "detail": "LikedYouPostVBThe Parts Other Creators Build WithMaking an effect is different from making the pieces effects are made from. The quietest work outlives the campaign.1 sourceLikedblendbasesTwo yeses. Next in line.Move it upKeep swiping"
  },
  {
-  "name": "reveal agree: floating hearts on screen",
-  "ok": true
+  "name": "reveal both liked: particles in the like token, full opacity",
+  "ok": true,
+  "detail": "{\"color\":\"rgb(184, 255, 113)\",\"opacity\":\"1\",\"token\":\"#B8FF71\",\"n\":12}"
  },
  {
-  "name": "reveal agree: both stamps",
-  "ok": true
- },
- {
-  "name": "move it up: pinned for the team",
-  "ok": true
+  "name": "Move it up: pinned first for the team",
+  "ok": true,
+  "detail": "[\"3d3b288d-6792-4168-ae25-ccc5e66760ce\"]"
  },
  {
   "name": "reveal split: entrance <= 1.2s, transform + opacity only",
@@ -565,23 +657,24 @@
   "detail": "{\"end\":1140,\"props\":[\"offset\",\"easing\",\"composite\",\"opacity\",\"computedOffset\",\"transform\"]}"
  },
  {
-  "name": "reveal split: card shows subtitle and sources, sized to content",
+  "name": "reveal split: card shows format, title, subtitle and \"{n} sources\", sized to content",
   "ok": true,
-  "detail": "{\"sub\":true,\"src\":\"2 sources\",\"slack\":12,\"glow\":0,\"flat\":true,\"bg\":\"linear-gradient(90deg, rgb(184, 255, 113) 0px, rgb(184, 255, 113) 50%, rgb(255, 107, 92) 50%, rgb(255, 107, 92) 100%)\"}"
+  "detail": "{\"fmt\":true,\"title\":true,\"sub\":true,\"src\":\"2 sources\",\"slack\":12,\"glow\":0,\"flat\":true,\"faces\":2,\"bg\":\"linear-gradient(90deg, rgb(184, 255, 113) 0px, rgb(184, 255, 113) 50%, rgb(255, 107, 92) 50%, rgb(255, 107, 92) 100%)\",\"buttons\":[\"Make your case\",\"Keep swiping\"]}"
  },
  {
-  "name": "reveal split: flat buttons, no rainbow glow",
+  "name": "reveal split: flat buttons, no glow; both avatars keep their faces",
   "ok": true,
-  "detail": "{\"sub\":true,\"src\":\"2 sources\",\"slack\":12,\"glow\":0,\"flat\":true,\"bg\":\"linear-gradient(90deg, rgb(184, 255, 113) 0px, rgb(184, 255, 113) 50%, rgb(255, 107, 92) 50%, rgb(255, 107, 92) 100%)\"}"
+  "detail": "{\"fmt\":true,\"title\":true,\"sub\":true,\"src\":\"2 sources\",\"slack\":12,\"glow\":0,\"flat\":true,\"faces\":2,\"bg\":\"linear-gradient(90deg, rgb(184, 255, 113) 0px, rgb(184, 255, 113) 50%, rgb(255, 107, 92) 50%, rgb(255, 107, 92) 100%)\",\"buttons\":[\"Make your case\",\"Keep swiping\"]}"
  },
  {
-  "name": "reveal split: copy + buttons",
+  "name": "reveal split: secondary is \"Keep swiping\"",
   "ok": true,
-  "detail": "LikedYouPostVBDesigning Overwhelm Without HarmMaking people feel focus fatigue without making them sick. Empathy needs a way out.2 sourcesPassedblendbasesYou two see this differently.Leave a noteKeep swiping"
+  "detail": "[\"Make your case\",\"Keep swiping\"]"
  },
  {
-  "name": "reveal split: stamps Liked + Passed",
-  "ok": true
+  "name": "reveal split: \"Split decision. Best note wins.\" / Make your case, stamps Liked + Passed",
+  "ok": true,
+  "detail": "LikedYouPostVBDesigning Overwhelm Without HarmMaking people feel focus fatigue without making them sick. Empathy needs a way out.2 sourcesPassedblendbasesSplit decision. Best note wins.Make your caseKeep swiping"
  },
  {
   "name": "reveal timing: entrance <= 1.2s, transform + opacity only",
@@ -589,35 +682,76 @@
   "detail": "{\"end\":1140,\"props\":[\"offset\",\"easing\",\"composite\",\"opacity\",\"computedOffset\",\"transform\"]}"
  },
  {
-  "name": "reveal timing: card shows subtitle and sources, sized to content",
+  "name": "reveal timing: card shows format, title, subtitle and \"{n} sources\", sized to content",
   "ok": true,
-  "detail": "{\"sub\":true,\"src\":\"1 source\",\"slack\":12,\"glow\":0,\"flat\":true,\"bg\":\"linear-gradient(rgb(184, 255, 113) 0%, color(srgb 0.853137 0.950392 0.35902) 38%, rgb(245, 232, 74) 72%)\"}"
+  "detail": "{\"fmt\":true,\"title\":true,\"sub\":true,\"src\":\"1 source\",\"slack\":12,\"glow\":0,\"flat\":true,\"faces\":2,\"bg\":\"linear-gradient(rgb(184, 255, 113) 0%, color(srgb 0.853137 0.950392 0.35902) 38%, rgb(245, 232, 74) 72%)\",\"buttons\":[\"Say when\",\"Keep swiping\"]}"
  },
  {
-  "name": "reveal timing: flat buttons, no rainbow glow",
+  "name": "reveal timing: flat buttons, no glow; both avatars keep their faces",
   "ok": true,
-  "detail": "{\"sub\":true,\"src\":\"1 source\",\"slack\":12,\"glow\":0,\"flat\":true,\"bg\":\"linear-gradient(rgb(184, 255, 113) 0%, color(srgb 0.853137 0.950392 0.35902) 38%, rgb(245, 232, 74) 72%)\"}"
+  "detail": "{\"fmt\":true,\"title\":true,\"sub\":true,\"src\":\"1 source\",\"slack\":12,\"glow\":0,\"flat\":true,\"faces\":2,\"bg\":\"linear-gradient(rgb(184, 255, 113) 0%, color(srgb 0.853137 0.950392 0.35902) 38%, rgb(245, 232, 74) 72%)\",\"buttons\":[\"Say when\",\"Keep swiping\"]}"
  },
  {
-  "name": "reveal timing: copy",
+  "name": "reveal timing: secondary is \"Keep swiping\"",
   "ok": true,
-  "detail": "SavedYouPostVBExistential Until I Met YouTechnology doesn't exist without humans, and feels existential without them too. The machine finds joy in being seen.1 sourceLikedblendbasesOne of you wants it now. One wants it later.Leave a noteKeep swiping"
+  "detail": "[\"Say when\",\"Keep swiping\"]"
  },
  {
-  "name": "reveal timing: clock hand",
+  "name": "reveal save vs like: \"Same yes, different week.\" / Say when",
+  "ok": true,
+  "detail": "SavedYouPostVBExistential Until I Met YouTechnology doesn't exist without humans, and feels existential without them too. The machine finds joy in being seen.1 sourceLikedblendbasesSame yes, different week.Say whenKeep swiping"
+ },
+ {
+  "name": "reveal now: entrance <= 1.2s, transform + opacity only",
+  "ok": true,
+  "detail": "{\"end\":1140,\"props\":[\"offset\",\"easing\",\"composite\",\"opacity\",\"computedOffset\",\"transform\"]}"
+ },
+ {
+  "name": "reveal now: card shows format, title, subtitle and \"{n} sources\", sized to content",
+  "ok": true,
+  "detail": "{\"fmt\":true,\"title\":true,\"sub\":true,\"src\":\"1 source\",\"slack\":12,\"glow\":0,\"flat\":true,\"faces\":2,\"bg\":\"radial-gradient(60% 50% at 50% 42%, rgb(255, 180, 90), color(srgb 0.967059 0.847059 0.696471) 58%, rgb(241, 240, 236) 100%), none\",\"buttons\":[\"Request it\",\"Keep swiping\"]}"
+ },
+ {
+  "name": "reveal now: flat buttons, no glow; both avatars keep their faces",
+  "ok": true,
+  "detail": "{\"fmt\":true,\"title\":true,\"sub\":true,\"src\":\"1 source\",\"slack\":12,\"glow\":0,\"flat\":true,\"faces\":2,\"bg\":\"radial-gradient(60% 50% at 50% 42%, rgb(255, 180, 90), color(srgb 0.967059 0.847059 0.696471) 58%, rgb(241, 240, 236) 100%), none\",\"buttons\":[\"Request it\",\"Keep swiping\"]}"
+ },
+ {
+  "name": "reveal now: secondary is \"Keep swiping\"",
+  "ok": true,
+  "detail": "[\"Request it\",\"Keep swiping\"]"
+ },
+ {
+  "name": "reveal both fast-tracked: \"You both want it now. Lock it in.\" / Request it",
+  "ok": true,
+  "detail": "Fast-trackYouPostVBThree Questions, Eight Answers, 54.8M ViewsThe smallest logic can feel personal. Depth doesn't need complexity.1 sourceFast-trackblendbasesYou both want it now. Lock it in.Request itKeep swiping"
+ },
+ {
+  "name": "reveal both fast-tracked: particles in the fasttrack token, full opacity",
+  "ok": true,
+  "detail": "{\"color\":\"rgb(255, 180, 90)\",\"opacity\":\"1\",\"token\":\"#FFB45A\",\"n\":12}"
+ },
+ {
+  "name": "reveals: four different backgrounds (like sunburst, fasttrack sunburst, halves, fade)",
+  "ok": true,
+  "detail": "{\"agree\":\"radial-gradient(60% 50% at 50% 42%, rgb(184, 255, 113), color(srgb 0.855686 0.964706 0.732549) 58%, rgb(241, 240, 236) 100%), none\",\"split\":\"linear-gradient(90deg, rgb(184, 255, 113) 0px, rgb(184, 255, 113) 50%, rgb(255, 107, 92) 50%, rgb(255, 107, 92) 100%)\",\"timing\":\"linear-gradient(rgb(184, 255, 113) 0%, color(srgb 0.853137 0.950392 0.35902) 38%, rgb(245, 232, 74) 72%)\",\"now\":\"radial-gradient(60% 50% at 50% 42%, rgb(255, 180, 90), color(srgb 0.967059 0.847059 0.696471) 58%, rgb(241, 240, 236) 100%), none\"}"
+ },
+ {
+  "name": "Request it: request_card with the card's format, REQUESTED by me",
+  "ok": true,
+  "detail": "{\"id\":\"art-3\",\"company_id\":\"b22beda7-45cf-486a-931e-d3b429619788\",\"card_id\":\"838e0b01-8a12-4284-881e-914cb9b84110\",\"format\":\"post\",\"title\":\"Three Questions, Eight Answers, 54.8M Views\",\"status\":\"requested\",\"body_html\":null,\"google_doc_url\":null,\"requested_at\":\"2026-09-29T01:43:39.719Z\",\"requested_by\":\"9afe9458-e205-4209-96ec-9c8f6fab77c5\",\"deliver_by\":null,\"delivered_at\":null,\"live_at\":null,\"created_at\":\"2026-09-29T01:43:39.719Z\"}"
+ },
+ {
+  "name": "Request it: portal-request form posted (company, slug, card_title, format, requester)",
+  "ok": true,
+  "detail": "{\"form-name\":\"portal-request\",\"company\":\"Vedika Bhasin\",\"slug\":\"vedika-bhasin-ycfogw\",\"card_title\":\"Three Questions, Eight Answers, 54.8M Views\",\"format\":\"post\",\"requester_name\":\"vedikabhasin\",\"requester_email\":\"vedikabhasin@gmail.com\"}"
+ },
+ {
+  "name": "later view: split label, no reveal",
   "ok": true
  },
  {
-  "name": "reveals: Agree, Split and Timing each have their own background",
-  "ok": true,
-  "detail": "{\"agree\":\"radial-gradient(60% 50% at 50% 42%, rgb(184, 255, 113), color(srgb 0.855686 0.964706 0.732549) 58%, rgb(241, 240, 236) 100%), none\",\"split\":\"linear-gradient(90deg, rgb(184, 255, 113) 0px, rgb(184, 255, 113) 50%, rgb(255, 107, 92) 50%, rgb(255, 107, 92) 100%)\",\"timing\":\"linear-gradient(rgb(184, 255, 113) 0%, color(srgb 0.853137 0.950392 0.35902) 38%, rgb(245, 232, 74) 72%)\"}"
- },
- {
-  "name": "later view: split label + edge glow, no reveal",
-  "ok": true
- },
- {
-  "name": "later view: color-coded dot",
+  "name": "later view: color-coded dots for all four",
   "ok": true
  },
  {
@@ -629,34 +763,34 @@
   "ok": true
  },
  {
-  "name": "up next: vb-02 moved to the top",
+  "name": "Up next: vb-02 moved to the top",
   "ok": true,
   "detail": "1The Parts Other Creators Build WithMoved upAgree2Existential Until I Met You3Designing Overwhelm Without Harm"
  },
  {
+  "name": "Library header \"1 DELIVERED · 3 UP NEXT · 2 REQUESTED\"",
+  "ok": true,
+  "detail": "{\"t\":\"1 delivered · 3 up next · 2 requested\",\"tt\":\"uppercase\"}"
+ },
+ {
   "name": "library: top card flat, centered, fully opaque",
   "ok": true,
-  "detail": "{\"count\":3,\"topText\":\"POST\\nVB\\nI Design for the Moment AI Is Wrong\\nDELIVERED IN 19H · SEP 26, 11:30 PM\",\"topOpaque\":true,\"topFlat\":true,\"backsHidden\":true,\"backRot\":[-5,5],\"topZ\":20,\"backZ\":[16,18]}"
+  "detail": "{\"topText\":\"POST\\nVB\\nDELIVERED\\nI Design for the Moment AI Is Wrong\\nDELIVERED IN 19H · SEP 28, 1:43 AM\",\"topOpaque\":true,\"topFlat\":true,\"backsHidden\":true,\"backRot\":[-8,8,-5,5],\"topZ\":20,\"backZ\":[12,14,16,18],\"tag\":\"Delivered\",\"tagCenter\":true}"
  },
  {
   "name": "library: back cards rotated 5-8 deg, content hidden, below the top",
   "ok": true,
-  "detail": "[-5,5]"
+  "detail": "[-8,8,-5,5]"
  },
  {
-  "name": "library: vb-01 \"Delivered in 19h · <date>\"",
+  "name": "DELIVERED tag (mono, centered) + \"DELIVERED IN 19H · {Mon D, h:mm AM}\"",
   "ok": true,
-  "detail": "POST\nVB\nI Design for the Moment AI Is Wrong\nDELIVERED IN 19H · SEP 26, 11:30 PM"
+  "detail": "POST\nVB\nDELIVERED\nI Design for the Moment AI Is Wrong\nDELIVERED IN 19H · SEP 28, 1:43 AM"
  },
  {
-  "name": "desktop vb-01: status stamp on one line, inside the card",
+  "name": "desktop DELIVERED: status stamp on one line, inside the card",
   "ok": true,
-  "detail": "[{\"text\":\"Delivered in 19h · Sep 26, 11:30 PM\",\"oneLine\":true,\"inside\":true,\"size\":\"10px\"}]"
- },
- {
-  "name": "library header: no credits line at 0 balance",
-  "ok": true,
-  "detail": "1 written · 2 approved"
+  "detail": "[{\"text\":\"Delivered in 19h · Sep 28, 1:43 AM\",\"oneLine\":true,\"inside\":true,\"size\":\"10px\"}]"
  },
  {
   "name": "library vb-01: title contrast AA (>= 4.5)",
@@ -668,58 +802,70 @@
   "ok": true
  },
  {
-  "name": "library: bx-01 ghost, \"Approved\" stamp + chip \"Ready to write · 1 credit\"",
+  "name": "WRITING tag + live countdown \"ARRIVING IN 14H {m}M\"",
   "ok": true,
-  "detail": "POST\nBLENDXR\nThe Experienced Eyes Are Retiring\nAPPROVED\nREADY TO WRITE · 1 CREDIT"
+  "detail": "POST\nVB\nWRITING\nThe Most Useful Page Says What Not to Do\nARRIVING IN 14H 18M"
  },
  {
-  "name": "desktop bx-01: status stamp on one line, inside the card",
+  "name": "desktop WRITING: status stamp on one line, inside the card",
   "ok": true,
-  "detail": "[{\"text\":\"Ready to write · 1 credit\",\"oneLine\":true,\"inside\":true,\"size\":\"10.5px\"}]"
+  "detail": "[{\"text\":\"Arriving in 14h 18m\",\"oneLine\":true,\"inside\":true,\"size\":\"10.5px\"}]"
  },
  {
-  "name": "ghost: opaque paper body, dashed border, two trails at 25%/12%",
+  "name": "REQUESTED tag + \"Requested by vedikabhasin · {Mon D}\"",
   "ok": true,
-  "detail": "{\"dashed\":true,\"bg\":\"253,252,248,1\",\"trails\":[0.12,0.12,0.25,0.25]}"
+  "detail": "POST\nVB\nREQUESTED\nThree Questions, Eight Answers, 54.8M Views\nREQUESTED BY VEDIKABHASIN · SEP 29"
  },
  {
-  "name": "library bx-01: title contrast AA (>= 4.5)",
+  "name": "REQUESTED card detail: \"Requested by {Name} · {Mon D}. Vedika confirms timing.\"",
   "ok": true,
-  "detail": "18.8"
+  "detail": "\n  \n    \n    \n      \n        Post\n        Three Questions, Eight Answers, 54.8M Views\n      \n      ×\n    \n    Requested\n    Requested by vedikabhasin · Sep 29. Vedika confirms timing.\n    \n      \n        Post\n        Insight\n        Pillar\n      \n      \n      Request this\n       \n    \n    \n  \n"
  },
  {
-  "name": "library bx-01: nothing from behind shows through the front card",
-  "ok": true
- },
- {
-  "name": "ghost tap: \"Write this\" with a format choice, cost and 0 balance",
+  "name": "UP NEXT tag on a liked, unrequested card",
   "ok": true,
-  "detail": "\n  \n    \n    \n      \n        Post\n        The Experienced Eyes Are Retiring\n      \n      ×\n    \n    Approved, not written yet.\n    \n      \n        Post · 1\n        Insight · 3\n        Pillar · 8\n      \n      1 credit. You have 0 credits.\n      Get credits\n       \n    \n    \n  \n"
+  "detail": "POST\nVB\nUP NEXT\nThe Parts Other Creators Build With\nTAP TO REQUEST"
  },
  {
-  "name": "internal account: credits are added by hand, no checkout",
-  "ok": true
- },
- {
-  "name": "library: vb-05 live countdown \"Arriving in 14h 20m\"",
-  "ok": true,
-  "detail": "POST\nVB\nThe Most Useful Page Says What Not to Do\nAPPROVED\nARRIVING IN 14H 18M"
- },
- {
-  "name": "library vb-05: title contrast AA (>= 4.5)",
+  "name": "library vb-02 up next: title contrast AA (>= 4.5)",
   "ok": true,
   "detail": "18.8"
  },
  {
-  "name": "library vb-05: nothing from behind shows through the front card",
+  "name": "library vb-02 up next: nothing from behind shows through the front card",
   "ok": true
+ },
+ {
+  "name": "UP NEXT sheet: \"Request this\", format preselected to the card's, no credits",
+  "ok": true,
+  "detail": "{\"fmt\":\"post\",\"btn\":\"Request this\",\"disabled\":false,\"cost\":false,\"text\":\"POST\\n\\nThe Parts Other Creators Build With\\n\\n×\\nUP NEXT\\n\\nLiked, not requested yet.\\n\\nPOST\\nINSIGHT\\nPILLAR\\nRequest this\"}"
+ },
+ {
+  "name": "Request this: one tap, stamp lands, sheet reads \"Requested by {Name} · {Mon D}. Vedika confirms timing.\"",
+  "ok": true,
+  "detail": "{\"stamp\":true,\"copy\":\"Requested by vedikabhasin · Sep 29. Vedika confirms timing.\",\"box\":true}"
+ },
+ {
+  "name": "Request this: portal-request form posted once",
+  "ok": true,
+  "detail": "[{\"form-name\":\"portal-request\",\"company\":\"Vedika Bhasin\",\"slug\":\"vedika-bhasin-ycfogw\",\"card_title\":\"The Parts Other Creators Build With\",\"format\":\"post\",\"requester_name\":\"vedikabhasin\",\"requester_email\":\"vedikabhasin@gmail.com\"}]"
+ },
+ {
+  "name": "Library header updates without a reload: \"1 delivered · 2 up next · 3 requested\"",
+  "ok": true,
+  "detail": "1 delivered · 2 up next · 3 requested"
+ },
+ {
+  "name": "no \"Approved\", \"Ready to write\" or \"Approved, not written yet\" anywhere",
+  "ok": true,
+  "detail": ""
  },
  {
   "name": "reader: date line uses the delivery stamp",
   "ok": true
  },
  {
-  "name": "mark live: status live",
+  "name": "mark live: live_at stamped",
   "ok": true
  },
  {
@@ -727,75 +873,52 @@
   "ok": true
  },
  {
-  "name": "library: never shows notes, pins, or Hub layout",
-  "ok": true
- },
- {
-  "name": "first pencil tap: invite pop-up with one field, \"One seat left.\"",
-  "ok": true
- },
- {
-  "name": "hub unlocked: 3 books + seeded texts + notes, toolbar",
+  "name": "first Hub tap: \"Who else decides your content?\" / \"They’ll get a sign-in link. One seat left on your portal.\"",
   "ok": true,
-  "detail": "{\"books\":3,\"notes\":0,\"texts\":2,\"locked\":false,\"toolbar\":true}"
+  "detail": "{\"title\":\"Who else decides your content?\",\"sub\":\"They’ll get a sign-in link. One seat left on your portal.\",\"fields\":1,\"ghosts\":1,\"seats\":2}"
  },
  {
-  "name": "hub: auto-created article rows saved",
-  "ok": true
- },
- {
-  "name": "hub: seeded text items keep their positions",
-  "ok": true
- },
- {
-  "name": "first Hub entry line",
+  "name": "Hub unlocked: 5 articles, 2 UP NEXT cards, the 2 texts, notes, toolbar",
   "ok": true,
-  "detail": "Drag anything. Pin what matters. Tap Done to go back."
+  "detail": "{\"books\":5,\"cards\":2,\"notes\":0,\"texts\":2,\"locked\":false,\"toolbar\":true}"
  },
  {
-  "name": "drag: x/y saved on drop, last dragged comes to front",
+  "name": "Hub: card rows saved as kind card",
+  "ok": true
+ },
+ {
+  "name": "Hub card menu on UP NEXT: \"Request this\"",
   "ok": true,
-  "detail": "{\"x\":669,\"y\":122,\"z\":6,\"before\":{\"id\":\"hhyg2mehluv4\",\"ref_id\":\"553f5a86-290e-4a13-ad97-3e7fa29e6c5f\",\"body\":null,\"emoji\":null,\"x\":549,\"y\":32,\"rotation\":-3.3,\"z\":3,\"hidden\":false,\"updated_at\":\"2026-09-27T23:30:27.997Z\",\"company_id\":\"b22beda7-45cf-486a-931e-d3b429619788\",\"kind\":\"article\",\"created_by\":null}}"
+  "detail": "[\"Request this\",\"Hide\"]"
  },
  {
-  "name": "pin: dropped onto an item stays attached (ref_id = item)",
+  "name": "requested from the Hub: the card item became the article in place",
   "ok": true,
-  "detail": "{\"id\":\"hgn6412q2cob\",\"ref_id\":\"hhyg2mehluv4\",\"body\":null,\"emoji\":\"🔥\",\"x\":42,\"y\":28,\"rotation\":0,\"z\":7,\"hidden\":false,\"updated_at\":\"2026-09-27T23:30:31.813Z\",\"company_id\":\"b22beda7-45cf-486a-931e-d3b429619788\",\"kind\":\"emoji\",\"created_by\":\"9afe9458-e205-4209-96ec-9c8f6fab77c5\"}"
+  "detail": "{\"id\":\"hxr9dom7svb8\",\"ref_id\":\"art-5\",\"body\":null,\"emoji\":null,\"x\":288,\"y\":503,\"rotation\":-2.9,\"z\":8,\"hidden\":false,\"updated_at\":\"2026-09-29T01:43:48.258Z\",\"company_id\":\"b22beda7-45cf-486a-931e-d3b429619788\",\"kind\":\"article\",\"created_by\":null}"
  },
  {
-  "name": "pin: rendered inside its item",
+  "name": "drag: x/y saved on drop, comes to front",
   "ok": true
  },
  {
-  "name": "pin: travels with its item",
+  "name": "pin: dropped onto an item stays attached",
   "ok": true
  },
  {
-  "name": "hide: item disappears and is saved hidden",
+  "name": "hide: saved hidden",
   "ok": true
  },
  {
-  "name": "show hidden: back at 30% with Unhide",
-  "ok": true
+  "name": "unhide mode: hidden items never cover visible ones (moved clear, and under)",
+  "ok": true,
+  "detail": "{\"hidden\":1,\"overlaps\":false,\"under\":true}"
  },
  {
-  "name": "show hidden: hidden items sit under every visible item",
+  "name": "unhide mode: the display move is not saved",
   "ok": true
  },
  {
   "name": "unhide: saved visible",
-  "ok": true
- },
- {
-  "name": "text note: added to the canvas",
-  "ok": true
- },
- {
-  "name": "only the Hub has grabbable items",
-  "ok": true
- },
- {
-  "name": "Done returns to the catalog fan",
   "ok": true
  },
  {
@@ -812,6 +935,14 @@
  },
  {
   "name": "posthog: moved_up",
+  "ok": true
+ },
+ {
+  "name": "posthog: card_requested",
+  "ok": true
+ },
+ {
+  "name": "posthog: card_detail_opened",
   "ok": true
  },
  {
@@ -843,6 +974,10 @@
   "ok": true
  },
  {
+  "name": "posthog: note_added",
+  "ok": true
+ },
+ {
   "name": "posthog: identify by member id, never email",
   "ok": true
  },
@@ -852,16 +987,35 @@
   "detail": ""
  },
  {
-  "name": "?hub=locked: locked canvas, frosted overlay, no toolbar",
+  "name": "?hub=locked: the invite pop-up comes first",
   "ok": true
  },
  {
-  "name": "?hub=locked: lock modal copy",
+  "name": "?hub=locked: blurred canvas, lock modal, no toolbar",
   "ok": true,
-  "detail": "\n      \n        Your Hub opens with your first credit pack.\n        It’s where drafts, edits, and your team’s notes come together.\n        Start with 5 credits\n        Back to Library\n      \n    "
+  "detail": "{\"locked\":true,\"overlay\":true,\"toolbar\":true,\"text\":\"Your Hub opens with your first content pack.\\n\\nIt’s where drafts, edits, and your team’s notes come together.\\n\\nTalk it through\\nBack to Library\",\"href\":\"https://cal.com/vedika/ghostwriter-mom?metadata[slug]=vedika-bhasin-ycfogw\",\"target\":\"_blank\",\"btns\":[\"Talk it through\",\"Back to Library\"]}"
  },
  {
-  "name": "?hub=locked: real items auto-laid (books + rules notes), no writes",
+  "name": "lock modal: \"Your Hub opens with your first content pack.\" + body",
+  "ok": true,
+  "detail": "Your Hub opens with your first content pack.\n\nIt’s where drafts, edits, and your team’s notes come together.\n\nTalk it through\nBack to Library"
+ },
+ {
+  "name": "lock modal: \"Talk it through\" (booking link, new tab) + \"Back to Library\", no price",
+  "ok": true,
+  "detail": "{\"locked\":true,\"overlay\":true,\"toolbar\":true,\"text\":\"Your Hub opens with your first content pack.\\n\\nIt’s where drafts, edits, and your team’s notes come together.\\n\\nTalk it through\\nBack to Library\",\"href\":\"https://cal.com/vedika/ghostwriter-mom?metadata[slug]=vedika-bhasin-ycfogw\",\"target\":\"_blank\",\"btns\":[\"Talk it through\",\"Back to Library\"]}"
+ },
+ {
+  "name": "?hub=locked: Invite button above the blur and modal, clickable",
+  "ok": true
+ },
+ {
+  "name": "locked background: only the company's own items, nothing written",
+  "ok": true,
+  "detail": "[\"31e4f1d2-dc70-4701-999b-8cbb2f5dd1bc\",\"e49f6c62-af3d-438d-8ee8-7adb49e6657f\",\"553f5a86-290e-4a13-ad97-3e7fa29e6c5f\",\"d4579ee5-34dc-4065-b21d-97013b252f02\",\"8add2b56-951c-460c-a674-27bee47f4954\",\"838e0b01-8a12-4284-881e-914cb9b84110\",\"3d3b288d-6792-4168-ae25-ccc5e66760ce\",\"c2975be9-dfa9-4215-a215-9fa21087b1ea\"]"
+ },
+ {
+  "name": "locked Hub: header Invite opens the pop-up",
   "ok": true
  },
  {
@@ -869,11 +1023,17 @@
   "ok": true
  },
  {
-  "name": "?hub=invite: invite pop-up again, one free seat",
-  "ok": true
+  "name": "invite success: stays open, field clears, \"Invite sent to {email}.\"",
+  "ok": true,
+  "detail": "{\"msg\":\"Invite sent to collaborator@blendxr.com.\",\"open\":true,\"field\":\"\",\"sub\":\"They’ll get a sign-in link.\",\"form\":true,\"seats\":[\"vedikabhasin\",\"blendbases\",\"Collaborator\"],\"skip\":\"Done\"}"
  },
  {
-  "name": "?hub=invite: invite sent, then into the Hub",
+  "name": "invite success: new seat with the derived name, seat line updates (0 left: form goes, \"Done\")",
+  "ok": true,
+  "detail": "{\"msg\":\"Invite sent to collaborator@blendxr.com.\",\"open\":true,\"field\":\"\",\"sub\":\"They’ll get a sign-in link.\",\"form\":true,\"seats\":[\"vedikabhasin\",\"blendbases\",\"Collaborator\"],\"skip\":\"Done\"}"
+ },
+ {
+  "name": "3/3 seats: Hub Invite button hidden, no seat ghosts",
   "ok": true
  },
  {
@@ -886,92 +1046,64 @@
   "ok": true
  },
  {
-  "name": "non-internal company: ?hub=locked ignored (unlocked Hub)",
+  "name": "client company: ?hub=locked ignored (hub_unlocked stays open)",
   "ok": true
  },
  {
-  "name": "reduced motion: reveal is static (no animations)",
+  "name": "reduced motion: reveal shows the final frame (no animations)",
   "ok": true,
   "detail": "{\"running\":0,\"cls\":\"reveal rv-agree rv-static\"}"
  },
  {
-  "name": "locked $19: Library is open, header \"1 written · 3 approved\", no credits line",
+  "name": "Acme 375x812: feed tooltip never covers the card footer",
   "ok": true,
-  "detail": "1 written · 3 approved"
+  "detail": "{\"bubbleTop\":666.150634765625,\"cardBottom\":582,\"over\":false}"
  },
  {
-  "name": "locked $19 delivered: status stamp on one line, inside the card",
-  "ok": true,
-  "detail": "[{\"text\":\"Delivered in 19h · Sep 26, 6:30 AM\",\"oneLine\":true,\"inside\":true,\"size\":\"8px\"}]"
- },
- {
-  "name": "locked $19: approved card chip \"Ready to write · 3 credits\"",
-  "ok": true,
-  "detail": "Ready to write · 3 credits"
- },
- {
-  "name": "locked $19 ready chip: status stamp on one line, inside the card",
-  "ok": true,
-  "detail": "[{\"text\":\"Ready to write · 3 credits\",\"oneLine\":true,\"inside\":true,\"size\":\"10.25px\"}]"
- },
- {
-  "name": "write this: format defaults to the card (insight), cost updates live",
-  "ok": true,
-  "detail": "insight | 3 credits. You have 0 credits. | 8 credits. You have 0 credits."
- },
- {
-  "name": "write this: not enough credits -> \"Get credits\"",
+  "name": "window open: no banner",
   "ok": true
  },
  {
-  "name": "never bought: Starter checkout, \"5 credits · $495\", \"Your $19 counts toward this.\"",
+  "name": "claimed sales-page swipes count as the owner's: 5 cards · 0 unread",
   "ok": true,
-  "detail": "\n  \n    \n    \n      \n        Credits\n        Start with 5 credits\n      \n      ×\n    \n    Starter5 credits · $495Your $19 counts toward this.Continue to checkout\n     \n  \n"
+  "detail": "5 cards · 0 unread"
  },
  {
-  "name": "Starter: create-checkout(starter), first purchase gets the $19 coupon",
+  "name": "Feed history shows the 5 claimed swipes (sales page, now the owner's)",
   "ok": true,
-  "detail": "https://checkout.stripe.test/starter?q=1&coupon=first"
+  "detail": "[\"YouSAVED · SALES PAGE\\nSep 26, 5:43 PM\",\"YouLIKED · SALES PAGE\\nSep 26, 4:43 PM\",\"YouPASSED · SALES PAGE\\nSep 26, 3:43 PM\",\"YouFAST-TRACK · SALES PAGE\\nSep 26, 2:43 PM\",\"YouLIKED · SALES PAGE\\nSep 26, 1:43 PM\"]"
  },
  {
-  "name": "first Hub tap: invite pop-up, two fields, \"Two seats left.\"",
+  "name": "liked ones are UP NEXT (the fast-tracked one is already writing)",
+  "ok": true,
+  "detail": "1Robots That Ask Before They Move2Uptime Is a Staffing Problem"
+ },
+ {
+  "name": "Library header \"1 DELIVERED · 2 UP NEXT\" (no REQUESTED at 0), no credits",
+  "ok": true,
+  "detail": "1 delivered · 2 up next"
+ },
+ {
+  "name": "Acme DELIVERED: status stamp on one line, inside the card",
+  "ok": true,
+  "detail": "[{\"text\":\"Delivered in 19h · Sep 27, 8:43 AM\",\"oneLine\":true,\"inside\":true,\"size\":\"8.25px\"}]"
+ },
+ {
+  "name": "format defaults to the card's (pillar)",
   "ok": true
  },
  {
-  "name": "invite errors: one message per code, never the generic line",
+  "name": "request_card with the chosen format, requested by Dana",
   "ok": true,
-  "detail": "{\"invalid\":\"That email doesn’t look right.\",\"self\":\"That’s you. Invite someone else.\",\"seat\":\"All 3 seats are taken.\",\"already\":\"They’re already on your portal.\",\"invalidSrv\":\"That email doesn’t look right.\",\"selfSrv\":\"That’s you. Invite someone else.\",\"failed\":\"We couldn’t send that invite. Try again in a minute.\"}"
+  "detail": "{\"id\":\"art-2\",\"company_id\":\"a2000000-0000-0000-0000-000000000001\",\"card_id\":\"a3000000-0000-0000-0000-000000000000\",\"format\":\"insight\",\"title\":\"Robots That Ask Before They Move\",\"status\":\"requested\",\"body_html\":null,\"google_doc_url\":null,\"requested_at\":\"2026-09-29T01:44:03.899Z\",\"requested_by\":\"a1000000-0000-0000-0000-000000000001\",\"deliver_by\":null,\"delivered_at\":null,\"live_at\":null,\"created_at\":\"2026-09-29T01:44:03.899Z\"}"
  },
  {
-  "name": "locked Hub: blurred canvas, lock modal, no toolbar",
+  "name": "portal-request: company, slug, card_title, format, requester_name, requester_email",
   "ok": true,
-  "detail": "{\"blur\":true,\"modal\":true,\"text\":\"Your Hub opens with your first credit pack.\\n\\nIt’s where drafts, edits, and your team’s notes come together.\\n\\nStart with 5 credits\\nBack to Library\",\"toolbar\":true,\"invite\":true,\"ghosts\":2}"
+  "detail": "{\"form-name\":\"portal-request\",\"company\":\"Acme Robotics\",\"slug\":\"acme-q1w2e3\",\"card_title\":\"Robots That Ask Before They Move\",\"format\":\"insight\",\"requester_name\":\"Dana\",\"requester_email\":\"dana@acme.co\"}"
  },
  {
-  "name": "locked Hub: modal copy + \"Start with 5 credits\" + \"Back to Library\"",
-  "ok": true,
-  "detail": "Your Hub opens with your first credit pack.\n\nIt’s where drafts, edits, and your team’s notes come together.\n\nStart with 5 credits\nBack to Library"
- },
- {
-  "name": "locked Hub: header Invite + 2 empty-seat ghosts, never under the blur or modal",
-  "ok": true,
-  "detail": "{\"blur\":true,\"modal\":true,\"text\":\"Your Hub opens with your first credit pack.\\n\\nIt’s where drafts, edits, and your team’s notes come together.\\n\\nStart with 5 credits\\nBack to Library\",\"toolbar\":true,\"invite\":true,\"ghosts\":2}"
- },
- {
-  "name": "locked Hub: nothing written to the canvas",
-  "ok": true
- },
- {
-  "name": "Hub header Invite opens the same pop-up",
-  "ok": true
- },
- {
-  "name": "invite sent from the Hub header: members row added, seats update, still in the Hub",
-  "ok": true,
-  "detail": "{\"seats\":2,\"ghosts\":1,\"invite\":true}"
- },
- {
-  "name": "lock modal \"Start with 5 credits\" opens the Starter checkout step",
+  "name": "no credit UI anywhere with CREDITS_ENABLED off",
   "ok": true
  },
  {
@@ -984,136 +1116,170 @@
   "detail": "3,3,3,2,1"
  },
  {
-  "name": "caught up: face-down stack of 5, first real next-week format face-up",
+  "name": "empty feed: paper card with a faint grid, \"5 new on Tuesday, Oct 6\" (real next-drop count) + live countdown",
   "ok": true,
-  "detail": "{\"text\":\"INSIGHT\\n\\n5 new on Tuesday, Sep 29\\n\\nIN 1D 0H\\n\\n+\\nLee hasn’t seen 5 of these.\\nSeat 3 is open. Invite someone who decides content.\",\"stack\":5,\"faceUp\":\"Insight\"}"
+  "detail": "5 new on Tuesday, Oct 6\n\nIN 6D 22H\n\n+\nLee hasn’t seen 5 of these.\n+\nSeat 3 is open."
  },
  {
-  "name": "caught up: \"5 new on Tuesday, Sep 29\" (drop day = weekday first opened) with a live countdown",
+  "name": "empty feed: \"Lee hasn’t seen 5 of these.\" with Lee's avatar, and \"Seat 3 is open.\" dashed",
   "ok": true,
-  "detail": "INSIGHT\n\n5 new on Tuesday, Sep 29\n\nIN 1D 0H\n\n+\nLee hasn’t seen 5 of these.\nSeat 3 is open. Invite someone who decides content."
+  "detail": "[{\"t\":\"Lee hasn’t seen 5 of these.\",\"av\":true,\"open\":false},{\"t\":\"+\\nSeat 3 is open.\",\"av\":false,\"open\":true}]"
  },
  {
-  "name": "caught up: a line per seat with cards left, an invite line per open seat",
-  "ok": true,
-  "detail": "INSIGHT\n\n5 new on Tuesday, Sep 29\n\nIN 1D 0H\n\n+\nLee hasn’t seen 5 of these.\nSeat 3 is open. Invite someone who decides content."
- },
- {
-  "name": "tapping a seat line only highlights that seat",
+  "name": "tapping a bubble only highlights that seat",
   "ok": true,
   "detail": "Lee"
  },
  {
-  "name": "open-seat line opens the same invite pop-up, \"One seat left.\"",
+  "name": "open-seat bubble opens the invite pop-up: \"One seat left on your portal.\"",
   "ok": true
  },
  {
-  "name": "locked $19: no page errors",
+  "name": "invite errors: exact copy per code",
+  "ok": true,
+  "detail": "{\n \"invalid\": \"That email doesn’t look right.\",\n \"self\": \"That’s you. Invite someone else.\",\n \"invalidSrv\": \"That email doesn’t look right.\",\n \"selfSrv\": \"That’s you. Invite someone else.\",\n \"already\": \"They’re already on your portal.\",\n \"alreadyRow\": \"They’re already on your portal.\",\n \"seat\": \"All 3 seats are taken.\",\n \"session\": \"Your session expired. Sign in again.\",\n \"failed\": \"We couldn’t send that invite. Try again in a minute.\",\n \"noEmail\": \"We couldn’t send that invite. Try again in a minute.\"\n}"
+ },
+ {
+  "name": "locked Hub (no credits): lock modal with \"Talk it through\" to the booking page",
+  "ok": true,
+  "detail": "{\"blur\":true,\"modal\":true,\"text\":\"Your Hub opens with your first content pack.\\n\\nIt’s where drafts, edits, and your team’s notes come together.\\n\\nTalk it through\\nBack to Library\",\"href\":\"https://cal.com/vedika/ghostwriter-mom?metadata[slug]=acme-q1w2e3\",\"invite\":true,\"ghosts\":1,\"items\":4}"
+ },
+ {
+  "name": "locked Hub: Invite + one \"+ seat\" ghost in the header, above the blur",
+  "ok": true,
+  "detail": "{\"blur\":true,\"modal\":true,\"text\":\"Your Hub opens with your first content pack.\\n\\nIt’s where drafts, edits, and your team’s notes come together.\\n\\nTalk it through\\nBack to Library\",\"href\":\"https://cal.com/vedika/ghostwriter-mom?metadata[slug]=acme-q1w2e3\",\"invite\":true,\"ghosts\":1,\"items\":4}"
+ },
+ {
+  "name": "locked Hub: the company's own items only, nothing written",
+  "ok": true,
+  "detail": "{\"blur\":true,\"modal\":true,\"text\":\"Your Hub opens with your first content pack.\\n\\nIt’s where drafts, edits, and your team’s notes come together.\\n\\nTalk it through\\nBack to Library\",\"href\":\"https://cal.com/vedika/ghostwriter-mom?metadata[slug]=acme-q1w2e3\",\"invite\":true,\"ghosts\":1,\"items\":4}"
+ },
+ {
+  "name": "\"+ seat\" ghost opens the same pop-up",
+  "ok": true
+ },
+ {
+  "name": "3/3 after the invite: header Invite hidden, the new seat shows",
+  "ok": true
+ },
+ {
+  "name": "Acme: no page errors",
   "ok": true,
   "detail": ""
  },
  {
-  "name": "credits: header \"1 written · 3 approved · 25 credits\"",
+  "name": "3 seats, like + like + pass: the majority pair -> \"Two yeses\"",
   "ok": true,
-  "detail": "1 written · 3 approved · 25 credits"
+  "detail": "{\"cls\":\"reveal rv-agree\",\"names\":[\"You\",\"Lee\"]}"
  },
  {
-  "name": "notes readable on the card in the Library",
+  "name": "3 seats, save + pass + like: all differ -> Split",
   "ok": true
  },
  {
-  "name": "enough credits: \"Write this · 8 credits\"",
-  "ok": true
- },
- {
-  "name": "spend: one piece, 8 credits from the soonest-expiring grant, by this seat",
+  "name": "closed window, Feed: banner \"Your portal window closed. Pick up where you left off.\" + \"Book 15 minutes\"",
   "ok": true,
-  "detail": "[{\"id\":\"l2\",\"company_id\":\"a2000000-0000-0000-0000-000000000001\",\"delta\":-8,\"kind\":\"spend\",\"grant_id\":\"g-plan\",\"piece_id\":\"pc0\",\"created_by\":\"a1000000-0000-0000-0000-000000000001\"}]"
+  "detail": "{\"shown\":true,\"text\":\"Your portal window closed. Pick up where you left off. Book 15 minutes\",\"href\":\"https://cal.com/vedika/ghostwriter-mom?metadata[slug]=acme-q1w2e3\",\"target\":\"_blank\"}"
  },
  {
-  "name": "after spend: card shows \"Arriving in <countdown>\", header 17 credits",
+  "name": "closed: new drops stop (5 cards, the late one hidden)",
   "ok": true,
-  "detail": "PillarUptime Is a Staffing ProblemApprovedArriving in 24h 0m"
+  "detail": "5 cards · 1 unread"
  },
  {
-  "name": "second piece: card shows \"Queued\"",
+  "name": "closed: swiping still works (decision saved)",
   "ok": true
  },
  {
-  "name": "credits account: first Hub tap still offers the last seat",
-  "ok": true
- },
- {
-  "name": "credit purchase + active $19: Hub unlocked",
-  "ok": true
- },
- {
-  "name": "Hub: approved, unwritten cards marked \"Ready to write\"",
-  "ok": true
- },
- {
-  "name": "Hub: tapping it opens the same \"Write this\"",
-  "ok": true
- },
- {
-  "name": "bought before: plan and top-up offered, no Starter",
+  "name": "closed: \"Request it\" disabled with \"Your window closed. Book 15 minutes to keep going.\"",
   "ok": true,
-  "detail": "\n  \n    \n    \n      \n        Credits\n        You have 0 credits.\n      \n      ×\n    \n    Plan20 credits a month · $2,000Unused credits carry over one month.Start the planTop-up$125 per credit−3+Buy 3 credits · $375\n     \n  \n"
+  "detail": "{\"disabled\":true,\"title\":\"Your window closed. Book 15 minutes to keep going.\",\"tip\":\"Your window closed. Book 15 minutes to keep going.\"}"
  },
  {
-  "name": "top-up quantity picker: default = credits missing, total updates",
-  "ok": true
- },
- {
-  "name": "top-up: create-checkout(topup, 5), no coupon after the first purchase",
+  "name": "closed window, History: banner \"Your portal window closed. Pick up where you left off.\" + \"Book 15 minutes\"",
   "ok": true,
-  "detail": "https://checkout.stripe.test/topup?q=5&coupon=none"
+  "detail": "{\"shown\":true,\"text\":\"Your portal window closed. Pick up where you left off. Book 15 minutes\",\"href\":\"https://cal.com/vedika/ghostwriter-mom?metadata[slug]=acme-q1w2e3\",\"target\":\"_blank\"}"
  },
  {
-  "name": "back from checkout: \"Payment received\", then the new balance, URL cleaned",
+  "name": "closed: Feed history readable",
   "ok": true
  },
  {
-  "name": "credits account: no page errors",
+  "name": "closed window, Library: banner \"Your portal window closed. Pick up where you left off.\" + \"Book 15 minutes\"",
+  "ok": true,
+  "detail": "{\"shown\":true,\"text\":\"Your portal window closed. Pick up where you left off. Book 15 minutes\",\"href\":\"https://cal.com/vedika/ghostwriter-mom?metadata[slug]=acme-q1w2e3\",\"target\":\"_blank\"}"
+ },
+ {
+  "name": "closed: \"Request this\" disabled with the tooltip, reason shown",
+  "ok": true,
+  "detail": "{\"disabled\":true,\"title\":\"Your window closed. Book 15 minutes to keep going.\",\"msg\":\"Your window closed. Book 15 minutes to keep going.\"}"
+ },
+ {
+  "name": "closed: delivered pieces stay readable; Mark live hidden",
+  "ok": true
+ },
+ {
+  "name": "closed window, Hub: banner \"Your portal window closed. Pick up where you left off.\" + \"Book 15 minutes\"",
+  "ok": true,
+  "detail": "{\"shown\":true,\"text\":\"Your portal window closed. Pick up where you left off. Book 15 minutes\",\"href\":\"https://cal.com/vedika/ghostwriter-mom?metadata[slug]=acme-q1w2e3\",\"target\":\"_blank\"}"
+ },
+ {
+  "name": "closed: the empty feed offers the call, not a new drop",
+  "ok": true,
+  "detail": "Pick up where you left off.Book 15 minutes"
+ },
+ {
+  "name": "closed: request_card never called",
+  "ok": true
+ },
+ {
+  "name": "closed: no page errors",
   "ok": true,
   "detail": ""
  },
  {
-  "name": "RPR: Feed open (canceled but not ended), 10 new cards",
+  "name": "credits: Library header has no balance",
+  "ok": true
+ },
+ {
+  "name": "a credit grant opens the Hub",
+  "ok": true
+ },
+ {
+  "name": "credits: nothing says credits, \"Ready to write\" or a price",
+  "ok": true
+ },
+ {
+  "name": "closed window, RPR Feed: banner \"Your portal window closed. Pick up where you left off.\" + \"Book 15 minutes\"",
+  "ok": true,
+  "detail": "{\"shown\":true,\"text\":\"Your portal window closed. Pick up where you left off. Book 15 minutes\",\"href\":\"https://cal.com/vedika/ghostwriter-mom?metadata[slug]=rpr-k7m2qx\",\"target\":\"_blank\"}"
+ },
+ {
+  "name": "RPR: 10 cards, swipeable",
   "ok": true,
   "detail": "10 cards · 10 unread"
  },
  {
-  "name": "RPR caught up (UTC viewer): first opened on a Friday -> \"5 new on Friday, Oct 2\"",
-  "ok": true,
-  "detail": "5 new on Friday, Oct 2In 4d 0h+++You haven’t seen 10 of these.Seat 2 is open. Invite someone who decides content.Seat 3 is open. Invite someone who decides content.Seat 4 is open. Invite someone who decides content."
- },
- {
-  "name": "RPR caught up: the test seat has cards left, seats 2 to 4 open, no invented face-up card",
-  "ok": true,
-  "detail": "5 new on Friday, Oct 2In 4d 0h+++You haven’t seen 10 of these.Seat 2 is open. Invite someone who decides content.Seat 3 is open. Invite someone who decides content.Seat 4 is open. Invite someone who decides content."
- },
- {
-  "name": "RPR Library: empty shelf, no credits line",
+  "name": "RPR: a swipe is saved",
   "ok": true
  },
  {
-  "name": "RPR: first Hub tap -> invite pop-up, \"Three seats left.\" (seat_limit 4, one test seat)",
+  "name": "RPR empty feed: seats 2 to 4 open",
+  "ok": true,
+  "detail": "Pick up where you left off.Book 15 minutes++++Seat 2 is open.+Seat 3 is open.+Seat 4 is open."
+ },
+ {
+  "name": "RPR Library: \"0 DELIVERED · 1 UP NEXT\"",
+  "ok": true,
+  "detail": "0 delivered · 1 up next"
+ },
+ {
+  "name": "RPR invite: \"Three seats left on your portal.\" (seat_limit 4)",
   "ok": true
  },
  {
-  "name": "RPR Hub: locked with the lock modal, Invite in the header",
+  "name": "RPR Hub: locked, Invite above the blur",
   "ok": true
- },
- {
-  "name": "RPR credits: \"Resume your $19 to buy credits\", ends Oct 25, one button",
-  "ok": true,
-  "detail": "\n  \n    \n    \n      \n        Credits\n        Resume your $19 to buy credits\n      \n      ×\n    \n    Your $19 portalEnds Oct 25Resume it and it keeps renewing as before. No new charge today.Resume my $19\n     \n  \n"
- },
- {
-  "name": "Resume: same subscription resumed (no new $19), then straight into the Starter checkout with the coupon",
-  "ok": true,
-  "detail": "resume,starter https://checkout.stripe.test/starter?q=1&coupon=first"
  },
  {
   "name": "RPR: no page errors",
@@ -1121,69 +1287,104 @@
   "detail": ""
  },
  {
-  "name": "drop day in the viewer's timezone: Tokyo sees a Saturday -> Monday (Monday, Oct 5)",
+  "name": "drop day from the shared helper in the viewer's timezone (UTC): \"5 new on Friday, Oct 2\"",
+  "ok": true,
+  "detail": "5 new on Friday, Oct 2"
+ },
+ {
+  "name": "drop day from the shared helper in the viewer's timezone (Asia/Tokyo): \"5 new on Monday, Oct 5\"",
   "ok": true,
   "detail": "5 new on Monday, Oct 5"
  },
  {
-  "name": "375x568: \"Swipe to shuffle. Tap to open.\" sits above the Feed/Library switch, uncovered",
+  "name": "375x600: feed tooltip never covers the card footer",
   "ok": true,
-  "detail": "{\"hintBottom\":480,\"hintTop\":468,\"swTop\":500,\"visible\":true,\"bookBottom\":412.640625}"
+  "detail": "{\"bubbleTop\":598.5618286132812,\"cardBottom\":510,\"over\":false}"
  },
  {
-  "name": "375x568 delivered: status stamp on one line, inside the card",
+  "name": "375x600: \"Swipe to shuffle. Tap to open.\" above the Feed/Library switch, uncovered",
   "ok": true,
-  "detail": "[{\"text\":\"Delivered in 19h · Sep 26, 6:31 AM\",\"oneLine\":true,\"inside\":true,\"size\":\"7.5px\"}]"
+  "detail": "{\"text\":\"Swipe to shuffle. Tap to open.\",\"hintBottom\":512,\"hintTop\":500,\"swTop\":532,\"visible\":true,\"bookBottom\":441.625}"
  },
  {
-  "name": "375x667: \"Swipe to shuffle. Tap to open.\" sits above the Feed/Library switch, uncovered",
+  "name": "375x600 DELIVERED: status stamp on one line, inside the card",
   "ok": true,
-  "detail": "{\"hintBottom\":579,\"hintTop\":567,\"swTop\":599,\"visible\":true,\"bookBottom\":473.375}"
+  "detail": "[{\"text\":\"Delivered in 19h · Sep 27, 8:44 AM\",\"oneLine\":true,\"inside\":true,\"size\":\"8.25px\"}]"
  },
  {
-  "name": "375x667 delivered: status stamp on one line, inside the card",
+  "name": "375x667: feed tooltip never covers the card footer",
   "ok": true,
-  "detail": "[{\"text\":\"Delivered in 19h · Sep 26, 6:31 AM\",\"oneLine\":true,\"inside\":true,\"size\":\"8px\"}]"
+  "detail": "{\"bubbleTop\":598.5864868164062,\"cardBottom\":510,\"over\":false}"
  },
  {
-  "name": "375x812: \"Swipe to shuffle. Tap to open.\" sits above the Feed/Library switch, uncovered",
+  "name": "375x667: \"Swipe to shuffle. Tap to open.\" above the Feed/Library switch, uncovered",
   "ok": true,
-  "detail": "{\"hintBottom\":724,\"hintTop\":712,\"swTop\":744,\"visible\":true,\"bookBottom\":545.875}"
+  "detail": "{\"text\":\"Swipe to shuffle. Tap to open.\",\"hintBottom\":579,\"hintTop\":567,\"swTop\":599,\"visible\":true,\"bookBottom\":475.125}"
  },
  {
-  "name": "375x812 delivered: status stamp on one line, inside the card",
+  "name": "375x667 DELIVERED: status stamp on one line, inside the card",
   "ok": true,
-  "detail": "[{\"text\":\"Delivered in 19h · Sep 26, 6:31 AM\",\"oneLine\":true,\"inside\":true,\"size\":\"8px\"}]"
+  "detail": "[{\"text\":\"Delivered in 19h · Sep 27, 8:44 AM\",\"oneLine\":true,\"inside\":true,\"size\":\"8.25px\"}]"
  },
  {
-  "name": "1280x700: \"Swipe to shuffle. Tap to open.\" sits above the Feed/Library switch, uncovered",
+  "name": "375x812: feed tooltip never covers the card footer",
   "ok": true,
-  "detail": "{\"hintBottom\":612,\"hintTop\":600,\"swTop\":632,\"visible\":true,\"bookBottom\":539.5}"
+  "detail": "{\"bubbleTop\":662.8585815429688,\"cardBottom\":582,\"over\":false}"
  },
  {
-  "name": "1280x700 delivered: status stamp on one line, inside the card",
+  "name": "375x812: swipe buttons clear the Feed/Library switch without scrolling (card 472px)",
   "ok": true,
-  "detail": "[{\"text\":\"Delivered in 19h · Sep 26, 6:31 AM\",\"oneLine\":true,\"inside\":true,\"size\":\"9.75px\"}]"
+  "detail": "{\"ctl\":734,\"sw\":744,\"card\":472}"
  },
  {
-  "name": "blendbases: Agree reveal on first view of vb-02 (You + vedikabhasin)",
+  "name": "375x812: \"Swipe to shuffle. Tap to open.\" above the Feed/Library switch, uncovered",
   "ok": true,
-  "detail": "LikedYouPostVBThe Parts Other Creators Build WithMaking an effect is different from making the pieces effects are made from. The quietest work outlives the campaign.1 sourceLikedvedikabhasinYou both want this one.Move it upKeep swiping"
+  "detail": "{\"text\":\"Swipe to shuffle. Tap to open.\",\"hintBottom\":724,\"hintTop\":712,\"swTop\":744,\"visible\":true,\"bookBottom\":547.625}"
  },
  {
-  "name": "blendbases: Split from the other side (You passed, vedikabhasin liked)",
+  "name": "375x812 DELIVERED: status stamp on one line, inside the card",
+  "ok": true,
+  "detail": "[{\"text\":\"Delivered in 19h · Sep 27, 8:44 AM\",\"oneLine\":true,\"inside\":true,\"size\":\"8.25px\"}]"
+ },
+ {
+  "name": "1280x700: feed tooltip never covers the card footer",
+  "ok": true,
+  "detail": "{\"bubbleTop\":590.8491821289062,\"cardBottom\":510,\"over\":false}"
+ },
+ {
+  "name": "1280x700: \"Swipe to shuffle. Tap to open.\" above the Feed/Library switch, uncovered",
+  "ok": true,
+  "detail": "{\"text\":\"Swipe to shuffle. Tap to open.\",\"hintBottom\":612,\"hintTop\":600,\"swTop\":632,\"visible\":true,\"bookBottom\":543}"
+ },
+ {
+  "name": "1280x700 DELIVERED: status stamp on one line, inside the card",
+  "ok": true,
+  "detail": "[{\"text\":\"Delivered in 19h · Sep 27, 8:44 AM\",\"oneLine\":true,\"inside\":true,\"size\":\"10px\"}]"
+ },
+ {
+  "name": "blendbases: \"Two yeses\" on first view of vb-02 (You + vedikabhasin)",
+  "ok": true,
+  "detail": "LikedYouPostVBThe Parts Other Creators Build WithMaking an effect is different from making the pieces effects are made from. The quietest work outlives the campaign.1 sourceLikedvedikabhasinTwo yeses. Next in line.Move it upKeep swiping"
+ },
+ {
+  "name": "blendbases: reveal name tags fit at 375px",
   "ok": true
  },
  {
-  "name": "blendbases: reveal name tags fit on screen at 375px, untruncated",
+  "name": "blendbases: Make your case prefilled \"Passed because \" (their own swipe)",
   "ok": true
  },
  {
-  "name": "blendbases: Timing from the other side",
+  "name": "blendbases: \"Request it\" on a card Vedika already requested is disabled (\"Already requested.\")",
+  "ok": true,
+  "detail": "{\"disabled\":true,\"tip\":\"Already requested.\"}"
+ },
+ {
+  "name": "notes readable on card detail in the Library",
   "ok": true
  },
  {
-  "name": "blendbases: sees Vedika's note in the Hub",
+  "name": "blendbases: sees Vedika's notes in the Hub",
   "ok": true
  },
  {
@@ -1192,35 +1393,38 @@
   "detail": ""
  },
  {
-  "name": "code: bad code shows the error and stays on sign-in",
+  "name": "send: rate limit -> \"Too many tries. Wait a minute and try again.\"",
   "ok": true
  },
  {
-  "name": "code: spaces stripped from a pasted code",
+  "name": "code: wrong code -> \"That code didn’t work. Check the latest email or send a new link.\" + \"Send a new link\"",
   "ok": true
  },
  {
-  "name": "code: button enabled again after a failed check",
+  "name": "code: spaces dropped",
   "ok": true
  },
  {
-  "name": "code: \"Use a different email\" returns to the email form and clears the code",
-  "ok": true
- },
- {
-  "name": "code: verifyOtp called with the sent email, the code and type email",
+  "name": "\"Send a new link\" sends to the same address",
   "ok": true,
-  "detail": "{\"email\":\"vedikabhasin@gmail.com\",\"token\":\"123456\",\"type\":\"email\",\"gotrue_meta_security\":{}}"
+  "detail": "{\"method\":\"POST\",\"path\":\"/auth/v1/otp?redirect_to=http%3A%2F%2Flocalhost%3A8877%2Fportal\",\"body\":{\"email\":\"vedikabhasin@gmail.com\",\"data\":{},\"create_user\":false,\"gotrue_meta_security\":{},\"code_challenge\":null,\"code_challenge_method\":null}}"
  },
  {
-  "name": "code: lands on the feed, portal started once",
+  "name": "verify: rate limit -> \"Too many tries. Wait a minute and try again.\"",
+  "ok": true
+ },
+ {
+  "name": "paste: spaces trimmed",
+  "ok": true
+ },
+ {
+  "name": "code-only sign-in: verifyOtp({ email, token, type: \"email\" }) with an 8-digit code",
   "ok": true,
-  "detail": "company loads: 1"
+  "detail": "{\"email\":\"vedikabhasin@gmail.com\",\"token\":\"12345678\",\"type\":\"email\",\"gotrue_meta_security\":{}}"
  },
  {
   "name": "sign out: local scope only",
-  "ok": true,
-  "detail": "/auth/v1/logout?scope=local"
+  "ok": true
  },
  {
   "name": "code: no page errors",

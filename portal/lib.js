@@ -62,20 +62,8 @@ export function todayStr() {
 }
 
 // ---- weekly drop day --------------------------------------------------------
-// The drop day is the weekday the company first opened its sales page, read
-// in the viewer's timezone; a Saturday or Sunday becomes Monday.
-/** 0 (Sun) to 6 (Sat). */
-export function dropWeekday(firstOpenedIso) {
-  const w = new Date(firstOpenedIso).getDay();
-  return w === 0 || w === 6 ? 1 : w;
-}
-/** Local midnight of the next drop day after today. */
-export function nextDrop(firstOpenedIso, now = new Date()) {
-  const want = dropWeekday(firstOpenedIso);
-  const d = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-  do { d.setDate(d.getDate() + 1); } while (d.getDay() !== want);
-  return d;
-}
+// The drop day itself comes from /shared/drop-day.js (shared with the sales
+// page). These only format it.
 /** "Tuesday, Oct 6" */
 export function fmtWeekday(d) {
   try { return d.toLocaleDateString(undefined, { weekday: 'long', month: 'short', day: 'numeric' }); }

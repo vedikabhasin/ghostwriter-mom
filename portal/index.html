@@ -43,6 +43,9 @@
     </div>
   </header>
 
+  <!-- Window closed: on every view, one line and a way to keep going. -->
+  <p class="closed-banner" id="closed-banner" role="status" hidden></p>
+
   <!-- LOADING -->
   <section class="screen" id="screen-loading" role="status" aria-live="polite">
     <div class="loading">Opening your portal&hellip;</div>
@@ -67,15 +70,13 @@
         </div>
         <p class="field-msg" id="signin-msg" aria-live="polite">&nbsp;</p>
       </form>
-      <div class="signin-sent" id="signin-sent" hidden role="status" aria-live="polite">
-        <span class="envelope" aria-hidden="true">&#9993;&#65039;</span>
-        <p class="sent-head">Check your inbox.</p>
-        <p class="sent-sub">If <strong id="sent-email"></strong> has a portal, a sign-in link and code are on their way.</p>
+      <div class="signin-sent" id="signin-sent" hidden>
+        <p class="sent-head" role="status">Check your inbox. The link and the code work for 24 hours.</p>
         <form class="capture code-form" id="code-form" novalidate>
+          <label class="code-label" for="signin-code">Or enter the code from your email</label>
           <div class="login-field">
-            <input type="text" id="signin-code" name="code" placeholder="6-digit code"
-                   inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]*"
-                   minlength="6" maxlength="8" required aria-label="Sign-in code">
+            <input type="text" id="signin-code" name="code" placeholder="Code"
+                   inputmode="numeric" autocomplete="one-time-code" autocapitalize="off" spellcheck="false" required>
             <span class="join-host">
               <span class="join-glow" aria-hidden="true"></span>
               <button type="submit" class="join gwm-btn" id="code-btn">
@@ -84,6 +85,7 @@
             </span>
           </div>
           <p class="field-msg" id="code-msg" aria-live="polite">&nbsp;</p>
+          <button type="button" class="btn-text" id="code-resend" hidden>Send a new link</button>
         </form>
         <button type="button" class="btn-ghost" data-action="signin-again">Use a different email</button>
       </div>
@@ -146,7 +148,6 @@
 
   <!-- LIBRARY (catalog mode) -->
   <section class="screen" id="screen-library">
-    <p class="resub-line" id="resub-line" hidden></p>
     <div class="feed-top">
       <span class="eyebrow gwm-mono-tag">Library</span>
       <span class="feed-count" id="lib-count"></span>
@@ -193,9 +194,9 @@
     </div>
     <div class="hub-overlay" id="hub-overlay" hidden>
       <div class="hub-overlay-panel" role="dialog" aria-labelledby="hub-lock-title">
-        <h3 class="hub-line" id="hub-lock-title">Your Hub opens with your first credit pack.</h3>
+        <h3 class="hub-line" id="hub-lock-title">Your Hub opens with your first content pack.</h3>
         <p class="hub-sub">It’s where drafts, edits, and your team’s notes come together.</p>
-        <button type="button" class="btn btn-primary gwm-btn" data-action="hub-start" id="hub-start">Start with 5 credits</button>
+        <a class="btn btn-primary gwm-btn" id="hub-talk" target="_blank" rel="noopener noreferrer">Talk it through</a>
         <button type="button" class="btn btn-secondary gwm-btn" data-action="back-to-library">Back to Library</button>
       </div>
     </div>
@@ -284,8 +285,8 @@
   </div>
 </div>
 
-<!-- Ghost (approved, unwritten) sheet -->
-<div class="sheet-scrim" id="ghost-sheet" role="dialog" aria-modal="true" aria-label="Approved article">
+<!-- Card detail: UP NEXT, REQUESTED, WRITING -->
+<div class="sheet-scrim" id="ghost-sheet" role="dialog" aria-modal="true" aria-label="Card">
   <div class="sheet-panel">
     <div class="sheet-grabber" aria-hidden="true"></div>
     <div class="sheet-head">
@@ -295,15 +296,16 @@
       </div>
       <button type="button" class="sheet-close gwm-center" data-close="ghost-sheet" aria-label="Close">&times;</button>
     </div>
-    <p class="ghost-copy" id="ghost-copy"></p>
+    <div class="ghost-tag" id="ghost-tag"></div>
+    <p class="ghost-copy" id="ghost-copy" aria-live="polite"></p>
     <div class="write-box" id="write-box" hidden>
       <div class="fmt-choice" id="fmt-choice" role="radiogroup" aria-label="Format">
         <button type="button" class="fmt-opt gwm-btn" role="radio" data-fmt="post">Post</button>
         <button type="button" class="fmt-opt gwm-btn" role="radio" data-fmt="insight">Insight</button>
         <button type="button" class="fmt-opt gwm-btn" role="radio" data-fmt="pillar">Pillar</button>
       </div>
-      <p class="write-cost" id="write-cost" aria-live="polite"></p>
-      <button type="button" class="btn btn-primary gwm-btn" id="write-btn">Write this</button>
+      <p class="write-cost" id="write-cost" aria-live="polite" hidden></p>
+      <button type="button" class="btn btn-primary gwm-btn" id="write-btn">Request this</button>
       <p class="field-msg" id="write-msg" aria-live="polite">&nbsp;</p>
     </div>
     <div class="card-notes" id="ghost-notes"></div>
@@ -355,9 +357,11 @@
   <div class="modal-panel">
     <h3 id="invite-title">Who else decides your content?</h3>
     <p class="modal-sub" id="invite-sub">They’ll get a sign-in link.</p>
-    <p class="seat-line gwm-mono-tag" id="invite-seats"></p>
+    <div class="seats invite-seats" id="invite-seat-row" aria-label="Seats"></div>
     <form id="invite-form" novalidate>
-      <div id="invite-fields"></div>
+      <label class="field">
+        <input type="email" id="invite-email" placeholder="teammate@work.com" autocomplete="off" inputmode="email" aria-label="Teammate email">
+      </label>
       <p class="field-msg" id="invite-msg" aria-live="polite">&nbsp;</p>
       <span class="btn-glow-host">
         <span class="btn-glow" aria-hidden="true"></span>
@@ -367,6 +371,15 @@
     <button type="button" class="btn-ghost center-btn" data-action="invite-skip">Skip for now</button>
   </div>
 </div>
+
+<!-- Netlify registers this form at deploy time; the portal posts to it with
+     fetch() on every request. Never shown. -->
+<form name="portal-request" method="POST" data-netlify="true" netlify-honeypot="bot-field" hidden>
+  <input type="hidden" name="form-name" value="portal-request">
+  <input name="bot-field">
+  <input name="company"><input name="slug"><input name="card_title"><input name="format">
+  <input name="requester_name"><input name="requester_email">
+</form>
 
 <script type="module" src="/portal/portal.js"></script>
 </body>

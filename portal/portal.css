@@ -132,6 +132,8 @@ body[data-view="signin"] .topbar{display:none;}
 .field:focus-within, .note-field:focus-within{outline:2px solid var(--ink); outline-offset:1px;}
 .field-msg{font-family:var(--font-mono); font-size:11.5px; color:var(--ink-soft); min-height:16px; margin:2px 2px 10px; line-height:1.45;}
 .field-msg.err{color:#8a1a1a;}
+.field-msg.ok{color:var(--like-ink); font-weight:700;}
+a.btn{text-decoration:none; box-sizing:border-box;}
 
 /* -----------------------------------------------------------------------------
    SIGN IN: the waitlist page's identity: grid, desk objects at the edges,
@@ -209,7 +211,13 @@ body[data-view="signin"] .desk{display:block;}
 .card{
   position:absolute; top:0; left:0; right:0; margin:0 auto;
   width:100%; max-width:400px;
-  min-height:clamp(380px, 52vh, 500px);
+  /* Fixed height, same as the sales page: every card is the same size, so
+     swipe reach and reading rhythm stay predictable. Long proof scrolls
+     inside .proof. The portal also has the Feed/Library switch under the
+     buttons, so on shorter phones the card gives up only what it needs for
+     the buttons to stay above the switch (never under 400px). */
+  --card-h:clamp(460px, 62vh, 560px);
+  height:max(400px, min(var(--card-h), calc(100dvh - var(--card-room, 340px))));
   padding:22px 22px 20px;
   display:flex; flex-direction:column; gap:12px;
   border-radius:var(--radius-card);
@@ -266,7 +274,13 @@ body[data-view="signin"] .desk{display:block;}
 .card-title{font-family:var(--font-display); font-weight:800; font-size:clamp(20px, 5.4vw, 26px); line-height:1.15; letter-spacing:-0.018em; margin:2px 0 0; text-wrap:balance;}
 .card-angle{font-size:15px; line-height:1.5; margin:0;}
 /* Proof box: same as the sales page's card-evidence. */
-.proof{font-family:var(--font-mono); font-size:12px; line-height:1.5; color:#333; background:rgba(14,14,14,0.045); border-radius:10px; padding:12px; margin:0;}
+.proof{font-family:var(--font-mono); font-size:12px; line-height:1.5; color:#333; background:rgba(14,14,14,0.045); border-radius:10px; padding:12px; margin:0;
+  max-height:132px; flex:0 1 auto; min-height:0; overflow-y:auto; overscroll-behavior:contain;
+  scrollbar-width:thin; scrollbar-color:rgba(14,14,14,0.24) transparent; -webkit-overflow-scrolling:touch; touch-action:pan-y;}
+.proof::-webkit-scrollbar{width:6px; height:6px;}
+.proof::-webkit-scrollbar-track{background:transparent;}
+.proof::-webkit-scrollbar-thumb{background:rgba(14,14,14,0.16); border-radius:3px;}
+.proof:hover::-webkit-scrollbar-thumb{background:rgba(14,14,14,0.28);}
 .proof::before{content:"Proof: "; font-weight:700; color:var(--ink);}
 .card-tags{display:flex; flex-wrap:wrap; align-items:center; gap:6px;}
 .card-tag{font-family:var(--font-mono); font-size:10px; letter-spacing:0.04em; color:#333; background:rgba(14,14,14,0.06); padding:3px 8px; border-radius:999px;}
@@ -292,6 +306,16 @@ body[data-view="signin"] .desk{display:block;}
 .signal-hint{font-family:var(--font-mono); font-size:10.5px; letter-spacing:0.08em; text-transform:uppercase; color:var(--ink-soft);}
 
 .card-sources{display:flex; align-items:center; flex-wrap:wrap; gap:6px; margin-top:auto; padding-top:8px; border-top:1px dashed rgba(14,14,14,0.14);}
+.src-btn{display:inline-flex; align-items:center; gap:8px; padding:6px 10px 6px 12px; border-radius:999px; cursor:pointer;
+  background:rgba(255,255,255,0.92); border:1px solid rgba(14,14,14,0.14); -webkit-tap-highlight-color:transparent; touch-action:manipulation;
+  font-family:var(--font-mono); font-size:11px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--ink);
+  transition:transform 180ms var(--ease), background 180ms var(--ease), border-color 180ms var(--ease);}
+.src-btn:hover{background:var(--white); border-color:rgba(14,14,14,0.28); transform:translateY(-1px);}
+.src-btn:active{transform:translateY(0);}
+.src-btn:focus-visible{outline:2px solid var(--ink); outline-offset:2px;}
+.src-btn-label{line-height:1;}
+.src-btn-count{display:inline-flex; align-items:center; justify-content:center; min-width:18px; height:18px; padding:0 6px;
+  background:var(--ink); color:var(--white); border-radius:999px; font-size:10px; font-weight:800; letter-spacing:0;}
 .card-sources-label{font-family:var(--font-mono); font-size:10px; letter-spacing:0.12em; text-transform:uppercase; color:var(--ink-soft); font-weight:700; margin-right:2px;}
 .src-chip{display:inline-flex; align-items:center; gap:6px; padding:5px 10px 5px 5px; border-radius:999px; line-height:1;
   background:rgba(255,255,255,0.92); border:1px solid rgba(14,14,14,0.14); cursor:pointer;
@@ -310,6 +334,7 @@ body[data-view="signin"] .desk{display:block;}
 .ov-label.agree {background:color-mix(in srgb, var(--like) 40%, transparent); color:var(--like-ink);}
 .ov-label.split {background:color-mix(in srgb, var(--pass) 28%, transparent); color:var(--pass-ink);}
 .ov-label.timing{background:color-mix(in srgb, var(--save) 45%, transparent); color:var(--save-ink);}
+.ov-label.now   {background:color-mix(in srgb, var(--fasttrack) 40%, transparent); color:var(--fasttrack-ink);}
 .av{display:inline-flex; width:22px; height:22px; border-radius:50%; background:var(--white); align-items:center; justify-content:center;
   box-shadow:0 0 0 1.5px var(--white), 0 2px 6px -2px rgba(14,14,14,0.3); flex:0 0 auto;}
 .av .av-svg{width:20px; height:20px;}
@@ -393,6 +418,7 @@ body[data-view="signin"] .desk{display:block;}
 .dot.ov-agree::before{box-shadow:0 0 0 2px var(--like);}
 .dot.ov-split::before{box-shadow:0 0 0 2px var(--pass);}
 .dot.ov-timing::before{box-shadow:0 0 0 2px var(--save);}
+.dot.ov-now::before{box-shadow:0 0 0 2px var(--fasttrack);}
 .dot:focus-visible{outline:2px solid var(--ink); outline-offset:1px; border-radius:6px;}
 
 /* Controls: faint until hover / focus / touch. Never hidden. */
@@ -480,9 +506,6 @@ body.dir-like .ctl-like, body.dir-pass .ctl-pass, body.dir-fasttrack .ctl-fasttr
    two per side peeking out at +/-5 and +/-8 degrees. Back cards show edges
    and spines only; the front card is fully opaque.
    ----------------------------------------------------------------------------- */
-.resub-line{margin:0; padding:10px 14px; border-radius:14px; font-size:14px; line-height:1.45;
-  background:color-mix(in srgb, var(--pass) 18%, transparent); border:1px solid color-mix(in srgb, var(--pass) 45%, transparent); color:var(--pass-ink);}
-.resub-line a{color:inherit; font-weight:700;}
 .deck-stage{position:relative; flex:1; min-height:min(440px, calc(100dvh - 250px)); display:flex; align-items:center; justify-content:center; margin-top:8px;}
 /* Books scale with the screen height too, so the hint above the switch
    never has to move. */
@@ -513,17 +536,16 @@ body.dir-like .ctl-like, body.dir-pass .ctl-pass, body.dir-fasttrack .ctl-fasttr
   white-space:nowrap; margin-left:-8px;
 }
 .book-stamp.delivered{color:var(--like-ink);}
-.book-stamp.approved{color:var(--ink); border:2px dashed var(--f-color); margin-top:0; transform:rotate(-8deg); position:absolute; top:18px; right:16px;}
 .book-state{margin-top:auto; font-family:var(--font-mono); font-size:10.5px; letter-spacing:0.08em; text-transform:uppercase; color:var(--ink); font-weight:700;
   white-space:nowrap;}
-.book-state.arriving{background:color-mix(in srgb, var(--accent) 45%, transparent); align-self:flex-start; padding:5px 9px; border-radius:999px;}
+.book-state.writing{background:color-mix(in srgb, var(--accent) 45%, transparent); align-self:flex-start; padding:5px 9px; border-radius:999px;}
+.book-state.requested, .book-state.up_next{align-self:flex-start; letter-spacing:0.06em;}
 .book-state.ready{align-self:flex-start; padding:5px 9px 5px 10px; border-radius:999px; border:1.5px solid var(--ink); background:var(--white);}
 .book-state.queued{align-self:flex-start; padding:5px 9px 5px 10px; border-radius:999px; background:var(--canvas-alt); border:1.5px dashed var(--ink-soft);}
 /* Ghost (approved_unwritten): opaque paper, dashed border in the format color. */
 .book.ghost{background:var(--paper); box-shadow:0 18px 34px -24px rgba(14,14,14,0.45);
   border:2px dashed var(--f-color); border-left:var(--spine) dashed var(--f-color);}
 .book.ghost .card-format{background:var(--paper); border:1.5px dashed var(--f-color); color:var(--ink);}
-.book.ghost .book-head{padding-right:84px;}
 .book-trail{border:2px dashed var(--f-color); background:transparent; pointer-events:none;}
 .book-trail.fmt-pillar{--f-color:var(--f-pillar);} .book-trail.fmt-insight{--f-color:var(--f-insight);} .book-trail.fmt-post{--f-color:var(--f-post);}
 .book-trail.t1{opacity:0.25;} .book-trail.t2{opacity:0.12;}
@@ -832,3 +854,67 @@ body[data-view="library"] .toast{bottom:calc(var(--switch-h) + var(--switch-bott
 .qty-btn{width:40px; height:40px; border-radius:50%; border:1px solid rgba(14,14,14,0.16); background:var(--white); font-size:20px; cursor:pointer;}
 .qty-btn:disabled{opacity:0.4; cursor:default;}
 .qty-n{min-width:2ch; text-align:center; font-family:var(--font-mono); font-weight:700; font-size:18px;}
+
+/* -----------------------------------------------------------------------------
+   Call mode: closed-window banner, status tags, empty feed, sign-in code
+   ----------------------------------------------------------------------------- */
+.closed-banner{margin:0; padding:9px 14px; border-radius:14px; font-size:14px; line-height:1.45;
+  background:var(--white); border:1px solid rgba(14,14,14,0.14); color:var(--ink);}
+.closed-banner a, .book-link{color:var(--ink); font-weight:700; text-decoration:underline; text-underline-offset:3px;}
+body[data-view="hub"] .closed-banner{max-width:520px; width:calc(100% - 36px); margin:0 auto;}
+
+/* Status tags: uppercase mono, centered (gwm-center), one per state. */
+.status-tag{padding:4px 8px 4px 9px; border-radius:999px; font-family:var(--font-mono); font-size:9px; font-weight:700;
+  letter-spacing:0.08em; text-transform:uppercase; white-space:nowrap; line-height:1; border:1.5px solid transparent;}
+.book-head .status-tag{margin-left:auto;}
+.st-up_next{background:var(--white); color:var(--ink); border-color:var(--ink);}
+.st-requested{background:var(--white); color:var(--ink); border:1.5px dashed var(--ink);}
+.st-writing{background:color-mix(in srgb, var(--accent) 55%, var(--white)); color:var(--accent-ink); border-color:var(--accent-ink);}
+.st-delivered{background:var(--like); color:var(--like-ink); border-color:var(--like-ink);}
+.ghost-tag{display:flex; margin:-2px 0 10px;}
+.ghost-tag .status-tag{font-size:10.5px; padding:6px 10px 6px 11px;}
+.status-tag.stamp-in{animation:stamp-in 520ms var(--ease-spring) both;}
+@keyframes stamp-in{from{opacity:0; transform:rotate(-10deg) scale(2.2);} 60%{opacity:1;} to{transform:rotate(-4deg) scale(1);}}
+.stamp-in{transform:rotate(-4deg);}
+.mini-book .mb-state.status-tag{align-self:flex-start; font-size:8.5px;}
+.hub-item.tappable{cursor:pointer;}
+
+/* Empty feed: a paper card with the next drop, then who still has cards. */
+.cu-paper{width:min(100%, 340px); padding:26px 20px 22px; border-radius:18px; display:flex; flex-direction:column; align-items:center; gap:12px;
+  background:
+    repeating-linear-gradient(0deg, rgba(14,14,14,0.05) 0 1px, transparent 1px 22px),
+    repeating-linear-gradient(90deg, rgba(14,14,14,0.05) 0 1px, transparent 1px 22px),
+    var(--paper);
+  border:1px solid rgba(14,14,14,0.14); box-shadow:0 18px 34px -24px rgba(14,14,14,0.45); transform:rotate(-1.2deg);}
+.cu-sub{margin:0; font-size:15px;}
+.cu-bubble{position:relative; display:flex; align-items:center; gap:10px; width:100%; text-align:left; cursor:pointer;
+  border:1px solid rgba(14,14,14,0.14); background:var(--white); border-radius:16px 16px 16px 4px; padding:9px 14px 9px 10px;
+  font-family:var(--font-body); font-size:14px; color:var(--ink); line-height:1.35;}
+.cu-bubble.open{border:1.5px dashed var(--grey-300); background:transparent;}
+.cu-bubble:hover{background:var(--canvas-alt);}
+.cu-bubble:focus-visible{outline:2px solid var(--ink); outline-offset:2px;}
+.cu-bubble .av{flex:0 0 auto;}
+.cu-ghost{width:24px; height:24px; flex:0 0 24px; border-radius:50%; border:1.5px dashed var(--grey-300); color:var(--ink-soft); font-weight:700;}
+.cu-say{min-width:0;}
+button.seat.empty{cursor:pointer; padding:0; font-family:var(--font-body);}
+button.seat.empty:hover{border-color:var(--ink); color:var(--ink);}
+button.seat.empty:focus-visible{outline:2px solid var(--ink); outline-offset:2px;}
+
+/* Invite pop-up: the seats row updates in place. */
+.invite-seats{margin:0 0 12px;}
+
+/* Sign-in code */
+.code-label{display:block; font-size:14px; color:var(--ink); margin:2px 2px 8px; font-weight:600;}
+.btn-text{border:none; background:transparent; padding:6px 2px; cursor:pointer; font-family:var(--font-body); font-size:14px; font-weight:700;
+  color:var(--ink); text-decoration:underline; text-underline-offset:3px; align-self:flex-start;}
+.btn-text:focus-visible{outline:2px solid var(--ink); outline-offset:2px; border-radius:6px;}
+.btn-text:disabled{opacity:0.5;}
+
+/* Reveal: Now is a fasttrack-orange sunburst; a disabled primary says why. */
+.rv-now .rv-bg{background:
+  radial-gradient(60% 50% at 50% 42%, var(--fasttrack), color-mix(in srgb, var(--fasttrack) 40%, var(--canvas)) 58%, var(--canvas) 100%), var(--canvas);}
+.rv-now .rv-bg::before{content:''; position:absolute; inset:-20%; background:repeating-conic-gradient(from 0deg at 50% 42%,
+  color-mix(in srgb, var(--fasttrack) 55%, transparent) 0deg 8deg, transparent 8deg 22deg);
+  animation:rv-burst 1100ms var(--ease-spring) both; opacity:0.75;}
+.rv-tip{position:relative; z-index:1; margin:-8px 0 0; font-size:13.5px; background:rgba(255,255,255,0.85); padding:5px 10px; border-radius:999px;}
+#lib-count{text-align:right; line-height:1.5; margin-left:12px;}

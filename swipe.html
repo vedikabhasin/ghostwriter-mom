@@ -233,7 +233,10 @@ body.is-dragging{overflow:hidden; touch-action:none;}
 .card{
   position:absolute;
   width:100%; max-width:400px;
-  min-height:clamp(440px, 62vh, 560px);
+  /* Fixed height, not min-height — every card is the same size so swipe
+     reach and reading rhythm stay predictable. Content that would run past
+     the frame lives inside .card-evidence, which scrolls internally. */
+  height:clamp(460px, 62vh, 560px);
   padding:22px 22px 20px;
   display:flex; flex-direction:column; gap:12px;
   border-radius:var(--radius-card);
@@ -332,7 +335,22 @@ body.is-dragging{overflow:hidden; touch-action:none;}
   font-family:var(--font-mono); font-size:12px; line-height:1.5;
   color:#333; background:rgba(14,14,14,0.045);
   border-radius:10px; padding:12px; margin:0; position:relative;
+  /* Fixed frame across every card. When the proof body is longer than the
+     frame, it scrolls internally with a thin, self-hiding scrollbar so the
+     card outline stays consistent. */
+  max-height:132px; overflow-y:auto; overscroll-behavior:contain;
+  scrollbar-width:thin; scrollbar-color:rgba(14,14,14,0.24) transparent;
+  -webkit-overflow-scrolling:touch;
+  touch-action:pan-y;
 }
+.card-evidence::-webkit-scrollbar{ width:6px; height:6px; }
+.card-evidence::-webkit-scrollbar-track{ background:transparent; }
+.card-evidence::-webkit-scrollbar-thumb{
+  background:rgba(14,14,14,0.16); border-radius:3px;
+  transition:background 200ms var(--ease);
+}
+/* Hover/touch keeps it slightly darker; idle it stays low-contrast. */
+.card-evidence:hover::-webkit-scrollbar-thumb{ background:rgba(14,14,14,0.28); }
 .card-evidence::before{content:"Proof: "; font-weight:700; color:var(--ink);}
 .card-tags{display:flex; flex-wrap:wrap; gap:6px;}
 .card-tag{
@@ -351,6 +369,30 @@ body.is-dragging{overflow:hidden; touch-action:none;}
 .card-sources-label{
   font-family:var(--font-mono); font-size:10px; letter-spacing:0.12em; text-transform:uppercase;
   color:#4a4a4a; font-weight:700; margin-right:2px;
+}
+/* Single "Sources · N" button per card; opens the sheet with the full list.
+   Replaces the row of per-source chips so every card has the same footer. */
+.src-btn{
+  display:inline-flex; align-items:center; gap:8px;
+  padding:6px 10px 6px 12px;
+  border-radius:999px;
+  background:rgba(255,255,255,0.92);
+  border:1px solid rgba(14,14,14,0.14);
+  cursor:pointer; -webkit-tap-highlight-color:transparent;
+  font-family:var(--font-mono); font-size:11px; font-weight:700; letter-spacing:0.1em;
+  text-transform:uppercase; color:var(--ink);
+  transition:transform 180ms var(--ease), background 180ms var(--ease), border-color 180ms var(--ease);
+  touch-action:manipulation;
+}
+.src-btn:hover{ background:#fff; border-color:rgba(14,14,14,0.28); transform:translateY(-1px); }
+.src-btn:active{ transform:translateY(0); }
+.src-btn:focus-visible{ outline:2px solid var(--ink); outline-offset:2px; }
+.src-btn-label{ line-height:1; }
+.src-btn-count{
+  display:inline-flex; align-items:center; justify-content:center;
+  min-width:18px; height:18px; padding:0 6px;
+  background:var(--ink); color:#fff;
+  border-radius:999px; font-size:10px; font-weight:800; letter-spacing:0;
 }
 .src-chip{
   display:inline-flex; align-items:center; gap:6px;
@@ -497,12 +539,17 @@ body.dir-save  .ctl-save{
 }
 
 .info-btn{
-  position:fixed; left:14px; bottom:calc(14px + env(safe-area-inset-bottom, 0px));
-  width:36px; height:36px; border-radius:50%;
-  background:rgba(255,255,255,0.9);
+  /* Top-right corner, above the safe-area inset. Anchored to the viewport
+     top instead of the bottom because on short viewports the bottom edge is
+     where the feed controls (pass/save/fast/like) live, and the fixed button
+     used to overlap them. Top-right sits above the feed-top row's history
+     button, which slides left thanks to .feed-top's padding-right below. */
+  position:fixed; right:12px; top:calc(12px + env(safe-area-inset-top, 0px));
+  width:32px; height:32px; border-radius:50%;
+  background:rgba(255,255,255,0.92);
   border:1px solid rgba(14,14,14,0.14);
   color:var(--ink);
-  font-family:var(--font-accent); font-style:italic; font-weight:700; font-size:18px; line-height:1;
+  font-family:var(--font-accent); font-style:italic; font-weight:700; font-size:16px; line-height:1;
   cursor:pointer; -webkit-tap-highlight-color:transparent;
   box-shadow:0 6px 18px -8px rgba(14,14,14,0.28);
   z-index:40;
@@ -510,6 +557,9 @@ body.dir-save  .ctl-save{
 }
 .info-btn:hover{transform:scale(1.06);}
 .info-btn:focus-visible{outline:2px solid var(--ink); outline-offset:2px;}
+/* Reserve room for the info-btn on the feed screen's header row so its
+   History button never sits under the fixed circle at any width. */
+.feed-top{ padding-right:44px; }
 .info-scrim{
   position:fixed; inset:0; z-index:60;
   background:rgba(14,14,14,0.35);
@@ -1096,6 +1146,16 @@ body.dir-save  .ctl-save{
   background:rgba(255,107,92,0.18); color:var(--pass-ink);
 }
 
+/* Call-mode: replaces the price-block. One small mono line above the CTA
+   ("Early clients shape what the portal builds next. · Up to 3 seats.").
+   Sits in the same container as the button so the two share a width and
+   the line breaks land where copy asks, not at an arbitrary ch cap. */
+.call-line{
+  font-family:var(--font-mono); font-size:11.5px; letter-spacing:0.06em;
+  color:#333; margin:14px auto 8px; text-align:center;
+  max-width:none; width:100%;
+}
+
 /* Signal — competitor name blurred but the shape stays. */
 .blur-name{
   color:transparent;
@@ -1322,6 +1382,7 @@ body.dir-save  .ctl-save{
     </span>
     <div style="display:flex; justify-content:center; gap:14px; flex-wrap:wrap;">
       <button type="button" class="btn-ghost" data-action="keep-swiping" id="keep-swiping-btn" hidden>Keep swiping</button>
+      <button type="button" class="btn-ghost" data-action="back-to-confirmation" id="back-to-confirmation-btn" hidden>Back to confirmation &#8594;</button>
       <button type="button" class="btn-ghost" data-action="show-history">See what you swiped</button>
     </div>
   </section>
@@ -1370,26 +1431,30 @@ body.dir-save  .ctl-save{
       </div>
     </div>
 
-    <div class="price-block">
+    <div class="price-block" id="price-block" hidden>
       <p class="price-headline"><span data-slot="price-early"></span>/month</p>
       <p class="seat-line">Up to 3 seats &middot; Early clients keep this price.</p>
       <p class="spots-line" id="spots-line" hidden></p>
     </div>
 
+    <p class="call-line" id="call-line" hidden>
+      Early clients shape what the portal builds next. &middot; Up to 3 seats.
+    </p>
+
     <span class="btn-glow-host" id="cta-glow">
       <span class="btn-glow" aria-hidden="true"></span>
       <button type="button" class="btn btn-primary" data-action="portal-cta" id="portal-cta-btn">
-        <span id="portal-cta-label">Keep your portal &middot; $19/month</span>
+        <span id="portal-cta-label">Open your portal &middot; 15-minute walkthrough</span>
         <span class="arr" aria-hidden="true">&#8594;</span>
       </button>
     </span>
     <p class="offer-fine" id="cta-fine">
-      Cancel anytime. Your free article lands <span data-slot="dropWeekday"></span> either way.
+      Your free article lands <span data-slot="dropWeekday"></span> either way.
     </p>
     <p class="waitlist-ack" id="waitlist-ack">Noted. I'll be in touch.</p>
 
     <div style="display:flex; justify-content:center; gap:14px; flex-wrap:wrap; margin-top:6px;">
-      <button type="button" class="btn-ghost" data-action="back-to-direction">Back to direction</button>
+      <button type="button" class="btn-ghost" data-action="change-direction">&#8592; Change direction</button>
       <button type="button" class="btn-ghost" data-action="show-history">See what you swiped</button>
     </div>
   </section>
@@ -1541,7 +1606,8 @@ body.dir-save  .ctl-save{
   //    (REPLACE_ME) or the file is missing, the adapter transparently falls
   //    back to the legacy /clients/*.json path so the site still functions
   //    while you're wiring things up.
-  var runtime = { supabaseUrl: '', supabaseAnonKey: '', posthogKey: '', posthogHost: 'https://us.i.posthog.com' };
+  var runtime = { supabaseUrl: '', supabaseAnonKey: '', posthogKey: '', posthogHost: 'https://us.i.posthog.com',
+                  bookingUrl: 'https://cal.com/vedika/ghostwriter-mom' };
   var supabase = null;
 
   // -- PostHog (only initialized once runtime.json loads).
@@ -1678,6 +1744,9 @@ body.dir-save  .ctl-save{
       signal:           rpc.signal || null,
       firstOpenedAt: rpc.first_opened_at || null,
       showScarcity:  rpc.show_scarcity === true,
+      // 'call' (walkthrough) or 'checkout' (Stripe). Default 'call' — the DB
+      // default matches, but a stale JSON fallback shouldn't leak checkout UI.
+      unlockMode:    rpc.unlock_mode === 'checkout' ? 'checkout' : 'call',
       cards: (rpc.cards || []).map(function(c){
         return {
           id:       c.card_key,
@@ -1806,11 +1875,19 @@ body.dir-save  .ctl-save{
        state.screen !== 'loading' && state.screen !== 'error'){
       previousScreen = state.screen;
     }
+    // Defensive: clear the drag lock on any screen change. A canceled touch or
+    // an interrupted animation on the feed can otherwise leave body.is-dragging
+    // (overflow:hidden + touch-action:none) attached, which then locks the
+    // direction / confirmation pages from scrolling.
+    document.body.classList.remove('is-dragging');
     transitionTo(function(){
       $all('.screen').forEach(function(el){ el.classList.remove('on'); });
       var el = document.getElementById('screen-' + id);
       if(el) el.classList.add('on');
       state.screen = id;
+      // Land at the top of the new screen. Without this a tall direction list
+      // can render mid-scroll if the previous screen was scrolled down.
+      try{ window.scrollTo({ top: 0, behavior: 'auto' }); }catch(_){}
     });
     if(id === 'direction')    logEvent('', 'direction_viewed');
     if(id === 'confirmation') logEvent('', 'confirmation_viewed');
@@ -2032,18 +2109,13 @@ body.dir-save  .ctl-save{
       var s = document.createElement('span'); s.className = 'card-tag'; s.textContent = String(t);
       tagWrap.appendChild(s);
     });
+    // Single "Sources" button — opens the sheet with the full list. The
+    // per-source chip row is retired; every card now shows the same slim
+    // control regardless of source count.
     var sourceWrap = el.querySelector('[data-slot="sources"]');
     var sources = Array.isArray(card.sources) ? card.sources : [];
     if(sources.length){
-      var lab = document.createElement('span'); lab.className = 'card-sources-label'; lab.textContent = 'Sources';
-      sourceWrap.appendChild(lab);
-      var visible = Math.min(CHIP_LIMIT, sources.length);
-      for(var si = 0; si < visible; si++){
-        sourceWrap.appendChild(buildSourceChip(sources[si], si + 1, card));
-      }
-      if(sources.length > visible){
-        sourceWrap.appendChild(buildMoreChip(sources.length - visible, card));
-      }
+      sourceWrap.appendChild(buildSourcesButton(sources.length, card));
     }
     if(depth === 0) attachGestures(el);
     return el;
@@ -2067,6 +2139,20 @@ body.dir-save  .ctl-save{
     b.className = 'src-chip more';
     b.setAttribute('aria-label', 'Open all ' + n + ' more sources.');
     b.textContent = '+' + n;
+    stopChipDragPropagation(b, card);
+    return b;
+  }
+  // One button per card: "Sources ({n})" that opens the sheet with the
+  // full list. Same drag-propagation guard as the old chips so the swipe
+  // gesture never triggers when the user meant to tap the button.
+  function buildSourcesButton(count, card){
+    var b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'src-btn';
+    b.setAttribute('aria-label', 'Open ' + count + ' source' + (count === 1 ? '' : 's') + '.');
+    var lab = document.createElement('span'); lab.className = 'src-btn-label'; lab.textContent = 'Sources';
+    var n   = document.createElement('span'); n.className = 'src-btn-count'; n.textContent = String(count);
+    b.appendChild(lab); b.appendChild(n);
     stopChipDragPropagation(b, card);
     return b;
   }
@@ -2145,7 +2231,7 @@ body.dir-save  .ctl-save{
   function attachGestures(el){ el.addEventListener('pointerdown', onDown); }
   function onDown(e){
     if(e.button !== undefined && e.button !== 0) return;
-    if(e.target.closest('button, a, .src-chip')) return;
+    if(e.target.closest('button, a, .src-chip, .src-btn, .card-evidence')) return;
     var el = e.currentTarget;
     stopOnboardingHint(el);
     try{ el.setPointerCapture(e.pointerId); }catch(_){}
@@ -2310,11 +2396,57 @@ body.dir-save  .ctl-save{
     return upper + ' ' + n;
   }
 
+  // Score a candidate against an anchor card. Higher = better fit for the
+  // next slot in the direction. Signals used:
+  //   * series overlap (blendxr / RPR groupings) — strongest cue
+  //   * tag overlap    — every shared tag adds 2
+  //   * recency        — later like = fresher = small boost
+  //   * drop_date      — closer to today = small boost (editorial priority)
+  // No LLM here — this is a heuristic that mimics how an editor sequences a
+  // brief, favoring adjacency in theme and recency of interest.
+  function scoreAgainstAnchor(candidate, anchor, recencyIndex){
+    if(!candidate) return -Infinity;
+    var s = 0;
+    if(anchor){
+      if(candidate.series && anchor.series && candidate.series === anchor.series) s += 6;
+      var at = (anchor.tags || []).map(function(x){ return String(x).toLowerCase(); });
+      var ct = (candidate.tags || []).map(function(x){ return String(x).toLowerCase(); });
+      for(var i = 0; i < ct.length; i++){ if(at.indexOf(ct[i]) !== -1) s += 2; }
+    }
+    // Recency: index 0 = oldest like, N-1 = newest.
+    if(typeof recencyIndex === 'number') s += Math.min(3, recencyIndex * 0.5);
+    // Drop-date freshness: within 60d earns a nudge.
+    if(candidate.drop_date){
+      var d = new Date(candidate.drop_date).getTime();
+      if(!isNaN(d)){
+        var days = (Date.now() - d) / 86400000;
+        if(days >= 0 && days <= 60) s += 1;
+      }
+    }
+    return s;
+  }
+  // Pick the highest-scoring card from `pool` (already filtered) against the
+  // given anchor. Returns the card or null. `used` keeps repeats out.
+  function pickBest(pool, anchor, used){
+    var best = null, bestScore = -Infinity;
+    for(var i = 0; i < pool.length; i++){
+      var c = pool[i];
+      if(!c || used[c.id]) continue;
+      var sc = scoreAgainstAnchor(c, anchor, i);
+      if(sc > bestScore){ best = c; bestScore = sc; }
+    }
+    return best;
+  }
+
   function computeDirection(){
     var shape = (client && client.directionShape) || { pillar:1, post:2 };
     var slotFmts = planSlotFormats(shape);
     var picks = new Array(slotFmts.length);
     var used = {};
+
+    // Anchor: the fast-tracked card is the strongest cue, otherwise the
+    // most-recent like (that's what the visitor is thinking about now).
+    var anchor = state.superLiked || (state.liked.length ? state.liked[state.liked.length - 1] : null);
 
     if(state.superLiked){
       var stFmt = String(state.superLiked.format || '').toLowerCase();
@@ -2326,55 +2458,57 @@ body.dir-save  .ctl-save{
         }
       }
     }
+
+    // Split likes by format so the scorer only compares candidates that fit
+    // the slot. State.liked preserves insertion order (oldest -> newest), so
+    // its index is a proxy for recency in scoreAgainstAnchor.
+    function likesByFormat(fmt){
+      return state.liked.filter(function(c){ return String(c.format).toLowerCase() === fmt; });
+    }
     for(var s = 0; s < slotFmts.length; s++){
       if(picks[s]) continue;
       var wantFmt = slotFmts[s];
-      for(var j = 0; j < state.liked.length; j++){
-        var c = state.liked[j];
-        if(used[c.id]) continue;
-        if(String(c.format).toLowerCase() === wantFmt){
-          picks[s] = { brief: c, source: 'liked' };
-          used[c.id] = true;
-          break;
-        }
+      var pool = likesByFormat(wantFmt);
+      var best = pickBest(pool, anchor, used);
+      if(best){
+        picks[s] = { brief: best, source: 'liked' };
+        used[best.id] = true;
       }
     }
+
+    // Adaptations: if a slot is still empty and the format is pillar/insight,
+    // try the other article format under the same scoring rule.
     for(var t = 0; t < slotFmts.length; t++){
       if(picks[t]) continue;
       var want = slotFmts[t];
       if(ARTICLE_FORMATS.indexOf(want) === -1) continue;
       var other = want === 'pillar' ? 'insight' : 'pillar';
-      for(var k = 0; k < state.liked.length; k++){
-        var c2 = state.liked[k];
-        if(used[c2.id]) continue;
-        if(String(c2.format).toLowerCase() === other){
-          picks[t] = { brief: c2, source: 'Adapted from: ' + String(c2.title || 'a liked card') };
-          used[c2.id] = true;
-          break;
-        }
+      var pool2 = likesByFormat(other);
+      var best2 = pickBest(pool2, anchor, used);
+      if(best2){
+        picks[t] = { brief: best2, source: 'Adapted from: ' + String(best2.title || 'a liked card') };
+        used[best2.id] = true;
       }
     }
+
+    // Saved: same scoring, per format then any leftover.
     for(var u = 0; u < slotFmts.length; u++){
       if(picks[u]) continue;
       var want2 = slotFmts[u];
-      for(var m = 0; m < state.saved.length; m++){
-        var c3 = state.saved[m];
-        if(used[c3.id]) continue;
-        if(String(c3.format).toLowerCase() === want2){
-          picks[u] = { brief: c3, source: 'saved for later' };
-          used[c3.id] = true;
-          break;
-        }
+      var pool3 = state.saved.filter(function(c){ return String(c.format).toLowerCase() === want2; });
+      var best3 = pickBest(pool3, anchor, used);
+      if(best3){
+        picks[u] = { brief: best3, source: 'saved for later' };
+        used[best3.id] = true;
+        continue;
       }
-      if(picks[u]) continue;
-      for(var n = 0; n < state.saved.length; n++){
-        var c4 = state.saved[n];
-        if(used[c4.id]) continue;
-        picks[u] = { brief: c4, source: 'saved for later' };
-        used[c4.id] = true;
-        break;
+      var any = pickBest(state.saved, anchor, used);
+      if(any){
+        picks[u] = { brief: any, source: 'saved for later' };
+        used[any.id] = true;
       }
     }
+
     var out = [];
     for(var w = 0; w < picks.length; w++){
       if(picks[w]) out.push({
@@ -2455,16 +2589,26 @@ body.dir-save  .ctl-save{
     if(keepBtn) keepBtn.hidden = !(client && state.cardIndex < client.cards.length);
 
     updateApproveButton();
+    updateBackToConfirmationBtn();
     show('direction');
   }
   function pickFreeArticle(cardId){
     var id = String(cardId);
     if(state.freePickCardId === id) return;   // no-op re-tap same card
+    // If the visitor is switching after already approving, invalidate the
+    // approval so they re-confirm — the free article they were promised
+    // referenced the old card.
+    if(state.approved){
+      state.approved      = false;
+      state.approvedAtIso = '';
+      state.deliverByIso  = '';
+    }
     state.freePickCardId = id;
     saveState();
     logEvent(id, 'free_pick');
     applyFreePickSelection();
     updateApproveButton();
+    updateBackToConfirmationBtn();
   }
   function applyFreePickSelection(){
     $all('#dir-slots .dir-block').forEach(function(b){
@@ -2482,6 +2626,14 @@ body.dir-save  .ctl-save{
     btn.disabled = !picked;
     if(lbl) lbl.textContent = picked ? 'Get your free article' : 'Pick your free article';
     if(host) host.classList.toggle('glow-off', !picked);
+  }
+  // Shown on the direction screen when the visitor arrived via
+  // "Change direction ←" and still has a live approval — one-tap route
+  // back without re-approving.
+  function updateBackToConfirmationBtn(){
+    var btn = document.getElementById('back-to-confirmation-btn');
+    if(!btn) return;
+    btn.hidden = !(state.approved && state.freePickCardId);
   }
 
   function freeArticleTitle(){
@@ -2507,6 +2659,16 @@ body.dir-save  .ctl-save{
       return;
     }
     openEmailModal('approval');
+  }
+
+  // From the confirmation, "Change direction" jumps back to the picker with
+  // the current selection intact. The visitor can peek without losing their
+  // approval; picking a DIFFERENT card in pickFreeArticle() below invalidates
+  // it, forcing a re-approve. Same card (or Back to confirmation) leaves
+  // everything in place.
+  function changeDirection(){
+    show('direction');
+    goToDirection();
   }
 
   function finalizeApproval(email){
@@ -2663,9 +2825,38 @@ body.dir-save  .ctl-save{
       }
     }
 
-    // Spots + CTA — render immediately from cached value, then refresh from RPC.
-    renderSpotsAndCta();
-    refreshSpotsAsync();
+    // CTA — one of two modes.
+    //   'call'     : hide price/spots UI, show the walkthrough copy + BOOKING_URL.
+    //   'checkout' : keep the original Stripe + spots-line flow (unchanged).
+    var unlockMode = (client && client.unlockMode) || 'call';
+    if(unlockMode === 'checkout'){
+      renderSpotsAndCta();
+      refreshSpotsAsync();
+    } else {
+      renderCallModeCta();
+    }
+  }
+
+  // Call-mode confirmation CTA. Hides the price-block entirely; shows a small
+  // "Early clients shape what the portal builds next. · Up to 3 seats." line
+  // above the button, then a walkthrough CTA that links to BOOKING_URL.
+  function renderCallModeCta(){
+    var price = document.getElementById('price-block');
+    var spots = document.getElementById('spots-line');
+    var line  = document.getElementById('call-line');
+    var btn   = document.getElementById('portal-cta-btn');
+    var lbl   = document.getElementById('portal-cta-label');
+    var fine  = document.getElementById('cta-fine');
+    var ack   = document.getElementById('waitlist-ack');
+    var host  = document.getElementById('cta-glow');
+    if(price) price.hidden = true;
+    if(spots) spots.hidden = true;
+    if(line)  line.hidden  = false;
+    if(lbl)   lbl.textContent = 'Open your portal · 15-minute walkthrough';
+    if(btn)   btn.disabled = false;
+    if(host)  host.classList.remove('glow-off');
+    if(ack)   ack.classList.remove('on');
+    if(fine)  fine.style.display = '';
   }
 
   // ---- Signals tile copy.
@@ -2929,8 +3120,26 @@ body.dir-save  .ctl-save{
     return d;
   }
 
-  // -- Portal CTA — Stripe or waitlist depending on spots ------------------
+  // -- Portal CTA — walkthrough call (default) or Stripe checkout ----------
   function portalCta(){
+    var unlockMode = (client && client.unlockMode) || 'call';
+    if(unlockMode === 'call'){
+      // Walkthrough: PostHog event + open BOOKING_URL in a new tab, carrying
+      // slug (and email, when we have one) as Cal.com metadata.
+      var props = { slug: SLUG };
+      if(state.emailProvided) props.email = state.emailProvided;
+      ph.capture('cta_walkthrough_clicked', props);
+      state.events.push({ action:'cta_walkthrough_clicked', cardId:'', timestamp:new Date().toISOString() });
+      saveState();
+      var base = (runtime && runtime.bookingUrl) || 'https://cal.com/vedika/ghostwriter-mom';
+      var qs = 'metadata%5Bslug%5D=' + encodeURIComponent(SLUG);
+      if(state.emailProvided) qs += '&email=' + encodeURIComponent(state.emailProvided);
+      var sep = base.indexOf('?') === -1 ? '?' : '&';
+      window.open(base + sep + qs, '_blank', 'noopener,noreferrer');
+      return;
+    }
+
+    // Checkout mode (only used when a company is explicitly flipped in the DB).
     var full = spotsLeft <= 0;
     if(full){
       if(state.waitlistJoined) return;
@@ -2942,8 +3151,6 @@ body.dir-save  .ctl-save{
       }
       return;
     }
-    // Unlock — go to Stripe. Fire the PostHog event synchronously so it lands
-    // even though we're about to leave the page.
     logEvent('', 'unlock_clicked');
     var url = client && client.stripeLink19;
     if(!url){ alert('Checkout link is not configured yet for this client.'); return; }
@@ -3048,16 +3255,23 @@ body.dir-save  .ctl-save{
   }
 
   // -- History -------------------------------------------------------------
+  // Actions tab shows only card-level decisions. Session events
+  // (direction_viewed, confirmation_viewed, approved, unlock_clicked,
+  // cta_walkthrough_clicked, waitlist_joined, source_opened) still fire to
+  // PostHog and stay in state.events so the portal can read them; they just
+  // don't clutter the visitor's Actions list.
+  var HISTORY_VISIBLE_ACTIONS = { like:1, pass:1, save:1, super:1, free_pick:1 };
   function openHistory(){ renderActionsTab(); show('history'); }
   function renderActionsTab(){
     var list = document.getElementById('history-list');
     if(!list) return;
     list.textContent = '';
-    if(!state.events.length){
+    var visible = state.events.filter(function(ev){ return HISTORY_VISIBLE_ACTIONS[ev.action]; });
+    if(!visible.length){
       var empty = document.createElement('li'); empty.className = 'history-empty';
       empty.textContent = 'Nothing yet.'; list.appendChild(empty);
     } else {
-      state.events.slice().reverse().forEach(function(ev){
+      visible.slice().reverse().forEach(function(ev){
         var card = ev.cardId ? findFull(ev.cardId) : null;
         var li = document.createElement('li'); li.className = 'history-item';
         var t = document.createElement('span'); t.className = 'history-title';
@@ -3180,7 +3394,8 @@ body.dir-save  .ctl-save{
              referral_sent:'Referred',
              portal_interest:'Portal interest',
              source_opened:'Opened source',
-             checkout_clicked:'Went to checkout'})[a] || a;
+             checkout_clicked:'Went to checkout',
+             cta_walkthrough_clicked:'Booked walkthrough'})[a] || a;
   }
   function labelForEvent(a){
     if(a === 'direction_viewed')    return 'Direction shown';
@@ -3192,6 +3407,7 @@ body.dir-save  .ctl-save{
     if(a === 'referral_sent')       return 'Referral sent';
     if(a === 'source_opened')       return 'Source opened';
     if(a === 'checkout_clicked')    return 'Opened Stripe';
+    if(a === 'cta_walkthrough_clicked') return 'Opened walkthrough booking';
     return 'Session event';
   }
   function fmtWhen(iso){
@@ -3231,7 +3447,9 @@ body.dir-save  .ctl-save{
       case 'pass': case 'like': case 'save': case 'super':
         doAction(a); return;
       case 'approve-direction':   approve(); return;
+      case 'change-direction':    changeDirection(); return;
       case 'back-to-direction':   show('direction'); return;
+      case 'back-to-confirmation':show('confirmation'); return;
       case 'portal-cta':          portalCta(); return;
       case 'show-history':        openHistory(); return;
       case 'close-history':       closeHistory(); return;

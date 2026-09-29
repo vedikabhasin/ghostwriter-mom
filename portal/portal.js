@@ -2,24 +2,27 @@
 // ghostwriter.mom portal. Three places: Feed, Library, and the Library's design
 // mode, the Hub. Reads through RLS as the signed-in member; writes through RLS
 // (notes, hub_items, members.onboarding) or RPCs (portal_decide,
-// portal_set_live, spend_credits), plus the invite-member and create-checkout
-// edge functions.
+// portal_set_live, request_card), plus the invite-member edge function.
 //
-// "$19 decides, credits make." Everything is gated on account state from
-// portal_account() (balance, Hub access, $19 status), never on ids or names.
+// Call mode: access runs on portal_active() (internal, an active
+// subscription, or the portal_access_until window). When the window closes
+// the portal stays readable and swipeable; requests and new drops stop and a
+// banner offers a 15-minute call. Every gate reads account state from
+// portal_account(), never ids or names. Credits code stays behind
+// CREDITS_ENABLED.
 //
 // Colors, type and motion come from /styles/tokens.css; date formats from
 // /portal/lib.js (copied from swipe.html); the mascot from /portal/avatars.js.
 // -----------------------------------------------------------------------------
-import { $, $all, h, prefersReduced, fmtWhen, fmtDay, hoursBetween, countdown, todayStr, countdownLong, nextDrop, fmtWeekday } from '/portal/lib.js';
+import { $, $all, h, prefersReduced, fmtWhen, fmtDay, hoursBetween, todayStr, countdownLong, fmtWeekday, dateStr } from '/portal/lib.js';
+import { nextDropDate } from '/shared/drop-day.js';
 import { avatarSVG, pencilSVG, ICONS } from '/portal/avatars.js';
 import { showReveal, closeReveal, isRevealOpen } from '/portal/reveal.js';
-import { initHub, enterHub, articleRects, slotForNewItem } from '/portal/hub.js';
+import { initHub, enterHub, refreshHub, articleRects, slotForNewItem } from '/portal/hub.js';
 
 const SUPABASE_JS = 'https://esm.sh/@supabase/supabase-js@2.45.0';
 const SWIPE_T = 90;
 const VERT_T = 100;
-const CHIP_LIMIT = 3;
 const NOTE_MAX = 280;
 const WANTS_WRITTEN = 'wants_written';
 // What Stripe charges (display only; the prices live in Stripe).
@@ -29,14 +32,32 @@ const ACTION_LABEL = { like: 'Liked', pass: 'Passed', save: 'Saved', fasttrack: 
 const FMT_LABEL = { pillar: 'Pillar', insight: 'Insight', post: 'Post' };
 const SPRING = 'cubic-bezier(0.34,1.56,0.64,1)';
 const PARAMS = new URLSearchParams(location.search);
+const OV_LABEL = { agree: 'Agree', now: 'Now', split: 'Split', timing: 'Timing' };
+
+// Credits are frozen for the call-mode pivot. Every credit-numbered chip, copy
+// line, and admin panel is gated on this constant; flip when the credits flow
+// is thawed. Nothing that reads it should assume a schema; the flag is the
+// only source of truth.
+const CREDITS_ENABLED = false;
+
+// Card statuses (articles.status after 20260928000011_call_mode.sql, plus
+// up_next, which is derived and never stored):
+//   up_next    liked or fast-tracked, nothing requested
+//   requested  someone asked for it (request_card); no clock yet
+//   writing    the 24-hour clock is running
+//   delivered  written and in the Library
+const STATUS_TAG = { up_next: 'Up next', requested: 'Requested', writing: 'Writing', delivered: 'Delivered' };
+const isGhostStatus = (s) => s !== 'delivered';
+const isLive        = (a) => !!a && !!a.live_at;
+const CLOSED_TIP = 'Your window closed. Book 15 minutes to keep going.';
 
 // -- State --------------------------------------------------------------------
-let runtime = { supabaseUrl: '', supabaseAnonKey: '', posthogKey: '', posthogHost: 'https://us.i.posthog.com' };
+let runtime = { supabaseUrl: '', supabaseAnonKey: '', posthogKey: '', posthogHost: 'https://us.i.posthog.com', bookingUrl: '', writerName: '' };
 let sb = null;
 let ph = { capture() {}, identify() {}, group() {}, register() {}, reset() {} };
 const S = {
   session: null, me: null, company: null, members: [], cards: [], decisions: [], events: [],
-  signal: null, articles: [], notes: [], hubItems: [], pieces: [], account: null, readOnly: false,
+  signal: null, articles: [], notes: [], hubItems: [], pieces: [], account: null, expired: false,
   view: 'loading', feedIndex: 0, items: [], libOrder: [], onb: {}, loaded: false,
   forceHub: null, // internal testing switch: 'locked' | 'invite'
 };
@@ -61,14 +82,17 @@ function initPosthog() {
 // -- Views --------------------------------------------------------------------
 function show(view) {
   S.view = view;
+  // An interrupted swipe can leave these on and the next view unscrollable.
+  document.body.classList.remove('is-dragging', 'touching', 'dir-like', 'dir-pass', 'dir-save', 'dir-fasttrack');
   document.body.setAttribute('data-view', view);
   $all('.screen').forEach((s) => s.classList.toggle('on', s.id === 'screen-' + view));
-  $('#switch').hidden = !(S.loaded && (view === 'feed' || view === 'library') && !S.readOnly);
+  $('#switch').hidden = !(S.loaded && (view === 'feed' || view === 'library'));
   $('#switch-feed').classList.toggle('active', view === 'feed');
   $('#switch-library').classList.toggle('active', view === 'library');
   $('#switch-feed').setAttribute('aria-current', view === 'feed' ? 'page' : 'false');
   $('#switch-library').setAttribute('aria-current', view === 'library' ? 'page' : 'false');
   $('#sign-out-btn').hidden = !S.session;
+  $('#closed-banner').hidden = !(S.loaded && S.expired && view !== 'signin' && view !== 'loading' && view !== 'nolink');
   if (view !== 'feed') setFormatTint(null);
   if (view !== 'library') stopCountdowns();
   hideBubble();
@@ -129,7 +153,7 @@ function setFlag(key) { if (S.onb[key]) return; S.onb[key] = true; saveOnb(); }
 /** First-time event lines. Each shows once per member. */
 function firstLine(key, text, opts) {
   S.onb.lines = S.onb.lines || {};
-  if (S.onb.lines[key] || S.readOnly) return false;
+  if (S.onb.lines[key]) return false;
   S.onb.lines[key] = true;
   saveOnb();
   toast(text, Object.assign({ kind: 'line', ms: 4200 }, opts || {}));
@@ -163,13 +187,14 @@ function dismissBubble() {
 }
 /** First visit: Feed, then a glow on Library, then a glow on the pencil. */
 function runOnboarding() {
-  if (S.readOnly || isRevealOpen()) return;
+  if (isRevealOpen()) return;
   const o = S.onb;
   $('#switch-library').classList.toggle('onb-glow', !!o.feed_intro && !o.library_glow);
   $('#pencil-sticker').classList.toggle('onb-glow', !!o.library_glow && !o.pencil_glow);
   requestAnimationFrame(() => {
     if (S.view === 'feed' && !o.feed_intro) {
-      showBubble('feed_intro', $('#dots'), 'Your feed is live. Swipe to decide, tap a dot to jump.', 'above');
+      // Below the dots: the bubble never sits over the card's footer.
+      showBubble('feed_intro', $('#dots'), 'Your feed is live. Swipe to decide, tap a dot to jump.', 'below');
     } else if (S.view === 'feed' && !o.library_glow) {
       showBubble('library_glow', $('#switch-library'), 'Your articles live in the Library.', 'above');
     } else if (S.view === 'library' && o.library_glow && !o.pencil_glow) {
@@ -178,7 +203,7 @@ function runOnboarding() {
   });
 }
 
-// -- Account: credits, Hub access, the $19 (portal_account) ---------------------
+// -- Account: access window, Hub access, credits (portal_account) ---------------
 const credits = (n) => n + (n === 1 ? ' credit' : ' credits');
 function costOf(fmt) {
   const c = S.account && S.account.costs;
@@ -198,15 +223,56 @@ async function refreshArticles() {
   const { data, error } = await sb.from('articles').select(ARTICLE_COLS).eq('company_id', S.company.id);
   if (!error) S.articles = data;
 }
-const ARTICLE_COLS = 'id,card_id,format,title,status,body_html,google_doc_url,requested_at,deliver_by,delivered_at,live_at,created_at';
+const ARTICLE_COLS = 'id,card_id,format,title,status,body_html,google_doc_url,requested_at,requested_by,deliver_by,delivered_at,live_at,created_at';
+
+/** portal_active(company), from portal_account(). If that call failed, only
+ *  the flags this member can read decide: internal, or an open window. */
+function portalActive() {
+  if (S.account && typeof S.account.portal_active === 'boolean') return S.account.portal_active;
+  const c = S.company || {};
+  return !!(c.is_internal || (c.portal_access_until && new Date(c.portal_access_until) > new Date()));
+}
+/** The walkthrough booking link, tagged with the company slug. */
+function bookingUrl() {
+  const base = String(runtime.bookingUrl || '');
+  if (!/^https:\/\//i.test(base)) return '';
+  return base + (base.includes('?') ? '&' : '?') + 'metadata[slug]=' + encodeURIComponent(S.company.slug);
+}
+function bookingLink(text) {
+  const a = h('a', 'book-link', text || 'Book 15 minutes');
+  const url = bookingUrl();
+  if (url) { a.href = url; a.target = '_blank'; a.rel = 'noopener noreferrer'; }
+  a.addEventListener('click', () => track('booking_opened', { from: S.view }));
+  return a;
+}
+/** Local "YYYY-MM-DD" the window closed on; new drops stop after it. */
+function closedDay() {
+  const c = S.company || {};
+  const end = c.portal_access_until || c.subscription_ends_at;
+  return end ? dateStr(new Date(end)) : todayStr();
+}
+/** Slim banner on every view once the window has closed. */
+function renderClosedBanner() {
+  const b = $('#closed-banner');
+  b.textContent = '';
+  if (!S.expired) return;
+  b.append(document.createTextNode('Your portal window closed. Pick up where you left off. '), bookingLink('Book 15 minutes'));
+}
+/** "{Writer} confirms timing." The writer's name comes from runtime config. */
+function confirmLine() { return runtime.writerName ? runtime.writerName + ' confirms timing.' : 'We confirm timing.'; }
 
 // -- Seats ----------------------------------------------------------------------
 // Seats come from the account (companies.seat_limit, 3 unless raised).
 function seatLimit() { return (S.company && S.company.seat_limit) || 3; }
 function seatsLeft() { return Math.max(0, seatLimit() - S.members.length); }
-const SEAT_LINE = { 1: 'One seat left.', 2: 'Two seats left.', 3: 'Three seats left.' };
+const NUM_WORD = ['No', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten'];
+function seatLine(n) {
+  if (n <= 0) return '';
+  return (NUM_WORD[n] || String(n)) + (n === 1 ? ' seat' : ' seats') + ' left on your portal.';
+}
 const allTaken = () => 'All ' + seatLimit() + ' seats are taken.';
-/** Three seats: a monster per member, a dashed ghost per open seat. */
+/** A monster per member, a dashed "+ seat" ghost per open seat. The ghosts
+ *  open the invite pop-up. */
 function renderSeats(wrap) {
   wrap.textContent = '';
   for (let i = 0; i < Math.max(seatLimit(), S.members.length); i++) {
@@ -218,16 +284,19 @@ function renderSeats(wrap) {
       s0.title = displayName(m);
       wrap.appendChild(s0);
     } else {
-      const g = h('span', 'seat empty gwm-center', '+');
+      const g = h('button', 'seat empty gwm-center', '+');
+      g.type = 'button';
       g.dataset.seat = String(i + 1);
+      g.dataset.action = 'invite';
       g.title = 'Seat ' + (i + 1) + ' is open';
+      g.setAttribute('aria-label', 'Seat ' + (i + 1) + ' is open. Invite someone.');
       wrap.appendChild(g);
     }
   }
 }
 function renderHubHead() {
   renderSeats($('#hub-seats'));
-  $('#hub-invite').hidden = !seatsLeft() || S.readOnly;
+  $('#hub-invite').hidden = !seatsLeft();
 }
 
 // -- People -------------------------------------------------------------------
@@ -269,30 +338,66 @@ function teamDecisions(cardId) {
   return map;
 }
 function myAction(cardId) { return teamDecisions(cardId).get(S.me.id) || null; }
+/** The reveal state for two actions:
+ *    like+like, fasttrack+like          agree   "Two yeses."
+ *    fasttrack+fasttrack                now     "You both want it now."
+ *    like|fasttrack|save + pass         split
+ *    like|fasttrack + save              timing  "Same yes, different week."
+ *    pass+pass, save+save               nothing */
+function pairState(x, y) {
+  if (x === y) return x === 'like' ? 'agree' : x === 'fasttrack' ? 'now' : null;
+  const set = new Set([x, y]);
+  if (set.has('pass')) return 'split';
+  if (set.has('save')) return 'timing';
+  return 'agree';
+}
+/** Two seats: that pair. Three or more: the majority pair (two with the same
+ *  action), or Split when every action differs. The viewer's own row comes
+ *  first whenever it is part of the pair. */
 function overlap(cardId) {
   const entries = Array.from(teamDecisions(cardId).entries());
   if (entries.length < 2) return null;
-  // Prefer pairs that include the viewer.
   entries.sort((a, b) => (b[0] === S.me.id) - (a[0] === S.me.id));
-  const pos = entries.filter((e) => POSITIVE.includes(e[1]));
-  const pass = entries.filter((e) => e[1] === 'pass');
-  const save = entries.filter((e) => e[1] === 'save');
   const m = (e) => (e[0] === 'owner' ? ownerStandIn() : memberById(e[0]) || { id: e[0] });
-  if (pos.length && pass.length) return { state: 'split', a: m(pos[0]), aAction: pos[0][1], b: m(pass[0]), bAction: 'pass' };
-  if (pos.length && save.length) return { state: 'timing', a: m(pos[0]), aAction: pos[0][1], b: m(save[0]), bAction: 'save' };
-  if (pos.length >= 2) return { state: 'agree', a: m(pos[0]), aAction: pos[0][1], b: m(pos[1]), bAction: pos[1][1] };
-  return null;
+  let pair = null, state = null;
+  if (entries.length === 2) {
+    pair = entries;
+    state = pairState(entries[0][1], entries[1][1]);
+  } else {
+    const by = new Map();
+    entries.forEach((e) => { if (!by.has(e[1])) by.set(e[1], []); by.get(e[1]).push(e); });
+    const major = Array.from(by.values()).find((list) => list.length >= 2);
+    if (major) {
+      pair = major.slice(0, 2);
+      state = pairState(pair[0][1], pair[1][1]);
+    } else {
+      // All different: the viewer (or the first) against the opposite call.
+      const first = entries[0];
+      const other = entries.slice(1).find((e) => (e[1] === 'pass') !== (first[1] === 'pass')) || entries[1];
+      pair = [first, other];
+      state = 'split';
+    }
+  }
+  if (!state) return null;
+  return { state, a: m(pair[0]), aAction: pair[0][1], b: m(pair[1]), bAction: pair[1][1] };
 }
-/** Cards any member moved up from an Agree reveal (stored in their onboarding). */
+/** Cards any member moved up from an Agree reveal (members.onboarding.pins),
+ *  with when, so the latest "Move it up" is first. */
 function pinnedCards() {
-  const set = new Set();
+  const map = new Map();
   S.members.forEach((m) => {
     const onb = m.id === S.me.id ? S.onb : m.onboarding || {};
-    (onb.pins || []).forEach((id) => set.add(id));
+    const at = onb.pinned_at || {};
+    (onb.pins || []).forEach((id, i) => {
+      const t = at[id] ? Date.parse(at[id]) : -i;
+      if (!map.has(id) || t > map.get(id)) map.set(id, t);
+    });
   });
-  return set;
+  return map;
 }
-/** "Up next": what we'd write next. Moved-up cards first, then Agree cards. */
+function articleFor(cardId) { return S.articles.find((a) => a.card_id === cardId) || null; }
+/** UP NEXT: liked or fast-tracked by anyone, nothing requested. Moved-up
+ *  cards first (latest first), then Agree cards, then by how many yeses. */
 function upNext() {
   const written = new Set(S.articles.map((a) => a.card_id).filter(Boolean));
   const pins = pinnedCards();
@@ -305,23 +410,26 @@ function upNext() {
       const pass = acts.filter((a) => a === 'pass').length;
       const ov = overlap(c.id);
       const pinned = pins.has(c.id);
-      const score = (pinned ? 1000 : 0) + (ov && ov.state === 'agree' ? 100 : 0) + pos * 10 + ft * 5 - pass * 4;
-      return { card: c, score, pos, ov, pinned };
+      const score = (ov && (ov.state === 'agree' || ov.state === 'now') ? 100 : 0) + pos * 10 + ft * 5 - pass * 4;
+      return { card: c, score, pos, ov, pinned, pinAt: pinned ? pins.get(c.id) : null };
     })
-    .filter((x) => x.pos > 0 || x.pinned)
-    .sort((a, b) => b.score - a.score);
+    .filter((x) => x.pos > 0)
+    .sort((a, b) => (b.pinned - a.pinned) || (a.pinned && b.pinned ? b.pinAt - a.pinAt : 0) || (b.score - a.score));
 }
 
 // -- Overlap reveal -----------------------------------------------------------
 // Once per card per member (members.onboarding.reveals), the first time the
 // member views a card with an overlap, or right after their swipe creates one.
 function revealSeen(cardId) { return !!(S.onb.reveals && S.onb.reveals[cardId]); }
+/** Note prefill for "Make your case": from the viewer's own swipe. */
+const CASE_PREFIX = { like: 'Liked because ', fasttrack: 'Liked because ', pass: 'Passed because ', save: 'Saved because ' };
+const CASE_PREFIXES = Object.values(CASE_PREFIX).concat('Hold this for ');
 function maybeReveal(card) {
   const ov = overlap(card.id);
-  if (!ov || S.readOnly || isRevealOpen() || revealSeen(card.id)) return false;
+  if (!ov || isRevealOpen() || revealSeen(card.id)) return false;
   if (document.querySelector('.sheet-scrim.open, .modal-scrim.open') || !$('#reader').hidden) return false;
-  const meIn = ov.a.id === S.me.id || ov.b.id === S.me.id;
-  if (!meIn) return false;
+  // Only members who have called this card see its reveal.
+  if (!myAction(card.id)) return false;
   S.onb.reveals = Object.assign({}, S.onb.reveals, { [card.id]: ov.state });
   // The reveal carries the Agree / Split first-time lines.
   S.onb.lines = Object.assign({}, S.onb.lines);
@@ -334,10 +442,19 @@ function maybeReveal(card) {
   hideBubble();
   track('overlap_seen', { state: ov.state, card_id: card.id, reveal: true });
   seenOverlap.add(card.id + ov.state);
+  const requested = !!articleFor(card.id);
+  const locked = ov.state === 'now' && (!portalActive() || requested);
   showReveal({
     state: ov.state, left, right,
     card: { format: card.format, series: card.series, title: card.title, angle: card.angle, sources: card.sources },
-    onPrimary: () => (ov.state === 'agree' ? moveUp(card) : openNoteSheet(card)),
+    primaryDisabled: locked,
+    primaryTip: locked ? (requested ? 'Already requested.' : CLOSED_TIP) : '',
+    onPrimary: () => {
+      if (ov.state === 'agree') return moveUp(card);
+      if (ov.state === 'now') return requestFromReveal(card);
+      if (ov.state === 'timing') return openNoteSheet(card, 'Hold this for ');
+      return openNoteSheet(card, CASE_PREFIX[myAction(card.id)] || '');
+    },
     onClose: () => track('reveal_dismissed', { state: ov.state }),
     onDismiss: () => setTimeout(() => {
       const cur = S.items[S.feedIndex];
@@ -348,17 +465,23 @@ function maybeReveal(card) {
   return true;
 }
 function moveUp(card) {
-  const pins = new Set(S.onb.pins || []);
-  pins.add(card.id);
-  S.onb.pins = Array.from(pins);
+  const pins = (S.onb.pins || []).filter((id) => id !== card.id);
+  // Latest move goes to the very top of UP NEXT.
+  S.onb.pins = [card.id].concat(pins);
+  S.onb.pinned_at = Object.assign({}, S.onb.pinned_at, { [card.id]: new Date().toISOString() });
   saveOnb();
   track('moved_up', { card_id: card.id });
   toast('Moved to the top of Up next.');
 }
+async function requestFromReveal(card) {
+  const a = await requestCard(card, card.format, 'reveal');
+  if (a) toast('Requested. ' + confirmLine());
+}
 
 // -- Feed ---------------------------------------------------------------------
 function feedCards() {
-  const t = todayStr();
+  // Once the window closes, new weekly drops stop appearing.
+  const t = S.expired ? [todayStr(), closedDay()].sort()[0] : todayStr();
   return S.cards
     .filter((c) => c.drop_date && c.drop_date <= t)
     .sort((a, b) => (a.drop_date < b.drop_date ? 1 : a.drop_date > b.drop_date ? -1 : a.sort_order - b.sort_order));
@@ -430,43 +553,54 @@ function stopFeedTimer() { clearInterval(feedTimer); feedTimer = null; }
 function unseenBy(m) {
   return feedCards().filter((c) => !teamDecisions(c.id).has(m.id)).length;
 }
+/** The next drop, strictly after today, from the shared drop-day helper. */
+function nextDropDay() {
+  const t = new Date();
+  const tomorrow = new Date(t.getFullYear(), t.getMonth(), t.getDate() + 1);
+  return nextDropDate(S.company.first_opened_at || S.company.created_at, tomorrow);
+}
+/** How many cards the next drop brings: the real count if they exist. */
+function nextDropCount() {
+  const upcoming = S.cards.filter((c) => c.drop_date && c.drop_date > todayStr());
+  if (!upcoming.length) return 5;
+  const first = upcoming.map((c) => c.drop_date).sort()[0];
+  return upcoming.filter((c) => c.drop_date === first).length;
+}
 function buildCaughtUp() {
   const box = h('div', 'caught-up');
   box.setAttribute('role', 'group');
   box.setAttribute('aria-label', 'All caught up');
-  // Face-down stack of next week's five. A real card's format shows face-up
-  // on top only if next week's cards already exist; nothing is invented.
-  const upcoming = S.cards.filter((c) => c.drop_date && c.drop_date > todayStr())
-    .sort((a, b) => (a.drop_date < b.drop_date ? -1 : a.drop_date > b.drop_date ? 1 : a.sort_order - b.sort_order));
-  const stack = h('div', 'fd-stack');
-  stack.setAttribute('aria-hidden', 'true');
-  for (let i = 4; i >= 0; i--) {
-    const c = h('div', 'fd-card');
-    c.style.setProperty('--i', String(i));
-    if (i === 0 && upcoming[0]) {
-      c.classList.add('face-up', 'fmt-' + upcoming[0].format);
-      c.appendChild(h('span', 'card-format gwm-center gwm-mono-tag', FMT_LABEL[upcoming[0].format] || upcoming[0].format));
-    }
-    stack.appendChild(c);
+  // A paper card with the next drop and a live countdown.
+  const paper = h('div', 'cu-paper');
+  if (S.expired) {
+    paper.appendChild(h('p', 'cu-title', 'Pick up where you left off.'));
+    const p0 = h('p', 'cu-sub');
+    p0.appendChild(bookingLink('Book 15 minutes'));
+    paper.appendChild(p0);
+  } else {
+    const when = nextDropDay();
+    paper.appendChild(h('p', 'cu-title', nextDropCount() + ' new on ' + fmtWeekday(when)));
+    const tick = () => 'In ' + (countdownLong(when) || 'a moment');
+    const cd = h('p', 'cu-count gwm-mono-tag', tick());
+    cd.id = 'cu-count';
+    paper.appendChild(cd);
+    feedTimer = setInterval(() => { const el = $('#cu-count'); if (el) el.textContent = tick(); }, 30000);
   }
-  box.appendChild(stack);
-  const when = nextDrop(S.company.first_opened_at || S.company.created_at);
-  box.appendChild(h('p', 'cu-title', '5 new on ' + fmtWeekday(when)));
-  const cd = h('p', 'cu-count gwm-mono-tag', 'In ' + (countdownLong(when) || 'a moment'));
-  cd.id = 'cu-count';
-  box.appendChild(cd);
-  feedTimer = setInterval(() => { const el = $('#cu-count'); if (el) el.textContent = 'In ' + (countdownLong(when) || 'a moment'); }, 30000);
+  box.appendChild(paper);
 
   const seats = h('div', 'seats cu-seats');
   renderSeats(seats);
   box.appendChild(seats);
   const lines = h('div', 'cu-lines');
   S.members.forEach((m) => {
+    if (m.id === S.me.id) return;
     const n = unseenBy(m);
     if (!n) return;
-    const b = h('button', 'cu-line', (m.id === S.me.id ? 'You haven’t' : displayName(m) + ' hasn’t') + ' seen ' + n + ' of these.');
+    const b = h('button', 'cu-bubble');
     b.type = 'button';
-    // Copies nothing, sends nothing: it only points at that seat.
+    b.appendChild(avatarEl(m));
+    b.appendChild(h('span', 'cu-say', displayName(m) + ' hasn’t seen ' + n + ' of these.'));
+    // Sends nothing: it only points at that seat.
     b.addEventListener('click', () => {
       $all('.seat.hl', box).forEach((x) => x.classList.remove('hl'));
       const seat = seats.querySelector(`[data-member="${m.id}"]`);
@@ -474,13 +608,13 @@ function buildCaughtUp() {
     });
     lines.appendChild(b);
   });
-  if (!S.readOnly) {
-    for (let i = S.members.length; i < seatLimit(); i++) {
-      const b = h('button', 'cu-line open', 'Seat ' + (i + 1) + ' is open. Invite someone who decides content.');
-      b.type = 'button';
-      b.addEventListener('click', () => openInvite(null));
-      lines.appendChild(b);
-    }
+  for (let i = S.members.length; i < seatLimit(); i++) {
+    const b = h('button', 'cu-bubble open');
+    b.type = 'button';
+    b.appendChild(h('span', 'cu-ghost gwm-center', '+'));
+    b.appendChild(h('span', 'cu-say', 'Seat ' + (i + 1) + ' is open.'));
+    b.addEventListener('click', () => openInvite(null));
+    lines.appendChild(b);
   }
   box.appendChild(lines);
   return box;
@@ -528,7 +662,7 @@ function buildFeedCard(item, depth) {
     const avs = h('span', 'avs');
     avs.appendChild(avatarEl(ov.a)); avs.appendChild(avatarEl(ov.b));
     lab.appendChild(avs);
-    lab.appendChild(document.createTextNode({ agree: 'Agree', split: 'Split', timing: 'Timing' }[ov.state]));
+    lab.appendChild(document.createTextNode(OV_LABEL[ov.state]));
     lab.setAttribute('aria-label', ov.state + ': ' + displayName(ov.a) + ' ' + ACTION_LABEL[ov.aAction].toLowerCase() + ', ' + displayName(ov.b) + ' ' + ACTION_LABEL[ov.bAction].toLowerCase());
     head.appendChild(lab);
   }
@@ -541,29 +675,28 @@ function buildFeedCard(item, depth) {
   tags.filter((t) => String(t).toLowerCase() !== 'refresh').forEach((t) => tagWrap.appendChild(h('span', 'card-tag', t)));
   el.appendChild(tagWrap);
 
-  if (depth === 0 && ov && (ov.state === 'split' || ov.state === 'timing') && !S.readOnly) {
+  if (depth === 0 && ov && (ov.state === 'split' || ov.state === 'timing')) {
     const nb = h('button', 'btn-note gwm-btn');
     nb.type = 'button';
     nb.innerHTML = ICONS.pencil;
     nb.appendChild(h('span', null, 'Add a note'));
     stopDrag(nb);
-    nb.addEventListener('click', (e) => { e.stopPropagation(); openNoteSheet(c); });
+    const pre = ov.state === 'timing' ? 'Hold this for ' : CASE_PREFIX[myAction(c.id)] || '';
+    nb.addEventListener('click', (e) => { e.stopPropagation(); openNoteSheet(c, pre); });
     el.appendChild(nb);
   }
 
+  // One "Sources · N" button per card (as on the sales page) opens the sheet.
   const sources = Array.isArray(c.sources) ? c.sources : [];
   if (sources.length) {
     const sw = h('div', 'card-sources');
-    sw.appendChild(h('span', 'card-sources-label', 'Sources'));
-    sources.slice(0, CHIP_LIMIT).forEach((src, i) => sw.appendChild(sourceChip(src, i + 1, c)));
-    if (sources.length > CHIP_LIMIT) {
-      const more = h('button', 'src-chip more gwm-center', '+' + (sources.length - CHIP_LIMIT));
-      more.type = 'button';
-      more.setAttribute('aria-label', 'Open all sources');
-      stopDrag(more);
-      more.addEventListener('click', (e) => { e.stopPropagation(); openSourceSheet(c); });
-      sw.appendChild(more);
-    }
+    const b = h('button', 'src-btn');
+    b.type = 'button';
+    b.setAttribute('aria-label', 'Open ' + sources.length + (sources.length === 1 ? ' source.' : ' sources.'));
+    b.append(h('span', 'src-btn-label', 'Sources'), h('span', 'src-btn-count', sources.length));
+    stopDrag(b);
+    b.addEventListener('click', (e) => { e.stopPropagation(); openSourceSheet(c); });
+    sw.appendChild(b);
     el.appendChild(sw);
   }
 
@@ -582,18 +715,6 @@ function buildFeedCard(item, depth) {
     attachCardGestures(el, item);
   }
   return el;
-}
-function sourceChip(src, num, card) {
-  const b = h('button', 'src-chip');
-  b.type = 'button';
-  b.setAttribute('aria-label', 'Source ' + num + ': ' + (src.publisher || '') + '. Open list of sources.');
-  const n = h('span', 'num gwm-center', num);
-  const i0 = h('span', 'mono-init gwm-center', String(src.publisher || '?').trim().charAt(0).toUpperCase() || '?');
-  const p = h('span', 'pub', src.publisher || '');
-  b.append(n, i0, p);
-  stopDrag(b);
-  b.addEventListener('click', (e) => { e.stopPropagation(); openSourceSheet(card); });
-  return b;
 }
 function stopDrag(el) {
   ['pointerdown', 'pointermove', 'pointerup', 'touchstart', 'mousedown'].forEach((t) =>
@@ -632,7 +753,7 @@ function renderControls() {
   const isCard = item && item.kind === 'card';
   const mine = isCard ? myAction(item.card.id) : null;
   $all('#feed-controls .ctl').forEach((b) => {
-    b.disabled = !isCard || S.readOnly;
+    b.disabled = !isCard;
     const on = b.dataset.decide === mine;
     b.classList.toggle('is-current', on);
     b.setAttribute('aria-pressed', on ? 'true' : 'false');
@@ -660,7 +781,8 @@ let drag = null;
 function attachCardGestures(el, item) {
   el.addEventListener('pointerdown', (e) => {
     if (e.button !== undefined && e.button !== 0) return;
-    if (e.target.closest('button, a')) return;
+    // Scrolling the proof or tapping Sources never starts a swipe.
+    if (e.target.closest('button, a, .src-btn, .proof')) return;
     try { el.setPointerCapture(e.pointerId); } catch (_) {}
     drag = { id: e.pointerId, x0: e.clientX, y0: e.clientY, dx: 0, dy: 0, el, item, moved: false };
     el.classList.add('dragging');
@@ -674,7 +796,7 @@ function attachCardGestures(el, item) {
     drag.moved = true;
     const rot = Math.max(-18, Math.min(18, drag.dx / 12));
     el.style.transform = 'translate(' + drag.dx + 'px,' + drag.dy + 'px) rotate(' + rot + 'deg)';
-    if (drag.item.kind !== 'card' || S.readOnly) return;
+    if (drag.item.kind !== 'card') return;
     const horiz = Math.abs(drag.dx) > Math.abs(drag.dy);
     const dir = horiz ? (drag.dx > 0 ? 'like' : 'pass') : (drag.dy < 0 ? 'fasttrack' : 'save');
     const mag = horiz ? Math.abs(drag.dx) : Math.abs(drag.dy);
@@ -701,7 +823,7 @@ function attachCardGestures(el, item) {
     else if (dx > SWIPE_T && Math.abs(dx) > Math.abs(dy)) action = 'like';
     else if (dx < -SWIPE_T && Math.abs(dx) > Math.abs(dy)) action = 'pass';
     if (!action) { el.style.transform = ''; return; }
-    if (d.item.kind === 'signal' || S.readOnly) {
+    if (d.item.kind === 'signal') {
       if (action === 'pass' && S.feedIndex > 0) { el.style.transform = ''; goTo(S.feedIndex - 1); return; }
       exitThen(el, action, () => goTo(S.feedIndex + 1));
       return;
@@ -719,7 +841,6 @@ function exitThen(el, action, fn) {
 }
 
 async function decide(action, via) {
-  if (S.readOnly) return;
   const item = S.items[S.feedIndex];
   if (!item || item.kind !== 'card') return;
   const card = item.card;
@@ -794,19 +915,20 @@ function closeScrim(id) {
 // A note goes to notes AND gets a hub_items row, so it appears in the Hub
 // (and only there).
 let noteCard = null;
-function openNoteSheet(card) {
+function openNoteSheet(card, prefill) {
   noteCard = card;
   $('#note-sheet-title').textContent = card.title;
   const input = $('#note-input');
-  input.value = '';
-  $('#note-count').textContent = '0 / ' + NOTE_MAX;
+  input.value = prefill || '';
+  $('#note-count').textContent = input.value.length + ' / ' + NOTE_MAX;
   $('#note-save').disabled = true;
   openScrim('note-sheet');
-  setTimeout(() => input.focus(), 50);
+  // Cursor at the end of the prefill.
+  setTimeout(() => { input.focus(); input.setSelectionRange(input.value.length, input.value.length); }, 50);
 }
 async function saveNote() {
   const body = $('#note-input').value.trim().slice(0, NOTE_MAX);
-  if (!body || !noteCard) return;
+  if (!body || !noteCard || CASE_PREFIXES.includes(body + ' ')) return;
   const btn = $('#note-save');
   btn.disabled = true;
   const { data, error } = await sb.from('notes')
@@ -842,7 +964,8 @@ function renderHistory(tab) {
   const log = $('#history-log');
   log.textContent = '';
   const byCard = new Map();
-  S.events.forEach((e) => {
+  // Card-level decisions only (like, pass, save, fast-track).
+  S.events.filter((e) => e.card_id && ACTION_LABEL[e.action]).forEach((e) => {
     if (!byCard.has(e.card_id)) byCard.set(e.card_id, []);
     byCard.get(e.card_id).push(e);
   });
@@ -903,14 +1026,24 @@ function renderHistory(tab) {
 }
 
 // -- Library: catalog mode (read-only fan) --------------------------------------
-function libArticles() {
-  const rank = { live: 0, delivered: 0, approved_unwritten: 1 };
-  return S.articles.slice().sort((a, b) =>
-    (rank[a.status] - rank[b.status]) ||
-    String(b.delivered_at || b.requested_at || b.created_at).localeCompare(String(a.delivered_at || a.requested_at || a.created_at)));
+// One entry per card that is up next, requested, writing or delivered.
+// Articles carry the last three; UP NEXT entries are derived from swipes.
+function entryOf(a) {
+  return { id: a.id, status: a.status, format: a.format, title: a.title, card_id: a.card_id, article: a, card: S.cards.find((c) => c.id === a.card_id) || null };
 }
+function upNextEntry(card) {
+  return { id: 'card:' + card.id, status: 'up_next', format: card.format, title: card.title, card_id: card.id, article: null, card };
+}
+const TIME_OF = (e) => (e.article ? String(e.article.delivered_at || e.article.requested_at || e.article.created_at) : '');
+function libEntries() {
+  const rank = { delivered: 0, writing: 1, requested: 2 };
+  const arts = S.articles.map(entryOf).sort((a, b) =>
+    ((rank[a.status] ?? 3) - (rank[b.status] ?? 3)) || TIME_OF(b).localeCompare(TIME_OF(a)));
+  return arts.concat(upNext().map((x) => upNextEntry(x.card)));
+}
+function entryById(id) { return libEntries().find((e) => e.id === id) || null; }
 function syncLibOrder() {
-  const ids = libArticles().map((a) => a.id);
+  const ids = libEntries().map((e) => e.id);
   S.libOrder = S.libOrder.filter((id) => ids.includes(id));
   ids.forEach((id) => { if (!S.libOrder.includes(id)) S.libOrder.push(id); });
 }
@@ -925,22 +1058,32 @@ const FAN = [
 function pieceFor(a) {
   return S.pieces.find((p) => p.article_id === a.id && p.status !== 'killed') || null;
 }
-/** Approved, unwritten, not the free pick, nothing spent on it yet. */
+/** Credits (frozen): a requested article nothing has been spent on yet. */
 function writable(a) {
-  return a.status === 'approved_unwritten' && !a.requested_at && !pieceFor(a) && !S.readOnly;
+  return CREDITS_ENABLED && !!a && a.status === 'requested' && !pieceFor(a) && portalActive();
 }
-/** Delivery state line for a card. */
-function deliveryState(a) {
-  if (a.status === 'approved_unwritten') {
-    const piece = pieceFor(a);
-    if (piece && piece.status === 'queued') return { kind: 'queued', text: 'Queued' };
-    if (a.requested_at && a.deliver_by) {
-      const left = countdown(a.deliver_by);
-      return { kind: 'arriving', text: left ? 'Arriving in ' + left : 'Arriving any minute' };
-    }
-    const cost = costOf(a.format);
-    if (writable(a) && cost) return { kind: 'ready', text: 'Ready to write · ' + credits(cost) };
-    return { kind: 'approved', text: 'Approved · not written yet' };
+/** "14H 20M" style: always hours and minutes. */
+function hoursMinutes(iso) {
+  const ms = new Date(iso) - Date.now();
+  if (!(ms > 0)) return null;
+  const mins = Math.ceil(ms / 60000);
+  return Math.floor(mins / 60) + 'h ' + (mins % 60) + 'm';
+}
+/** Who asked for it: the member, or the owner for a sales-page pick. */
+function requesterName(a) { return displayName(eventMember(a.requested_by)); }
+/** Status line for an entry: tag (UP NEXT, REQUESTED, WRITING, DELIVERED)
+ *  and the line under it. */
+function deliveryState(e) {
+  const a = e.article;
+  if (e.status === 'up_next') return { kind: 'up_next', text: portalActive() ? 'Tap to request' : '' };
+  if (e.status === 'writing') {
+    const left = a.deliver_by ? hoursMinutes(a.deliver_by) : null;
+    return { kind: 'writing', text: left ? 'Arriving in ' + left : 'Arriving any minute' };
+  }
+  if (e.status === 'requested') {
+    const piece = CREDITS_ENABLED ? pieceFor(a) : null;
+    if (piece && piece.status === 'queued') return { kind: 'requested', text: 'Queued' };
+    return { kind: 'requested', text: 'Requested by ' + requesterName(a) + (a.requested_at ? ' · ' + fmtDay(a.requested_at) : '') };
   }
   const when = fmtWhen(a.delivered_at || a.created_at);
   const text = a.requested_at && a.delivered_at
@@ -948,83 +1091,92 @@ function deliveryState(a) {
     : 'Delivered · ' + when;
   return { kind: 'delivered', text };
 }
+function statusTag(status, extra) {
+  const t = h('span', 'status-tag gwm-center gwm-mono-tag st-' + status + (extra ? ' ' + extra : ''), STATUS_TAG[status]);
+  return t;
+}
 let countdownTimer = null;
 function stopCountdowns() { clearInterval(countdownTimer); countdownTimer = null; }
 function tickCountdowns() {
-  $all('#deck-stage [data-countdown]').forEach((el) => {
+  $all('[data-countdown]').forEach((el) => {
     const a = S.articles.find((x) => x.id === el.dataset.countdown);
-    if (a) el.textContent = deliveryState(a).text;
+    if (a) el.textContent = deliveryState(entryOf(a)).text;
   });
+}
+function libCountText(list) {
+  const n = (st) => list.filter((e) => e.status === st).length;
+  let t = n('delivered') + ' delivered · ' + n('up_next') + ' up next';
+  if (n('requested')) t += ' · ' + n('requested') + ' requested';
+  if (CREDITS_ENABLED && balance() > 0) t += ' · ' + credits(balance());
+  return t;
 }
 function renderLibrary(opts) {
   syncLibOrder();
   stopCountdowns();
   const stage = $('#deck-stage');
   stage.textContent = '';
-  const byId = new Map(S.articles.map((a) => [a.id, a]));
+  const all = libEntries();
+  const byId = new Map(all.map((e) => [e.id, e]));
   const order = S.libOrder.map((id) => byId.get(id)).filter(Boolean);
-  const written = order.filter((a) => a.status !== 'approved_unwritten').length;
-  $('#lib-count').textContent = (order.length ? written + ' written · ' + (order.length - written) + ' approved' : '') +
-    (balance() > 0 ? (order.length ? ' · ' : '') + credits(balance()) : '');
+  $('#lib-count').textContent = libCountText(all);
   $('#lib-nav').hidden = order.length < 2;
   if (!order.length) {
-    stage.appendChild(h('p', 'lib-empty', 'Your articles land here as they’re written.'));
+    stage.appendChild(h('p', 'lib-empty', 'Like a card in your feed and it lands here, up next.'));
     return;
   }
   const visible = order.slice(0, FAN.length);
   const els = [];
   // Paint back to front so the top card is last and fully covers the rest.
   for (let i = visible.length - 1; i >= 0; i--) {
-    const a = visible[i];
-    const ghost = a.status === 'approved_unwritten';
+    const e = visible[i];
+    const ghost = isGhostStatus(e.status);
     const slot = FAN[i];
     const tf = `translateX(${slot.x}px) rotate(${slot.r}deg)`;
     const z = 20 - i * 2;
     if (ghost) {
       // The ghost trail: two faint dashed copies, 6px and 12px down-right.
       [2, 1].forEach((k) => {
-        const t = h('div', `book-trail t${k} fmt-${a.format}`);
+        const t = h('div', `book-trail t${k} fmt-${e.format}`);
         t.style.transform = `${tf} translate(${6 * k}px, ${6 * k}px)`;
         t.style.zIndex = String(z - 1);
         t.setAttribute('aria-hidden', 'true');
         stage.appendChild(t);
       });
     }
-    const b = h('div', 'book fmt-' + a.format + (ghost ? ' ghost' : '') + (i === 0 ? ' top' : ' back'));
-    b.dataset.id = a.id;
+    const b = h('div', 'book fmt-' + e.format + (ghost ? ' ghost' : '') + (i === 0 ? ' top' : ' back'));
+    b.dataset.id = e.id;
     b.style.transform = tf;
     b.style.zIndex = String(z);
     const head = h('div', 'book-head');
-    head.appendChild(h('span', 'card-format gwm-center gwm-mono-tag fmt-' + a.format, FMT_LABEL[a.format] || a.format));
-    const card = S.cards.find((c) => c.id === a.card_id);
-    if (card && card.series) head.appendChild(h('span', 'gwm-series-label', card.series));
-    if (a.status === 'live') head.appendChild(h('span', 'live-tag gwm-center gwm-mono-tag', 'Live'));
+    head.appendChild(h('span', 'card-format gwm-center gwm-mono-tag fmt-' + e.format, FMT_LABEL[e.format] || e.format));
+    if (e.card && e.card.series) head.appendChild(h('span', 'gwm-series-label', e.card.series));
+    if (isLive(e.article)) head.appendChild(h('span', 'live-tag gwm-center gwm-mono-tag', 'Live'));
+    head.appendChild(statusTag(e.status));
     b.appendChild(head);
-    b.appendChild(h('h3', 'book-title', a.title));
-    const st = deliveryState(a);
+    b.appendChild(h('h3', 'book-title', e.title));
+    const st = deliveryState(e);
     if (st.kind === 'delivered') {
       b.appendChild(h('span', 'book-stamp delivered', st.text));
-    } else {
-      b.appendChild(h('span', 'book-stamp approved gwm-center', 'Approved'));
+    } else if (st.text) {
       const line = h('span', 'book-state ' + st.kind, st.text);
-      if (st.kind === 'arriving') line.dataset.countdown = a.id;
+      if (st.kind === 'writing') line.dataset.countdown = e.id;
       b.appendChild(line);
     }
     if (i === 0) {
       b.tabIndex = 0;
       b.setAttribute('role', 'button');
-      b.setAttribute('aria-label', (ghost ? 'Approved, not written: ' : 'Open article: ') + a.title + '. ' + st.text);
-      attachBookGestures(b, a);
+      b.setAttribute('aria-label', (ghost ? STATUS_TAG[e.status] + ': ' : 'Open article: ') + e.title + (st.text ? '. ' + st.text : ''));
+      attachBookGestures(b, e);
     } else b.setAttribute('aria-hidden', 'true');
     stage.appendChild(b);
     els[i] = b;
   }
-  if (visible.some((a) => deliveryState(a).kind === 'arriving')) countdownTimer = setInterval(tickCountdowns, 30000);
+  if (visible.some((e) => e.status === 'writing')) countdownTimer = setInterval(tickCountdowns, 30000);
   if (els[0]) fitOneLine($all('.book-stamp.delivered, .book-state', els[0]));
   if (opts && opts.fromRects) animateBooksFrom(opts.fromRects, els);
 }
-/** Status stamps never wrap: tighten, then shrink the type, until the whole
- *  stamp fits the card's inner width. */
+/** Status stamps never wrap: tighten the letter-spacing first, then shrink
+ *  the type, until the whole stamp fits the card's inner width. */
 function fitOneLine(list) {
   list.forEach((el) => {
     el.style.fontSize = ''; el.style.letterSpacing = '';
@@ -1032,7 +1184,10 @@ function fitOneLine(list) {
     const room = card.clientWidth - parseFloat(cs.paddingRight) - 6 - Math.max(0, el.offsetLeft);
     const width = () => el.getBoundingClientRect().width / Math.cos(4 * Math.PI / 180);
     if (el.scrollWidth <= room && width() <= room + 8) return;
-    el.style.letterSpacing = '0.02em';
+    for (const ls of ['0.03em', '0.01em', '0em']) {
+      el.style.letterSpacing = ls;
+      if (el.offsetWidth <= room) return;
+    }
     let size = parseFloat(getComputedStyle(el).fontSize);
     while (el.offsetWidth > room && size > 7.5) { size -= 0.25; el.style.fontSize = size + 'px'; }
   });
@@ -1064,7 +1219,7 @@ function rotateLib(dir) {
 }
 // Swiping the top card shuffles it to the back; a tap opens it. Nothing here
 // is grabbable or movable; that lives only in the Hub.
-function attachBookGestures(el, article) {
+function attachBookGestures(el, entry) {
   let d = null;
   el.addEventListener('pointerdown', (e) => {
     if (e.button !== undefined && e.button !== 0) return;
@@ -1082,21 +1237,21 @@ function attachBookGestures(el, article) {
     const moved = d.moved, dx = d.dx;
     d = null;
     if (e.type === 'pointercancel') return;
-    if (!moved) { openArticle(article); return; }
+    if (!moved) { openEntry(entry); return; }
     if (Math.abs(dx) > 60) rotateLib(dx > 0 ? -1 : 1);
   };
   el.addEventListener('pointerup', up);
   el.addEventListener('pointercancel', up);
   el.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openArticle(article); }
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openEntry(entry); }
   });
 }
-function openArticle(a) {
-  if (a.status === 'approved_unwritten') return openWrite(a);
-  openReader(a);
+function openEntry(e) {
+  if (e.status === 'delivered') return openReader(e.article);
+  openCardSheet(e);
 }
 
-// Notes on a card, readable anywhere at $19 (History, Library, reader).
+// Notes on a card, readable at every access level (History, Library, reader).
 function renderNotes(wrap, cardId) {
   wrap.textContent = '';
   const list = S.notes.filter((n) => n.card_id && n.card_id === cardId && n.body !== WANTS_WRITTEN);
@@ -1115,43 +1270,72 @@ function renderNotes(wrap, cardId) {
   });
 }
 
-// "Write this": an approved, unwritten card. Pick a format, see the cost,
-// spend credits (or get some).
-let writeArticle = null, writeFmt = null;
-function openWrite(a) {
-  writeArticle = a;
-  track('ghost_tapped', { article_id: a.id, format: a.format });
-  $('#ghost-sheet-fmt').textContent = FMT_LABEL[a.format] || a.format;
-  $('#ghost-sheet-title').textContent = a.title;
-  const st = deliveryState(a);
-  const canWrite = writable(a) && !!costOf(a.format);
-  $('#ghost-copy').textContent =
-    st.kind === 'arriving' ? 'Being written now. ' + st.text + '.' :
-    st.kind === 'queued' ? 'Queued. Writing starts when the piece ahead of it is delivered.' :
-    'Approved, not written yet.';
-  $('#write-box').hidden = !canWrite;
-  if (canWrite) { writeFmt = a.format; renderWriteBox(); }
-  renderNotes($('#ghost-notes'), a.card_id);
+// Card detail for anything not delivered yet. UP NEXT: "Request this" with a
+// format choice (the card's own format preselected, one tap). REQUESTED and
+// WRITING: who asked, when, and the countdown. Credits (frozen) reuse the
+// same box as "Write this".
+let sheetEntry = null, writeFmt = null, sheetMode = null;
+function openCardSheet(e) {
+  sheetEntry = e;
+  track('card_detail_opened', { status: e.status, format: e.format });
+  $('#ghost-sheet-fmt').textContent = FMT_LABEL[e.format] || e.format;
+  $('#ghost-sheet-title').textContent = e.title;
+  const tagWrap = $('#ghost-tag');
+  tagWrap.textContent = '';
+  tagWrap.appendChild(statusTag(e.status));
+  const st = deliveryState(e);
+  const copy = $('#ghost-copy');
+  delete copy.dataset.countdown;
+  sheetMode = null;
+  if (e.status === 'up_next') {
+    copy.textContent = 'Liked, not requested yet.';
+    sheetMode = 'request';
+  } else if (e.status === 'writing') {
+    copy.textContent = 'Being written now. ' + st.text + '.';
+  } else {
+    copy.textContent = st.text === 'Queued' ? 'Queued. Writing starts when the piece ahead of it is delivered.' : st.text + '. ' + confirmLine();
+    if (writable(e.article) && costOf(e.format)) sheetMode = 'credits';
+  }
+  $('#write-box').hidden = !sheetMode;
+  if (sheetMode) { writeFmt = e.format; renderWriteBox(); }
+  renderNotes($('#ghost-notes'), e.card_id);
   openScrim('ghost-sheet');
 }
 function renderWriteBox() {
+  const credit = sheetMode === 'credits';
   $all('#fmt-choice .fmt-opt').forEach((b) => {
     const on = b.dataset.fmt === writeFmt;
     b.classList.toggle('on', on);
     b.setAttribute('aria-checked', on ? 'true' : 'false');
-    b.textContent = FMT_LABEL[b.dataset.fmt] + ' · ' + costOf(b.dataset.fmt);
-    b.setAttribute('aria-label', FMT_LABEL[b.dataset.fmt] + ', ' + credits(costOf(b.dataset.fmt)));
+    b.textContent = FMT_LABEL[b.dataset.fmt] + (credit ? ' · ' + costOf(b.dataset.fmt) : '');
+    b.setAttribute('aria-label', FMT_LABEL[b.dataset.fmt] + (credit ? ', ' + credits(costOf(b.dataset.fmt)) : ''));
   });
-  const cost = costOf(writeFmt), bal = balance();
-  $('#write-cost').textContent = credits(cost) + '. You have ' + credits(bal) + '.';
   const btn = $('#write-btn');
-  btn.textContent = bal >= cost ? 'Write this · ' + credits(cost) : 'Get credits';
-  btn.disabled = false;
-  $('#write-msg').textContent = ' ';
-  $('#write-msg').className = 'field-msg';
+  const msg = $('#write-msg');
+  msg.className = 'field-msg';
+  msg.textContent = ' ';
+  $('#write-cost').hidden = !credit;
+  btn.removeAttribute('title');
+  btn.removeAttribute('aria-describedby');
+  if (credit) {
+    const cost = costOf(writeFmt), bal = balance();
+    $('#write-cost').textContent = credits(cost) + '. You have ' + credits(bal) + '.';
+    btn.textContent = bal >= cost ? 'Write this · ' + credits(cost) : 'Get credits';
+    btn.disabled = false;
+    return;
+  }
+  btn.textContent = 'Request this';
+  btn.disabled = !portalActive();
+  if (btn.disabled) {
+    // Disabled, with the reason as a tooltip and as a visible line.
+    btn.title = CLOSED_TIP;
+    btn.setAttribute('aria-describedby', 'write-msg');
+    msg.textContent = CLOSED_TIP;
+  }
 }
 async function writeThis() {
-  const a = writeArticle;
+  if (sheetMode === 'request') return requestFromSheet();
+  const a = sheetEntry && sheetEntry.article;
   if (!a) return;
   const cost = costOf(writeFmt);
   if (balance() < cost) { closeScrim('ghost-sheet'); openCredits({ need: cost - balance() }); return; }
@@ -1171,6 +1355,73 @@ async function writeThis() {
   toast(data.piece.status === 'writing' ? 'Writing starts now. It lands within 24 hours.' : 'Queued. It starts when the one ahead of it is delivered.');
   if (S.view === 'library') renderLibrary();
   if (S.view === 'hub') goHub();
+}
+async function requestFromSheet() {
+  const e = sheetEntry;
+  if (!e || !e.card) return;
+  const btn = $('#write-btn');
+  btn.disabled = true;
+  const a = await requestCard(e.card, writeFmt, S.view === 'hub' ? 'hub' : 'library');
+  if (!a) { renderWriteBox(); return; }
+  // The sheet turns into the requested card: a stamp lands, the line updates.
+  $('#write-box').hidden = true;
+  const tagWrap = $('#ghost-tag');
+  tagWrap.textContent = '';
+  tagWrap.appendChild(statusTag('requested', prefersReduced ? '' : 'stamp-in'));
+  $('#ghost-copy').textContent = 'Requested by ' + requesterName(a) + ' · ' + fmtDay(a.requested_at) + '. ' + confirmLine();
+  sheetEntry = entryOf(a);
+  if (S.view === 'library') renderLibrary();
+  if (S.view === 'hub') refreshHub();
+}
+
+/** request_card: UP NEXT becomes REQUESTED. Also tells the team inbox (the
+ *  portal-request Netlify form); a failed post is only logged. */
+async function requestCard(card, format, via) {
+  if (!portalActive()) { toast(CLOSED_TIP); return null; }
+  const before = articleFor(card.id);
+  const { data, error } = await sb.rpc('request_card', { p_card_id: card.id, p_format: format || card.format });
+  if (error) {
+    console.warn('[portal] request failed', error.message);
+    toast(/portal closed/.test(error.message) ? CLOSED_TIP : 'That didn’t go through. Try again.');
+    return null;
+  }
+  let a = S.articles.find((x) => x.id === data.id);
+  if (!a) {
+    a = { id: data.id, card_id: card.id, title: card.title, body_html: null, google_doc_url: null, deliver_by: null, delivered_at: null, live_at: null, created_at: data.requested_at };
+    S.articles.push(a);
+  }
+  Object.assign(a, { status: data.status, format: data.format, requested_at: data.requested_at, requested_by: data.requested_by });
+  // The Library puts it where the UP NEXT card was.
+  const k = S.libOrder.indexOf('card:' + card.id);
+  if (k >= 0) S.libOrder[k] = a.id;
+  track('card_requested', { card_id: card.id, format: a.format, via });
+  if (!before) postRequestForm(card, a);
+  await hubCardToArticle(card, a);
+  return a;
+}
+function postRequestForm(card, a) {
+  const fields = {
+    'form-name': 'portal-request',
+    company: S.company.name || '', slug: S.company.slug || '', card_title: card.title || '', format: a.format || '',
+    requester_name: displayName(S.me), requester_email: (S.session && S.session.user && S.session.user.email) || '',
+  };
+  try {
+    fetch('/portal/index.html', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams(fields).toString(),
+    }).then((r) => { if (!r.ok) console.warn('[portal] portal-request form post failed', r.status); })
+      .catch((err) => console.warn('[portal] portal-request form post failed', err && err.message));
+  } catch (err) { console.warn('[portal] portal-request form post failed', err && err.message); }
+}
+/** A Hub "card" item keeps its spot and becomes the article. */
+async function hubCardToArticle(card, a) {
+  const it = S.hubItems.find((i) => i.kind === 'card' && i.ref_id === card.id);
+  if (!it) return;
+  const { error } = await sb.from('hub_items').update({ kind: 'article', ref_id: a.id, updated_at: new Date().toISOString() }).eq('id', it.id);
+  if (error) { console.warn('[portal] hub item move failed', error.message); return; }
+  it.kind = 'article';
+  it.ref_id = a.id;
 }
 
 // Credits sheet: resume the $19 first if needed, then Starter (never bought)
@@ -1378,7 +1629,7 @@ function openReader(a) {
   const fmt = $('#reader-fmt');
   fmt.className = 'card-format gwm-center gwm-mono-tag fmt-' + a.format;
   fmt.textContent = FMT_LABEL[a.format] || a.format;
-  $('#reader-date').textContent = deliveryState(a).text;
+  $('#reader-date').textContent = deliveryState(entryOf(a)).text;
   $('#reader-title').textContent = a.title;
   const body = $('#reader-html');
   body.innerHTML = cleanHtml(a.body_html) || '<p>The full text is in the Google Doc.</p>';
@@ -1390,8 +1641,9 @@ function openReader(a) {
   $('#copy-web').disabled = !a.body_html;
   renderNotes($('#reader-notes'), a.card_id);
   const lt = $('#live-toggle');
-  lt.hidden = S.readOnly;
-  lt.setAttribute('aria-checked', a.status === 'live' ? 'true' : 'false');
+  // portal_set_live needs an open window.
+  lt.hidden = !portalActive();
+  lt.setAttribute('aria-checked', isLive(a) ? 'true' : 'false');
   const r = $('#reader');
   r.hidden = false;
   r.scrollTop = 0;
@@ -1427,9 +1679,9 @@ async function copyForWeb() {
 }
 async function toggleLive() {
   const a = readerArticle;
-  if (!a || S.readOnly) return;
+  if (!a || !portalActive()) return;
   const lt = $('#live-toggle');
-  const goLive = a.status !== 'live';
+  const goLive = !isLive(a);
   lt.setAttribute('aria-checked', goLive ? 'true' : 'false');
   lt.disabled = true;
   const { data, error } = await sb.rpc('portal_set_live', { p_article_id: a.id, p_live: goLive });
@@ -1439,6 +1691,7 @@ async function toggleLive() {
     toast('That didn’t save. Try again.');
     return;
   }
+  // portal_set_live only stamps live_at now (status stays 'delivered').
   a.status = data.status;
   a.live_at = data.live_at;
   track('marked_live', { article_id: a.id, live: goLive });
@@ -1462,41 +1715,43 @@ function goHub() {
   renderHubHead();
   enterHub({ forceLocked: S.forceHub === 'locked', fromRects: libraryRects() });
 }
+/** The Hub's "Talk it through" goes to the booking page. */
+function renderHubLock() {
+  const a = $('#hub-talk');
+  const url = bookingUrl();
+  a.hidden = !url;
+  if (url) a.href = url;
+}
 function exitHub() {
   const rects = articleRects();
   go('library', { fromRects: rects });
 }
 
-// One invite pop-up for the Hub's first tap, the Hub header and the Feed's
-// caught-up state. `after` runs once it closes (sent or skipped).
+// One invite pop-up in four places: the Hub's first tap, the Hub header's
+// Invite button, a "+ seat" ghost, and an open-seat bubble in the empty feed.
+// `after` runs once it closes (sent or skipped).
 let inviteAfter = null, inviteFlag = false;
+function renderInviteSeats() {
+  const left = seatsLeft();
+  $('#invite-sub').textContent = 'They’ll get a sign-in link.' + (left ? ' ' + seatLine(left) : '');
+  renderSeats($('#invite-seat-row'));
+  // No seats left: the form goes, the last line stays.
+  $('#invite-form').hidden = !left;
+  $('[data-action="invite-skip"]').textContent = left ? 'Skip for now' : 'Done';
+}
 function openInvite(after, opts) {
   inviteAfter = after || null;
   inviteFlag = !!(opts && opts.flag);
   const left = seatsLeft();
-  const seats = Math.min(2, left);
-  if (seats <= 0) { toast(allTaken()); finishInvite(); return; }
-  const wrap = $('#invite-fields');
-  wrap.textContent = '';
-  for (let i = 0; i < seats; i++) {
-    const lab = h('label', 'field');
-    const input = h('input');
-    input.type = 'email';
-    input.placeholder = i === 0 ? 'teammate@work.com' : 'another@work.com (optional)';
-    input.autocomplete = 'off';
-    input.inputMode = 'email';
-    input.setAttribute('aria-label', 'Teammate email ' + (i + 1));
-    lab.appendChild(input);
-    wrap.appendChild(lab);
-  }
-  $('#invite-seats').textContent = SEAT_LINE[left] || '';
-  $('#invite-seats').hidden = !SEAT_LINE[left];
+  if (left <= 0) { finishInvite(); return; }
+  $('#invite-email').value = '';
   $('#invite-msg').textContent = ' ';
   $('#invite-msg').className = 'field-msg';
   $('#invite-btn').disabled = false;
-  track('invite_opened', { seats_left: left });
+  renderInviteSeats();
+  track('invite_opened', { seats_left: left, from: S.view });
   openScrim('invite-modal');
-  setTimeout(() => { const f = $('#invite-fields input'); if (f) f.focus(); }, 60);
+  setTimeout(() => $('#invite-email').focus(), 60);
 }
 function finishInvite() {
   const f = inviteAfter;
@@ -1513,36 +1768,50 @@ const INVITE_ERR = {
   invalid_email: 'That email doesn’t look right.',
   self_invite: 'That’s you. Invite someone else.',
   already_member: 'They’re already on your portal.',
+  not_signed_in: 'Your session expired. Sign in again.',
 };
+const INVITE_FAILED = 'We couldn’t send that invite. Try again in a minute.';
 async function submitInvite(e) {
   e.preventDefault();
   const msg = $('#invite-msg');
-  const emails = $all('#invite-fields input').map((i) => i.value.trim().toLowerCase()).filter(Boolean);
+  const input = $('#invite-email');
+  const email = input.value.trim().toLowerCase();
   const fail = (text) => { msg.textContent = text; msg.className = 'field-msg err'; };
-  if (!emails.length) return fail('Add an email, or skip for now.');
-  if (emails.some((x) => !EMAIL_RE.test(x))) return fail(INVITE_ERR.invalid_email);
-  if (S.session && emails.includes(String(S.session.user.email || '').toLowerCase())) return fail(INVITE_ERR.self_invite);
+  if (!email) return fail('Add an email, or skip for now.');
+  if (!EMAIL_RE.test(email)) return fail(INVITE_ERR.invalid_email);
+  if (S.session && email === String(S.session.user.email || '').toLowerCase()) return fail(INVITE_ERR.self_invite);
   const btn = $('#invite-btn');
   btn.disabled = true;
   msg.textContent = 'Sending…';
   msg.className = 'field-msg';
-  const { data, error } = await sb.functions.invoke('invite-member', { body: { emails } });
-  if (error) {
-    let code = '';
-    try { code = (await error.context.json()).error; } catch (_) {}
-    track('invite_failed', { code: code || 'unknown' });
-    btn.disabled = false;
-    // Every other failure (502 / failed, network): never the generic line.
-    fail(INVITE_ERR[code] || 'We couldn’t send that invite. Try again in a minute.');
-    if (code === 'seat_limit' || code === 'already_member') await refreshMembers();
+  let data = null, code = '';
+  try {
+    const r = await sb.functions.invoke('invite-member', { body: { emails: [email] } });
+    data = r.data;
+    if (r.error) {
+      try { code = (await r.error.context.json()).error; } catch (_) {}
+      code = code || 'failed';
+    }
+  } catch (_) { code = 'failed'; }
+  btn.disabled = false;
+  const results = (data && data.results) || [];
+  // A lone per-address "already_member" reads the same as the top-level one.
+  if (!code && results.length === 1 && results[0].status === 'already_member') code = 'already_member';
+  if (!code && !results.some((r) => r.status === 'invited')) code = 'failed';
+  if (code) {
+    track('invite_failed', { code });
+    fail(INVITE_ERR[code] || INVITE_FAILED);
+    if (code === 'seat_limit' || code === 'already_member' || results.length) { await refreshMembers(); renderInviteSeats(); }
     return;
   }
-  const sent = (data && data.results || []).filter((r) => r.status === 'invited').length;
-  track('invite_sent', { count: sent, requested: emails.length });
+  track('invite_sent', { count: 1 });
   await refreshMembers();
-  closeScrim('invite-modal');
-  toast(sent === 1 ? 'Invite sent.' : 'Invites sent.');
-  finishInvite();
+  // Stay open: the field clears, the new seat shows up, the line updates.
+  input.value = '';
+  renderInviteSeats();
+  msg.textContent = 'Invite sent to ' + email + '.';
+  msg.className = 'field-msg ok';
+  if (S.view === 'hub') renderHubHead();
 }
 function skipInvite() {
   closeScrim('invite-modal');
@@ -1576,6 +1845,14 @@ function readAuthError() {
 // The email the last link and code went to. The code form verifies against
 // this, never against whatever is in the email input now.
 let sentTo = null;
+const RATE_LIMITED = 'Too many tries. Wait a minute and try again.';
+const isRateLimit = (err) => !!err && (err.status === 429 || /rate limit|too many/i.test(err.message || ''));
+async function requestLink(email) {
+  return sb.auth.signInWithOtp({
+    email,
+    options: { shouldCreateUser: false, emailRedirectTo: location.origin + '/portal' },
+  });
+}
 async function sendLink(e) {
   e.preventDefault();
   const input = $('#signin-email');
@@ -1586,26 +1863,24 @@ async function sendLink(e) {
   btn.disabled = true;
   msg.className = 'field-msg';
   msg.textContent = 'Sending…';
-  const { error } = await sb.auth.signInWithOtp({
-    email,
-    options: { shouldCreateUser: false, emailRedirectTo: location.origin + '/portal' },
-  });
+  const { error } = await requestLink(email);
   btn.disabled = false;
-  if (error && error.status === 429) {
-    msg.textContent = 'Too many tries. Wait a minute and try again.';
+  if (isRateLimit(error)) {
+    msg.textContent = RATE_LIMITED;
     msg.className = 'field-msg err';
     return;
   }
   // Same answer whether or not the email has a portal.
-  msg.textContent = ' ';
+  msg.textContent = ' ';
   sentTo = email;
-  $('#sent-email').textContent = email;
   $('#signin-form').hidden = true;
   $('#signin-sent').hidden = false;
+  $('#code-resend').hidden = true;
   $('#signin-code').focus();
+  track('signin_link_sent');
 }
-// Six to eight digit code from the same email, for people whose link opens in
-// an email app's built-in browser instead of the one they want to stay in.
+// The code from the same email, for people whose link opens in an email
+// app's built-in browser. Any length; spaces are dropped.
 async function verifyCode(e) {
   e.preventDefault();
   const input = $('#signin-code');
@@ -1613,10 +1888,11 @@ async function verifyCode(e) {
   const token = input.value.replace(/\s+/g, '');
   input.value = token;
   const bad = () => {
-    msg.textContent = 'That code didn’t work. Check the latest email or send a new one.';
+    msg.textContent = 'That code didn’t work. Check the latest email or send a new link.';
     msg.className = 'field-msg err';
+    $('#code-resend').hidden = false;
   };
-  if (!sentTo || !/^[0-9]{6,8}$/.test(token)) return bad();
+  if (!sentTo || !token) return bad();
   const btn = $('#code-btn');
   btn.disabled = true;
   msg.className = 'field-msg';
@@ -1625,14 +1901,30 @@ async function verifyCode(e) {
   try { res = await sb.auth.verifyOtp({ email: sentTo, token, type: 'email' }); }
   catch (err) { res = { error: err }; }
   btn.disabled = false;
+  if (isRateLimit(res.error)) { msg.textContent = RATE_LIMITED; msg.className = 'field-msg err'; return; }
   if (res.error || !res.data || !res.data.session) return bad();
-  msg.textContent = ' ';
+  msg.textContent = ' ';
   S.session = res.data.session;
+  track('signin_code_used');
   start(true);
+}
+async function resendLink() {
+  if (!sentTo) return resetSignin();
+  const msg = $('#code-msg');
+  const btn = $('#code-resend');
+  btn.disabled = true;
+  const { error } = await requestLink(sentTo);
+  btn.disabled = false;
+  $('#signin-code').value = '';
+  if (isRateLimit(error)) { msg.textContent = RATE_LIMITED; msg.className = 'field-msg err'; return; }
+  msg.textContent = 'New link sent. Use the code in the latest email.';
+  msg.className = 'field-msg';
+  btn.hidden = true;
+  $('#signin-code').focus();
 }
 function resetSignin() {
   $('#signin-code').value = '';
-  $('#code-msg').textContent = ' ';
+  $('#code-msg').textContent = ' ';
   $('#code-msg').className = 'field-msg';
   $('#signin-sent').hidden = true;
   $('#signin-form').hidden = false;
@@ -1672,7 +1964,7 @@ async function loadPortal(fromLink) {
   S.onb = Object.assign({}, S.me.onboarding || {});
   const cid = S.me.company_id;
   const [company, members, cards, decisions, events, signal, articles, notes, hubItems] = await Promise.all([
-    sb.from('companies').select('id,slug,name,contact_first_name,subscription_status,subscription_ends_at,hub_unlocked,is_internal,first_opened_at,created_at,seat_limit').eq('id', cid).single(),
+    sb.from('companies').select('id,slug,name,contact_first_name,subscription_status,subscription_ends_at,portal_access_until,unlock_mode,hub_unlocked,is_internal,first_opened_at,created_at,seat_limit').eq('id', cid).single(),
     sb.from('members').select('id,user_id,role,display_name,avatar_shape,onboarding,created_at').eq('company_id', cid).order('created_at'),
     sb.from('cards').select('id,card_key,format,series,title,angle,evidence,tags,sources,drop_date,sort_order').eq('company_id', cid).order('sort_order'),
     sb.from('decisions').select('card_id,member_id,action,updated_at').eq('company_id', cid),
@@ -1694,8 +1986,9 @@ async function loadPortal(fromLink) {
   S.notes = notes.data;
   S.hubItems = hubItems.data;
   const c = S.company;
-  S.readOnly = c.subscription_status === 'canceled' && !!c.subscription_ends_at && new Date(c.subscription_ends_at) <= new Date();
   await refreshAccount();
+  // Access comes from portal_active() only.
+  S.expired = !portalActive();
   S.loaded = true;
   await applySwitches();
 
@@ -1707,25 +2000,15 @@ async function loadPortal(fromLink) {
   } catch (_) {}
   let loggedThisTab = false;
   try { loggedThisTab = sessionStorage.getItem('gwm_portal_login') === '1'; sessionStorage.setItem('gwm_portal_login', '1'); } catch (_) {}
-  if (fromLink || !loggedThisTab) track('portal_login', { via: fromLink ? 'link' : 'session', read_only: S.readOnly });
+  if (fromLink || !loggedThisTab) track('portal_login', { via: fromLink ? 'link' : 'session', expired: S.expired });
 
   $('#company-name').textContent = c.name;
   $('#pencil-sticker').innerHTML = pencilSVG(84);
   buildItems();
-
-  if (S.readOnly) {
-    const line = $('#resub-line');
-    line.hidden = false;
-    line.textContent = 'Your subscription ended ' + fmtDay(c.subscription_ends_at) + '. Your library stays here. ';
-    const a = h('a', null, 'Resubscribe to reopen your feed.');
-    a.href = '/' + encodeURIComponent(c.slug);
-    line.appendChild(a);
-    $('#pencil-sticker').hidden = true;
-    go('library');
-    return;
-  }
+  renderClosedBanner();
+  renderHubLock();
   go('feed');
-  afterCheckout();
+  if (CREDITS_ENABLED) afterCheckout();
 }
 
 async function boot() {
@@ -1748,7 +2031,7 @@ async function boot() {
   }
   initHub({
     get sb() { return sb; }, S, show, track, toast, firstLine, avatarEl, displayName, memberById,
-    libArticles, exitHub, FMT_LABEL, WANTS_WRITTEN, hubOpen, writable, openWrite,
+    libEntries, entryOf, upNextEntry, exitHub, FMT_LABEL, STATUS_TAG, WANTS_WRITTEN, hubOpen, openEntry, deliveryState, articleFor, upNext,
   });
   const { data } = await sb.auth.getSession();
   S.session = data.session;
@@ -1798,7 +2081,7 @@ document.addEventListener('click', (e) => {
     case 'back-to-library': return exitHub();
     case 'invite-skip': return skipInvite();
     case 'invite': return openInvite(null);
-    case 'hub-start': return openCredits();
+    case 'hub-start': return CREDITS_ENABLED ? openCredits() : undefined;
     case 'bubble-dismiss': return dismissBubble();
     case 'sign-out': return signOut();
     case 'signin-again': return resetSignin();
@@ -1810,10 +2093,19 @@ document.addEventListener('click', (e) => {
 });
 $('#signin-form').addEventListener('submit', sendLink);
 $('#code-form').addEventListener('submit', verifyCode);
+$('#code-resend').addEventListener('click', resendLink);
+// Pasted codes: keep the digits and letters, drop the spaces.
+$('#signin-code').addEventListener('paste', (e) => {
+  const t = (e.clipboardData || window.clipboardData).getData('text');
+  if (!t) return;
+  e.preventDefault();
+  e.target.value = t.replace(/\s+/g, '');
+});
 $('#invite-form').addEventListener('submit', submitInvite);
 $('#note-input').addEventListener('input', (e) => {
   $('#note-count').textContent = e.target.value.length + ' / ' + NOTE_MAX;
-  $('#note-save').disabled = !e.target.value.trim();
+  // A bare prefill ("Liked because ") is not a note yet.
+  $('#note-save').disabled = !e.target.value.trim() || CASE_PREFIXES.includes(e.target.value.trim() + ' ');
 });
 $('#note-save').addEventListener('click', saveNote);
 $('#write-btn').addEventListener('click', writeThis);
