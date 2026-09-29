@@ -33,7 +33,7 @@ export function vedikaDb(overrides = {}) {
     { id: OWNER,  company_id: CO, user_id: USERS['tok-vedika'].id, role: 'owner',  display_name: 'vedikabhasin', avatar_shape: 'worm',  onboarding: {}, created_at: '2026-09-27T18:47:47.473518+00:00' },
     { id: MEMBER, company_id: CO, user_id: USERS['tok-blend'].id,  role: 'member', display_name: 'blendbases',   avatar_shape: 'spike', onboarding: {}, created_at: '2026-09-27T18:47:47.473519+00:00' },
   ];
-  const decisions = [['vb-02', 'like'], ['vb-03', 'pass'], ['vb-04', 'like']]
+  const decisions = [['vb-02', 'like'], ['vb-03', 'pass'], ['vb-04', 'like'], ['vb-06', 'fasttrack']]
     .map(([k, a], i) => ({ id: 'd' + i, company_id: CO, card_id: cardId(k), member_id: MEMBER, action: a, updated_at: iso(-2 * H) }));
   return {
     companies: [{ id: CO, slug: 'vedika-bhasin-ycfogw', name: 'Vedika Bhasin', contact_first_name: 'Vedika', is_internal: true,
@@ -50,7 +50,7 @@ export function vedikaDb(overrides = {}) {
         body_html: VB01_BODY, google_doc_url: null, requested_at: iso(-43 * H), deliver_by: null, delivered_at: iso(-24 * H), live_at: null, created_at: iso(-43 * H) },
       { id: 'd4579ee5-34dc-4065-b21d-97013b252f02', company_id: CO, card_id: cardId('vb-05'), format: 'post', title: 'The Most Useful Page Says What Not to Do', status: 'writing',
         body_html: null, google_doc_url: null, requested_at: iso(-9.6 * H), deliver_by: iso(14.3 * H), delivered_at: null, live_at: null, created_at: iso(-9.6 * H) },
-      { id: '8add2b56-951c-460c-a674-27bee47f4954', company_id: CO, card_id: cardId('bx-01'), format: 'post', title: 'The Experienced Eyes Are Retiring', status: 'requested',
+      { id: '8add2b56-951c-460c-a674-27bee47f4954', company_id: CO, card_id: cardId('bx-01'), format: 'post', title: 'The Experienced Eyes Are Retiring', status: 'requested', requested_by: null,
         body_html: null, google_doc_url: null, requested_at: null, deliver_by: null, delivered_at: null, live_at: null, created_at: iso(-3 * H) },
     ],
     notes: [],

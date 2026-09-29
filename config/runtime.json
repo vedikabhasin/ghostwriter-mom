@@ -4,5 +4,6 @@
   "supabaseAnonKey": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpldXVwZ216dHd5aWFscWF0b2VsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTAzNTg5ODYsImV4cCI6MjEwNTkzNDk4Nn0.vVA9OYZCOTiuaaamdo4TvLKuVBPVGRHxROgwf-Py_VA",
   "posthogKey": "phc_rPb5PLbmRGeXLP5cf5hHZbEtPpNraNxCm7x2HiyEDeW7",
   "posthogHost": "https://us.i.posthog.com",
-  "bookingUrl": "https://cal.com/vedika/ghostwriter-mom"
+  "bookingUrl": "https://cal.com/vedika/ghostwriter-mom",
+  "writerName": "Vedika"
 }

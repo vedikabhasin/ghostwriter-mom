@@ -5,7 +5,8 @@
 // credits-sql.test.mjs; this mirrors them closely enough to drive the UI.
 //
 // Test knobs on `db`: inviteError = { status, error } answers the next
-// invite with that error; checkout = [] records create-checkout calls.
+// invite with that error; inviteResults = [{ status }] overrides the next
+// per-address results; checkout = [] records create-checkout calls.
 export const COSTS = { post: 1, insight: 3, pillar: 8, call: null, usd_per_credit: 100 };
 export function createMock(db, USERS) {
   const log = [];
@@ -20,11 +21,15 @@ export function createMock(db, USERS) {
   const balanceOf = (cid) => grantsOf(cid).filter(live).reduce((a, g) => a + Math.max(0, g.remaining), 0);
   const everBought = (cid) => grantsOf(cid).some((g) => ['starter', 'plan', 'topup'].includes(g.product));
   const companyById = (cid) => db.companies.find((c) => c.id === cid);
-  const hubAccess = (cid) => { const c = companyById(cid); return !!(c.is_internal || c.hub_unlocked || (c.subscription_status === 'active' && everBought(cid))); };
+  // hub_access (migration 12): internal, hub_unlocked, or any credit grant.
+  const hubAccess = (cid) => { const c = companyById(cid); return !!(c.is_internal || c.hub_unlocked || grantsOf(cid).length); };
+  // portal_active (migration 11): internal, active subscription, or an open window.
+  const portalActive = (cid) => { const c = companyById(cid); return !!(c.is_internal || c.subscription_status === 'active' || (c.portal_access_until && new Date(c.portal_access_until) > now())); };
   function account(cid) {
     const c = companyById(cid);
     return {
-      balance: balanceOf(cid), costs: COSTS, hub_access: hubAccess(cid), portal_active: c.subscription_status === 'active',
+      balance: balanceOf(cid), costs: COSTS, hub_access: hubAccess(cid), portal_active: portalActive(cid),
+      unlock_mode: c.unlock_mode || 'call', portal_access_until: c.portal_access_until || null,
       can_resume: c.subscription_status === 'canceled' && !!c.subscription_ends_at && new Date(c.subscription_ends_at) > now() && !!c.stripe_subscription_id,
       ever_bought: everBought(cid), starter_bought: grantsOf(cid).some((g) => g.product === 'starter'), plan_active: !!c.plan_subscription_id, next_expiry: null,
     };
@@ -77,12 +82,17 @@ export function createMock(db, USERS) {
     const user = userFor(req);
 
     // --- Auth
+    // db.authError = { status: 429 } answers the next otp / verify call with it.
+    if ((path === '/auth/v1/otp' || path === '/auth/v1/verify') && db.authError) {
+      const e = db.authError; db.authError = null;
+      return json(route, e.status, { code: e.status, error_code: e.status === 429 ? 'over_email_send_rate_limit' : 'error', msg: e.status === 429 ? 'For security purposes, you can only request this after 60 seconds.' : 'error' });
+    }
     if (path === '/auth/v1/otp') return json(route, 200, {});
     // Email OTP: the code 123456 is valid for any known user; anything else is
     // treated as expired or invalid, the same 403 GoTrue returns.
     if (path === '/auth/v1/verify' && method === 'POST') {
       const tok = Object.keys(USERS).find((k) => USERS[k].email === String(body.email || '').toLowerCase());
-      if (!tok || body.type !== 'email' || body.token !== '123456') return json(route, 403, { code: 403, error_code: 'otp_expired', msg: 'Token has expired or is invalid' });
+      if (!tok || body.type !== 'email' || !['123456', '12345678'].includes(body.token)) return json(route, 403, { code: 403, error_code: 'otp_expired', msg: 'Token has expired or is invalid' });
       const u = USERS[tok];
       return json(route, 200, { access_token: tok, refresh_token: 'r-' + tok, token_type: 'bearer', expires_in: 3600,
         expires_at: Math.floor(Date.now() / 1000) + 3600, user: { id: u.id, email: u.email, aud: 'authenticated', role: 'authenticated' } });
@@ -93,10 +103,7 @@ export function createMock(db, USERS) {
     if (!user) return json(route, 401, { message: 'JWT required' });
     const cos = companiesOf(user.id);
     const me = (cid) => db.members.find((m) => m.user_id === user.id && m.company_id === cid);
-    const canWrite = (cid) => {
-      const c = db.companies.find((x) => x.id === cid);
-      return !(c.subscription_status === 'canceled' && c.subscription_ends_at && new Date(c.subscription_ends_at) <= new Date());
-    };
+    const canWrite = (cid) => portalActive(cid);
 
     // --- Edge functions
     if (path === '/functions/v1/create-checkout') {
@@ -121,11 +128,13 @@ export function createMock(db, USERS) {
       if (db.inviteError) { const e = db.inviteError; db.inviteError = null; return json(route, e.status, { error: e.error }); }
       const emails = [...new Set((body.emails || []).map((e) => String(e).trim().toLowerCase()))];
       const team = db.members.filter((m) => m.company_id === caller.company_id);
+      if (db.inviteResults) { const r = db.inviteResults; db.inviteResults = null; return json(route, 200, { results: r.map((x, i) => ({ email: emails[i] || emails[0], ...x })) }); }
+      if (emails.some((e) => db.members.some((m) => m.company_id === caller.company_id && m.email === e))) return json(route, 409, { error: 'already_member' });
       if (emails.includes(user.email)) return json(route, 400, { error: 'self_invite' });
       const limit = companyById(caller.company_id).seat_limit || 3;
       if (team.length + emails.length > limit) return json(route, 409, { error: 'seat_limit', seats_left: limit - team.length });
       const results = emails.map((email, i) => {
-        db.members.push({ id: 'm-new-' + i, company_id: caller.company_id, user_id: 'u-new-' + i, role: 'member',
+        db.members.push({ id: 'm-new-' + db.members.length, company_id: caller.company_id, user_id: 'u-new-' + db.members.length, role: 'member', email,
           display_name: email.split('@')[0].split(/[._+-]/)[0].replace(/^./, (c) => c.toUpperCase()), avatar_shape: ['pebble', 'curl'][i], onboarding: {}, created_at: new Date().toISOString() });
         return { email, status: 'invited' };
       });
@@ -141,7 +150,7 @@ export function createMock(db, USERS) {
       const a = db.articles.find((x) => x.id === body.p_article_id && cos.has(x.company_id));
       if (!a) return json(route, 400, { message: 'unknown article' });
       if (!canWrite(a.company_id)) return json(route, 403, { message: 'subscription ended' });
-      if (a.status !== 'approved_unwritten' || a.requested_at) return json(route, 400, { message: 'not writable' });
+      if (a.status !== 'requested') return json(route, 400, { message: 'not writable' });
       if (db.pieces.some((p) => p.article_id === a.id && p.status !== 'killed')) return json(route, 409, { message: 'already queued' });
       const cost = COSTS[body.p_format];
       if (balanceOf(a.company_id) < cost) return json(route, 400, { message: 'insufficient_credits' });
@@ -161,10 +170,28 @@ export function createMock(db, USERS) {
       if (!writing) { a.requested_at = piece.writing_at; a.deliver_by = piece.deliver_by; }
       return json(route, 200, { piece, balance: balanceOf(a.company_id) });
     }
+    if (path === '/rest/v1/rpc/request_card') {
+      const card = db.cards.find((c) => c.id === body.p_card_id && cos.has(c.company_id));
+      if (!card) return json(route, 400, { message: 'unknown card' });
+      if (!canWrite(card.company_id)) return json(route, 403, { message: 'portal closed' });
+      const m = me(card.company_id);
+      const fmt = body.p_format || card.format;
+      let a = db.articles.find((x) => x.company_id === card.company_id && x.card_id === card.id);
+      if (a && a.status !== 'requested') return json(route, 400, { message: 'card already ' + a.status });
+      const t = new Date().toISOString();
+      if (a) { a.format = fmt; a.requested_by = a.requested_by || m.id; a.requested_at = a.requested_at || t; }
+      else {
+        a = { id: 'art-' + db.articles.length, company_id: card.company_id, card_id: card.id, format: fmt, title: card.title, status: 'requested',
+          body_html: null, google_doc_url: null, requested_at: t, requested_by: m.id, deliver_by: null, delivered_at: null, live_at: null, created_at: t };
+        db.articles.push(a);
+      }
+      db.requests = (db.requests || []).concat({ card_id: card.id, format: fmt, by: m.id });
+      return json(route, 200, { id: a.id, card_id: a.card_id, status: a.status, format: a.format, requested_at: a.requested_at, requested_by: a.requested_by });
+    }
+    // Swipes stay open for members whatever the window (migration 12).
     if (path === '/rest/v1/rpc/portal_decide') {
       const card = db.cards.find((c) => c.id === body.p_card_id && cos.has(c.company_id));
       if (!card) return json(route, 400, { message: 'unknown card' });
-      if (!canWrite(card.company_id)) return json(route, 403, { message: 'subscription ended' });
       const m = me(card.company_id);
       const row = db.decisions.find((d) => d.card_id === card.id && d.member_id === m.id);
       const prev = row ? row.action : null;
@@ -176,7 +203,7 @@ export function createMock(db, USERS) {
     if (path === '/rest/v1/rpc/portal_set_live') {
       const a = db.articles.find((x) => x.id === body.p_article_id && cos.has(x.company_id));
       if (!a) return json(route, 400, { message: 'unknown article' });
-      if (!canWrite(a.company_id)) return json(route, 403, { message: 'subscription ended' });
+      if (!canWrite(a.company_id)) return json(route, 403, { message: 'portal closed' });
       if (a.status !== 'delivered') return json(route, 400, { message: 'article not delivered yet' });
       // Match migration 8's portal_set_live: status stays 'delivered'; toggle
       // just flips live_at.

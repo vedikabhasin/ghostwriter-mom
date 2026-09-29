@@ -1,5 +1,6 @@
 // -----------------------------------------------------------------------------
-// Overlap reveal: the full-screen "match" moment for Agree, Split and Timing.
+// Overlap reveal: the full-screen "match" moment for Agree (two yeses), Now
+// (both fast-tracked), Split and Timing (save vs like).
 // Motion is transform + opacity only; every animation's resting state is the
 // final layout, so prefers-reduced-motion (animations off) shows a static
 // overlay with nothing missing.
@@ -8,9 +9,10 @@ import { $, h, hash, prefersReduced } from '/portal/lib.js';
 import { avatarSVG, ICONS } from '/portal/avatars.js';
 
 const COPY = {
-  agree:  { line: 'You both want this one.',                     primary: 'Move it up' },
-  split:  { line: 'You two see this differently.',               primary: 'Leave a note' },
-  timing: { line: 'One of you wants it now. One wants it later.', primary: 'Leave a note' },
+  agree:  { line: 'Two yeses. Next in line.',              primary: 'Move it up' },
+  now:    { line: 'You both want it now. Lock it in.',     primary: 'Request it' },
+  split:  { line: 'Split decision. Best note wins.',       primary: 'Make your case' },
+  timing: { line: 'Same yes, different week.',             primary: 'Say when' },
 };
 const STAMP = { like: 'Liked', pass: 'Passed', save: 'Saved', fasttrack: 'Fast-track' };
 const FMT = { pillar: 'Pillar', insight: 'Insight', post: 'Post' };
@@ -28,9 +30,10 @@ export function isRevealOpen() { return !!open; }
 
 /**
  * @param {object} o
- *   state: 'agree'|'split'|'timing'
+ *   state: 'agree'|'now'|'split'|'timing'
  *   left, right: { member, action, name }
  *   card: { format, series, title, angle, sources }
+ *   primaryDisabled, primaryTip (the reason, shown as a tooltip and a line)
  *   onPrimary(), onClose()
  */
 export function showReveal(o) {
@@ -40,17 +43,18 @@ export function showReveal(o) {
   root.className = 'reveal rv-' + o.state + (prefersReduced ? ' rv-static' : '');
   root.setAttribute('aria-label', COPY[o.state].line);
 
-  // Background, one per state so the three never look alike: Agree is a
-  // like-green burst, Split is like-green and pass-coral halves meeting at
-  // the card, Timing is like-green fading into save-yellow.
+  // Background, one per state so no two look alike: Agree is a like-green
+  // sunburst, Now a fasttrack-orange sunburst, Split like-green and
+  // pass-coral halves meeting at the card, Timing like-green fading into
+  // save-yellow.
   const bg = h('div', 'rv-bg');
   if (o.state === 'split') {
     const side = (act) => (act === 'pass' ? 'var(--pass)' : 'var(--like)');
     bg.style.setProperty('--rv-a', side(o.left.action));
     bg.style.setProperty('--rv-b', side(o.right.action));
   }
-  if (o.state === 'agree') {
-    const shared = o.left.action === 'fasttrack' && o.right.action === 'fasttrack' ? 'fasttrack' : 'like';
+  if (o.state === 'agree' || o.state === 'now') {
+    const shared = o.state === 'now' ? 'fasttrack' : 'like';
     root.style.setProperty('--rv-c', `var(--${shared})`);
     root.style.setProperty('--rv-c-ink', `var(--${shared}-ink)`);
     const icons = h('div', 'rv-floaters');
@@ -101,10 +105,21 @@ export function showReveal(o) {
   const actions = h('div', 'rv-actions');
   const primary = h('button', 'btn btn-primary rv-btn gwm-btn', COPY[o.state].primary);
   primary.type = 'button';
+  let tip = null;
+  if (o.primaryDisabled) {
+    primary.disabled = true;
+    if (o.primaryTip) {
+      primary.title = o.primaryTip;
+      tip = h('p', 'rv-tip', o.primaryTip);
+      tip.id = 'rv-tip';
+      primary.setAttribute('aria-describedby', 'rv-tip');
+    }
+  }
   const secondary = h('button', 'btn btn-secondary rv-btn gwm-btn', 'Keep swiping');
   secondary.type = 'button';
   actions.append(primary, secondary);
   root.appendChild(actions);
+  if (tip) root.appendChild(tip);
 
   primary.addEventListener('click', () => { closeReveal(); o.onPrimary && o.onPrimary(); });
   secondary.addEventListener('click', () => { closeReveal(); o.onClose && o.onClose(); });
@@ -113,7 +128,7 @@ export function showReveal(o) {
   root.setAttribute('aria-labelledby', 'rv-line');
   root.hidden = false;
   document.body.classList.add('rv-open');
-  setTimeout(() => primary.focus(), prefersReduced ? 0 : 600);
+  setTimeout(() => (primary.disabled ? secondary : primary).focus(), prefersReduced ? 0 : 600);
 }
 
 function side(which, s) {

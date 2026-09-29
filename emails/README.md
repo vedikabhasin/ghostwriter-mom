@@ -15,7 +15,12 @@ external CSS, image, or script.
   Subject: **You're invited to your content portal**
 
 Both templates use Supabase's default token `{{ .ConfirmationURL }}` for the
-one-time link. No other tokens needed.
+one-time link. `magic-link.html` also prints `{{ .Token }}`, the code the
+portal's "Or enter the code from your email" field accepts
+(`verifyOtp({ email, token, type: 'email' })`).
+
+Set **Auth → Providers → Email → Email OTP expiration** to `86400` seconds so
+the link and the code both work for 24 hours, as the email and the portal say.
 
 ## Where to paste them
 
