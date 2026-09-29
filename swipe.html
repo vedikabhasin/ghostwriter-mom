@@ -480,13 +480,19 @@ body.is-dragging{overflow:hidden; touch-action:none;}
 .card[data-depth="0"].hint-visible .ghost-hint{opacity:1; transform:translateY(0);}
 .ghost-row{display:flex; align-items:center; gap:8px;}
 .ghost-hand{width:28px; height:28px; display:inline-block; animation:ghost-still 1s var(--ease) infinite;}
+.card[data-depth="0"].hint-t .ghost-hand{animation:ghost-tap 1400ms var(--ease) infinite;}
 .card[data-depth="0"].hint-h .ghost-hand{animation:ghost-swipe-h 1800ms var(--ease) infinite;}
 .card[data-depth="0"].hint-v .ghost-hand{animation:ghost-swipe-v 1800ms var(--ease) infinite;}
 @keyframes ghost-still  { 0%,100% {transform:translate(0,0);} }
 @keyframes ghost-swipe-h{ 0%,10% {transform:translateX(0);} 35% {transform:translateX(38px);} 45%{transform:translateX(0);} 70% {transform:translateX(-38px);} 90% {transform:translateX(0);} }
 /* Vertical wiggle: up first, back, then down, matching the H rhythm. */
 @keyframes ghost-swipe-v{ 0%,10% {transform:translateY(0);} 35% {transform:translateY(-30px);} 45%{transform:translateY(0);} 70% {transform:translateY(30px);} 90% {transform:translateY(0);} }
+/* Tap: quick press-and-release pulse. */
+@keyframes ghost-tap    { 0%,15% {transform:scale(1);} 30% {transform:scale(0.82);} 45%,100% {transform:scale(1);} }
 .ghost-arrows{opacity:0.8;}
+/* Tap indicator concentric ripples pulse in time with the hand. */
+.card[data-depth="0"].hint-t .ghost-arrows{ animation:ghost-tap-ripple 1400ms var(--ease) infinite; transform-origin:center; }
+@keyframes ghost-tap-ripple{ 0%,15% {opacity:0.8; transform:scale(1);} 30% {opacity:1; transform:scale(1.08);} 60% {opacity:0.8; transform:scale(1);} 100% {opacity:0.8; transform:scale(1);} }
 
 /* Feed controls */
 .feed-controls{
@@ -1732,7 +1738,7 @@ body.dir-save  .ctl-save{
   var SUPER_THRESHOLD = 100;
   var SAVE_THRESHOLD  = 100;
   var VISIBLE_DEPTH   = 3;
-  var ONBOARDING_MAX  = 2;
+  var ONBOARDING_MAX  = 3;
   var CHIP_LIMIT      = 3;
   var DAY_MS          = 24 * 60 * 60 * 1000;
   // spotsTotal is fixed at 10 by product spec. spotsLeft is fetched live from
@@ -2014,7 +2020,7 @@ body.dir-save  .ctl-save{
     screen:'loading', cardIndex:0,
     liked:[], passed:[], saved:[], superLiked:null,
     events:[], paid:false,
-    onboardingDone:{ h:false, v:false },
+    onboardingDone:{ t:false, h:false, v:false },
     approved:false, approvedAtIso:'', deliverByIso:'',
     freePickCardId:'',
     emailProvided:'', waitlistJoined:false
@@ -2031,7 +2037,7 @@ body.dir-save  .ctl-save{
         state.saved      = s.saved      || [];
         state.superLiked = s.superLiked || null;
         state.events     = s.events     || [];
-        state.onboardingDone = s.onboardingDone || { h:false, v:false };
+        state.onboardingDone = s.onboardingDone || { t:false, h:false, v:false };
         state.approved       = !!s.approved;
         state.approvedAtIso  = s.approvedAtIso || '';
         state.deliverByIso   = s.deliverByIso  || '';
@@ -2384,17 +2390,21 @@ body.dir-save  .ctl-save{
   function shortPub(s){ return String(s || '').trim(); }
 
   // -- Onboarding hints ----------------------------------------------------
-  // Two steps only:
-  //   Step 1 (card 0):  horizontal arrows + "Swipe right to like. Left to pass."
-  //   Step 2 (card 1):  vertical arrows (up + down) on the same card +
+  // Three steps:
+  //   Step 1 (card 0):  tap indicator + "Tap card to expand."
+  //   Step 2 (card 1):  horizontal arrows + "Swipe right to like. Left to pass."
+  //   Step 3 (card 2):  vertical arrows (up + down) on the same card +
   //                     "Swipe up to fast-track. Down to save."
+  function currentOnbKind(){
+    return state.cardIndex === 0 ? 't'
+         : state.cardIndex === 1 ? 'h'
+         : state.cardIndex === 2 ? 'v' : null;
+  }
   function attachOnboardingHint(){
     var top = document.querySelector('.card[data-depth="0"]');
     if(!top) return;
     if(state.cardIndex >= ONBOARDING_MAX) return;
-    var kind = state.cardIndex === 0 ? 'h'
-             : state.cardIndex === 1 ? 'v'
-             :                          null;
+    var kind = currentOnbKind();
     if(!kind) return;
     if(state.onboardingDone[kind]) return;
     var hint = top.querySelector('.ghost-hint');
@@ -2407,16 +2417,16 @@ body.dir-save  .ctl-save{
     hint.appendChild(row);
     var txt = document.createElement('div');
     txt.textContent =
-      kind === 'h' ? 'Swipe right to like. Left to pass.'
+      kind === 't' ? 'Tap card to expand.'
+    : kind === 'h' ? 'Swipe right to like. Left to pass.'
     :                'Swipe up to fast-track. Down to save.';
     hint.appendChild(txt);
     top.classList.add('hint-visible', 'hint-' + kind);
   }
   function stopOnboardingHint(top){
     if(!top) return;
-    top.classList.remove('hint-visible','hint-h','hint-v','hint-d','hint-u');
-    var kind = state.cardIndex === 0 ? 'h'
-             : state.cardIndex === 1 ? 'v' : null;
+    top.classList.remove('hint-visible','hint-t','hint-h','hint-v','hint-d','hint-u');
+    var kind = currentOnbKind();
     if(kind && !state.onboardingDone[kind]){
       state.onboardingDone[kind] = true;
       saveState();
@@ -2434,10 +2444,13 @@ body.dir-save  .ctl-save{
   }
   function makeArrows(kind){
     var s = document.createElement('span'); s.className = 'ghost-arrows a-' + kind;
-    // Horizontal: double-headed arrow. Vertical: double-headed arrow (up+down)
-    // sharing the same spine so both directions read as one gesture.
+    // Tap:  concentric ripples at the tap point.
+    // Horizontal: double-headed arrow.
+    // Vertical:   double-headed arrow (up + down) sharing one spine.
     var svg =
-      kind === 'h'
+      kind === 't'
+        ? '<svg viewBox="0 0 22 22" width="24" height="24"><circle cx="11" cy="11" r="3" fill="#fff"/><circle cx="11" cy="11" r="6.5" stroke="#fff" stroke-width="1.4" fill="none" opacity="0.75"/><circle cx="11" cy="11" r="10" stroke="#fff" stroke-width="1.2" fill="none" opacity="0.45"/></svg>'
+    : kind === 'h'
         ? '<svg viewBox="0 0 32 12" width="42" height="14"><path d="M2 6h28M24 2l4 4-4 4M2 6l4-4M2 6l4 4" stroke="#fff" stroke-width="1.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>'
         : '<svg viewBox="0 0 12 34" width="14" height="38"><path d="M6 2v30M2 8l4-4 4 4M2 26l4 4 4-4" stroke="#fff" stroke-width="1.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>';
     s.innerHTML = svg;
@@ -2513,13 +2526,14 @@ body.dir-save  .ctl-save{
     if(dx >  SWIPE_THRESHOLD && Math.abs(dx) > Math.abs(dy))          return doAction('like');
     if(dx < -SWIPE_THRESHOLD && Math.abs(dx) > Math.abs(dy))          return doAction('pass');
     el.style.transform = '';
-    // Tap-without-drag on the angle or proof opens the detail sheet.
-    // setPointerCapture can suppress the natural click on the child element,
-    // so we route through the origin target explicitly. Threshold matches a
-    // finger tap: under 6px movement.
+    // Tap-without-drag anywhere on the card body opens the detail sheet
+    // (the "Tap card to expand" onboarding teaches this). Buttons and links
+    // are excluded via the closest() guard below. setPointerCapture can
+    // suppress the natural child click, so we route from onUp explicitly.
+    // Threshold matches a finger tap: under 6px movement.
     if(Math.abs(dx) < 6 && Math.abs(dy) < 6 && origin){
-      var tapTarget = origin.closest && origin.closest('.card-angle, .card-evidence');
-      if(tapTarget){
+      var isControl = origin.closest && origin.closest('button, a, .src-chip, .src-btn, .ghost-hint');
+      if(!isControl){
         var cardKey = el.getAttribute('data-card-id');
         var full = cardKey ? findFull(cardKey) : null;
         if(full) openCardDetail(full);
