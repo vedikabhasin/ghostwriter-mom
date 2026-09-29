@@ -95,7 +95,7 @@ async function newPage(browser, { mobile, db, token, reduced, height, timezoneId
   await ctx.addInitScript(COLOR_JS);
   // The portal-request Netlify form: record every post.
   db.forms = db.forms || [];
-  await ctx.route(BASE + '/portal/index.html', (r) => {
+  await ctx.route(BASE + '/portal', (r) => {
     if (r.request().method() !== 'POST') return r.continue();
     db.forms.push(Object.fromEntries(new URLSearchParams(r.request().postData() || '')));
     return r.fulfill({ status: 200, contentType: 'text/html', body: 'ok' });

@@ -1406,7 +1406,8 @@ function postRequestForm(card, a) {
     requester_name: displayName(S.me), requester_email: (S.session && S.session.user && S.session.user.email) || '',
   };
   try {
-    fetch('/portal/index.html', {
+    // /portal is a 200 rewrite; '/' is a redirect and would drop the post.
+    fetch('/portal', {
       method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
       body: new URLSearchParams(fields).toString(),
