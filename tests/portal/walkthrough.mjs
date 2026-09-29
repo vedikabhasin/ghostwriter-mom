@@ -283,7 +283,15 @@ for (const mobile of [true, false]) {
       return { overlaps, eyebrow: document.querySelector('#screen-signin .eyebrow').textContent, headline: document.querySelector('.headline').textContent,
         btn: document.querySelector('#signin-btn').textContent.trim() };
     });
-    check('login: waitlist identity, "Welcome back.", button "Send me a link"', /your portal/i.test(lg.eyebrow) && lg.headline === 'Welcome back.' && lg.btn.startsWith('Send me a link'), JSON.stringify(lg));
+    check('login: eyebrow YOUR PORTAL, "Welcome back.", button "Email me a way in", placeholder you@company.com', /your portal/i.test(lg.eyebrow) && lg.headline === 'Welcome back.' &&
+      lg.btn.startsWith('Email me a way in') && (await page.getAttribute('#signin-email', 'placeholder')) === 'you@company.com', JSON.stringify(lg));
+    const dk = await page.evaluate(() => {
+      const d = document.querySelector('.gwm-desk');
+      const frags = Array.from(document.querySelectorAll('.gwm-desk-frag')).filter((f) => getComputedStyle(f).display !== 'none' && getComputedStyle(f).visibility !== 'hidden');
+      return { shared: !!d && d.dataset.density === 'light' && getComputedStyle(d).display !== 'none', old: document.querySelectorAll('.desk-obj, .desk-stamp').length,
+        shown: frags.length, stamp: Array.from(document.querySelectorAll('.gwm-desk-frag.stamp')).map((f) => f.textContent).join() };
+    });
+    check('login: the shared desk layer (/shared/desk.js) at density light, stamp says Delivered, no local copy', dk.shared && dk.old === 0 && dk.shown > 0 && dk.stamp === 'Delivered', JSON.stringify(dk));
     check('login: desk objects never behind the form, headline, wordmark or footer', !lg.overlaps);
     await shot(page, `${tag}01-login`);
     await page.fill('#signin-email', 'vedikabhasin@gmail.com');
@@ -470,11 +478,29 @@ for (const mobile of [true, false]) {
   check('notes are not shown on feed cards', await top(page).locator('.card-notes').count() === 0);
   await shot(page, `${tag}10-split-later`);
 
-  // History: notes on the card, Up next with the moved card first.
+  // Log: every card I called, newest first, my stamp, the team result, sources.
   await page.click('[data-action="show-history"]');
+  const lg2 = await page.evaluate(() => ({
+    head: document.getElementById('log-count').textContent,
+    rows: Array.from(document.querySelectorAll('#history-log .log-row')).map((r) => ({
+      title: r.querySelector('.hist-title').textContent, stamp: r.querySelector('.log-meta .pill').textContent,
+      chip: (r.querySelector('.result-chip') || {}).textContent || '', chipCase: r.querySelector('.result-chip') ? getComputedStyle(r.querySelector('.result-chip')).textTransform : '',
+      sources: r.querySelectorAll('.log-sources .sheet-item').length, links: r.querySelectorAll('.log-sources a.sheet-title-link[href^="http"]').length })),
+    label: document.querySelector('[data-action="show-history"]').textContent,
+  }));
+  const srcN = (k) => db.cards.find((c) => c.card_key === k).sources.length;
+  const exp = [['vb-06', 'Fast-track', 'Match'], ['vb-04', 'Saved', 'Timing'], ['vb-03', 'Liked', 'Split'], ['vb-02', 'Liked', 'Match']];
+  check('Log: "4 calls logged.", opened from "Log"', lg2.head === '4 calls logged.' && lg2.label === 'Log', JSON.stringify(lg2.head));
+  check('Log: newest first, my stamp, MATCH / SPLIT / TIMING, the card\'s sources as the numbered list', lg2.rows.length === 4 &&
+    exp.every(([k, st, ch], i) => lg2.rows[i].title.endsWith(title(db, k)) && lg2.rows[i].stamp === st && lg2.rows[i].chip === ch && lg2.rows[i].chipCase === 'uppercase' &&
+      lg2.rows[i].sources === srcN(k) && lg2.rows[i].links === srcN(k)), JSON.stringify(lg2.rows));
+  await shot(page, `${tag}11a-log`);
+  const oldWords = /\b(history|approved|ready to write)\b/i;
+  const lw = await pageText(page);
+  check('Log view: no "History", "Approved" or "Ready to write" in text or labels', !oldWords.test(lw), (lw.match(/.{0,30}\b(history|approved|ready to write)\b.{0,30}/i) || [''])[0]);
   if (mobile) {
     const hist = await page.evaluate(() => Array.from(document.querySelectorAll('#history-log .hist-card')).map((c) => c.innerText).find((t) => t.includes('Grok is my best proof')) || '');
-    check('notes readable on card detail in Feed history', hist.includes('Liked because Grok is my best proof') && /1 note/i.test(hist), hist.slice(0, 160));
+    check('notes readable on the card in the Log', hist.includes('Liked because Grok is my best proof') && /1 note/i.test(hist), hist.slice(0, 160));
   }
   await page.click('[data-tab="upnext"]');
   const un = await page.textContent('#history-upnext');
@@ -547,7 +573,7 @@ for (const mobile of [true, false]) {
   await page.click('[data-close="ghost-sheet"]');
   check('Library header updates without a reload: "1 delivered · 2 up next · 3 requested"', (await page.textContent('#lib-count')) === '1 delivered · 2 up next · 3 requested', await page.textContent('#lib-count'));
   const words = await pageText(page);
-  check('no "Approved", "Ready to write" or "Approved, not written yet" anywhere', !/Approved|Ready to write/i.test(words), (words.match(/.{0,30}(Approved|Ready to write).{0,30}/i) || [''])[0]);
+  check('Library: no "History", "Approved", "Ready to write" or "Approved, not written yet" in text or labels', !/History|Approved|Ready to write/i.test(words), (words.match(/.{0,30}(Approved|Ready to write).{0,30}/i) || [''])[0]);
   // Reader + Mark live.
   await libTo(page, /DELIVERED IN/i);
   await page.click('.book.top');
@@ -651,6 +677,7 @@ for (const mobile of [true, false]) {
   await page.click('#pencil-sticker');
   await page.waitForSelector('#screen-hub.on');
   check('second pencil tap: straight into the Hub (no invite)', await page.locator('#invite-modal.open').count() === 0);
+  check('Hub: no "History", "Approved" or "Ready to write" in text or labels', !/\b(history|approved|ready to write)\b/i.test(await pageText(page)));
 
   const ev = await phEvents(page);
   const captured = new Set(ev.filter((c) => c[0] === 'capture').map((c) => c[1]));
@@ -787,8 +814,9 @@ console.log('\n=== Acme (375px): opened on the call, 30-day window, Hub locked')
   check('window open: no banner', await page.locator('#closed-banner:not([hidden])').count() === 0);
   check('claimed sales-page swipes count as the owner\'s: 5 cards · 0 unread', (await page.textContent('#feed-count')) === '5 cards · 0 unread', await page.textContent('#feed-count'));
   await page.click('[data-action="show-history"]');
-  const hist = await page.evaluate(() => Array.from(document.querySelectorAll('#history-log .hist-row')).map((r) => r.innerText));
-  check('Feed history shows the 5 claimed swipes (sales page, now the owner\'s)', hist.length === 5 && hist.every((t) => t.toLowerCase().includes('sales page') && t.startsWith('You')), JSON.stringify(hist));
+  const hist = await page.evaluate(() => ({ head: document.getElementById('log-count').textContent, rows: document.querySelectorAll('#history-log .log-row').length,
+    chips: document.querySelectorAll('#history-log .result-chip').length }));
+  check('Log shows the 5 claimed sales-page swipes as the owner\'s calls; one seat reacted, so no team chip', hist.head === '5 calls logged.' && hist.rows === 5 && hist.chips === 0, JSON.stringify(hist));
   await page.click('[data-tab="upnext"]');
   const un = await page.textContent('#history-upnext');
   check('liked ones are UP NEXT (the fast-tracked one is already writing)', un.includes('Robots That Ask Before They Move') && un.includes('Uptime Is a Staffing Problem') && !un.includes('Why Warehouse Pilots Stall'), un);
@@ -946,8 +974,8 @@ console.log('\n=== Acme after the window closed (375px)');
   await shot(page, 'x02-closed-reveal');
   await page.click('#reveal .btn-secondary');
   await page.click('[data-action="show-history"]');
-  await bannerCheck(page, 'History', 'acme-q1w2e3');
-  check('closed: Feed history readable', (await page.textContent('#history-log')).includes('Robots That Ask'));
+  await bannerCheck(page, 'Log', 'acme-q1w2e3');
+  check('closed: the Log stays readable', (await page.textContent('#history-log')).includes('Robots That Ask'));
   await page.click('[data-action="close-history"]');
   await page.click('#switch-library');
   await page.waitForSelector('#screen-library.on');
@@ -1078,6 +1106,135 @@ for (const [w, hgt] of [[375, 600], [375, 667], [375, 812], [1280, 700]]) {
   check(`${w}x${hgt}: "Swipe to shuffle. Tap to open." above the Feed/Library switch, uncovered`, /swipe to shuffle\. tap to open\./i.test(g.text) && g.hintBottom <= g.swTop - 4 && g.hintTop >= 0 && g.visible && g.bookBottom <= g.hintTop, JSON.stringify(g));
   await checkStampOneLine(p.page, `${w}x${hgt} DELIVERED`);
   if (hgt === 600) await shot(p.page, 'l01-library-600');
+  await p.ctx.close();
+}
+
+console.log('\n=== One look: waitlist, sales intro, portal login side by side');
+{
+  const measureLook = (page, sel) => page.evaluate((q) => {
+    const pick = (s0) => { const el = document.querySelector(s0); if (!el) return null; const c = getComputedStyle(el); return { font: c.fontFamily.split(',')[0], weight: c.fontWeight, size: c.fontSize, ls: c.letterSpacing }; };
+    const em = document.querySelector(q.head + ' em');
+    return { head: pick(q.head), em: em ? { font: getComputedStyle(em).fontFamily.split(',')[0], style: getComputedStyle(em).fontStyle } : null,
+      eyebrow: q.eyebrow ? pick(q.eyebrow) : null, pill: q.pill ? (() => { const f = document.querySelector(q.pill); const b = f.querySelector('button'); const c = getComputedStyle(f), cb = getComputedStyle(b);
+        return { radius: c.borderRadius, bg: c.backgroundColor, btnBg: cb.backgroundColor, btnInside: f.contains(b) }; })() : null,
+      desk: (() => { const d = document.querySelector('.gwm-desk'); return d ? { density: d.dataset.density, shown: getComputedStyle(d).display !== 'none' } : null; })() };
+  }, sel);
+  const shotsAt = {};
+  for (const [w, hh] of [[1280, 800], [390, 844]]) {
+    const pages = [
+      ['waitlist', '/waitlist.html', { head: '.headline', pill: '.field' }],
+      ['sales intro', '/swipe.html?slug=rpr-k7m2qx', { head: '.intro-hello', eyebrow: '.intro-eyebrow' }],
+      ['portal login', '/portal', { head: '#screen-signin .headline', eyebrow: '#screen-signin .eyebrow', pill: '#signin-form .login-field' }],
+    ];
+    const looks = {};
+    shotsAt[w] = [];
+    for (const [name, url, sel] of pages) {
+      const p = await newPage(browser, { mobile: w < 500, db: vedikaDb(), token: null, height: hh });
+      if (w >= 500) await p.page.setViewportSize({ width: w, height: hh });
+      await p.page.route(/cdnjs\.cloudflare\.com/, (r) => r.abort());
+      await p.page.goto(BASE + url);
+      await p.page.waitForSelector(sel.head, { state: 'visible' });
+      await wait(900);
+      looks[name] = await measureLook(p.page, sel);
+      const file = `${OUT}/v-${name.replace(' ', '-')}-${w}.jpg`;
+      await p.page.screenshot({ path: file, type: 'jpeg', quality: 80 });
+      shotsAt[w].push([name, file]);
+      await p.ctx.close();
+    }
+    const L = looks;
+    check(`${w}px: headline is the heavy display sans with one italic serif word on all three`,
+      ['waitlist', 'sales intro', 'portal login'].every((n) => L[n].head.font === L.waitlist.head.font && +L[n].head.weight >= 800 && L[n].em && L[n].em.style === 'italic' && L[n].em.font === L.waitlist.em.font), JSON.stringify(L));
+    check(`${w}px: portal login headline size matches the waitlist`, L['portal login'].head.size === L.waitlist.head.size && L['portal login'].head.ls === L.waitlist.head.ls, L['portal login'].head.size + ' vs ' + L.waitlist.head.size);
+    check(`${w}px: pill input with the black button inside matches the waitlist`, JSON.stringify(L['portal login'].pill) === JSON.stringify(L.waitlist.pill), JSON.stringify([L.waitlist.pill, L['portal login'].pill]));
+    check(`${w}px: monospace eyebrow matches the sales intro`, JSON.stringify(L['portal login'].eyebrow) === JSON.stringify(L['sales intro'].eyebrow), JSON.stringify([L['sales intro'].eyebrow, L['portal login'].eyebrow]));
+    check(`${w}px: desk layer from the shared module on all three (waitlist full, intro and login light)`, L.waitlist.desk.density === 'full' && L['sales intro'].desk.density === 'light' && L['portal login'].desk.density === 'light' &&
+      ['waitlist', 'sales intro', 'portal login'].every((n) => L[n].desk.shown), JSON.stringify([L.waitlist.desk, L['sales intro'].desk, L['portal login'].desk]));
+  }
+  // One composite per width: the three pages next to each other.
+  const comp = await (await browser.newContext({ viewport: { width: 1800, height: 900 } })).newPage();
+  for (const w of [1280, 390]) {
+    const imgs = shotsAt[w].map(([n, f]) => `<figure><img src="data:image/jpeg;base64,${fs.readFileSync(f).toString('base64')}"><figcaption>${n} · ${w}px</figcaption></figure>`).join('');
+    await comp.setContent(`<style>body{margin:0;background:#ddd;font:14px system-ui}main{display:flex;gap:16px;padding:16px;align-items:flex-start}figure{margin:0;flex:1}img{width:100%;border:1px solid #999}figcaption{padding:6px 0;text-align:center}</style><main>${imgs}</main>`);
+    await comp.screenshot({ path: `${OUT}/v00-side-by-side-${w}.jpg`, type: 'jpeg', quality: 80, fullPage: true });
+    shotsAt[w].forEach(([, f]) => fs.rmSync(f));
+  }
+  await comp.context().close();
+}
+
+console.log('\n=== Desk layer only where named, never over content, no layout shift');
+{
+  const deskState = (page) => page.evaluate(() => {
+    const d = document.querySelector('.gwm-desk');
+    const on = d && getComputedStyle(d).display !== 'none';
+    const frags = on ? Array.from(d.querySelectorAll('.gwm-desk-frag')).filter((f) => getComputedStyle(f).display !== 'none' && getComputedStyle(f).visibility !== 'hidden') : [];
+    const content = Array.from(document.querySelectorAll('#shell h1, #shell h2, #shell h3, #shell p, #shell button, #shell input, #shell a, #shell label, #shell .card, #shell .cu-paper, #shell .cu-bubble, #shell .seat, #shell .book, #shell .lib-empty-state, #switch'))
+      .filter((e) => e.offsetParent !== null || getComputedStyle(e).position === 'fixed').map((e) => e.getBoundingClientRect()).filter((r) => r.width && r.height);
+    const hits = frags.filter((f) => { const r = f.getBoundingClientRect(); return content.some((b) => r.left < b.right && b.left < r.right && r.top < b.bottom && b.top < r.bottom); });
+    const cls = (window.__cls || 0);
+    return { on: !!on, shown: frags.length, hits: hits.map((f) => f.dataset.fid), cls, hscroll: document.documentElement.scrollWidth > innerWidth };
+  });
+  const clsInit = `window.__cls = 0; new PerformanceObserver((l) => l.getEntries().forEach((e) => { if (!e.hadRecentInput) window.__cls += e.value; })).observe({ type: 'layout-shift', buffered: true });`;
+  const emptyDb = () => { const d = acmeDb(); d.decisions = []; d.swipe_events = []; d.articles = []; return d; };
+  for (const w of [360, 390, 768, 1280, 1920]) {
+    const vp = { width: w, height: w < 500 ? 780 : 900 };
+    // Login
+    let p = await newPage(browser, { mobile: w < 500, db: vedikaDb(), token: null });
+    await p.page.setViewportSize(vp); await p.page.addInitScript(clsInit);
+    await p.page.goto(BASE + '/portal'); await p.page.waitForSelector('#screen-signin.on'); await wait(700);
+    let st = await deskState(p.page);
+    check(`${w}px login: desk shown, nothing overlapped, no layout shift`, st.on && st.shown > 0 && !st.hits.length && st.cls < 0.01 && !st.hscroll, JSON.stringify(st));
+    await p.ctx.close();
+    // Feed caught up
+    p = await newPage(browser, { mobile: w < 500, db: acmeDb(), token: 'tok-acme' });
+    await p.page.setViewportSize(vp); await p.page.addInitScript(clsInit);
+    await p.page.goto(BASE + '/portal'); await p.page.waitForSelector('#screen-feed.on'); await dismissBubbles(p.page);
+    st = await deskState(p.page);
+    check(`${w}px Feed with cards: no desk objects`, !st.on, JSON.stringify(st));
+    await toEnd(p.page); await p.page.waitForSelector('#card-stage .caught-up'); await wait(400);
+    st = await deskState(p.page);
+    check(`${w}px Feed caught up: desk behind it, clear of the paper card and bubbles`, st.on && !st.hits.length && !st.hscroll, JSON.stringify(st));
+    if (w === 390 || w === 1280) await shot(p.page, `e01-caught-up-desk-${w}`);
+    await p.page.click('#switch-library'); await wait(300);
+    st = await deskState(p.page);
+    check(`${w}px Library with cards: no desk objects`, !st.on, JSON.stringify(st));
+    await p.page.click('[data-action="show-history"]').catch(() => {});
+    await p.ctx.close();
+    // Empty Library
+    p = await newPage(browser, { mobile: w < 500, db: emptyDb(), token: 'tok-acme' });
+    await p.page.setViewportSize(vp);
+    await p.page.goto(BASE + '/portal'); await p.page.waitForSelector('#screen-feed.on'); await dismissBubbles(p.page);
+    await p.page.click('#switch-library'); await p.page.waitForSelector('.lib-empty-state'); await dismissBubbles(p.page); await wait(300);
+    st = await deskState(p.page);
+    const txt = await p.page.evaluate(() => ({ eyebrow: document.querySelector('.lib-empty-state .eyebrow').textContent, head: document.querySelector('.lib-empty-head').innerHTML,
+      line: document.querySelector('.lib-empty-line').textContent, bg: getComputedStyle(document.querySelector('.lib-empty-state')).backgroundImage.includes('repeating-linear-gradient') }));
+    check(`${w}px empty Library: paper panel, YOUR LIBRARY, "Nothing on the shelf yet.", one line; desk clear`, txt.eyebrow === 'Your library' && txt.head === 'Nothing on the <em>shelf</em> yet.' &&
+      txt.line === 'Like or fast-track a card and it lands here as UP NEXT.' && txt.bg && st.on && !st.hits.length, JSON.stringify([txt, st]));
+    if (w === 390 || w === 1280) await shot(p.page, `e02-empty-library-${w}`);
+    await p.ctx.close();
+  }
+  // Hub: unlocked and empty -> grid + one line, no desk. Locked -> no desk.
+  const hubEmpty = acmeDb({ credits: true }); hubEmpty.decisions = []; hubEmpty.swipe_events = []; hubEmpty.articles = [];
+  let p = await newPage(browser, { mobile: true, db: hubEmpty, token: 'tok-acme' });
+  await p.page.goto(BASE + '/portal'); await p.page.waitForSelector('#screen-feed.on'); await dismissBubbles(p.page);
+  await p.page.click('#switch-library'); await dismissBubbles(p.page); await p.page.click('#pencil-sticker');
+  if (await p.page.locator('#invite-modal.open').count()) await p.page.click('[data-action="invite-skip"]');
+  await p.page.waitForSelector('#screen-hub.on'); await wait(600);
+  const he = await p.page.evaluate(() => ({ line: document.getElementById('hub-empty').hidden ? null : document.getElementById('hub-empty').textContent, items: document.querySelectorAll('#hub-canvas .hub-item').length,
+    desk: getComputedStyle(document.querySelector('.gwm-desk')).display }));
+  check('empty unlocked Hub: grid only, "Drag a card here, or add a note.", no desk', he.line === 'Drag a card here, or add a note.' && he.items === 0 && he.desk === 'none', JSON.stringify(he));
+  await shot(p.page, 'e03-empty-hub');
+  await p.page.click('[data-hub="done"]'); await p.page.click('[data-action="show-history"]').catch(() => {});
+  await p.ctx.close();
+  p = await newPage(browser, { mobile: true, db: acmeDb(), token: 'tok-acme' });
+  await p.page.goto(BASE + '/portal'); await p.page.waitForSelector('#screen-feed.on'); await dismissBubbles(p.page);
+  await p.page.click('[data-action="show-history"]'); await wait(200);
+  check('Log: no desk objects', await p.page.evaluate(() => getComputedStyle(document.querySelector('.gwm-desk')).display) === 'none');
+  await p.page.click('[data-action="close-history"]');
+  await p.page.click('#switch-library'); await dismissBubbles(p.page); await p.page.click('#pencil-sticker');
+  if (await p.page.locator('#invite-modal.open').count()) await p.page.click('[data-action="invite-skip"]');
+  await p.page.waitForSelector('#screen-hub.on'); await wait(600);
+  check('locked Hub: lock modal, no desk objects, no empty-Hub line', await p.page.evaluate(() => getComputedStyle(document.querySelector('.gwm-desk')).display === 'none' &&
+    !document.getElementById('hub-overlay').hidden && document.getElementById('hub-empty').hidden));
   await p.ctx.close();
 }
 

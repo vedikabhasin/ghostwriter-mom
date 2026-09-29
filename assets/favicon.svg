@@ -1,4 +1,13 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Ghostwriter Mom">
-  <rect width="64" height="64" rx="14" fill="#0E0E0E"/>
-  <text x="32" y="46" text-anchor="middle" font-family="'Inter Tight','Helvetica Neue',Helvetica,Arial,sans-serif" font-weight="800" font-size="42" fill="#B8FF71" letter-spacing="-1">G</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Ghostwriter Mom">
+  <rect width="512" height="512" rx="112" fill="#141414"/>
+  <!-- The pencil, drawn upright and tilted 30 degrees. -->
+  <g transform="rotate(30 256 256)">
+    <path d="M171 290 V125 A85 85 0 0 1 341 125 V290 Z" fill="#B8FF71"/>
+    <path d="M171 311 H341 L290 401 H222 Z" fill="#B8FF71"/>
+    <path d="M226 414 H286 L256 466 Z" fill="#F5F4EF"/>
+  </g>
+  <!-- Face -->
+  <circle cx="283" cy="142" r="13" fill="#141414"/>
+  <circle cx="355" cy="183" r="13" fill="#141414"/>
+  <circle cx="303" cy="189" r="7.5" fill="#141414"/>
 </svg>

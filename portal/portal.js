@@ -16,6 +16,7 @@
 // -----------------------------------------------------------------------------
 import { $, $all, h, prefersReduced, fmtWhen, fmtDay, hoursBetween, todayStr, countdownLong, fmtWeekday, dateStr } from '/portal/lib.js';
 import { nextDropDate } from '/shared/drop-day.js';
+import { mountDesk } from '/shared/desk.js';
 import { avatarSVG, pencilSVG, ICONS } from '/portal/avatars.js';
 import { showReveal, closeReveal, isRevealOpen } from '/portal/reveal.js';
 import { initHub, enterHub, refreshHub, articleRects, slotForNewItem } from '/portal/hub.js';
@@ -97,6 +98,7 @@ function show(view) {
   if (view !== 'library') stopCountdowns();
   hideBubble();
   window.scrollTo(0, 0);
+  updateDesk();
 }
 function setFormatTint(format) {
   const t = $('#tint-format');
@@ -108,6 +110,43 @@ function setActionTint(action, strength) {
   document.documentElement.style.setProperty('--tint-action', action ? `color-mix(in srgb, var(--${action}) 50%, transparent)` : 'transparent');
   document.documentElement.style.setProperty('--tint-action-strength', String(strength || 0));
 }
+
+// -- Desk layer (shared with the waitlist and the sales intro) -------------------
+// Only on the login, the Feed's caught-up state and an empty Library. Every
+// other view has none: the cards are the visual. A fragment that would touch
+// text, a card, a bubble or a button is hidden (visibility only, so nothing
+// shifts).
+const desk = mountDesk($('#desk-mount'), { density: 'light' });
+const DESK_CLEAR = '#shell h1, #shell h2, #shell h3, #shell p, #shell button, #shell input, #shell a, #shell label, ' +
+  '#shell .brandmark, #shell .company-name, #shell .feed-count, #shell .dots-wrap, #shell .feed-controls, ' +
+  '#shell .cu-paper, #shell .cu-bubble, #shell .seat, #shell .card, #shell .book, #shell .lib-empty-state, #shell .login-field, ' +
+  '#switch, #bubble, #toast';
+function deskWanted() {
+  if (S.view === 'signin') return true;
+  if (S.view === 'feed') return !!$('#card-stage .caught-up');
+  if (S.view === 'library') return !!$('#deck-stage .lib-empty-state');
+  return false;
+}
+function clearDesk() {
+  const pad = 8;
+  const boxes = $all(DESK_CLEAR).filter((el) => el.offsetParent !== null || getComputedStyle(el).position === 'fixed')
+    .map((el) => el.getBoundingClientRect()).filter((r) => r.width > 0 && r.height > 0);
+  $all('.gwm-desk-frag', desk).forEach((f) => {
+    f.style.visibility = '';
+    const r = f.getBoundingClientRect();
+    if (!r.width) return;
+    const hit = boxes.some((b) => r.left < b.right + pad && b.left < r.right + pad && r.top < b.bottom + pad && b.top < r.bottom + pad);
+    if (hit) f.style.visibility = 'hidden';
+  });
+}
+function updateDesk() {
+  const on = deskWanted();
+  document.body.dataset.desk = on ? 'on' : 'off';
+  if (on) requestAnimationFrame(clearDesk);
+}
+let deskT = null;
+window.addEventListener('resize', () => { clearTimeout(deskT); deskT = setTimeout(updateDesk, 120); });
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(updateDesk);
 
 // -- Toasts -------------------------------------------------------------------
 // A plain confirmation replaces a plain one on screen; first-time lines queue
@@ -514,6 +553,7 @@ function renderFeed() {
     stage.appendChild(buildCaughtUp());
     setFormatTint(null);
     renderDots(); renderControls();
+    updateDesk();
     return;
   }
   // The stack thins toward the end: a peek layer only for cards still to come.
@@ -537,6 +577,7 @@ function renderFeed() {
   renderDots();
   renderControls();
   pulseLastDots();
+  updateDesk();
 }
 // Reaching the last two cards: the remaining dots pulse once.
 let pulsed = false;
@@ -886,9 +927,9 @@ async function decide(action, via) {
 }
 
 // -- Sources sheet (sales page) -----------------------------------------------
-function openSourceSheet(card) {
-  $('#src-sheet-title').textContent = card.title || '';
-  const list = $('#src-sheet-list');
+/** Numbered source rows (title link, publisher, URL): the card detail sheet
+ *  and the Log both use this list. */
+function fillSourceList(list, card) {
   list.textContent = '';
   (card.sources || []).forEach((src, i) => {
     const li = h('li', 'sheet-item');
@@ -898,10 +939,15 @@ function openSourceSheet(card) {
     if (/^https?:\/\//i.test(url)) a.href = url;
     a.target = '_blank';
     a.rel = 'noopener noreferrer';
+    a.addEventListener('click', () => track('source_opened', { card_id: card.id, from: S.view }));
     body.append(a, h('div', 'sheet-pub', src.publisher || ''), h('div', 'sheet-url', url));
     li.append(h('span', 'sheet-num gwm-center', i + 1), body);
     list.appendChild(li);
   });
+}
+function openSourceSheet(card) {
+  $('#src-sheet-title').textContent = card.title || '';
+  fillSourceList($('#src-sheet-list'), card);
   openScrim('src-sheet');
 }
 function openScrim(id) { $('#' + id).classList.add('open'); }
@@ -950,7 +996,28 @@ async function saveNote() {
   else S.hubItems.push(hub.data);
 }
 
-// -- History -------------------------------------------------------------------
+// -- Log -----------------------------------------------------------------------
+// Every card this member called: title, their stamp, the team result when two
+// or more seats reacted (MATCH, SPLIT, TIMING), notes, and the card's sources.
+// Newest call first.
+const RESULT_CHIP = { agree: 'Match', now: 'Match', split: 'Split', timing: 'Timing' };
+/** Is this swipe_events row mine? Sales-page swipes (member_id null) belong to the owner. */
+function isMine(e) { return e.member_id ? e.member_id === S.me.id : ownerStandIn().id === S.me.id; }
+function myCalls() {
+  const last = new Map();
+  S.events.filter((e) => e.card_id && ACTION_LABEL[e.action] && isMine(e)).forEach((e) => {
+    if (!last.has(e.card_id) || e.created_at > last.get(e.card_id).created_at) last.set(e.card_id, e);
+  });
+  // A decision with no event row (older data) still counts.
+  S.decisions.forEach((d) => {
+    const mine = d.member_id ? d.member_id === S.me.id : ownerStandIn().id === S.me.id;
+    if (mine && !last.has(d.card_id)) last.set(d.card_id, { card_id: d.card_id, action: d.action, created_at: d.updated_at });
+  });
+  const byId = new Map(S.cards.map((c) => [c.id, c]));
+  return Array.from(last.values()).filter((e) => byId.has(e.card_id))
+    .map((e) => ({ card: byId.get(e.card_id), action: myAction(e.card_id) || e.action, at: e.created_at }))
+    .sort((a, b) => (a.at < b.at ? 1 : a.at > b.at ? -1 : 0));
+}
 function renderHistory(tab) {
   tab = tab || 'log';
   $all('.hist-tab').forEach((t) => {
@@ -961,43 +1028,38 @@ function renderHistory(tab) {
   $('#history-log').hidden = tab !== 'log';
   $('#history-upnext').hidden = tab !== 'upnext';
 
+  const calls = myCalls();
+  $('#log-count').textContent = calls.length + (calls.length === 1 ? ' call logged.' : ' calls logged.');
   const log = $('#history-log');
   log.textContent = '';
-  const byCard = new Map();
-  // Card-level decisions only (like, pass, save, fast-track).
-  S.events.filter((e) => e.card_id && ACTION_LABEL[e.action]).forEach((e) => {
-    if (!byCard.has(e.card_id)) byCard.set(e.card_id, []);
-    byCard.get(e.card_id).push(e);
-  });
-  const cardById = new Map(S.cards.map((c) => [c.id, c]));
-  // Cards with only notes still get a box: notes are readable at $19.
-  S.notes.forEach((n) => { if (n.card_id && n.body !== WANTS_WRITTEN && !byCard.has(n.card_id)) byCard.set(n.card_id, [{ created_at: n.created_at, note: true }]); });
-  const groups = Array.from(byCard.entries())
-    .filter(([id]) => cardById.has(id))
-    .sort((a, b) => (a[1][a[1].length - 1].created_at < b[1][b[1].length - 1].created_at ? 1 : -1));
-  if (!groups.length) log.appendChild(h('p', 'hist-empty', 'No decisions yet.'));
-  groups.forEach(([cardId, evs]) => {
-    const c = cardById.get(cardId);
-    const box = h('div', 'hist-card fmt-' + c.format);
+  if (!calls.length) log.appendChild(h('p', 'hist-empty', 'Swipe a card and it shows up here.'));
+  calls.forEach(({ card: c, action, at }) => {
+    const box = h('div', 'hist-card log-row fmt-' + c.format);
+    const head = h('div', 'log-head');
     const title = h('p', 'hist-title', c.title);
     if (c.series) title.prepend(h('span', 'gwm-series-label', c.series));
-    box.appendChild(title);
-    evs.slice().reverse().forEach((e) => {
-      if (e.note) return;
-      const m = eventMember(e.member_id);
-      const row = h('div', 'hist-row');
-      row.appendChild(avatarEl(m));
-      const who = h('span');
-      who.appendChild(h('span', 'who', nameOrYou(m)));
-      who.appendChild(h('span', 'pill gwm-center gwm-mono-tag ' + e.action, ACTION_LABEL[e.action]));
-      if (e.source === 'sales') who.appendChild(h('span', 'src', ' · sales page'));
-      row.appendChild(who);
-      row.appendChild(h('span', 'when', fmtWhen(e.created_at)));
-      box.appendChild(row);
-    });
+    head.appendChild(title);
+    const meta = h('div', 'log-meta');
+    meta.appendChild(h('span', 'pill gwm-center gwm-mono-tag ' + action, ACTION_LABEL[action]));
+    const team = teamDecisions(c.id);
+    const ov = team.size >= 2 ? overlap(c.id) : null;
+    if (ov) {
+      const chip = h('span', 'result-chip gwm-center gwm-mono-tag ' + ov.state, RESULT_CHIP[ov.state]);
+      chip.title = displayName(ov.a) + ' ' + ACTION_LABEL[ov.aAction].toLowerCase() + ', ' + displayName(ov.b) + ' ' + ACTION_LABEL[ov.bAction].toLowerCase();
+      meta.appendChild(chip);
+    }
+    meta.appendChild(h('span', 'when', fmtWhen(at)));
+    head.appendChild(meta);
+    box.appendChild(head);
     const notes = h('div', 'card-notes');
-    renderNotes(notes, cardId);
+    renderNotes(notes, c.id);
     box.appendChild(notes);
+    if ((c.sources || []).length) {
+      const list = h('ol', 'sheet-list log-sources');
+      list.setAttribute('aria-label', 'Sources for ' + c.title);
+      fillSourceList(list, c);
+      box.appendChild(list);
+    }
     log.appendChild(box);
   });
 
@@ -1121,7 +1183,13 @@ function renderLibrary(opts) {
   $('#lib-count').textContent = libCountText(all);
   $('#lib-nav').hidden = order.length < 2;
   if (!order.length) {
-    stage.appendChild(h('p', 'lib-empty', 'Like a card in your feed and it lands here, up next.'));
+    const box = h('div', 'lib-empty-state');
+    const head = h('h2', 'headline lib-empty-head');
+    head.append('Nothing on the ', h('em', null, 'shelf'), ' yet.');
+    box.append(h('p', 'eyebrow gwm-mono-tag', 'Your library'), head,
+      h('p', 'lib-empty-line', 'Like or fast-track a card and it lands here as UP NEXT.'));
+    stage.appendChild(box);
+    updateDesk();
     return;
   }
   const visible = order.slice(0, FAN.length);
@@ -1174,6 +1242,7 @@ function renderLibrary(opts) {
   if (visible.some((e) => e.status === 'writing')) countdownTimer = setInterval(tickCountdowns, 30000);
   if (els[0]) fitOneLine($all('.book-stamp.delivered, .book-state', els[0]));
   if (opts && opts.fromRects) animateBooksFrom(opts.fromRects, els);
+  updateDesk();
 }
 /** Status stamps never wrap: tighten the letter-spacing first, then shrink
  *  the type, until the whole stamp fits the card's inner width. */
@@ -1251,7 +1320,7 @@ function openEntry(e) {
   openCardSheet(e);
 }
 
-// Notes on a card, readable at every access level (History, Library, reader).
+// Notes on a card, readable at every access level (Log, Library, reader).
 function renderNotes(wrap, cardId) {
   wrap.textContent = '';
   const list = S.notes.filter((n) => n.card_id && n.card_id === cardId && n.body !== WANTS_WRITTEN);

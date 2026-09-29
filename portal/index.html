@@ -7,14 +7,16 @@
 <meta name="robots" content="noindex, nofollow">
 <meta name="referrer" content="no-referrer">
 <title>Ghostwriter Mom | Portal</title>
-<link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
-<link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png">
-<link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png">
+<link rel="icon" type="image/svg+xml" href="/assets/favicon.svg?v=2">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png?v=2">
+<link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16.png?v=2">
+<link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png?v=2">
 <!-- PostHog stub (same as the sales page). posthog.init() runs once
      /config/runtime.json is read. -->
 <script>
 !function(t,e){var o,n,p,r;e.__SV||(window.posthog=e,e._i=[],e.init=function(i,s,a){function g(t,e){var o=e.split(".");2==o.length&&(t=t[o[0]],e=o[1]),t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}}(p=t.createElement("script")).type="text/javascript",p.crossOrigin="anonymous",p.async=!0,p.src=s.api_host.replace(".i.posthog.com","-assets.i.posthog.com")+"/static/array.js",(r=t.getElementsByTagName("script")[0]).parentNode.insertBefore(p,r);var u=e;for(void 0!==a?u=e[a]=[]:a="posthog",u.people=u.people||[],u.toString=function(t){var e="posthog";return"posthog"!==a&&(e+="."+a),t||(e+=" (stub)"),e},u.people.toString=function(){return u.toString(1)+".people (stub)"},o="init capture register register_once register_for_session unregister unregister_for_session getFeatureFlag getFeatureFlagPayload isFeatureEnabled reloadFeatureFlags updateEarlyAccessFeatureEnrollment getEarlyAccessFeatures on onFeatureFlags onSessionId getSurveys getActiveMatchingSurveys renderSurvey canRenderSurvey identify setPersonProperties group resetGroups setPersonPropertiesForFlags resetPersonPropertiesForFlags setGroupPropertiesForFlags resetGroupPropertiesForFlags reset get_distinct_id getGroups get_session_id get_session_replay_url alias set_config startSessionRecording stopSessionRecording sessionRecordingStarted captureException loadToolbar get_property getSessionProperty createPersonProfile opt_in_capturing opt_out_capturing has_opted_in_capturing has_opted_out_capturing clear_opt_in_out_capturing debug getPageViewId".split(" "),n=0;n<o.length;n++)g(u,o[n]);e._i.push([i,s,a])},e.__SV=1)}(document,window.posthog||[]);
 </script>
+<link rel="stylesheet" href="/shared/desk.css">
 <link rel="stylesheet" href="/portal/portal.css">
 </head>
 <body data-view="loading">
@@ -22,16 +24,11 @@
 <div class="bg-tint format" id="tint-format" aria-hidden="true"></div>
 <div class="bg-tint action" id="tint-action" aria-hidden="true"></div>
 
-<!-- Desk objects for the sign-in page (waitlist visual identity). Placed at
-     the edges only; the form column never sits under one. -->
-<div class="desk" id="desk" aria-hidden="true">
-  <span class="desk-obj d-pin">&#128204;</span>
-  <span class="desk-obj d-clip">&#128206;</span>
-  <span class="desk-obj d-notebook">&#128211;</span>
-  <span class="desk-obj d-coffee">&#9749;</span>
-  <span class="desk-obj d-pen">&#128394;&#65039;</span>
-  <span class="desk-stamp">Draft<br>Approved</span>
-</div>
+<!-- Desk layer: the shared module (/shared/desk.js), the same one the
+     waitlist and the sales intro mount. Density "light". portal.js shows it
+     only on the login, the Feed's caught-up state and an empty Library, and
+     hides any fragment that would touch content. -->
+<div id="desk-mount"></div>
 
 <main class="shell" id="shell">
   <header class="topbar">
@@ -59,12 +56,12 @@
       <h1 class="headline">Welcome <em>back</em>.</h1>
       <form class="capture" id="signin-form" novalidate>
         <div class="login-field">
-          <input type="email" id="signin-email" name="email" placeholder="you@work.com"
+          <input type="email" id="signin-email" name="email" placeholder="you@company.com"
                  autocomplete="email" inputmode="email" required aria-label="Email">
           <span class="join-host">
             <span class="join-glow" aria-hidden="true"></span>
             <button type="submit" class="join gwm-btn" id="signin-btn">
-              Send me a link <span class="arr gwm-center" aria-hidden="true">&#8594;</span>
+              Email me a way in <span class="arr gwm-center" aria-hidden="true">&#8594;</span>
             </button>
           </span>
         </div>
@@ -132,10 +129,10 @@
     </div>
   </section>
 
-  <!-- HISTORY -->
-  <section class="screen" id="screen-history">
+  <!-- LOG (ids keep the old "history" names) -->
+  <section class="screen" id="screen-history" aria-labelledby="log-count">
     <div class="feed-top">
-      <span class="eyebrow gwm-mono-tag">Log</span>
+      <h2 class="feed-count log-count" id="log-count">Log</h2>
       <button type="button" class="btn-ghost" data-action="close-history">Back to feed</button>
     </div>
     <div class="hist-tabs" role="tablist" aria-label="Log views">
@@ -176,6 +173,7 @@
       <div class="hub-canvas" id="hub-canvas"></div>
     </div>
     <p class="hub-hint gwm-center" id="hub-hint" hidden></p>
+    <p class="hub-empty-line" id="hub-empty" hidden>Drag a card here, or add a note.</p>
     <div class="hub-emoji-picker" id="hub-emoji-picker" role="menu" aria-label="Pick a pin" hidden>
       <button type="button" class="gwm-center" role="menuitem" data-emoji="📌" aria-label="Pushpin">&#128204;</button>
       <button type="button" class="gwm-center" role="menuitem" data-emoji="⭐" aria-label="Star">&#11088;</button>

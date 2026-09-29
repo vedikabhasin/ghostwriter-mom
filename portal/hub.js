@@ -207,6 +207,8 @@ function render() {
     else { el.style.left = '0px'; el.style.top = '0px'; }
   });
   canvas.classList.toggle('empty', !visible.length);
+  // Unlocked and empty: the grid alone, with one line. Locked keeps its modal.
+  $('#hub-empty').hidden = locked || visible.length > 0;
   $('[data-hub="hidden"]').classList.toggle('on', showHidden);
   $('[data-hub="hidden"]').setAttribute('aria-pressed', showHidden ? 'true' : 'false');
 }

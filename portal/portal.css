@@ -80,7 +80,7 @@ body[data-view="signin"] .topbar{display:none;}
 .screen{display:none; flex:1; flex-direction:column; gap:12px; position:relative;}
 .screen.on{display:flex;}
 .screen.center{justify-content:center;}
-.eyebrow{font-family:var(--font-mono); font-size:11px; text-transform:uppercase; color:var(--ink-soft); margin:0;}
+.eyebrow{font-family:var(--font-mono); font-size:11px; letter-spacing:0.14em; text-transform:uppercase; color:#4a4a4a; margin:0;}
 .big-copy{font-family:var(--font-display); font-weight:700; font-size:clamp(20px, 5vw, 24px); line-height:1.32; margin:6px 0 10px; text-wrap:balance;}
 .loading{padding:60px 20px; text-align:center; color:var(--ink-soft); font-family:var(--font-mono); font-size:12px; letter-spacing:0.1em; text-transform:uppercase;}
 
@@ -139,33 +139,16 @@ a.btn{text-decoration:none; box-sizing:border-box;}
    SIGN IN: the waitlist page's identity: grid, desk objects at the edges,
    left-aligned 640px column, pill field with the gradient join button.
    ----------------------------------------------------------------------------- */
-.desk{display:none; position:fixed; inset:0; z-index:0; pointer-events:none;}
-body[data-view="signin"] .desk{display:block;}
-.desk-obj{position:absolute; font-size:clamp(22px, 3.2vw, 44px); line-height:1; filter:drop-shadow(0 12px 14px rgba(14,14,14,0.22)); user-select:none;}
-.d-pin     {top:3vh;     left:46%;  transform:rotate(8deg);}
-.d-clip    {top:20vh;    left:2vw;  transform:rotate(-22deg);}
-.d-notebook{top:52vh;    right:4vw; transform:rotate(-14deg);}
-.d-coffee  {bottom:10vh; right:6vw; transform:rotate(-6deg);}
-.d-pen     {bottom:18vh; left:3vw;  transform:rotate(34deg);}
-.desk-stamp{
-  position:absolute; top:12vh; right:4vw; transform:rotate(-6deg);
-  width:clamp(72px, 7vw, 98px); padding:7px 9px; background:var(--white); border:2px dashed rgba(220,60,60,0.7);
-  font-family:var(--font-mono); font-size:clamp(8.5px, 1vw, 10px); letter-spacing:0.12em; text-transform:uppercase;
-  color:#c0392b; text-align:center; box-shadow:0 12px 22px -14px rgba(14,14,14,0.4); line-height:1.2;
-}
-@media (max-width:767px){
-  /* Phone: small accents in the top and bottom margins, clear of the form. */
-  .desk-obj{font-size:20px;}
-  .d-clip{top:15vh; right:8vw; left:auto;} .d-notebook{display:none;} .d-pen{bottom:10vh; left:6vw;}
-  .d-coffee{bottom:10vh; right:34vw;} .d-pin{top:2vh; left:62%;}
-  .desk-stamp{top:auto; bottom:9vh; right:5vw; width:70px; font-size:8px;}
-}
+/* The desk layer itself comes from /shared/desk.css (density "light").
+   portal.js sets body[data-desk] where it may show; everywhere else, none. */
+body:not([data-desk="on"]) .gwm-desk{display:none;}
+.gwm-desk{z-index:0;}
 .login{justify-content:space-between; align-items:center; gap:18px; padding:20px 0 0;}
 .login .wordmark{font-family:var(--font-display); font-weight:800; font-size:clamp(14px,3.2vw,19px); letter-spacing:0.02em;
   text-transform:uppercase; display:flex; align-items:center; gap:8px; width:100%; max-width:640px; margin-top:14px;}
 .login .wordmark .reg{font-weight:600; font-size:0.68em; vertical-align:super; color:var(--ink-soft);}
 .login-hero{flex:1; display:flex; flex-direction:column; justify-content:center; width:100%; max-width:640px; gap:14px; padding:14px 0; position:relative; z-index:2;}
-.headline{font-family:var(--font-display); font-weight:800; font-size:clamp(34px, 7vw, 52px); line-height:1.05; letter-spacing:-0.025em; margin:0; text-wrap:balance;}
+.headline{font-family:var(--font-display); font-weight:800; font-size:clamp(30px, 6.4vw, 46px); line-height:1.08; letter-spacing:-0.025em; margin:0; text-wrap:balance;}
 /* Italic accent word; no trailing margin so the period sits right after it. */
 .headline em{font-family:var(--font-accent); font-style:italic; font-weight:700; letter-spacing:0; padding-right:0.04em;}
 .capture{display:flex; flex-direction:column; gap:6px; max-width:560px;}
@@ -185,6 +168,7 @@ body[data-view="signin"] .desk{display:block;}
   .login-field{flex-direction:row; align-items:center; padding:7px 7px 7px 22px; gap:0; border-radius:var(--radius-pill);}
   .login-field input{padding:12px 8px; min-height:44px;}
   .join, .join-host{width:auto; white-space:nowrap;}
+  .join{font-size:13.5px;}
 }
 .signin-sent{display:flex; flex-direction:column; align-items:flex-start; gap:6px; max-width:560px;}
 .envelope{display:inline-flex; align-items:center; justify-content:center; width:72px; height:72px; font-size:40px;
@@ -474,7 +458,7 @@ body.dir-like .ctl-like, body.dir-pass .ctl-pass, body.dir-fasttrack .ctl-fasttr
 .ghost-copy{font-family:var(--font-display); font-weight:700; font-size:18px; line-height:1.35; margin:0 0 14px;}
 
 /* -----------------------------------------------------------------------------
-   HISTORY
+   LOG (the History screen's ids are unchanged)
    ----------------------------------------------------------------------------- */
 .hist-tabs{display:inline-flex; align-self:flex-start; padding:4px; background:rgba(14,14,14,0.06); border-radius:999px; gap:4px;}
 .hist-tab{border:none; background:transparent; cursor:pointer; padding:8px 16px; border-radius:999px;
@@ -542,7 +526,7 @@ body.dir-like .ctl-like, body.dir-pass .ctl-pass, body.dir-fasttrack .ctl-fasttr
 .book-state.requested, .book-state.up_next{align-self:flex-start; letter-spacing:0.06em;}
 .book-state.ready{align-self:flex-start; padding:5px 9px 5px 10px; border-radius:999px; border:1.5px solid var(--ink); background:var(--white);}
 .book-state.queued{align-self:flex-start; padding:5px 9px 5px 10px; border-radius:999px; background:var(--canvas-alt); border:1.5px dashed var(--ink-soft);}
-/* Ghost (approved_unwritten): opaque paper, dashed border in the format color. */
+/* Ghost (not delivered yet): opaque paper, dashed border in the format color. */
 .book.ghost{background:var(--paper); box-shadow:0 18px 34px -24px rgba(14,14,14,0.45);
   border:2px dashed var(--f-color); border-left:var(--spine) dashed var(--f-color);}
 .book.ghost .card-format{background:var(--paper); border:1.5px dashed var(--f-color); color:var(--ink);}
@@ -918,3 +902,32 @@ button.seat.empty:focus-visible{outline:2px solid var(--ink); outline-offset:2px
   animation:rv-burst 1100ms var(--ease-spring) both; opacity:0.75;}
 .rv-tip{position:relative; z-index:1; margin:-8px 0 0; font-size:13.5px; background:rgba(255,255,255,0.85); padding:5px 10px; border-radius:999px;}
 #lib-count{text-align:right; line-height:1.5; margin-left:12px;}
+
+/* Log: one row per card this member called. */
+.log-count{margin:0; font-weight:700;}
+.log-head{display:flex; flex-direction:column; gap:8px;}
+.log-row .hist-title{margin:0;}
+.log-meta{display:flex; align-items:center; flex-wrap:wrap; gap:8px;}
+.log-meta .when{font-family:var(--font-mono); font-size:10.5px; letter-spacing:0.04em; color:var(--ink-soft); white-space:nowrap; margin-left:auto;}
+.result-chip{padding:4px 9px 4px 10px; border-radius:999px; font-family:var(--font-mono); font-size:9.5px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; border:1.5px solid currentColor;}
+.result-chip.agree, .result-chip.now{background:color-mix(in srgb, var(--like) 40%, var(--white)); color:var(--like-ink);}
+.result-chip.split{background:color-mix(in srgb, var(--pass) 28%, var(--white)); color:var(--pass-ink);}
+.result-chip.timing{background:color-mix(in srgb, var(--save) 45%, var(--white)); color:var(--save-ink);}
+.log-sources{margin-top:10px;}
+.log-sources .sheet-item{padding:8px; background:rgba(14,14,14,0.035);}
+
+/* Empty Library: a paper panel with the login's eyebrow + headline. */
+.lib-empty-state{position:relative; z-index:1; width:min(100%, 420px); margin:auto; padding:30px 24px 28px; border-radius:18px;
+  display:flex; flex-direction:column; gap:10px;
+  background:
+    repeating-linear-gradient(0deg, rgba(14,14,14,0.05) 0 1px, transparent 1px 22px),
+    repeating-linear-gradient(90deg, rgba(14,14,14,0.05) 0 1px, transparent 1px 22px),
+    var(--paper);
+  border:1px solid rgba(14,14,14,0.14); box-shadow:0 18px 34px -24px rgba(14,14,14,0.45);}
+.lib-empty-state .eyebrow{margin:0;}
+.lib-empty-head{font-size:clamp(26px, 6vw, 34px);}
+.lib-empty-line{margin:0; font-size:15px; line-height:1.5; color:var(--ink);}
+
+/* Empty Hub (unlocked, no items): the grid and one centered line. */
+.hub-empty-line{position:absolute; left:50%; top:45%; translate:-50% -50%; z-index:5; margin:0; pointer-events:none;
+  font-family:var(--font-body); font-size:15px; color:var(--ink-soft); text-align:center; width:max-content; max-width:calc(100vw - 48px);}
