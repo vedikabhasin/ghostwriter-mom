@@ -1771,7 +1771,10 @@ body.dir-save  .ctl-save{
     try{
       var payload = Object.assign({ 'form-name': name, 'bot-field': '' }, fields || {});
       var body = new URLSearchParams(payload).toString();
-      return fetch('/', {
+      // Post to this page's own path (/{slug}, a 200 rewrite), not '/':
+      // '/' is force-redirected to /waitlist (netlify.toml), and a
+      // redirected POST never reaches Netlify Forms.
+      return fetch(location.pathname || '/swipe.html', {
         method:'POST',
         headers:{ 'Content-Type':'application/x-www-form-urlencoded' },
         body: body, keepalive:true

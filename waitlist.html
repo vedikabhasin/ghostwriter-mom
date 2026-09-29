@@ -386,7 +386,9 @@ body,a,button,input,.frag{cursor:var(--pencil),auto;}
     try{ tzEl.value = Intl.DateTimeFormat().resolvedOptions().timeZone || ''; }catch(_){}
     const body = new URLSearchParams();
     new FormData(form).forEach((val, key) => body.append(key, val));
-    fetch('/', {
+    // Not '/': it is force-redirected here (netlify.toml), and a redirected
+    // POST never reaches Netlify Forms. /waitlist is a 200 rewrite.
+    fetch('/waitlist', {
       method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
       body: body.toString()
