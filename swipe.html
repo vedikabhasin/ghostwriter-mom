@@ -869,6 +869,11 @@ body.dir-save  .ctl-save{
   font-family:var(--font-mono); font-size:11px; letter-spacing:0.04em; color:#333; margin:0;
 }
 .pd-meta strong{color:var(--ink); font-weight:700;}
+/* One-line caption at the bottom of every tile. Body font, small, muted. */
+.pd-caption{
+  font-family:var(--font-body); font-size:13px; line-height:1.4;
+  color:#3a3a3a; margin:2px 0 0;
+}
 
 /* Feed animated stack.
    Container is tall enough to fully hold the animation range
@@ -922,90 +927,123 @@ body.dir-save  .ctl-save{
   100%    { transform:translate3d(0,0,0)    rotate(0deg);        opacity:1;   z-index:3; }
 }
 
-/* ----- Seat preview (real card + three ghost stamps looping MATCH/SPLIT/TIMING) ----- */
-.seat-preview{
-  position:relative; height:150px; margin:2px auto 6px;
+/* ============================================================
+   Portal mock, five tiles.
+   pd-reveal      Feed tile: mini reveal (card + 3 avatars + state chip)
+   pd-log-row     Log rows
+   pd-book        Library book (fanned)
+   pd-hub         Hub tile (pencil + lock + grid)
+   ============================================================ */
+
+/* Feed tile: mini reveal. */
+.pd-reveal{
+  position:relative; padding:14px 6px 8px;
+  min-height:190px; border-radius:14px; overflow:hidden;
+  isolation:isolate;
   display:grid; grid-template-columns:1fr; gap:8px;
-  align-items:start; justify-items:center;
-  width:100%; max-width:340px;
+  justify-items:center; align-items:start;
 }
-.seat-card{
-  width:100%; max-width:220px;
-  background:var(--paper); border:1.5px solid var(--f-color, rgba(14,14,14,0.2));
-  border-radius:14px; padding:10px 12px;
+.pd-reveal-bg{
+  position:absolute; inset:0; z-index:0;
+  background:radial-gradient(85% 60% at 50% 40%, rgba(184,255,113,0.35), transparent 70%);
+  transition:background 480ms var(--ease);
+}
+.pd-reveal-bg.r-split { background:linear-gradient(90deg, rgba(184,255,113,0.32) 0 50%, rgba(255,107,92,0.28) 50% 100%); }
+.pd-reveal-bg.r-timing{ background:linear-gradient(180deg, rgba(184,255,113,0.28), rgba(245,232,74,0.32)); }
+.pd-reveal-chip{
+  position:relative; z-index:2;
+  padding:3px 10px 4px; border-radius:999px;
+  font-family:var(--font-mono); font-size:9.5px; font-weight:800;
+  letter-spacing:0.14em; text-transform:uppercase; line-height:1;
+  background:#fff; color:var(--ink); border:1.5px solid var(--marker-outline);
+  opacity:0; transform:translateY(-2px); transition:opacity 300ms var(--ease), transform 300ms var(--ease);
+}
+.pd-reveal-chip.on{ opacity:1; transform:translateY(0); }
+.pd-reveal-chip.r-match { border-color:var(--like); color:var(--like-ink); }
+.pd-reveal-chip.r-split { border-color:var(--pass); color:var(--pass-ink); }
+.pd-reveal-chip.r-timing{ border-color:var(--save); color:var(--save-ink); }
+.pd-reveal-card{
+  position:relative; z-index:2;
+  width:min(78%, 220px); background:#fff;
+  border:1.5px solid var(--f-color, rgba(14,14,14,0.18));
+  border-radius:12px; padding:10px 12px 8px;
+  transform:rotate(-2deg);
+  box-shadow:0 10px 18px -12px rgba(14,14,14,0.32);
   display:flex; flex-direction:column; gap:4px;
-  box-shadow:0 8px 18px -12px rgba(14,14,14,0.4);
-  position:relative;
 }
-.seat-card.fmt-pillar  { --f-color:var(--f-pillar);  }
-.seat-card.fmt-insight { --f-color:var(--f-insight); }
-.seat-card.fmt-post    { --f-color:var(--f-post);    }
-.seat-card .fmt-pill{
-  display:inline-flex; align-self:flex-start; align-items:center;
-  padding:2px 8px; border-radius:999px;
+.pd-reveal-card.fmt-pillar  { --f-color:var(--f-pillar);  }
+.pd-reveal-card.fmt-insight { --f-color:var(--f-insight); }
+.pd-reveal-card.fmt-post    { --f-color:var(--f-post);    }
+.pd-reveal-fmt{
+  align-self:flex-start; padding:2px 8px; border-radius:999px;
   font-family:var(--font-mono); font-size:8.5px; letter-spacing:0.14em;
-  text-transform:uppercase; font-weight:700; line-height:1;
-  background:var(--f-color); color:var(--ink);
+  font-weight:800; text-transform:uppercase; line-height:1;
+  background:var(--f-color); color:var(--f-pillar-ink);
 }
-.seat-card.fmt-pillar  .fmt-pill{color:var(--f-pillar-ink);}
-.seat-card.fmt-insight .fmt-pill{color:var(--f-insight-ink);}
-.seat-card.fmt-post    .fmt-pill{color:var(--f-post-ink);}
-.seat-card .seat-card-title{
-  font-family:var(--font-display); font-weight:700; font-size:12px; line-height:1.25;
+.pd-reveal-card.fmt-pillar  .pd-reveal-fmt{ color:var(--f-pillar-ink);  }
+.pd-reveal-card.fmt-insight .pd-reveal-fmt{ color:var(--f-insight-ink); }
+.pd-reveal-card.fmt-post    .pd-reveal-fmt{ color:var(--f-post-ink);    }
+.pd-reveal-title{
+  font-family:var(--font-display); font-weight:800; font-size:12.5px; line-height:1.25;
   color:var(--ink); margin:2px 0 0;
   display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;
 }
-.seat-row{
+.pd-reveal-sources{
+  align-self:flex-start; margin-top:2px;
+  padding:1.5px 8px; border-radius:999px;
+  font-family:var(--font-mono); font-size:8.5px; letter-spacing:0.08em;
+  color:#333; background:rgba(14,14,14,0.06); font-weight:700;
+}
+.pd-reveal-seats{
+  position:relative; z-index:2; width:100%;
   display:grid; grid-template-columns:repeat(3, 1fr); gap:6px;
-  width:100%; max-width:280px; align-items:center;
+  padding:0 8px;
 }
-.seat-slot{
+.pd-seat{
   display:flex; flex-direction:column; align-items:center; gap:4px;
-  min-height:52px;
+  min-height:64px;
 }
-.seat-avatar{
-  width:26px; height:26px; border-radius:50%;
-  display:inline-flex; align-items:center; justify-content:center;
+.pd-seat-ring{
+  width:34px; height:34px; border-radius:50%;
   background:#fff; border:1.5px solid rgba(14,14,14,0.22);
-  color:var(--ink); font-family:var(--font-mono); font-size:9px; font-weight:800;
-  letter-spacing:0.04em; line-height:1;
+  display:inline-flex; align-items:center; justify-content:center;
+  overflow:hidden;
 }
-.seat-slot.demo .seat-avatar{ border-style:dashed; opacity:0.55; background:transparent; }
-.seat-stamp{
-  min-height:14px; display:inline-flex; align-items:center; justify-content:center;
+.pd-seat-ring.mono{
+  color:var(--ink); font-family:var(--font-mono); font-size:9.5px; font-weight:800;
+  letter-spacing:0.06em;
+}
+.pd-seat.demo .pd-seat-ring{ border-style:dashed; opacity:0.75; background:transparent; }
+.pd-seat-stamp{
+  min-height:16px;
   padding:2px 6px; border-radius:4px;
-  font-family:var(--font-mono); font-size:8.5px; font-weight:800; letter-spacing:0.1em;
-  text-transform:uppercase; line-height:1;
+  font-family:var(--font-mono); font-size:8.5px; font-weight:800;
+  letter-spacing:0.08em; text-transform:uppercase; line-height:1;
   border:1.5px solid transparent; opacity:0;
-  transition:opacity 320ms var(--ease);
+  transition:opacity 260ms var(--ease);
+  white-space:nowrap;
+  transform:rotate(-3deg);
+  display:inline-flex; align-items:center; justify-content:center;
 }
-.seat-stamp.on{ opacity:1; }
-.seat-stamp.a-like  { background:var(--like); color:var(--like-ink); }
-.seat-stamp.a-pass  { background:var(--pass); color:var(--pass-ink); }
-.seat-stamp.a-save  { background:var(--save); color:var(--save-ink); }
-.seat-stamp.a-fasttrack{ background:var(--fasttrack); color:var(--fasttrack-ink); }
-.seat-slot.demo .seat-stamp{ border-style:dashed; }
-.seat-label{
+.pd-seat-stamp.on{ opacity:1; }
+.pd-seat-stamp.a-like     { background:var(--like);      color:var(--like-ink); }
+.pd-seat-stamp.a-pass     { background:var(--pass);      color:var(--pass-ink); }
+.pd-seat-stamp.a-save     { background:var(--save);      color:var(--save-ink); }
+.pd-seat-stamp.a-fasttrack{ background:var(--fasttrack); color:var(--fasttrack-ink); }
+.pd-seat-label{
   font-family:var(--font-mono); font-size:8px; letter-spacing:0.14em;
   text-transform:uppercase; color:#4a4a4a; font-weight:700;
 }
-.seat-result{
-  align-self:center; justify-self:center;
-  padding:3px 10px 3px 12px; border-radius:999px;
-  font-family:var(--font-mono); font-size:9.5px; font-weight:800;
-  letter-spacing:0.14em; text-transform:uppercase; line-height:1;
-  background:transparent; color:var(--ink);
+.pd-preview-tag{
+  position:absolute; top:6px; right:6px; z-index:3;
+  padding:2px 8px; border-radius:999px;
+  font-family:var(--font-mono); font-size:8.5px; font-weight:800;
+  letter-spacing:0.14em; text-transform:uppercase;
+  background:transparent; color:var(--marker-ink);
   border:1.5px solid var(--marker-outline);
-  opacity:0; transition:opacity 320ms var(--ease);
-  display:inline-flex; align-items:center; justify-content:center;
 }
-.seat-result.on{ opacity:1; }
-.seat-result.r-match  { border-color:var(--like);  color:var(--like-ink);  background:rgba(184,255,113,0.18); }
-.seat-result.r-split  { border-color:var(--pass);  color:var(--pass-ink);  background:rgba(255,107,92,0.14); }
-.seat-result.r-timing { border-color:var(--save);  color:var(--save-ink);  background:rgba(245,232,74,0.24); }
-
 @media (prefers-reduced-motion:reduce){
-  .seat-stamp, .seat-result{ transition:none; }
+  .pd-seat-stamp, .pd-reveal-chip, .pd-reveal-bg{ transition:none; }
 }
 
 /* Signals row inside dashboard */
@@ -1028,23 +1066,36 @@ body.dir-save  .ctl-save{
   color:var(--ink); margin:0;
 }
 
-/* Log rows — titles wrap to 2 lines */
-.pd-log{display:flex; flex-direction:column; gap:4px;}
-.pd-log .row{
-  display:grid; grid-template-columns:12px 1fr auto; gap:8px 10px; align-items:start;
+/* Log rows */
+.pd-log{display:flex; flex-direction:column; gap:6px;}
+.pd-log-row{
+  display:grid; grid-template-columns:1fr auto auto; gap:8px 10px; align-items:start;
   padding:6px 0;
   border-bottom:1px dashed rgba(14,14,14,0.08);
 }
-.pd-log .row:last-child{border-bottom:none;}
-.pd-log .row .dot{width:10px; height:10px; border-radius:50%; margin-top:5px;}
-.pd-log .row .t{
+.pd-log-row:last-child{border-bottom:none;}
+.pd-log-row.ghost{ opacity:0.28; min-height:22px; }
+.pd-log-row.ghost .pd-log-title{ background:rgba(14,14,14,0.08); border-radius:4px; height:12px; min-width:40%; }
+.pd-log-row.ghost .pd-log-src  { background:rgba(14,14,14,0.06); border-radius:4px; height:12px; width:36px; }
+.pd-log-title{
   display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;
   line-height:1.28; color:var(--ink); font-weight:500;
   word-break:break-word; font-size:13px;
 }
-.pd-log .row .a{
+.pd-log-stamp{
   font-family:var(--font-mono); font-size:9px; letter-spacing:0.1em; text-transform:uppercase;
-  padding:2px 6px; border-radius:999px; align-self:start; font-weight:700; white-space:nowrap;
+  padding:2px 6px; border-radius:4px; align-self:start; font-weight:800; white-space:nowrap;
+  border:1.5px solid transparent; transform:rotate(-2deg);
+  display:inline-flex; align-items:center; justify-content:center;
+}
+.pd-log-stamp.a-like     { background:var(--like);      color:var(--like-ink); }
+.pd-log-stamp.a-pass     { background:var(--pass);      color:var(--pass-ink); }
+.pd-log-stamp.a-save     { background:var(--save);      color:var(--save-ink); }
+.pd-log-stamp.a-fasttrack{ background:var(--fasttrack); color:var(--fasttrack-ink); }
+.pd-log-src{
+  font-family:var(--font-mono); font-size:9.5px; letter-spacing:0.08em;
+  color:#4a4a4a; font-weight:700; align-self:start; padding-top:3px;
+  text-transform:uppercase; white-space:nowrap;
 }
 .a-like  {background:rgba(184,255,113,0.75); color:var(--like-ink);}
 .a-pass  {background:rgba(255,157,192,0.75); color:var(--pass-ink);}
@@ -1054,67 +1105,93 @@ body.dir-save  .ctl-save{
 .a-source_opened, .a-approved, .a-free_pick, .a-unlock_clicked,
 .a-waitlist_joined, .a-referral_sent, .a-portal_interest{background:rgba(14,14,14,0.10); color:#333;}
 
-/* Library locked slots — ghost card style.
-   Opaque paper-white body, dashed border in the format color. Two faint
-   dashed-outline copies trail down-right (6px @ 25% opacity, 12px @ 12%
-   opacity) via ::before + ::after so the slot reads as a stack of future
-   drafts. "Approved" text stamp on the .arriving free-pick slot; other
-   slots carry the same ghost silhouette without the stamp. */
-.pd-library{display:flex; flex-direction:column; gap:16px;}
-.pd-library-slot{
-  position:relative; isolation:isolate;
-  display:grid; grid-template-columns:22px 1fr auto; gap:10px; align-items:start;
-  padding:12px 14px 14px;
-  background:var(--paper, #FDFCF8);
-  border:1.5px dashed var(--fmt-color, rgba(14,14,14,0.28));
-  border-radius:14px;
-  color:var(--ink);
+/* Library tile: book fan. Top book cycles UP NEXT → REQUESTED → WRITING →
+   DELIVERED with a flip animation on the stamp. Backing books stay UP NEXT. */
+.pd-library{ padding:8px 0 4px; }
+.pd-lib-empty{
+  font-family:var(--font-body); font-size:12.5px; color:#4a4a4a; margin:6px 0 0;
+  text-align:center;
 }
-/* Ghost trail — two offset dashed outlines. They're absolutely positioned
-   OUTSIDE the slot's clip because .pd-library has enough gap to hold them. */
-.pd-library-slot::before,
-.pd-library-slot::after{
-  content:""; position:absolute; inset:0;
-  border:1.5px dashed var(--fmt-color, rgba(14,14,14,0.28));
-  border-radius:14px;
-  pointer-events:none; z-index:-1;
+.pd-lib-stage{
+  position:relative; height:150px;
+  display:flex; align-items:center; justify-content:center;
+  perspective:800px;
 }
-.pd-library-slot::before{ transform:translate(6px, 6px);   opacity:0.25; }
-.pd-library-slot::after { transform:translate(12px, 12px); opacity:0.12; }
-
-.pd-library-slot.fmt-pillar  { --fmt-color:var(--f-pillar);  }
-.pd-library-slot.fmt-insight { --fmt-color:var(--f-insight); }
-.pd-library-slot.fmt-post    { --fmt-color:var(--f-post);    }
-
-.pd-library-slot .idx{
-  width:22px; height:22px; border-radius:50%;
-  background:rgba(14,14,14,0.08); color:var(--ink);
-  display:inline-flex; align-items:center; justify-content:center;
-  font-family:var(--font-mono); font-weight:700; font-size:10px;
-  line-height:1;
-  margin-top:2px;
+.pd-book{
+  position:absolute; width:min(80%, 220px);
+  background:#fff; border:1.5px solid var(--fmt-color, rgba(14,14,14,0.18));
+  border-radius:12px; padding:12px 12px 10px;
+  display:flex; flex-direction:column; gap:6px;
+  box-shadow:0 12px 22px -14px rgba(14,14,14,0.36);
+  transition:transform 380ms var(--ease-spring);
 }
-.pd-library-slot .lib-body{display:flex; flex-direction:column; gap:3px; min-width:0;}
-.pd-library-slot .lib-title{
-  font-family:var(--font-body); font-size:13px; line-height:1.35; color:var(--ink);
-  word-break:break-word; font-weight:600;
+.pd-book.fmt-pillar  { --fmt-color:var(--f-pillar);  }
+.pd-book.fmt-insight { --fmt-color:var(--f-insight); }
+.pd-book.fmt-post    { --fmt-color:var(--f-post);    }
+.pd-book.back{ opacity:0.82; }
+.pd-book-head{ display:flex; align-items:center; gap:6px; }
+.pd-book-fmt{
+  padding:2px 8px; border-radius:999px;
+  font-family:var(--font-mono); font-size:8.5px; letter-spacing:0.14em;
+  font-weight:800; text-transform:uppercase; line-height:1;
+  background:var(--fmt-color); color:var(--ink);
 }
-.pd-library-slot .status{
-  font-family:var(--font-mono); font-size:9.5px; letter-spacing:0.14em; text-transform:uppercase;
+.pd-book.fmt-pillar  .pd-book-fmt{ color:var(--f-pillar-ink);  }
+.pd-book.fmt-insight .pd-book-fmt{ color:var(--f-insight-ink); }
+.pd-book.fmt-post    .pd-book-fmt{ color:var(--f-post-ink);    }
+.pd-book-title{
+  font-family:var(--font-display); font-weight:800; font-size:13px; line-height:1.25;
+  color:var(--ink); margin:0;
+  display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;
+}
+.pd-book-stamp{
+  align-self:flex-start;
+  padding:3px 8px 4px; border-radius:5px;
+  font-family:var(--font-mono); font-size:8.5px; font-weight:800;
+  letter-spacing:0.14em; text-transform:uppercase; line-height:1;
+  border:1.5px solid var(--marker-outline);
+  color:var(--ink); background:#fff;
+  transform:rotate(-3deg);
+}
+.pd-book-stamp.st-upnext   { border-color:rgba(14,14,14,0.28); color:#4a4a4a; background:rgba(14,14,14,0.05); }
+.pd-book-stamp.st-requested{ border-color:var(--f-insight); color:var(--f-insight-ink); background:rgba(140,200,255,0.20); }
+.pd-book-stamp.st-writing  { border-color:var(--save);      color:var(--save-ink);      background:rgba(245,232,74,0.28); }
+.pd-book-stamp.st-delivered{ border-color:var(--like);      color:var(--like-ink);      background:rgba(184,255,113,0.32); }
+.pd-book-stamp.flip{ animation:pd-stamp-flip 260ms var(--ease-spring); }
+@keyframes pd-stamp-flip{
+  0%{ transform:rotate(-3deg) scaleX(0.1); opacity:0.4; }
+  60%{ transform:rotate(-2deg) scaleX(1.06); opacity:1; }
+  100%{ transform:rotate(-3deg) scaleX(1); opacity:1; }
+}
+.pd-book-count{
+  font-family:var(--font-mono); font-size:9.5px; letter-spacing:0.06em;
   color:#4a4a4a; font-weight:700;
 }
-/* "Approved" text stamp on the arriving (free-pick) slot. */
-.pd-library-slot .approved-stamp{
+@media (prefers-reduced-motion:reduce){
+  .pd-book-stamp.flip{ animation:none; }
+  .pd-book{ transition:none; }
+}
+
+/* Hub tile: pencil + lock + faint grid. Non-interactive. */
+.pd-hub{
+  position:relative; min-height:150px; border-radius:12px;
+  overflow:hidden;
+  display:flex; align-items:center; justify-content:center;
+}
+.pd-hub-grid{
+  position:absolute; inset:0;
+  background:
+    repeating-linear-gradient(0deg, transparent 0 19px, rgba(14,14,14,0.06) 19px 20px),
+    repeating-linear-gradient(90deg, transparent 0 19px, rgba(14,14,14,0.06) 19px 20px);
+  opacity:0.6;
+}
+.pd-hub-pencil{ position:relative; z-index:1; }
+.pd-hub-lock{
+  position:absolute; bottom:-4px; right:-4px;
+  width:22px; height:22px; border-radius:50%;
+  background:var(--ink); color:#fff;
   display:inline-flex; align-items:center; justify-content:center;
-  align-self:flex-start;
-  padding:4px 10px 4px 12px;
-  border:1.5px solid var(--fmt-color, rgba(14,14,14,0.28));
-  border-radius:6px;
-  font-family:var(--font-mono); font-size:9px; font-weight:800;
-  letter-spacing:0.18em; text-transform:uppercase;
-  color:var(--ink);
-  background:transparent; line-height:1;
-  transform:rotate(-4deg);
+  box-shadow:0 4px 10px -4px rgba(14,14,14,0.4);
 }
 .pd-library-slot:not(.arriving) .approved-stamp{ display:none; }
 
@@ -1145,6 +1222,28 @@ body.dir-save  .ctl-save{
 .spots-line.full{
   background:rgba(255,107,92,0.18); color:var(--pass-ink);
 }
+
+/* Fast-track continuation line. Shown above the card-stage after the visitor
+   fast-tracks a card with cards still remaining in the deck. */
+.ft-continue{
+  font-family:var(--font-mono); font-size:11.5px; letter-spacing:0.02em;
+  color:#333; margin:2px 0 6px; padding:8px 12px;
+  background:rgba(255,180,90,0.14);
+  border:1px solid rgba(255,180,90,0.35);
+  border-radius:10px; text-align:center;
+  animation:ft-in 240ms var(--ease) both;
+}
+.ft-continue .ft-title{ color:var(--ink); font-weight:700; }
+.ft-link{
+  background:none; border:none; padding:0; margin:0;
+  font:inherit; color:var(--ink); font-weight:700;
+  text-decoration:underline; cursor:pointer;
+  -webkit-tap-highlight-color:transparent;
+}
+.ft-link:hover{ opacity:0.75; }
+.ft-link:focus-visible{ outline:2px solid var(--ink); outline-offset:2px; border-radius:2px; }
+@keyframes ft-in{ 0%{opacity:0; transform:translateY(-4px);} 100%{opacity:1; transform:translateY(0);} }
+@media (prefers-reduced-motion:reduce){ .ft-continue{ animation:none; } }
 
 /* Call-mode: replaces the price-block. One small mono line above the CTA
    ("Early clients shape what the portal builds next. · Up to 3 seats.").
@@ -1299,12 +1398,23 @@ body.dir-save  .ctl-save{
 <form name="approvals" data-netlify="true" netlify-honeypot="bot-field" hidden aria-hidden="true">
   <input type="text"  name="slug">
   <input type="text"  name="companyName">
+  <input type="text"  name="cardTitle">
+  <input type="text"  name="cardFormat">
   <input type="email" name="email">
   <input type="text"  name="freeArticleTitle">
   <input type="text"  name="directionTitles">
   <input type="text"  name="approvedAt">
   <input type="text"  name="deliverBy">
+  <input type="text"  name="landsBy">
   <input type="text"  name="bot-field">
+</form>
+<form name="deck-complete" data-netlify="true" netlify-honeypot="bot-field" hidden aria-hidden="true">
+  <input type="text"     name="slug">
+  <input type="text"     name="companyName">
+  <input type="text"     name="cardsSwiped">
+  <input type="text"     name="reason">
+  <textarea              name="swipes"></textarea>
+  <input type="text"     name="bot-field">
 </form>
 <form name="portal-interest" data-netlify="true" netlify-honeypot="bot-field" hidden aria-hidden="true">
   <input type="text"  name="slug">
@@ -1344,8 +1454,9 @@ body.dir-save  .ctl-save{
   <section class="screen" id="screen-feed">
     <div class="feed-top">
       <span class="feed-counter" id="feed-counter">1 of 10</span>
-      <button type="button" class="btn-ghost" data-action="show-history">History</button>
+      <button type="button" class="btn-ghost" data-action="show-history">Log</button>
     </div>
+    <p class="ft-continue" id="fast-track-line" hidden></p>
     <div class="card-stage" id="card-stage" aria-live="polite"></div>
     <div class="feed-controls" aria-label="Card actions">
       <button type="button" class="ctl ctl-pass lg"    data-action="pass"  aria-label="Pass on this card">
@@ -1383,7 +1494,7 @@ body.dir-save  .ctl-save{
     <div style="display:flex; justify-content:center; gap:14px; flex-wrap:wrap;">
       <button type="button" class="btn-ghost" data-action="keep-swiping" id="keep-swiping-btn" hidden>Keep swiping</button>
       <button type="button" class="btn-ghost" data-action="back-to-confirmation" id="back-to-confirmation-btn" hidden>Back to confirmation &#8594;</button>
-      <button type="button" class="btn-ghost" data-action="show-history">See what you swiped</button>
+      <button type="button" class="btn-ghost" data-action="show-history">See your log</button>
     </div>
   </section>
 
@@ -1396,18 +1507,22 @@ body.dir-save  .ctl-save{
     </h2>
     <p class="conf-arrive" id="conf-arrive"></p>
 
-    <p class="portal-p">
-      Your team swipes, the portal logs every call, and Signals shows where you
-      rank and who AI cites instead.
-    </p>
+    <p class="portal-p">Here's what your team gets inside.</p>
 
     <div class="portal-dashboard">
       <div class="portal-inner">
 
-        <section class="pd-section">
+        <section class="pd-section" id="pd-feed-section">
           <p class="pd-h">Feed <span class="badge preview">Preview</span></p>
-          <div class="seat-preview" id="seat-preview" aria-hidden="true"></div>
+          <div class="pd-reveal" id="pd-reveal" aria-hidden="true"></div>
           <p class="pd-meta">Next drop: <strong data-slot="nextDropLabel"></strong></p>
+          <p class="pd-caption">Your team swipes. Matches, splits and timing calls surface on their own.</p>
+        </section>
+
+        <section class="pd-section" id="pd-log-section">
+          <p class="pd-h">Log <span class="pd-h-count" id="pd-log-count"></span></p>
+          <div class="pd-log" id="pd-log"></div>
+          <p class="pd-caption">Every call logged, with the sources behind each card.</p>
         </section>
 
         <section class="pd-section" id="pd-signals-section">
@@ -1416,16 +1531,19 @@ body.dir-save  .ctl-save{
             <span class="dot" aria-hidden="true"></span>
             <p class="msg" id="pd-signal-msg"></p>
           </div>
+          <p class="pd-caption">Where you rank, and who AI cites instead.</p>
         </section>
 
-        <section class="pd-section">
-          <p class="pd-h">Log <span class="pd-h-count" id="pd-log-count"></span></p>
-          <div class="pd-log" id="pd-log"></div>
-        </section>
-
-        <section class="pd-section">
+        <section class="pd-section" id="pd-library-section">
           <p class="pd-h">Library</p>
           <div class="pd-library" id="pd-library"></div>
+          <p class="pd-caption">Every article, from up next to delivered.</p>
+        </section>
+
+        <section class="pd-section" id="pd-hub-section">
+          <p class="pd-h">Hub</p>
+          <div class="pd-hub" id="pd-hub" aria-hidden="true"></div>
+          <p class="pd-caption">Your team's drafting board. Opens with your first content pack.</p>
         </section>
 
       </div>
@@ -1438,24 +1556,22 @@ body.dir-save  .ctl-save{
     </div>
 
     <p class="call-line" id="call-line" hidden>
-      Early clients shape what the portal builds next. &middot; Up to 3 seats.
+      Early clients shape what the portal builds&nbsp;next.
     </p>
 
     <span class="btn-glow-host" id="cta-glow">
       <span class="btn-glow" aria-hidden="true"></span>
       <button type="button" class="btn btn-primary" data-action="portal-cta" id="portal-cta-btn">
-        <span id="portal-cta-label">Open your portal &middot; 15-minute walkthrough</span>
+        <span id="portal-cta-label">Open 3 seats &middot; 15-minute onboarding</span>
         <span class="arr" aria-hidden="true">&#8594;</span>
       </button>
     </span>
-    <p class="offer-fine" id="cta-fine">
-      Your free article lands <span data-slot="dropWeekday"></span> either way.
-    </p>
+    <p class="offer-fine" id="cta-fine" hidden></p>
     <p class="waitlist-ack" id="waitlist-ack">Noted. I'll be in touch.</p>
 
     <div style="display:flex; justify-content:center; gap:14px; flex-wrap:wrap; margin-top:6px;">
       <button type="button" class="btn-ghost" data-action="change-direction">&#8592; Change direction</button>
-      <button type="button" class="btn-ghost" data-action="show-history">See what you swiped</button>
+      <button type="button" class="btn-ghost" data-action="show-history">See your log</button>
     </div>
   </section>
 
@@ -1464,13 +1580,13 @@ body.dir-save  .ctl-save{
     <p class="dir-eyebrow">Your direction</p>
     <p class="empty-copy">Nothing hit? Reply to my email and I'll rebuild the feed.</p>
     <div style="flex:1;"></div>
-    <button type="button" class="btn-ghost" data-action="show-history" style="align-self:center;">See what you swiped</button>
+    <button type="button" class="btn-ghost" data-action="show-history" style="align-self:center;">See your log</button>
   </section>
 
   <!-- HISTORY -->
   <section class="screen" id="screen-history">
-    <p class="dir-eyebrow">Your history</p>
-    <div class="hist-tabs" role="tablist" aria-label="History views">
+    <p class="dir-eyebrow">Your log</p>
+    <div class="hist-tabs" role="tablist" aria-label="Log views">
       <button type="button" class="hist-tab active" role="tab" data-action="hist-tab-actions" aria-selected="true">Actions</button>
       <button type="button" class="hist-tab"        role="tab" data-action="hist-tab-sources" aria-selected="false">Sources</button>
     </div>
@@ -1767,15 +1883,29 @@ body.dir-save  .ctl-save{
       .then(function(json){ feed.stripeLink19 = json.stripeLink19; return feed; })
       .catch(function(){ return feed; });
   }
-  function postForm(name, fields){
+  // Post a Netlify form. IMPORTANT: post to location.pathname, not "/", so
+  // the /waitlist force=true 302 in netlify.toml doesn't strip the body.
+  // The /:slug rewrite (force=false, status 200) passes POST through to
+  // Netlify Forms cleanly, and Netlify accepts submissions on any URL as
+  // long as `form-name` matches a declared form. If we're on a path that
+  // DOES redirect (like /portal), fall back to /swipe.html which is served
+  // as-is. `keepalive` is only used when the caller is about to navigate.
+  function postForm(name, fields, opts){
     try{
       var payload = Object.assign({ 'form-name': name, 'bot-field': '' }, fields || {});
       var body = new URLSearchParams(payload).toString();
-      return fetch('/', {
+      var path = location.pathname || '/';
+      // Anything that would 302 goes to /swipe.html directly.
+      if(path === '/' || path === '/portal' || /^\/vedika-bhasin/.test(path)){
+        path = '/swipe.html';
+      }
+      var init = {
         method:'POST',
         headers:{ 'Content-Type':'application/x-www-form-urlencoded' },
-        body: body, keepalive:true
-      }).catch(function(){});
+        body: body
+      };
+      if(opts && opts.keepalive) init.keepalive = true;
+      return fetch(path, init).catch(function(){});
     }catch(e){ return Promise.resolve(); }
   }
 
@@ -2045,6 +2175,14 @@ body.dir-save  .ctl-save{
     var stage = document.getElementById('card-stage');
     stage.textContent = '';
     updateCounter();
+    // Restore the fast-track continuation line if a fast-tracked card is
+    // still in play with cards remaining.
+    var ftHost = document.getElementById('fast-track-line');
+    if(ftHost){
+      var hasCardsLeft = state.cardIndex < client.cards.length;
+      if(state.superLiked && hasCardsLeft) showFastTrackContinuation();
+      else ftHost.hidden = true;
+    }
     // Thin the peek: while 2 cards remain, only show the front + one peek.
     // While 1 card remains, only the front. Prevents "phantom cards" behind
     // the last real one.
@@ -2332,16 +2470,45 @@ body.dir-save  .ctl-save{
         document.getElementById('card-stage').insertBefore(el, document.getElementById('card-stage').firstChild);
       }
       updateCounter();
-      if(action === 'super' || state.cardIndex >= client.cards.length){
-        // Deck's empty: show a face-down stack with "That's all N. Pick one
-        // to write free." then hand into the pick-a-topic (direction) screen.
-        // Respects prefers-reduced-motion by skipping the beat entirely.
+      // End-of-deck only fires when every card in the deck has a decision
+      // from this visitor. A fast-track with cards still unswiped continues
+      // to the next card; a small line above the stack names the most-recent
+      // fast-tracked card and offers a jump-to-pick shortcut.
+      if(state.cardIndex >= client.cards.length){
         showEndOfDeck(client.cards.length);
+        sendDeckComplete('end_of_deck');
         setTimeout(function(){ goToDirection(); }, prefersReduced ? 0 : 900);
+      } else if(action === 'super'){
+        showFastTrackContinuation();
+        attachOnboardingHint();
       } else {
         attachOnboardingHint();
       }
     }, prefersReduced ? 0 : 640);
+  }
+  // Render the "Fast-tracked {title}. Keep swiping, or pick it now." line
+  // above the card stack. Named after the most-recent superLiked card.
+  function showFastTrackContinuation(){
+    var host = document.getElementById('fast-track-line');
+    var ft = state.superLiked;
+    if(!host || !ft) return;
+    host.textContent = '';
+    var label = document.createElement('span');
+    label.className = 'ft-label';
+    label.textContent = 'Fast-tracked ';
+    var t = document.createElement('strong');
+    t.className = 'ft-title';
+    t.textContent = String(ft.title || '');
+    var sep = document.createTextNode('. Keep swiping, or ');
+    var link = document.createElement('button');
+    link.type = 'button';
+    link.className = 'ft-link';
+    link.setAttribute('data-action', 'pick-fast-tracked');
+    link.textContent = 'pick it now';
+    var end = document.createTextNode('.');
+    host.appendChild(label); host.appendChild(t); host.appendChild(sep);
+    host.appendChild(link); host.appendChild(end);
+    host.hidden = false;
   }
 
   // Renders a face-down stack + copy in the card stage. Not a real card, so
@@ -2661,6 +2828,20 @@ body.dir-save  .ctl-save{
     openEmailModal('approval');
   }
 
+  // Jump straight from the feed to the pick step, preselecting the most
+  // recent fast-tracked card. Called from the fast-track continuation link
+  // ("pick it now") above the card stack.
+  function pickFastTrackedNow(){
+    var ft = state.superLiked;
+    if(!ft) return;
+    // Send deck-complete now with whatever's been swiped so far.
+    sendDeckComplete('pick_it_now');
+    goToDirection();
+    if(state.freePickCardId !== String(ft.id)){
+      pickFreeArticle(ft.id);
+    }
+  }
+
   // From the confirmation, "Change direction" jumps back to the picker with
   // the current selection intact. The visitor can peek without losing their
   // approval; picking a DIFFERENT card in pickFreeArticle() below invalidates
@@ -2692,17 +2873,70 @@ body.dir-save  .ctl-save{
     var directionKeys = lastDirection.map(function(x){ return String(x.brief.id); });
     dataAdapter.submitApproval(freeKey, directionKeys, email || '');
 
+    var freeFull = findFull(freeKey) || {};
     dataAdapter.postApproval({
       slug:              SLUG,
       companyName:       String(client.companyName || ''),
+      cardTitle:         String(freeFull.title || freeArticleTitle()),
+      cardFormat:        String(freeFull.format || ''),
       email:             String(email || ''),
       freeArticleTitle:  freeArticleTitle(),
       directionTitles:   titles.join(' | '),
       approvedAt:        state.approvedAtIso,
-      deliverBy:         state.deliverByIso
+      deliverBy:         state.deliverByIso,
+      landsBy:           fmtLandsBy(due)
     });
+    // Also fire deck-complete when the visitor arrives at the pick step
+    // through the natural end-of-deck (they didn't use "pick it now"). Guarded
+    // in sessionStorage so a re-approval doesn't send a second submission.
+    sendDeckComplete('approved');
     renderConfirmation();
     show('confirmation');
+  }
+
+  // Human-readable "Sep 29, 10:26 PM PDT" for the approvals notification.
+  function fmtLandsBy(d){
+    try{
+      var main = d.toLocaleString(undefined, {
+        month:'short', day:'numeric', hour:'numeric', minute:'2-digit'
+      });
+      var tz = '';
+      try{
+        var parts = new Intl.DateTimeFormat(undefined, { timeZoneName:'short' }).formatToParts(d);
+        var p = parts.filter(function(x){ return x.type === 'timeZoneName'; })[0];
+        tz = p ? (' ' + p.value) : '';
+      }catch(_){}
+      return main + tz;
+    }catch(_){ return d.toISOString(); }
+  }
+
+  // Deck-complete Netlify submission. One per visitor per deck (guarded in
+  // sessionStorage). `reason` is 'end_of_deck', 'pick_it_now', or 'approved'.
+  // Sends every card the visitor decided on, in deck order, formatted:
+  // "{title}: {LIKED|PASSED|SAVED|FAST-TRACK}", one per line.
+  var DECK_COMPLETE_KEY_PREFIX = 'gwm-deck-complete-';
+  function sendDeckComplete(reason){
+    if(!client || !client.cards) return;
+    var key = DECK_COMPLETE_KEY_PREFIX + SLUG;
+    try{ if(sessionStorage.getItem(key)) return; }catch(_){}
+    var lines = [];
+    var actionMap = { like:'LIKED', pass:'PASSED', save:'SAVED', fasttrack:'FAST-TRACK' };
+    var decided = 0;
+    client.cards.forEach(function(c){
+      var a = actionOnCard(c.id);
+      if(!a) return;
+      decided++;
+      lines.push(String(c.title || '') + ': ' + (actionMap[a] || String(a).toUpperCase()));
+    });
+    if(!decided) return;
+    try{ sessionStorage.setItem(key, '1'); }catch(_){}
+    postForm('deck-complete', {
+      slug:         SLUG,
+      companyName:  String(client.companyName || ''),
+      cardsSwiped:  decided + ' of ' + client.cards.length,
+      reason:       String(reason || ''),
+      swipes:       lines.join('\n')
+    });
   }
 
   function renderConfirmation(){
@@ -2723,107 +2957,26 @@ body.dir-save  .ctl-save{
       el.textContent = fmtWeekdayMonDay(nextDrop);
     });
 
-    // Optional "lands by" line under the main copy — keeps the original
-    // "Your article, X, lands by Sep 22, 5:40 PM." sentence so nothing
-    // ambiguous slips through.
+    // Article line: "Your article, {title}, lands in your inbox by
+    // {Mon D, h:mm AM}. It's yours either way." Title + time bold.
     var arriveEl = document.getElementById('conf-arrive');
     if(arriveEl){
       arriveEl.textContent = '';
       arriveEl.appendChild(document.createTextNode('Your article, '));
       var s = document.createElement('strong'); s.textContent = freeTitle;
       arriveEl.appendChild(s);
-      arriveEl.appendChild(document.createTextNode(', lands by '));
+      arriveEl.appendChild(document.createTextNode(', lands in your inbox by '));
       var d2 = document.createElement('strong'); d2.textContent = deliverStr;
       arriveEl.appendChild(d2);
-      arriveEl.appendChild(document.createTextNode('.'));
+      arriveEl.appendChild(document.createTextNode(". It's yours either way."));
     }
 
-    // ---- Feed tile: seat preview (real card + YOU + SEAT 2 + SEAT 3 loop)
-    renderSeatPreview();
-
-    // ---- Log tile: visitor's real swipes newest first + count header
-    var log      = document.getElementById('pd-log');
-    var countEl  = document.getElementById('pd-log-count');
-    var swipeEvs = state.events.filter(function(e){
-      return ['like','pass','save','super'].indexOf(e.action) !== -1;
-    });
-    if(countEl){
-      countEl.textContent = swipeEvs.length + ' call' + (swipeEvs.length === 1 ? '' : 's') + ' logged';
-    }
-    if(log){
-      log.textContent = '';
-      var recent = swipeEvs.slice().reverse().slice(0, 3);
-      if(!recent.length){
-        var empty = document.createElement('div');
-        empty.style.cssText = 'font-family:var(--font-mono); font-size:11.5px; color:#4a4a4a; padding:4px 0;';
-        empty.textContent = 'Every call you make lands here.';
-        log.appendChild(empty);
-      } else {
-        recent.forEach(function(ev){
-          var card = findFull(ev.cardId);
-          var row = document.createElement('div'); row.className = 'row';
-          var dot = document.createElement('span'); dot.className = 'dot';
-          var fmt = card ? String(card.format).toLowerCase() : 'post';
-          dot.style.background = fmt === 'pillar' ? 'var(--f-pillar)' : fmt === 'insight' ? 'var(--f-insight)' : 'var(--f-post)';
-          var t = document.createElement('span'); t.className = 't'; t.textContent = card ? String(card.title) : '(card)';
-          var a = document.createElement('span');
-          a.className = 'a a-' + ev.action;
-          a.textContent = ev.action === 'super' ? 'Fast' : ev.action.charAt(0).toUpperCase() + ev.action.slice(1);
-          row.appendChild(dot); row.appendChild(t); row.appendChild(a);
-          log.appendChild(row);
-        });
-      }
-    }
-
-    // ---- Library tile: free pick = ARRIVING + countdown; others READY TO
-    // WRITE. No credit numbers, no LOCKED badge (badge already gone).
-    var lib = document.getElementById('pd-library');
-    if(lib){
-      lib.textContent = '';
-      var slots = lastDirection || [];
-      var freeId = state.freePickCardId;
-      var ordered = slots.slice().sort(function(a, b){
-        var af = String(a.brief.id) === String(freeId) ? 0 : 1;
-        var bf = String(b.brief.id) === String(freeId) ? 0 : 1;
-        return af - bf;
-      });
-      ordered.forEach(function(x, i){
-        var full = findFull(x.brief.id);
-        var title = full ? String(full.title) : String(x.brief.title || '');
-        var format = String((full && full.format) || x.brief.format || 'post').toLowerCase();
-        var arriving = String(x.brief.id) === String(freeId);
-        var slot = document.createElement('div');
-        slot.className = 'pd-library-slot fmt-' + format + (arriving ? ' arriving' : '');
-        var idx = document.createElement('span'); idx.className = 'idx'; idx.textContent = String(i + 1);
-        var body = document.createElement('div'); body.className = 'lib-body';
-        var lt  = document.createElement('span'); lt.className = 'lib-title'; lt.textContent = title;
-        var st  = document.createElement('span'); st.className = 'status';
-        if(arriving){
-          st.textContent = 'Arriving ' + (state.deliverByIso ? fmtDT(state.deliverByIso) : 'soon');
-        } else {
-          st.textContent = 'Ready to write';
-        }
-        body.appendChild(lt); body.appendChild(st);
-        var stamp = document.createElement('span'); stamp.className = 'approved-stamp'; stamp.textContent = 'Approved';
-        slot.appendChild(idx); slot.appendChild(body); slot.appendChild(stamp);
-        lib.appendChild(slot);
-      });
-    }
-
-    // ---- Signals tile: only rendered when the company has a signal row.
-    // Blur the competitor name — the source string names them, not the text.
-    var sigSection = document.getElementById('pd-signals-section');
-    var sigMsg     = document.getElementById('pd-signal-msg');
-    var sig        = client && client.signal;
-    if(sigSection && sigMsg){
-      if(sig && sig.text){
-        sigSection.hidden = false;
-        renderBlurredSignal(sigMsg, sig);
-      } else {
-        // Never invent a signal — hide the tile outright.
-        sigSection.hidden = true;
-      }
-    }
+    // Five-tile portal mock. Each tile calls its own renderer and its own
+    // loop (Feed cycles Match/Split/Timing; Library cycles UP NEXT →
+    // REQUESTED → WRITING → DELIVERED). mountPortalMock() cleans up any
+    // prior loops before starting new ones and wires an IntersectionObserver
+    // so nothing animates off-screen.
+    mountPortalMock();
 
     // CTA — one of two modes.
     //   'call'     : hide price/spots UI, show the walkthrough copy + BOOKING_URL.
@@ -2852,11 +3005,13 @@ body.dir-save  .ctl-save{
     if(price) price.hidden = true;
     if(spots) spots.hidden = true;
     if(line)  line.hidden  = false;
-    if(lbl)   lbl.textContent = 'Open your portal · 15-minute walkthrough';
+    if(lbl)   lbl.textContent = 'Open 3 seats · 15-minute onboarding';
     if(btn)   btn.disabled = false;
     if(host)  host.classList.remove('glow-off');
     if(ack)   ack.classList.remove('on');
-    if(fine)  fine.style.display = '';
+    // The article-line above the mock now carries the "either way" promise;
+    // the fine under the button is retired in call mode.
+    if(fine)  fine.hidden = true;
   }
 
   // ---- Signals tile copy.
@@ -2908,107 +3063,402 @@ body.dir-save  .ctl-save{
     el.textContent = text;
   }
 
-  // ---- Feed-tile seat preview: build a real card from this client's deck
-  // (prefers the visitor's free pick, falls back to their liked cards, then
-  // the first card). One YOU seat with the visitor's actual swipe on that
-  // card. SEAT 2 and SEAT 3 are dashed ghosts cycling demo reactions +
-  // result chip through MATCH / SPLIT / TIMING.
-  var seatCycleTimer = null;
-  function renderSeatPreview(){
-    var host = document.getElementById('seat-preview');
-    if(!host || !client || !client.cards || !client.cards.length) return;
-    if(seatCycleTimer){ clearInterval(seatCycleTimer); seatCycleTimer = null; }
-    host.textContent = '';
+  // ============================================================
+  // Portal mock: five tiles, real data where possible, small loops.
+  // Feed, Log, Signals, Library, Hub. All timers registered so
+  // mountPortalMock() can tear them down on re-mount, and an
+  // IntersectionObserver pauses everything when the mock leaves
+  // the viewport. prefers-reduced-motion collapses to a static frame.
+  // ============================================================
 
-    // Pick the card that best represents "the visitor's call" for the demo.
-    var pickId = state.freePickCardId ||
-                 (state.liked[0] && state.liked[0].id) ||
-                 (state.saved[0] && state.saved[0].id) ||
-                 (state.superLiked && state.superLiked.id) ||
-                 client.cards[0].id;
-    var card = findFull(pickId) || client.cards[0];
-    var fmt  = String(card.format || 'post').toLowerCase();
-    var yourAction = actionOnCard(card.id) || 'like';   // if the visitor never touched this card, assume like
-
-    // ---- real-card mock at top ----
-    var seatCard = document.createElement('div');
-    seatCard.className = 'seat-card fmt-' + fmt;
-    var pill = document.createElement('span'); pill.className = 'fmt-pill';
-    pill.textContent = fmt === 'pillar' ? 'Pillar' : fmt === 'insight' ? 'Insight' : 'Post';
-    var t = document.createElement('p'); t.className = 'seat-card-title'; t.textContent = String(card.title || '');
-    seatCard.appendChild(pill); seatCard.appendChild(t);
-    host.appendChild(seatCard);
-
-    // ---- three seats + result chip ----
-    var row = document.createElement('div'); row.className = 'seat-row';
-    var s1 = makeSeatSlot('you', 'YOU', yourAction, false);
-    var s2 = makeSeatSlot('demo2', 'SEAT 2', null, true);
-    var s3 = makeSeatSlot('demo3', 'SEAT 3', null, true);
-    row.appendChild(s1); row.appendChild(s2); row.appendChild(s3);
-    host.appendChild(row);
-
-    var result = document.createElement('span'); result.className = 'seat-result';
-    host.appendChild(result);
-
-    // Loop through MATCH -> SPLIT -> TIMING. Each state maps to seat 2/3's
-    // stamps and the result chip color.
-    var loop = [
-      // MATCH: everyone likes it
-      { s2:'like', s3:'like', label:'MATCH',  cls:'r-match'  },
-      // SPLIT: seats disagree
-      { s2:'pass', s3:'like', label:'SPLIT',  cls:'r-split'  },
-      // TIMING: someone saves for later
-      { s2:'save', s3:'like', label:'TIMING', cls:'r-timing' }
-    ];
-    var idx = 0;
-    function paint(){
-      var step = loop[idx];
-      setStamp(s2, step.s2);
-      setStamp(s3, step.s3);
-      result.className = 'seat-result on ' + step.cls;
-      result.textContent = step.label;
-      idx = (idx + 1) % loop.length;
-    }
-    if(prefersReduced){
-      // Static: land on MATCH and stop.
-      paint();
-      return;
-    }
-    paint();
-    seatCycleTimer = setInterval(paint, 2400);
+  // ---- Avatar helpers (inline copy of portal/avatars.js essentials so we
+  // don't need a module-loading bridge inside this classic-script IIFE).
+  var AVATAR_SHAPES = ['blob', 'worm', 'ghost', 'spike', 'pebble', 'curl'];
+  var AVATAR_COLORS = {
+    blob:   { body: 'var(--f-pillar)',  ink: 'var(--f-pillar-ink)' },
+    worm:   { body: 'var(--f-insight)', ink: 'var(--f-insight-ink)' },
+    ghost:  { body: 'var(--save)',      ink: 'var(--save-ink)' },
+    spike:  { body: 'var(--fasttrack)', ink: 'var(--fasttrack-ink)' },
+    pebble: { body: 'var(--like)',      ink: 'var(--like-ink)' },
+    curl:   { body: 'var(--pass)',      ink: 'var(--pass-ink)' }
+  };
+  var AVATAR_BODIES = {
+    blob:   'M20 4c8.5 0 14 6.4 14 14.5V30c0 2-1.6 3.2-3.2 2.2-1.6-1-3-1-4.6 0s-3 1-4.6 0-3-1-4.6 0-3 1-4.6 0S9.8 31.2 8.2 32.2C6.6 33.2 6 32 6 30V18.5C6 10.4 11.5 4 20 4z',
+    worm:   'M20 3c2 0 3 1.4 3 3 5 1.2 8 5.2 8 10.5V31a4 4 0 0 1-4 4H13a4 4 0 0 1-4-4V16.5C9 11.2 12 7.2 17 6c0-1.6 1-3 3-3z',
+    ghost:  'M20 4c7.7 0 13 5.8 13 13v17l-3.2-2.6L26.5 34 23.2 31.4 20 34l-3.2-2.6L13.5 34l-3.3-2.6L7 34V17C7 9.8 12.3 4 20 4z',
+    spike:  'M20 3l3 5 5-3 .5 5.6 5.6.4-3 5 4.4 3.6-5.2 2 1.8 5.4-5.6-.6-1 5.6L20 29.8 15.5 33l-1-5.6-5.6.6 1.8-5.4-5.2-2L9.9 17l-3-5 5.6-.4L13 6l5 3z',
+    pebble: 'M6 24c0-8 6.3-13 14-13s14 5 14 13c0 5-3.6 9-8.4 9H14.4C9.6 33 6 29 6 24z',
+    curl:   'M19 5c8 0 13 6 13 13.5S27 32 19 32c-3 0-5.4-.9-7-2.4-.8 2-2.9 3.4-5 3.4-1.6 0-2.4-1.3-1.4-2.4 1.6-1.8 1.4-4.2 1-6.2C6.2 23 6 21 6 18.5 6 11 11 5 19 5z'
+  };
+  var AVATAR_FACES = {
+    blob:   { eyes: [[15, 17], [25, 17]], mouth: 'M16 24q4 3 8 0' },
+    worm:   { eyes: [[16, 17], [24, 17]], mouth: 'M17 25h6' },
+    ghost:  { eyes: [[16, 17], [24, 17]], mouth: 'M18 24a2 2 0 0 0 4 0' },
+    spike:  { eyes: [[16.5, 18], [23.5, 18]], mouth: 'M17 23.5l1.5 1.5 1.5-1.5 1.5 1.5 1.5-1.5' },
+    pebble: { eyes: [[15, 22], [25, 22]], mouth: 'M17.5 27q2.5 1.6 5 0' },
+    curl:   { eyes: [[15, 16], [23, 16]], mouth: 'M16 22q3 2.5 6 0' }
+  };
+  function avatarSvg(shape, size){
+    var c = AVATAR_COLORS[shape], f = AVATAR_FACES[shape];
+    var eyes = f.eyes.map(function(p){
+      var x = p[0], y = p[1];
+      return '<circle cx="'+x+'" cy="'+y+'" r="2.6" fill="#fff"/>' +
+             '<circle cx="'+(x+0.5)+'" cy="'+(y+0.4)+'" r="1.3" style="fill:'+c.ink+'"/>';
+    }).join('');
+    return '<svg width="'+size+'" height="'+size+'" viewBox="0 0 40 40" aria-hidden="true" focusable="false">' +
+      '<path d="'+AVATAR_BODIES[shape]+'" style="fill:'+c.body+';stroke:'+c.ink+'" stroke-width="1.6" stroke-linejoin="round"/>' +
+      eyes +
+      '<path d="'+f.mouth+'" fill="none" style="stroke:'+c.ink+'" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>' +
+      '</svg>';
   }
+  function pencilFacelessSvg(size){
+    return '<svg width="'+size+'" height="'+size+'" viewBox="0 0 88 88" aria-hidden="true" focusable="false">' +
+      '<g transform="rotate(-38 44 44)" stroke="#0E0E0E" stroke-width="1.8" stroke-linejoin="round">' +
+        '<polygon points="44,4 36.5,18 51.5,18" fill="#2B2B2B"/>' +
+        '<polygon points="36.5,18 51.5,18 53,27 35,27" fill="#E8C9A0"/>' +
+        '<rect x="35" y="27" width="18" height="40" fill="#F2C200"/>' +
+        '<rect x="41" y="27" width="6" height="40" fill="#FFD84A" stroke="none"/>' +
+        '<rect x="35" y="67" width="18" height="6" fill="#BBBBBB"/>' +
+        '<rect x="35" y="73" width="18" height="10" rx="3.5" fill="#B8FF71"/>' +
+      '</g></svg>';
+  }
+
+  // ---- Action helpers used by every tile.
   function actionOnCard(cardKey){
-    // Search state.liked/passed/saved + superLiked for this card key.
     for(var i = 0; i < state.liked.length; i++)  if(String(state.liked[i].id) === String(cardKey))  return 'like';
     for(var j = 0; j < state.passed.length; j++) if(String(state.passed[j].id) === String(cardKey)) return 'pass';
     for(var k = 0; k < state.saved.length; k++)  if(String(state.saved[k].id) === String(cardKey))  return 'save';
     if(state.superLiked && String(state.superLiked.id) === String(cardKey)) return 'fasttrack';
     return null;
   }
-  function makeSeatSlot(fid, label, action, isDemo){
+  var STAMP_TEXT = { like:'LIKED', pass:'PASSED', save:'SAVED', fasttrack:'FAST-TRACK', super:'FAST-TRACK' };
+  function stampClass(action){ return action === 'super' ? 'a-fasttrack' : ('a-' + action); }
+  function sourcesCount(card){ return (card && Array.isArray(card.sources)) ? card.sources.length : 0; }
+
+  // ---- Timer + observer registry so mountPortalMock can tear down cleanly.
+  var pdTimers = [];
+  var pdObserver = null;
+  function pdSetInterval(fn, ms){ var id = setInterval(fn, ms); pdTimers.push(id); return id; }
+  function pdClearAllTimers(){
+    pdTimers.forEach(function(id){ clearInterval(id); });
+    pdTimers = [];
+  }
+  function pdTeardown(){
+    pdClearAllTimers();
+    if(pdObserver){ try{ pdObserver.disconnect(); }catch(_){} pdObserver = null; }
+  }
+  // The Feed and Library tiles start their own interval loops. Renderers for
+  // the static tiles (Log, Signals, Hub) are safe to call any number of times.
+  function startPortalLoops(){
+    renderFeedTile();
+    renderLibraryTile();
+  }
+
+  function mountPortalMock(){
+    pdTeardown();
+    renderFeedTile();
+    renderLogTile();
+    renderSignalsTile();
+    renderLibraryTile();
+    renderHubTile();
+    // Pause loops when the mock scrolls out of view. On return, re-start the
+    // two tiles that carry their own timers.
+    var host = document.querySelector('.portal-dashboard');
+    if(host && 'IntersectionObserver' in window){
+      pdObserver = new IntersectionObserver(function(entries){
+        entries.forEach(function(e){
+          if(e.isIntersecting){
+            if(!pdTimers.length) startPortalLoops();
+          } else {
+            pdClearAllTimers();
+          }
+        });
+      }, { threshold: 0.15 });
+      pdObserver.observe(host);
+    }
+  }
+
+  // ==============================
+  // Feed tile: mini reveal screen
+  // ==============================
+  function renderFeedTile(){
+    var host = document.getElementById('pd-reveal');
+    if(!host || !client || !client.cards || !client.cards.length) return;
+    host.textContent = '';
+
+    var pickId = state.freePickCardId ||
+                 (state.liked[0] && state.liked[0].id) ||
+                 (state.superLiked && state.superLiked.id) ||
+                 (state.saved[0] && state.saved[0].id) ||
+                 client.cards[0].id;
+    var card = findFull(pickId) || client.cards[0];
+    var fmt  = String(card.format || 'post').toLowerCase();
+    var yourAction = actionOnCard(card.id);   // may be null (no swipe on this card)
+
+    // Sunburst backdrop (SVG). Class toggles switch its gradient stops.
+    var backdrop = document.createElement('div'); backdrop.className = 'pd-reveal-bg';
+    host.appendChild(backdrop);
+    // State chip (MATCH / SPLIT / TIMING) top-center.
+    var chip = document.createElement('span'); chip.className = 'pd-reveal-chip';
+    host.appendChild(chip);
+    // The card (real content, tilted).
+    var cardEl = document.createElement('div'); cardEl.className = 'pd-reveal-card fmt-' + fmt;
+    var pill = document.createElement('span'); pill.className = 'pd-reveal-fmt'; pill.textContent = fmt === 'pillar' ? 'Pillar' : (fmt === 'insight' ? 'Insight' : 'Post');
+    var t    = document.createElement('p');    t.className    = 'pd-reveal-title'; t.textContent = String(card.title || '');
+    var srcN = document.createElement('span'); srcN.className = 'pd-reveal-sources';
+    var n = sourcesCount(card); srcN.textContent = n + ' source' + (n === 1 ? '' : 's');
+    cardEl.appendChild(pill); cardEl.appendChild(t); cardEl.appendChild(srcN);
+    host.appendChild(cardEl);
+
+    // Three seats around the card.
+    var seatsWrap = document.createElement('div'); seatsWrap.className = 'pd-reveal-seats';
+    var s1 = makeRevealSeat('you',   'YOU',    yourAction, 'blob',   false);
+    var s2 = makeRevealSeat('seat2', 'SEAT 2', null,       'spike',  true);
+    var s3 = makeRevealSeat('seat3', 'SEAT 3', null,       'pebble', true);
+    seatsWrap.appendChild(s1); seatsWrap.appendChild(s2); seatsWrap.appendChild(s3);
+    host.appendChild(seatsWrap);
+    var preview = document.createElement('span'); preview.className = 'pd-preview-tag'; preview.textContent = 'PREVIEW';
+    host.appendChild(preview);
+
+    // Cycle scenarios. Build a copy that respects YOU's real stamp.
+    // If YOU passed, we can't do MATCH — use the two seats to demo split/timing.
+    var loop = buildRevealScenarios(yourAction);
+    var idx = 0;
+    function paint(){
+      var step = loop[idx];
+      chip.textContent = step.label;
+      chip.className = 'pd-reveal-chip on ' + step.cls;
+      backdrop.className = 'pd-reveal-bg ' + step.cls;
+      setSeatStamp(s2, step.s2);
+      setSeatStamp(s3, step.s3);
+      idx = (idx + 1) % loop.length;
+    }
+    if(prefersReduced){ paint(); return; }
+    paint();
+    pdSetInterval(paint, 4000);
+  }
+
+  function makeRevealSeat(kind, label, action, defaultShape, isDemo){
     var slot = document.createElement('div');
-    slot.className = 'seat-slot' + (isDemo ? ' demo' : '');
-    var av = document.createElement('span'); av.className = 'seat-avatar';
-    av.textContent = isDemo ? '?' : 'YOU';
-    if(isDemo){ av.style.fontSize = '11px'; }
-    var stamp = document.createElement('span'); stamp.className = 'seat-stamp';
-    stamp.setAttribute('data-slot', 'stamp');
-    if(action) setStamp({ stamp: stamp }, action);
-    var lbl = document.createElement('span'); lbl.className = 'seat-label'; lbl.textContent = label;
-    slot.appendChild(av); slot.appendChild(stamp); slot.appendChild(lbl);
+    slot.className = 'pd-seat' + (isDemo ? ' demo' : '');
+    var ring = document.createElement('span'); ring.className = 'pd-seat-ring';
+    if(kind === 'you' && !action){
+      ring.textContent = 'YOU';
+      ring.classList.add('mono');
+    } else {
+      ring.innerHTML = avatarSvg(defaultShape, 30);
+    }
+    var stamp = document.createElement('span'); stamp.className = 'pd-seat-stamp';
+    if(action){ setSeatStamp({ _stamp: stamp }, action); }
+    var lbl = document.createElement('span'); lbl.className = 'pd-seat-label'; lbl.textContent = label;
+    slot.appendChild(ring); slot.appendChild(stamp); slot.appendChild(lbl);
     slot._stamp = stamp;
     return slot;
   }
-  function setStamp(slotOrObj, action){
-    var stamp = slotOrObj._stamp || slotOrObj.stamp;
+  function setSeatStamp(slot, action){
+    var stamp = slot._stamp;
     if(!stamp) return;
-    stamp.className = 'seat-stamp on a-' + (action === 'super' ? 'fasttrack' : action);
-    stamp.textContent =
-      action === 'like'      ? 'LIKED'
-    : action === 'pass'      ? 'PASSED'
-    : action === 'save'      ? 'SAVED'
-    : action === 'fasttrack' || action === 'super' ? 'FAST'
-    : '';
+    if(!action){ stamp.className = 'pd-seat-stamp'; stamp.textContent = ''; return; }
+    stamp.className = 'pd-seat-stamp on ' + stampClass(action);
+    stamp.textContent = STAMP_TEXT[action] || '';
+  }
+  function buildRevealScenarios(yourAction){
+    // MATCH: everyone agrees. Doable only if YOU didn't hard-pass.
+    // SPLIT: one seat disagrees.
+    // TIMING: someone saves while others like.
+    var matchS2, matchS3;
+    if(yourAction === 'pass'){ matchS2 = 'pass'; matchS3 = 'pass'; }
+    else if(yourAction === 'save'){ matchS2 = 'save'; matchS3 = 'save'; }
+    else if(yourAction === 'fasttrack'){ matchS2 = 'fasttrack'; matchS3 = 'like'; }
+    else { matchS2 = 'like'; matchS3 = 'like'; }
+    return [
+      { label:'MATCH',  cls:'r-match',  s2: matchS2, s3: matchS3 },
+      { label:'SPLIT',  cls:'r-split',  s2: 'pass', s3: 'like' },
+      { label:'TIMING', cls:'r-timing', s2: 'save', s3: 'like' }
+    ];
+  }
+
+  // ==============================
+  // Log tile
+  // ==============================
+  function renderLogTile(){
+    var log      = document.getElementById('pd-log');
+    var countEl  = document.getElementById('pd-log-count');
+    var swipeEvs = state.events.filter(function(e){
+      return ['like','pass','save','super'].indexOf(e.action) !== -1;
+    });
+    if(countEl){
+      countEl.textContent = swipeEvs.length + ' call' + (swipeEvs.length === 1 ? '' : 's') + ' logged';
+    }
+    if(!log) return;
+    log.textContent = '';
+    if(!swipeEvs.length){
+      // Faint placeholder rows.
+      for(var p = 0; p < 3; p++){
+        var ph = document.createElement('div');
+        ph.className = 'pd-log-row ghost';
+        var lp = document.createElement('span'); lp.className = 'pd-log-title';
+        var rp = document.createElement('span'); rp.className = 'pd-log-src';
+        ph.appendChild(lp); ph.appendChild(rp);
+        log.appendChild(ph);
+      }
+      return;
+    }
+    var recent = swipeEvs.slice().reverse().slice(0, 4);
+    recent.forEach(function(ev){
+      var card = findFull(ev.cardId);
+      var row = document.createElement('div'); row.className = 'pd-log-row';
+      var t = document.createElement('span'); t.className = 'pd-log-title'; t.textContent = card ? String(card.title) : '(card)';
+      var stamp = document.createElement('span');
+      stamp.className = 'pd-log-stamp ' + stampClass(ev.action);
+      stamp.textContent = STAMP_TEXT[ev.action] || '';
+      var sn = sourcesCount(card);
+      var srcs = document.createElement('span'); srcs.className = 'pd-log-src';
+      srcs.textContent = sn + ' src' + (sn === 1 ? '' : 's');
+      row.appendChild(t); row.appendChild(stamp); row.appendChild(srcs);
+      log.appendChild(row);
+    });
+  }
+
+  // ==============================
+  // Signals tile (existing blur logic)
+  // ==============================
+  function renderSignalsTile(){
+    var sigSection = document.getElementById('pd-signals-section');
+    var sigMsg     = document.getElementById('pd-signal-msg');
+    var sig        = client && client.signal;
+    if(!sigSection || !sigMsg) return;
+    if(sig && sig.text){
+      sigSection.hidden = false;
+      renderBlurredSignal(sigMsg, sig);
+    } else {
+      sigSection.hidden = true;
+    }
+  }
+
+  // ==============================
+  // Library tile: book fan
+  //   Top book = free pick, cycling UP NEXT → REQUESTED → WRITING → DELIVERED
+  //   Other books = the visitor's liked / fast-tracked cards, static UP NEXT.
+  // ==============================
+  function renderLibraryTile(){
+    var lib = document.getElementById('pd-library');
+    if(!lib) return;
+    lib.textContent = '';
+    // Assemble the book set: free pick first, then any other liked/fast-tracked
+    // cards not already picked.
+    var freeCard = state.freePickCardId ? findFull(state.freePickCardId) : null;
+    var otherLikes = [];
+    state.liked.forEach(function(c){
+      if(freeCard && String(c.id) === String(freeCard.id)) return;
+      otherLikes.push(c);
+    });
+    if(state.superLiked && !(freeCard && String(state.superLiked.id) === String(freeCard.id))){
+      // Include the fast-tracked card too (deduped against likes).
+      if(!otherLikes.some(function(x){ return String(x.id) === String(state.superLiked.id); })){
+        otherLikes.unshift(state.superLiked);
+      }
+    }
+    // Cap the visible fan at 3 for the mock; portal shows more but this is a preview.
+    var books = [];
+    if(freeCard) books.push(freeCard);
+    otherLikes.slice(0, 2).forEach(function(c){ books.push(c); });
+
+    if(!books.length){
+      var empty = document.createElement('p'); empty.className = 'pd-lib-empty';
+      empty.textContent = 'Every article lands here as it moves from up next to delivered.';
+      lib.appendChild(empty);
+      return;
+    }
+
+    var stage = document.createElement('div'); stage.className = 'pd-lib-stage';
+    var FAN = [ { x: 0, r: 0 }, { x: 22, r: 5 }, { x: -22, r: -5 } ];
+    var freeBookEl = null;
+    // Paint back to front so the top book sits on top.
+    for(var i = books.length - 1; i >= 0; i--){
+      var c = books[i];
+      var fmt = String(c.format || 'post').toLowerCase();
+      var slot = FAN[i] || FAN[0];
+      var b = document.createElement('div');
+      b.className = 'pd-book fmt-' + fmt + (i === 0 ? ' top' : ' back');
+      b.style.transform = 'translateX(' + slot.x + 'px) rotate(' + slot.r + 'deg)';
+      b.style.zIndex = String(20 - i * 2);
+      var head = document.createElement('div'); head.className = 'pd-book-head';
+      var fmtLbl = document.createElement('span'); fmtLbl.className = 'pd-book-fmt';
+      fmtLbl.textContent = fmt === 'pillar' ? 'Pillar' : (fmt === 'insight' ? 'Insight' : 'Post');
+      head.appendChild(fmtLbl);
+      b.appendChild(head);
+      var title = document.createElement('h3'); title.className = 'pd-book-title'; title.textContent = String(c.title || '');
+      b.appendChild(title);
+      var stamp = document.createElement('span'); stamp.className = 'pd-book-stamp';
+      if(i === 0){
+        // Free pick — will be driven by the loop below.
+        stamp.textContent = 'UP NEXT';
+        stamp.dataset.cycle = '1';
+        freeBookEl = { stamp: stamp, extra: null };
+        var extra = document.createElement('span'); extra.className = 'pd-book-count';
+        b.appendChild(extra);
+        freeBookEl.extra = extra;
+      } else {
+        stamp.textContent = 'UP NEXT';
+      }
+      b.appendChild(stamp);
+      stage.appendChild(b);
+    }
+    lib.appendChild(stage);
+
+    if(!freeBookEl) return;
+    var loop = [
+      { label:'UP NEXT',    cls:'st-upnext',    extra:'' },
+      { label:'REQUESTED',  cls:'st-requested', extra:'' },
+      { label:'WRITING',    cls:'st-writing',   extra:'countdown' },
+      { label:'DELIVERED',  cls:'st-delivered', extra:'delivered' }
+    ];
+    var lidx = 0;
+    function paintLib(){
+      var step = loop[lidx];
+      freeBookEl.stamp.className = 'pd-book-stamp on ' + step.cls;
+      freeBookEl.stamp.textContent = step.label;
+      // Flip animation trigger: retrigger by re-adding class.
+      freeBookEl.stamp.classList.remove('flip'); void freeBookEl.stamp.offsetWidth;
+      freeBookEl.stamp.classList.add('flip');
+      if(step.extra === 'countdown' && state.deliverByIso){
+        freeBookEl.extra.textContent = 'Arriving ' + fmtDT(state.deliverByIso);
+        freeBookEl.extra.hidden = false;
+      } else if(step.extra === 'delivered' && state.deliverByIso){
+        freeBookEl.extra.textContent = 'Delivered ' + fmtDT(state.deliverByIso);
+        freeBookEl.extra.hidden = false;
+      } else {
+        freeBookEl.extra.textContent = '';
+        freeBookEl.extra.hidden = true;
+      }
+      lidx = (lidx + 1) % loop.length;
+    }
+    if(prefersReduced){
+      // Static: land on WRITING with the countdown.
+      lidx = 2; paintLib();
+      return;
+    }
+    paintLib();
+    pdSetInterval(paintLib, 1500);
+  }
+
+  // ==============================
+  // Hub tile: pencil + lock + faint grid, non-interactive
+  // ==============================
+  function renderHubTile(){
+    var host = document.getElementById('pd-hub');
+    if(!host) return;
+    host.textContent = '';
+    var grid = document.createElement('div'); grid.className = 'pd-hub-grid';
+    host.appendChild(grid);
+    var pencilWrap = document.createElement('div'); pencilWrap.className = 'pd-hub-pencil';
+    pencilWrap.innerHTML = pencilFacelessSvg(56);
+    // Lock badge.
+    var lock = document.createElement('span'); lock.className = 'pd-hub-lock';
+    lock.innerHTML = '<svg viewBox="0 0 24 24" width="12" height="12" aria-hidden="true"><path d="M7 10V7a5 5 0 0 1 10 0v3" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><rect x="5" y="10" width="14" height="10" rx="2" fill="currentColor"/></svg>';
+    pencilWrap.appendChild(lock);
+    host.appendChild(pencilWrap);
   }
 
   function renderSpotsAndCta(){
@@ -3450,6 +3900,7 @@ body.dir-save  .ctl-save{
       case 'change-direction':    changeDirection(); return;
       case 'back-to-direction':   show('direction'); return;
       case 'back-to-confirmation':show('confirmation'); return;
+      case 'pick-fast-tracked':   pickFastTrackedNow(); return;
       case 'portal-cta':          portalCta(); return;
       case 'show-history':        openHistory(); return;
       case 'close-history':       closeHistory(); return;
