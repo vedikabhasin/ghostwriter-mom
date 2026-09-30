@@ -1,0 +1,62 @@
+/* -----------------------------------------------------------------------------
+   Desk objects — the floating stationery that sits behind the waitlist, the
+   sales-page intro, and the portal login. Rendered as absolutely-positioned
+   emoji glyphs + a DELIVERED stamp, so no raster images to compress.
+   * aria-hidden, pointer-events: none — never blocks clicks or reads to AT
+   * Wrapper is fixed inset:0; children absolute-position by data-def
+   * Densities: full (waitlist), light (sales intro + portal login), none
+   * Responsive: below 640px only phone-safe fragments show
+   * prefers-reduced-motion: static (no drift, no glow)
+   ----------------------------------------------------------------------------- */
+
+.gwm-desk{
+  position:fixed; inset:0; overflow:hidden;
+  pointer-events:none; z-index:0;
+}
+.gwm-desk-frag{
+  position:absolute;
+  user-select:none; -webkit-user-select:none;
+  will-change:transform;
+  filter:drop-shadow(0 12px 14px rgba(14,14,14,0.22));
+}
+.gwm-desk-frag.emoji{
+  font-size:clamp(24px, 3.4vw, 46px);
+  line-height:1;
+}
+.gwm-desk-frag.emoji.sm{ font-size:clamp(18px, 2.5vw, 32px); }
+.gwm-desk-frag.emoji.lg{ font-size:clamp(30px, 4.2vw, 54px); }
+
+/* DELIVERED stamp — the tilted rubber-stamp callout. */
+.gwm-desk-frag.stamp{
+  width:clamp(74px, 7vw, 104px);
+  padding:7px 9px;
+  background:#fff;
+  border:2px dashed rgba(220,60,60,0.7);
+  color:#c0392b;
+  font-family:'Space Mono', ui-monospace, Menlo, monospace;
+  font-size:clamp(9px, 1vw, 11px);
+  letter-spacing:0.14em; text-transform:uppercase; text-align:center;
+  line-height:1.15;
+  box-shadow:0 12px 22px -14px rgba(14,14,14,0.4);
+}
+
+/* Density controls: light/none hide the desktop-heavy fragments. */
+.gwm-desk[data-density="light"] .gwm-desk-frag.hide-light{ display:none; }
+.gwm-desk[data-density="none"]  .gwm-desk-frag{ display:none; }
+
+/* Responsive hiding. Anything with hide-sm/hide-xs collapses on small screens
+   so only 1–2 corner fragments remain on phone. */
+@media (max-width: 479px){
+  .gwm-desk-frag.hide-xs{ display:none; }
+  .gwm-desk-frag.emoji.sm{ font-size:clamp(15px, 4vw, 22px); }
+}
+@media (max-width: 639px){
+  .gwm-desk-frag.hide-sm{ display:none; }
+}
+@media (max-width: 1023px){
+  .gwm-desk-frag.hide-md{ display:none; }
+}
+
+@media (prefers-reduced-motion: reduce){
+  .gwm-desk-frag{ transform:none !important; animation:none !important; }
+}
