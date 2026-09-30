@@ -1,0 +1,227 @@
+{
+  "slug": "genrobotics-d597f6",
+  "companyName": "General Robotics",
+  "contactFirstName": null,
+  "greetingName": null,
+  "introBasis": "your Auto Engineering and DreamControl results, and the setup questions robot buyers ask before they commit",
+  "emailKnown": true,
+  "stripeLink19": "https://buy.stripe.com/7sY8wP0M833Rcx21YugnK09",
+  "directionShape": {
+    "long_form": 1,
+    "short_insight": 2
+  },
+  "offerText": "Your first article is on me.",
+  "signal": null,
+  "cards": [
+    {
+      "id": "gnr-01",
+      "format": "short_insight",
+      "title": "Robot Onboarding: The Month Nobody Budgets",
+      "angle": "Physical Intelligence hit an $11B valuation in March 2026 and NVIDIA is recruiting toward 2 million robotics developers, yet buyers still lose weeks per robot before any policy runs. The bottleneck is the integration layer, not the model.",
+      "evidence": "Your September 2026 Auto Engineering post shows a first Flexiv Rizon skill in about four hours (20 minutes ingestion, 10 minutes sim, the rest skill creation) and later skills in 10 to 15 minutes, against the month-long baseline your CEO gave GeekWire. No article on your site walks a buyer through where those four hours go.",
+      "formatNote": "One first-party log and one market shift.",
+      "tags": [
+        "robot-onboarding",
+        "short-insight",
+        "first-party-log"
+      ],
+      "sources": [
+        {
+          "title": "Introducing Auto Engineering for Robotics",
+          "publisher": "General Robotics",
+          "url": "https://www.generalrobotics.company/post/introducing-auto-engineering-for-robotics"
+        },
+        {
+          "title": "General Robotics says its AI has cut robot setup from a month to hours",
+          "publisher": "GeekWire",
+          "url": "https://www.geekwire.com/2026/general-robotics-led-by-microsoft-vets-says-its-ai-has-cut-robot-setup-from-a-month-to-hours/"
+        },
+        {
+          "title": "Nvidia wants to be the Android of generalist robotics",
+          "publisher": "TechCrunch",
+          "url": "https://techcrunch.com/2026/01/05/nvidia-wants-to-be-the-android-of-generalist-robotics"
+        }
+      ]
+    },
+    {
+      "id": "gnr-02",
+      "format": "short_insight",
+      "title": "Sim-to-Real Fails in Millimetres, Not Models",
+      "angle": "NVIDIA shipped Cosmos world models at CES 2026 to flood robots with synthetic data, and the field still treats transfer as a model-quality problem. Your own log says calibration and timing decide it first.",
+      "evidence": "Your Auto Engineering post reports a system-identification error cut from 143 mm and 6.4 degrees to 5.7 mm and 0.68 degrees, a depth-plane error cut from 28.0 mm to 1.2 mm, and a controller pacing at 500 Hz where the arm expected 30 Hz. Those are the most concrete transfer numbers any vendor published this year and they sit inside a launch post.",
+      "formatNote": "One set of measured errors against one industry assumption.",
+      "tags": [
+        "sim-to-real",
+        "short-insight",
+        "measured-error"
+      ],
+      "sources": [
+        {
+          "title": "Introducing Auto Engineering for Robotics",
+          "publisher": "General Robotics",
+          "url": "https://www.generalrobotics.company/post/introducing-auto-engineering-for-robotics"
+        },
+        {
+          "title": "The Intelligence Grid for Physical AI",
+          "publisher": "General Robotics",
+          "url": "https://www.generalrobotics.company/post/intelligence-grid"
+        },
+        {
+          "title": "Nvidia wants to be the Android of generalist robotics",
+          "publisher": "TechCrunch",
+          "url": "https://techcrunch.com/2026/01/05/nvidia-wants-to-be-the-android-of-generalist-robotics"
+        }
+      ]
+    },
+    {
+      "id": "gnr-03",
+      "format": "long_form",
+      "title": "One Human Video: What Teleop Still Costs",
+      "angle": "Generalist raised $200M at $3B in August 2026 on learning tasks from short human videos, while Western teleop labor runs $25 to $48 an hour and a task still eats dozens of demonstrations. The question is not whether video replaces teleop but what the residual correction loop costs per episode.",
+      "evidence": "Your pipeline turns a single human video into simulated robot experience through hand-pose estimation and Gaussian-splat reconstruction, then fine-tunes with behavior cloning and DAgger, with GELLO arms for corrections. You have never priced the correction step publicly, and that is the number a buyer comparing you to a data vendor wants.",
+      "formatNote": "A cost breakdown the buyer compares against data vendors across several factors.",
+      "tags": [
+        "demonstration-data",
+        "long-form",
+        "pipeline-proof"
+      ],
+      "sources": [
+        {
+          "title": "Robotics startup Generalist reaches $3B valuation",
+          "publisher": "TechCrunch",
+          "url": "https://techcrunch.com/2026/08/25/robotics-startup-generalist-reaches-3b-valuation-sources-say/"
+        },
+        {
+          "title": "Introducing Auto Engineering for Robotics",
+          "publisher": "General Robotics",
+          "url": "https://www.generalrobotics.company/post/introducing-auto-engineering-for-robotics"
+        },
+        {
+          "title": "Robot Teleoperation and Demonstration Data Collection Statistics 2026",
+          "publisher": "Cervo Tech",
+          "url": "https://www.cervo-tech.com/blog/robot-teleoperation-data-collection-statistics-2026.html"
+        }
+      ]
+    },
+    {
+      "id": "gnr-04",
+      "format": "linkedin_post",
+      "title": "Humanoid Control: Where the Small Policy Starts",
+      "angle": "Figure 03 entered BMW Spartanburg in June 2026 and Physical Intelligence's 3 to 5B parameter model needs about 100 ms to plan 50 steps. Below that a fast reflex policy has to take over, and nobody has drawn the boundary in public.",
+      "evidence": "Your DreamControl work (ICRA 2026) runs whole-body drawer, lift and locomotion skills on a Unitree G1 with a control policy under 1 million parameters, guided by a diffusion prior on human motion. The post explains the method and never argues the architecture question it answers.",
+      "formatNote": "One position, argued in the founder's voice.",
+      "tags": [
+        "humanoid-control",
+        "linkedin-post",
+        "research-proof"
+      ],
+      "sources": [
+        {
+          "title": "How we are building Humanoid AI skills with DreamControl",
+          "publisher": "General Robotics",
+          "url": "https://www.generalrobotics.company/post/dreamcontrol-building-humanoid-ai-skills"
+        },
+        {
+          "title": "Physical Intelligence raises $600M",
+          "publisher": "The Robot Report",
+          "url": "https://www.therobotreport.com/physical-intelligence-raises-600m-advance-robot-foundation-models/"
+        },
+        {
+          "title": "BMW deploys Figure 03 humanoid at smart factory",
+          "publisher": "Interesting Engineering",
+          "url": "https://interestingengineering.com/ai-robotics/bmw-figure-03-humanoid-robot-smart-factory-us"
+        }
+      ]
+    },
+    {
+      "id": "gnr-05",
+      "format": "short_insight",
+      "title": "100 Hz Control Over the Network: The Transport Problem",
+      "angle": "NVIDIA wants to be the Android of robotics, but Android never had to move camera frames and joint commands between a cloud model and an arm inside a control deadline. The unglamorous spec is the transport layer.",
+      "evidence": "Your Intelligence Grid post commits to 100 Hz+ control and 30 fps+ image transport across 40+ robot platforms, deployable cloud, on-prem or edge, and the Auto Engineering log shows what a pacing mismatch does when that layer slips. No piece on your site explains how a hosted skill meets a real-time deadline.",
+      "formatNote": "One platform spec and one failure it prevents.",
+      "tags": [
+        "real-time-control",
+        "short-insight",
+        "platform-spec"
+      ],
+      "sources": [
+        {
+          "title": "The Intelligence Grid for Physical AI",
+          "publisher": "General Robotics",
+          "url": "https://www.generalrobotics.company/post/intelligence-grid"
+        },
+        {
+          "title": "Introducing Auto Engineering for Robotics",
+          "publisher": "General Robotics",
+          "url": "https://www.generalrobotics.company/post/introducing-auto-engineering-for-robotics"
+        },
+        {
+          "title": "Nvidia wants to be the Android of generalist robotics",
+          "publisher": "TechCrunch",
+          "url": "https://techcrunch.com/2026/01/05/nvidia-wants-to-be-the-android-of-generalist-robotics"
+        }
+      ]
+    },
+    {
+      "id": "gnr-06",
+      "format": "long_form",
+      "title": "Fifty OEMs, One Interface: Fragmentation as the Product",
+      "angle": "Accenture Ventures invested in April 2026 to push physical AI into manufacturing and logistics, where a single plant runs arms, quadrupeds and AMRs from different vendors. Your CEO's stated constraint is the lack of unified intelligence infrastructure, not a shortage of models.",
+      "evidence": "Your GRID page lists 17 supported OEMs including Boston Dynamics, Unitree, Kinova, FANUC and ANYbotics, and the September 2026 post claims 50+ integrated. What an integration actually requires per OEM (drivers, kinematics, safety interlocks, sim twin) is undocumented, and it is the buyer's first due-diligence question.",
+      "formatNote": "A buyer's due-diligence guide, compared OEM by OEM across several factors.",
+      "tags": [
+        "robot-interoperability",
+        "long-form",
+        "platform-proof"
+      ],
+      "sources": [
+        {
+          "title": "Accenture Invests in General Robotics",
+          "publisher": "Accenture Newsroom",
+          "url": "https://newsroom.accenture.com/news/2026/accenture-invests-in-general-robotics-to-advance-physical-ai-powered-robotics-in-manufacturing-and-logistics"
+        },
+        {
+          "title": "GRID",
+          "publisher": "General Robotics",
+          "url": "https://www.generalrobotics.company/grid"
+        },
+        {
+          "title": "Introducing Auto Engineering for Robotics",
+          "publisher": "General Robotics",
+          "url": "https://www.generalrobotics.company/post/introducing-auto-engineering-for-robotics"
+        }
+      ]
+    },
+    {
+      "id": "gnr-07",
+      "format": "linkedin_post",
+      "title": "Fewer Than 1 in 20 ML Engineers Do Robotics",
+      "angle": "NVIDIA's 2 million developer goal assumes people exist to onboard, yet your CEO's public figure is that fewer than 1 in 20 ML engineers work on robotics. The honest piece is how a platform has to absorb the work those missing engineers would have done.",
+      "evidence": "Your Auto Engineering release describes an agent that builds, tests in MuJoCo and Warp, deploys a skill and adds it back to the platform, and you stated the talent gap in the April 2026 Intelligence Grid post. Neither post connects the two.",
+      "formatNote": "One founder claim connecting two of your own posts.",
+      "tags": [
+        "robotics-talent",
+        "linkedin-post",
+        "agentic-tooling"
+      ],
+      "sources": [
+        {
+          "title": "The Intelligence Grid for Physical AI",
+          "publisher": "General Robotics",
+          "url": "https://www.generalrobotics.company/post/intelligence-grid"
+        },
+        {
+          "title": "Introducing Auto Engineering for Robotics",
+          "publisher": "General Robotics",
+          "url": "https://www.generalrobotics.company/post/introducing-auto-engineering-for-robotics"
+        },
+        {
+          "title": "Nvidia wants to be the Android of generalist robotics",
+          "publisher": "TechCrunch",
+          "url": "https://techcrunch.com/2026/01/05/nvidia-wants-to-be-the-android-of-generalist-robotics"
+        }
+      ]
+    }
+  ]
+}
