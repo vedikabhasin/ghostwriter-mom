@@ -149,36 +149,6 @@
       ]
     },
     {
-      "id": "trv-05",
-      "format": "short_insight",
-      "title": "Cultural Archives in XR: Who Controls Access?",
-      "angle": "An August 2026 heritage paper argues rapid digital capture can counter lost site knowledge, but capture alone doesn't decide who controls sharing. Consent, community editorial control, access permissions, language stewardship and maintenance must be designed in.",
-      "evidence": "Your Treaty Story app for Treaty 8 Polytechnic is an immersive library on Apple Vision Pro covering Cree language, traditional foods, sacred plants and way of life. Get the client's approval before describing any governance decisions.",
-      "formatNote": "One case and one research shift.",
-      "tags": [
-        "cultural-preservation",
-        "short-insight",
-        "community-governance"
-      ],
-      "sources": [
-        {
-          "title": "Treaty Story",
-          "publisher": "Treeview",
-          "url": "https://treeview.studio/work/treaty-story"
-        },
-        {
-          "title": "UAV splatting paper",
-          "publisher": "MDPI Heritage",
-          "url": "https://www.mdpi.com/2571-9408/9/8/328"
-        },
-        {
-          "title": "Treaty Story",
-          "publisher": "App Store",
-          "url": "https://apps.apple.com/us/app/treaty-story/id6737520021"
-        }
-      ]
-    },
-    {
       "id": "trv-06",
       "format": "short_insight",
       "title": "Enterprise XR ROI: Read the Claims Carefully",
@@ -205,41 +175,6 @@
           "title": "Microsoft digital twin",
           "publisher": "Treeview",
           "url": "https://treeview.studio/work/microsoft"
-        }
-      ]
-    },
-    {
-      "id": "trv-07",
-      "format": "linkedin_post",
-      "title": "XR Pilot to Product: Plan the Decision Gate",
-      "angle": "Snap Specs ship this fall at $2,195, while Apple reportedly won't ship a lighter Vision Pro before late 2028. Pilots must survive hardware churn, so set success criteria, device choice, integrations and support before building.",
-      "evidence": "Your NEOM proof of concept tested tracking and navigation features for feasibility. Your Microsoft twin served feasibility-stage and fundraising decisions. Those are two different pilot purposes, and neither is evidence of broad rollout.",
-      "formatNote": "One claim about pilots, two cases that prove it.",
-      "tags": [
-        "pilot-planning",
-        "linkedin-post",
-        "decision-gate"
-      ],
-      "sources": [
-        {
-          "title": "NEOM",
-          "publisher": "Treeview",
-          "url": "https://treeview.studio/work/neom"
-        },
-        {
-          "title": "Microsoft digital twin",
-          "publisher": "Treeview",
-          "url": "https://treeview.studio/work/microsoft"
-        },
-        {
-          "title": "Snap Specs",
-          "publisher": "TechCrunch",
-          "url": "https://techcrunch.com/2026/06/16/snap-finally-debuts-its-long-awaited-ar-glasses-specs-and-oof-they-arent-cheap/"
-        },
-        {
-          "title": "successor report",
-          "publisher": "The Apple Post",
-          "url": "https://www.theapplepost.com/2026/09/27/72741/work-continues-on-lighter-apple-vision-pro-successor-report-says/"
         }
       ]
     }
