@@ -1510,6 +1510,12 @@ body.dir-save  .ctl-save{
 <script type="module">
   import { mountDesk } from '/shared/desk.js';
   mountDesk(document.getElementById('desk-mount'), { density: 'light' });
+
+  // Bridge /shared/track.js into the classic-script IIFE below. See
+  // /shared/track.js for the gating (swipetemplate / is_internal / tracking:
+  // 'basic' fall back to BASIC) and the session-replay masking rules.
+  import * as T from '/shared/track.js';
+  window.gwmTrack = T;
 </script>
 
 <!-- -----------------------------------------------------------------------------
@@ -1771,7 +1777,7 @@ body.dir-save  .ctl-save{
     <h3 id="email-modal-title">Where should I send it?</h3>
     <p class="modal-sub" id="email-modal-sub">Your free article lands here. No newsletter, no spam.</p>
     <label class="modal-field" for="email-modal-input">
-      <input type="email" id="email-modal-input" name="email"
+      <input type="email" id="email-modal-input" name="email" data-ph-mask
              placeholder="you@work.com" autocomplete="email"
              inputmode="email" required>
     </label>
@@ -2152,6 +2158,19 @@ body.dir-save  .ctl-save{
     });
     if(id === 'direction')    logEvent('', 'direction_viewed');
     if(id === 'confirmation') logEvent('', 'confirmation_viewed');
+    // Funnel milestones. intro_viewed and feed_started fire only once per
+    // session to keep the funnel clean.
+    if(id === 'intro') {
+      if(!state._introViewedSent){ state._introViewedSent = true; try { window.gwmTrack && window.gwmTrack.capture('intro_viewed'); } catch(_){} }
+      _bumpStep('intro');
+    }
+    if(id === 'feed') {
+      if(!_feedStartedAt){
+        _feedStartedAt = Date.now();
+        try { window.gwmTrack && window.gwmTrack.capture('feed_started'); } catch(_){}
+      }
+      _bumpStep('feed');
+    }
   }
   // Local history + PostHog capture. Per-card swipe rows now flow to Supabase
   // through dataAdapter.logSwipe (called from doAction) instead of a Netlify
@@ -2169,28 +2188,175 @@ body.dir-save  .ctl-save{
     state.events.push(evt);
     saveState();
 
-    // PostHog event mapping. Register slug is done once at init, so we don't
-    // repeat it on every capture.
+    // -- Analytics routing ---------------------------------------------------
+    // All slugs get the "existing events" fix (window.posthog looked up at
+    // call time so nothing lands in the dead stub queue). Only ENHANCED
+    // slugs get card_position_pct, swipe metrics, source counters, and the
+    // funnel timing props.
+    var T = window.gwmTrack;
+    if (!T) return;
+    var enhanced = T.isEnhanced();
     try{
-      var props = {};
+      var props = Object.assign({}, extra || {});
       if(cardId) props.card_key = cardId;
-      if(extraUrl) props.url = extraUrl;
+      var card  = cardId ? findFull(cardId) : null;
+      // The full URL carries PII risk on some sources, so keep host only.
+      if(props.url){
+        try { props.source_host = new URL(String(props.url)).host; } catch(_) {}
+        delete props.url;
+      }
+      if(enhanced){
+        var idx = (card && client && client.cards) ? client.cards.indexOf(card) : (typeof state.cardIndex === 'number' ? state.cardIndex : null);
+        var fmt = card ? String(card.format||'post').toLowerCase() : null;
+        if(idx !== null) props.card_index = idx;
+        if(fmt) props.card_format = fmt;
+      } else {
+        // Drop swipe-drag metrics on BASIC — those props are enhanced-only.
+        delete props.direction; delete props.velocity_px_ms; delete props.distance_px;
+        delete props.swipe_ms; delete props.ms_on_card;
+      }
       switch(action){
         case 'like': case 'pass': case 'save': case 'super':
           props.action = action === 'super' ? 'fasttrack' : action;
-          ph.capture('swipe', Object.assign({}, props));
+          if(enhanced) T.captureCard('swipe', props); else T.capture('swipe', props);
           break;
-        case 'source_opened':      ph.capture('source_opened',      props); break;
-        case 'direction_viewed':   ph.capture('direction_viewed',   props); break;
-        case 'confirmation_viewed':ph.capture('confirmation_viewed',props); break;
-        case 'free_pick':          ph.capture('free_pick',          props); break;
-        case 'approved':           ph.capture('approved',           props); break;
-        case 'unlock_clicked':     ph.capture('unlock_clicked',     props); break;
-        case 'waitlist_joined':    ph.capture('waitlist_joined',    props); break;
-        case 'checkout_clicked':   ph.capture('unlock_clicked',     props); break;
+        case 'source_opened':
+          if(enhanced){
+            _sourceOpens.total += 1;
+            if(cardId){ _sourceOpens.perCard[cardId] = (_sourceOpens.perCard[cardId] || 0) + 1; }
+            props.open_count_on_card = cardId ? _sourceOpens.perCard[cardId] : undefined;
+            props.sources_opened_total = _sourceOpens.total;
+            T.captureCard('source_opened', props);
+          } else {
+            T.capture('source_opened', props);
+          }
+          break;
+        case 'direction_viewed':   T.capture('direction_viewed',   props); _bumpStep('direction'); break;
+        case 'confirmation_viewed':T.capture('confirmation_viewed',props); _bumpStep('approved');  break;
+        case 'free_pick':
+          _bumpStep('pick');
+          var fpProps = enhanced ? Object.assign({}, props, _funnelTiming()) : props;
+          if(enhanced) T.captureCard('free_pick', fpProps); else T.capture('free_pick', fpProps);
+          break;
+        case 'approved':
+          _bumpStep('approved');
+          T.capture('approved', enhanced ? Object.assign({}, props, _funnelTiming()) : props);
+          break;
+        case 'unlock_clicked':
+          // Only meaningful in checkout mode; call-mode uses cta_walkthrough_clicked.
+          if((client && client.unlockMode) !== 'checkout') break;
+          T.capture('unlock_clicked', enhanced ? Object.assign({}, props, _funnelTiming()) : props);
+          break;
+        case 'waitlist_joined':    T.capture('waitlist_joined', props); break;
+        case 'checkout_clicked':
+          T.capture('unlock_clicked', enhanced ? Object.assign({}, props, _funnelTiming()) : props);
+          break;
       }
     }catch(_){}
   }
+  // -- Card lifecycle + funnel state (used by logEvent + doAction) ------------
+  var _cardTiming    = null;
+  var _feedStartedAt = 0;
+  var _cardsViewed   = 0;
+  var _cardsSwiped   = 0;
+  var _sourceOpens   = { total: 0, perCard: Object.create(null) };
+  var _furthestStep  = 'intro';
+  var _totalVisibleMs= 0;
+  var _visSince      = (typeof document !== 'undefined' && document.visibilityState === 'visible') ? Date.now() : 0;
+  var _stepOrder = ['intro','feed','deck_completed','pick','approved','cta_clicked','booked'];
+  function _bumpStep(s){
+    if(!s) return;
+    if(_stepOrder.indexOf(s) > _stepOrder.indexOf(_furthestStep)) _furthestStep = s;
+  }
+  function _funnelTiming(){
+    return {
+      ms_since_feed_started: _feedStartedAt ? (Date.now() - _feedStartedAt) : null,
+      cards_swiped_so_far:   _cardsSwiped,
+      cards_viewed_so_far:   _cardsViewed,
+      sources_opened_total:  _sourceOpens.total
+    };
+  }
+  function _cardCtx(card, extra){
+    var idx = (card && client && client.cards) ? client.cards.indexOf(card) : -1;
+    return Object.assign({
+      card_key:    card && card.id,
+      card_index:  idx,
+      card_format: card ? String(card.format||'post').toLowerCase() : null
+    }, extra || {});
+  }
+  // Enhanced-only helper. BASIC slugs skip card_viewed/dwell/paused entirely.
+  function _enhanced(){ var T = window.gwmTrack; return !!(T && T.isEnhanced()); }
+  function _armIdle(){
+    if(!_cardTiming) return;
+    clearTimeout(_cardTiming.idleTimer);
+    _cardTiming.idleTimer = setTimeout(function(){
+      if(!_cardTiming || _cardTiming.paused) return;
+      _cardTiming.paused = true;
+      var T = window.gwmTrack; if(!T || !T.isEnhanced()) return;
+      T.captureCard('card_paused', _cardCtx(_cardTiming.card, { idle_ms: 3000 }));
+    }, 3000);
+  }
+  function _bumpActivity(){ if(_cardTiming) _armIdle(); }
+  function _cardEnter(card, source){
+    if(!card) return;
+    _cardLeave();  // flush the previous one if any
+    var t0 = Date.now();
+    _cardTiming = {
+      card: card, tView: t0, visMs: 0,
+      lastVisSince: (document.visibilityState === 'visible') ? t0 : 0,
+      paused: false, source: source || 'auto', idleTimer: 0
+    };
+    _cardsViewed += 1;
+    if(_enhanced()){
+      window.gwmTrack.captureCard('card_viewed', _cardCtx(card, { source: _cardTiming.source }));
+    }
+    _armIdle();
+  }
+  function _cardLeave(){
+    if(!_cardTiming) return;
+    var now = Date.now();
+    if(_cardTiming.lastVisSince) _cardTiming.visMs += now - _cardTiming.lastVisSince;
+    clearTimeout(_cardTiming.idleTimer);
+    if(_enhanced()){
+      window.gwmTrack.captureCard('card_dwell', _cardCtx(_cardTiming.card, { dwell_ms: _cardTiming.visMs }));
+    }
+    _cardTiming = null;
+  }
+  // Pause the card-visible timer while the tab is hidden; also accumulate a
+  // global visible-ms so session_summary can carry it.
+  document.addEventListener('visibilitychange', function(){
+    var now = Date.now();
+    if(document.visibilityState === 'hidden'){
+      if(_visSince) _totalVisibleMs += now - _visSince;
+      _visSince = 0;
+      if(_cardTiming){
+        if(_cardTiming.lastVisSince) _cardTiming.visMs += now - _cardTiming.lastVisSince;
+        _cardTiming.lastVisSince = 0;
+        clearTimeout(_cardTiming.idleTimer);
+      }
+    } else {
+      _visSince = now;
+      if(_cardTiming){ _cardTiming.lastVisSince = now; _armIdle(); }
+    }
+  });
+  // Reset the idle timer on any user activity while a card is showing.
+  ['pointerdown','pointermove','touchstart','wheel','scroll'].forEach(function(ev){
+    window.addEventListener(ev, _bumpActivity, { passive: true });
+  });
+  // Session-summary payload; /shared/track.js sends it via sendBeacon on
+  // first visibilitychange->hidden (or the pagehide fallback).
+  function collectSessionSummary(){
+    var now = Date.now();
+    var visMs = _totalVisibleMs + (_visSince ? (now - _visSince) : 0);
+    return {
+      cards_viewed:         _cardsViewed,
+      cards_swiped:         _cardsSwiped,
+      sources_opened_total: _sourceOpens.total,
+      furthest_step:        _furthestStep,
+      total_visible_ms:     visMs
+    };
+  }
+  window.collectSessionSummary = collectSessionSummary;
 
   function setFormatTint(format){
     var el = document.getElementById('tint-format');
@@ -2229,7 +2395,8 @@ body.dir-save  .ctl-save{
     // falls back to /clients/*.json — the page still renders.
     loadRuntimeConfig()
       .then(function(){
-        ph.capture('feed_started');
+        // feed_started now fires from show('feed') so it carries super props
+        // (deck_size, unlock_mode, ...) that require the feed to be loaded.
         return Promise.all([ dataAdapter.getFeed(SLUG), dataAdapter.getOffer() ]);
       })
       .then(function(pair){
@@ -2277,10 +2444,30 @@ body.dir-save  .ctl-save{
       ));
     }
     var sig = client.signal || {};
+    // Mark the greeting name so session replay redacts it (feed's contact
+    // first name is private input). The company name and card copy stay
+    // visible.
+    $all('[data-slot="contactFirstName"]').forEach(function(el){ el.setAttribute('data-ph-mask',''); });
     // Signal text lives on the confirmation Signals tile now — renderConfirmation
     // handles blurring the competitor name so we don't paint it here.
     // Prices displayed everywhere come from offer.json.
     $all('[data-slot="price-early"]').forEach(function(el){ el.textContent = '$' + offer.earlyPrice; });
+
+    // -- Enhanced tracking (gated inside /shared/track.js) --------------------
+    // See /shared/track.js for gating + super-prop + session-replay behavior.
+    // The classic-script ph.capture(...) sites below all route through this
+    // module's capture(), which reads window.posthog at call time so the
+    // stub-vs-real-library race that historically dropped events is gone.
+    try {
+      if (window.gwmTrack){
+        window.gwmTrack.initTracking({
+          slug:       SLUG,
+          feed:       client,
+          isInternal: !!(client && client.isInternal)
+        });
+        window.gwmTrack.setSummaryCollector(function(){ return collectSessionSummary(); });
+      }
+    } catch(_){}
     // "$49 after early access" line is gone by product spec — the price
     // block only shows the current $19/month.
 
@@ -2347,6 +2534,9 @@ body.dir-save  .ctl-save{
     var top = client.cards[state.cardIndex];
     if(top) setFormatTint(top.format);
     attachOnboardingHint();
+    // Track the top card as viewed on stack render (fresh entry into the
+    // feed, not a per-swipe advance — doAction() handles that below).
+    if(top) _cardEnter(top, 'auto');
   }
   function buildCard(card, depth){
     var el = document.createElement('div');
@@ -2562,7 +2752,7 @@ body.dir-save  .ctl-save{
     // Remember the original target so a click-without-drag can open the
     // detail sheet even when setPointerCapture redirects the click event
     // to the card. onUp checks e.target below.
-    drag = { id:e.pointerId, x0:e.clientX, y0:e.clientY, dx:0, dy:0, el:el, moved:false, originTarget: e.target };
+    drag = { id:e.pointerId, x0:e.clientX, y0:e.clientY, dx:0, dy:0, el:el, moved:false, originTarget: e.target, t0: Date.now() };
     el.classList.add('dragging');
     document.body.classList.add('is-dragging');
     el.addEventListener('pointermove',   onMove);
@@ -2610,11 +2800,20 @@ body.dir-save  .ctl-save{
   function onUp(){
     if(!drag) return;
     var el = drag.el, dx = drag.dx, dy = drag.dy, origin = drag.originTarget;
+    var t0 = drag.t0 || Date.now();
     endDrag(el); drag = null;
-    if(dy < -SUPER_THRESHOLD && Math.abs(dx) < SWIPE_THRESHOLD * 1.2) return doAction('super');
-    if(dy >  SAVE_THRESHOLD  && Math.abs(dy) > Math.abs(dx))          return doAction('save');
-    if(dx >  SWIPE_THRESHOLD && Math.abs(dx) > Math.abs(dy))          return doAction('like');
-    if(dx < -SWIPE_THRESHOLD && Math.abs(dx) > Math.abs(dy))          return doAction('pass');
+    // Build a metrics object that doAction hands into logEvent so the swipe
+    // event carries direction / velocity / distance / ms_on_card. The
+    // direction reflects what the visitor ACTUALLY moved (right/left/up/down),
+    // even when the action fires from a button tap (metrics is {}).
+    var dt = Math.max(1, Date.now() - t0);
+    var dist = Math.sqrt(dx*dx + dy*dy);
+    var dir  = Math.abs(dx) > Math.abs(dy) ? (dx >= 0 ? 'right' : 'left') : (dy >= 0 ? 'down' : 'up');
+    var metrics = { direction: dir, velocity_px_ms: +(dist/dt).toFixed(3), distance_px: Math.round(dist), swipe_ms: dt };
+    if(dy < -SUPER_THRESHOLD && Math.abs(dx) < SWIPE_THRESHOLD * 1.2) return doAction('super', metrics);
+    if(dy >  SAVE_THRESHOLD  && Math.abs(dy) > Math.abs(dx))          return doAction('save',  metrics);
+    if(dx >  SWIPE_THRESHOLD && Math.abs(dx) > Math.abs(dy))          return doAction('like',  metrics);
+    if(dx < -SWIPE_THRESHOLD && Math.abs(dx) > Math.abs(dy))          return doAction('pass',  metrics);
     el.style.transform = '';
     // Tap-without-drag anywhere on the card body opens the detail sheet
     // (the "Tap card to expand" onboarding teaches this). Buttons and links
@@ -2631,12 +2830,18 @@ body.dir-save  .ctl-save{
     }
   }
 
-  function doAction(action){
+  function doAction(action, metrics){
     var card = client.cards[state.cardIndex];
     if(!card) return;
     var brief = { id: card.id, format: String(card.format||'post').toLowerCase(), title: String(card.title||'') };
     haptic(action === 'super' ? 18 : 8);
-    logEvent(card.id, action);
+    // Flush the leaving card's dwell before we advance the index, then log
+    // the swipe with metrics (direction/velocity/distance/ms_on_card).
+    var msOnCard = _cardTiming ? (Date.now() - _cardTiming.tView) : null;
+    _cardLeave();
+    _cardsSwiped += 1;
+    var swipeExtra = Object.assign({}, metrics || {}, { ms_on_card: msOnCard });
+    logEvent(card.id, action, swipeExtra);
     dataAdapter.logSwipe(card.id, action);   // Supabase RPC (best-effort, no await)
     if(action === 'like')  state.liked.push(brief);
     if(action === 'pass')  state.passed.push(brief);
@@ -2679,12 +2884,31 @@ body.dir-save  .ctl-save{
       if(state.cardIndex >= client.cards.length){
         showEndOfDeck(client.cards.length);
         sendDeckComplete('end_of_deck');
+        // Funnel: every card in the deck has a decision. deck_completed is an
+        // ENHANCED-only funnel event; the older deck-complete Netlify post
+        // above still runs for every slug.
+        _bumpStep('deck_completed');
+        try {
+          if(_enhanced()){
+            window.gwmTrack.capture('deck_completed', Object.assign({
+              likes:      (state.liked  || []).length,
+              passes:     (state.passed || []).length,
+              saves:      (state.saved  || []).length,
+              fasttracks: state.superLiked ? 1 : 0
+            }, _funnelTiming()));
+          }
+        } catch(_){}
         setTimeout(function(){ goToDirection(); }, prefersReduced ? 0 : 900);
       } else if(action === 'super'){
         showFastTrackContinuation();
         attachOnboardingHint();
+        // The next card is now visible on top; treat it as an advance-swipe view.
+        var nextC = client.cards[state.cardIndex];
+        if(nextC) _cardEnter(nextC, 'swipe');
       } else {
         attachOnboardingHint();
+        var nextC2 = client.cards[state.cardIndex];
+        if(nextC2) _cardEnter(nextC2, 'swipe');
       }
     }, prefersReduced ? 0 : 640);
   }
@@ -3855,10 +4079,17 @@ body.dir-save  .ctl-save{
     var unlockMode = (client && client.unlockMode) || 'call';
     if(unlockMode === 'call'){
       // Walkthrough: PostHog event + open BOOKING_URL in a new tab, carrying
-      // slug (and email, when we have one) as Cal.com metadata.
-      var props = { slug: SLUG };
-      if(state.emailProvided) props.email = state.emailProvided;
-      ph.capture('cta_walkthrough_clicked', props);
+      // slug (and email, when we have one) as Cal.com metadata. The event
+      // routes through window.gwmTrack so it carries super props and the
+      // same funnel-timing props as free_pick. Email is never in the event.
+      _bumpStep('cta_clicked');
+      try {
+        var T = window.gwmTrack;
+        if(T){
+          // Funnel-timing props only on ENHANCED; BASIC slugs get a bare event.
+          T.capture('cta_walkthrough_clicked', T.isEnhanced() ? _funnelTiming() : {});
+        }
+      } catch(_){}
       state.events.push({ action:'cta_walkthrough_clicked', cardId:'', timestamp:new Date().toISOString() });
       saveState();
       var base = (runtime && runtime.bookingUrl) || 'https://cal.com/vedika/ghostwriter-mom';
