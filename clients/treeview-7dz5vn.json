@@ -1,0 +1,247 @@
+{
+  "slug": "treeview-7dz5vn",
+  "companyName": "Treeview",
+  "contactFirstName": "Horacio",
+  "greetingName": "Horacio",
+  "introBasis": "your digital twin, Vision Pro and NEOM work, and the questions enterprise buyers ask before they fund an XR build",
+  "emailKnown": true,
+  "stripeLink19": "https://buy.stripe.com/7sY8wP0M833Rcx21YugnK09",
+  "directionShape": {
+    "long_form": 1,
+    "linkedin_post": 1
+  },
+  "offerText": "Your first article is on me.",
+  "signal": null,
+  "cards": [
+    {
+      "id": "trv-01",
+      "format": "long_form",
+      "title": "Digital Twin Projects Stall: Fix This Layer First",
+      "angle": "A September 2026 market analysis expects many announced enterprise twin initiatives to quietly stall by 2028, and a 2025 report found over 40% of manufacturers still in pilot. Diagnose data, simulation, interface, adoption and ownership separately.",
+      "evidence": "Your Microsoft project gave investors, officials and landowners an interactive view of a green hydrogen project's energy output with AI predictions. It was deployed during feasibility and fundraising and showcased at Microsoft's Co-Innovation Lab anniversary. It supported communication, which is not proof the whole twin program worked.",
+      "formatNote": "A diagnostic guide the buyer works through layer by layer.",
+      "tags": [
+        "digital-twins",
+        "long-form",
+        "failure-analysis"
+      ],
+      "sources": [
+        {
+          "title": "Microsoft digital twin",
+          "publisher": "Treeview",
+          "url": "https://treeview.studio/work/microsoft"
+        },
+        {
+          "title": "digital twin market analysis",
+          "publisher": "GlobeNewswire",
+          "url": "https://www.globenewswire.com/news-release/2026/09/08/3357954/0/en/digital-twin-market-demand-innovation-market-size.html"
+        },
+        {
+          "title": "digital twin statistics",
+          "publisher": "MindInventory",
+          "url": "https://www.mindinventory.com/blog/digital-twin-statistics/"
+        },
+        {
+          "title": "twin layers for manufacturing",
+          "publisher": "Treeview",
+          "url": "https://treeview.studio/blog/digital-twin-companies-manufacturing"
+        }
+      ]
+    },
+    {
+      "id": "trv-02",
+      "format": "linkedin_post",
+      "title": "XR App Ownership: Your Exit Plan Checklist",
+      "angle": "Meta Spark, Adobe Aero, Wikitude, Vuforia Chalk and 8th Wall all shut down between Sept 2024 and March 2026, per one roundup. A procurement checklist should cover code, assets, licenses, build pipelines, device management and maintenance.",
+      "evidence": "Your site states clients get full IP and source code ownership, and your FAQ says Treeview has no outside investors. Tie the checklist to specific contract terms only if you can approve them.",
+      "formatNote": "One sharp claim about platform risk, backed by a list every buyer recognizes.",
+      "tags": [
+        "procurement",
+        "linkedin-post",
+        "vendor-risk"
+      ],
+      "sources": [
+        {
+          "title": "FAQ",
+          "publisher": "Treeview",
+          "url": "https://treeview.studio/faq"
+        },
+        {
+          "title": "home",
+          "publisher": "Treeview",
+          "url": "https://treeview.studio/"
+        },
+        {
+          "title": "AR tools 2026",
+          "publisher": "BuildMVPFast",
+          "url": "https://www.buildmvpfast.com/blog/best-ar-spatial-computing-tools-2026"
+        },
+        {
+          "title": "WebAR landscape 2026",
+          "publisher": "Blippar",
+          "url": "https://www.blippar.com/best-webar-platforms-for-agencies-2026/"
+        }
+      ]
+    },
+    {
+      "id": "trv-03",
+      "format": "long_form",
+      "title": "WebXR or Native Headset App? Decide Here",
+      "angle": "The WebXR Device API reached W3C Candidate Recommendation status on June 9, 2026, but Safari and Firefox still lack support per one roundup. Compare reach, device features, performance, distribution, maintenance and security; neither model always wins.",
+      "evidence": "Your Microsoft twin shipped across HoloLens 2, mobile and WebGL, and your Treaty Story app is native on Apple Vision Pro. Both delivery models appear in your own work.",
+      "formatNote": "A buyer's decision guide comparing two delivery models across six factors.",
+      "tags": [
+        "webxr",
+        "long-form",
+        "decision-guide"
+      ],
+      "sources": [
+        {
+          "title": "WebXR Device API",
+          "publisher": "W3C",
+          "url": "https://www.w3.org/TR/2026/CRD-webxr-20260609/"
+        },
+        {
+          "title": "AR tools 2026",
+          "publisher": "BuildMVPFast",
+          "url": "https://www.buildmvpfast.com/blog/best-ar-spatial-computing-tools-2026"
+        },
+        {
+          "title": "Microsoft digital twin",
+          "publisher": "Treeview",
+          "url": "https://treeview.studio/work/microsoft"
+        },
+        {
+          "title": "Treaty Story",
+          "publisher": "Treeview",
+          "url": "https://treeview.studio/work/treaty-story"
+        }
+      ]
+    },
+    {
+      "id": "trv-04",
+      "format": "short_insight",
+      "title": "AR Wayfinding: Test Before You Deploy",
+      "angle": "Snap's $2,195 Specs and Android XR glasses both ship this fall, so mobility use cases are moving from headsets to glasses. Evaluate tracking, route mapping, usability and environment before committing, because a proof of concept isn't a deployment.",
+      "evidence": "Your NEOM work on Magic Leap 2 explored Trojena's ski village with a slalom route mapping tool, performance visualizers and session reports. Your page calls it a proof of concept assessing feasibility, not a deployed system.",
+      "formatNote": "One proof of concept and one hardware shift.",
+      "tags": [
+        "ar-wayfinding",
+        "short-insight",
+        "smart-glasses"
+      ],
+      "sources": [
+        {
+          "title": "NEOM",
+          "publisher": "Treeview",
+          "url": "https://treeview.studio/work/neom"
+        },
+        {
+          "title": "Snap Specs",
+          "publisher": "TechCrunch",
+          "url": "https://techcrunch.com/2026/06/16/snap-finally-debuts-its-long-awaited-ar-glasses-specs-and-oof-they-arent-cheap/"
+        },
+        {
+          "title": "Android XR glasses",
+          "publisher": "Road to VR",
+          "url": "https://roadtovr.com/first-android-xr-glasses-2026-launch/"
+        }
+      ]
+    },
+    {
+      "id": "trv-05",
+      "format": "short_insight",
+      "title": "Cultural Archives in XR: Who Controls Access?",
+      "angle": "An August 2026 heritage paper argues rapid digital capture can counter lost site knowledge, but capture alone doesn't decide who controls sharing. Consent, community editorial control, access permissions, language stewardship and maintenance must be designed in.",
+      "evidence": "Your Treaty Story app for Treaty 8 Polytechnic is an immersive library on Apple Vision Pro covering Cree language, traditional foods, sacred plants and way of life. Get the client's approval before describing any governance decisions.",
+      "formatNote": "One case and one research shift.",
+      "tags": [
+        "cultural-preservation",
+        "short-insight",
+        "community-governance"
+      ],
+      "sources": [
+        {
+          "title": "Treaty Story",
+          "publisher": "Treeview",
+          "url": "https://treeview.studio/work/treaty-story"
+        },
+        {
+          "title": "UAV splatting paper",
+          "publisher": "MDPI Heritage",
+          "url": "https://www.mdpi.com/2571-9408/9/8/328"
+        },
+        {
+          "title": "Treaty Story",
+          "publisher": "App Store",
+          "url": "https://apps.apple.com/us/app/treaty-story/id6737520021"
+        }
+      ]
+    },
+    {
+      "id": "trv-06",
+      "format": "short_insight",
+      "title": "Enterprise XR ROI: Read the Claims Carefully",
+      "angle": "A Meta-commissioned Forrester study reports 219% ROI on VR training, while a separate roundup finds only 7% of organizations use VR in training. Define the baseline, unit of measurement and counterfactual before trusting any benchmark.",
+      "evidence": "Your Microsoft twin page cites better stakeholder communication and support for feasibility decisions, and publishes no financial ROI figure. That gap is the point of the article.",
+      "formatNote": "One benchmark and one gap, written for the buyer who has to defend the budget.",
+      "tags": [
+        "xr-roi",
+        "short-insight",
+        "enterprise-buyers"
+      ],
+      "sources": [
+        {
+          "title": "enterprise VR training",
+          "publisher": "VR.org",
+          "url": "https://vr.org/articles/enterprise-vr-training-219-percent-roi"
+        },
+        {
+          "title": "industry statistics report",
+          "publisher": "Treeview",
+          "url": "https://treeview.studio/blog/ar-vr-mr-xr-metaverse-spatial-computing-industry-stats"
+        },
+        {
+          "title": "Microsoft digital twin",
+          "publisher": "Treeview",
+          "url": "https://treeview.studio/work/microsoft"
+        }
+      ]
+    },
+    {
+      "id": "trv-07",
+      "format": "linkedin_post",
+      "title": "XR Pilot to Product: Plan the Decision Gate",
+      "angle": "Snap Specs ship this fall at $2,195, while Apple reportedly won't ship a lighter Vision Pro before late 2028. Pilots must survive hardware churn, so set success criteria, device choice, integrations and support before building.",
+      "evidence": "Your NEOM proof of concept tested tracking and navigation features for feasibility. Your Microsoft twin served feasibility-stage and fundraising decisions. Those are two different pilot purposes, and neither is evidence of broad rollout.",
+      "formatNote": "One claim about pilots, two cases that prove it.",
+      "tags": [
+        "pilot-planning",
+        "linkedin-post",
+        "decision-gate"
+      ],
+      "sources": [
+        {
+          "title": "NEOM",
+          "publisher": "Treeview",
+          "url": "https://treeview.studio/work/neom"
+        },
+        {
+          "title": "Microsoft digital twin",
+          "publisher": "Treeview",
+          "url": "https://treeview.studio/work/microsoft"
+        },
+        {
+          "title": "Snap Specs",
+          "publisher": "TechCrunch",
+          "url": "https://techcrunch.com/2026/06/16/snap-finally-debuts-its-long-awaited-ar-glasses-specs-and-oof-they-arent-cheap/"
+        },
+        {
+          "title": "successor report",
+          "publisher": "The Apple Post",
+          "url": "https://www.theapplepost.com/2026/09/27/72741/work-continues-on-lighter-apple-vision-pro-successor-report-says/"
+        }
+      ]
+    }
+  ]
+}
