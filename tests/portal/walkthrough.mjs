@@ -1438,6 +1438,34 @@ console.log('\n=== Formats: current set + classic three, family colors, then /sh
     check('formats (shared map): no page errors', !p.errors.length, p.errors.join(' | '));
     await p.ctx.close();
   }
+
+  // 3) The sales branch's own /shared/formats.js (a classic script that sets
+  //    window.gwmFormats), when this checkout has it or git can show it.
+  const salesFile = (() => {
+    const f = path.join(ROOT, 'shared/formats.js');
+    if (fs.existsSync(f)) return fs.readFileSync(f, 'utf8');
+    try { return execFileSync('git', ['show', 'origin/leads-template:shared/formats.js'], { cwd: ROOT, encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] }); } catch { return null; }
+  })();
+  if (salesFile) {
+    const db = formatsDb();
+    const p = await newPage(browser, { mobile: true, db, token: 'tok-acme' });
+    const page = p.page;
+    await p.ctx.route(BASE + '/shared/formats.js', (r) => r.fulfill({ status: 200, contentType: 'application/javascript', body: salesFile }));
+    await page.goto(BASE + '/portal');
+    await page.waitForSelector('#screen-feed.on');
+    await dismissBubbles(page);
+    check('sales formats.js: window.gwmFormats read', await page.evaluate(() => !!(window.gwmFormats && window.gwmFormats.FORMATS.long_form)));
+    const fam = { long: await famColor(page, 'long'), web: await famColor(page, 'web'), social: await famColor(page, 'social') };
+    for (const k of SIX) {
+      const t = await readTop(page);
+      check(`sales formats.js ${k}: "${LABEL[k]}", ${FAM[k]} family`, t.label === LABEL[k] && t.bg === fam[FAM[k]] && t.cls.includes('fam-' + FAM[k]), JSON.stringify(t));
+      if (k !== SIX.at(-1)) { await page.click('[data-action="feed-next"]'); await wait(200); }
+    }
+    check('formats (sales formats.js): no page errors', !p.errors.length, p.errors.join(' | '));
+    await p.ctx.close();
+  } else {
+    console.log('  (skipped: no shared/formats.js and no origin/leads-template)');
+  }
 }
 
 await browser.close();

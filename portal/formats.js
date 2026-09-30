@@ -12,10 +12,13 @@
 // the current set; they share the family colors and are offered only on cards
 // already in one of them.
 //
-// Accepted shapes for /shared/formats.js, as named or default export:
+// /shared/formats.js is a classic script that sets window.gwmFormats (the
+// sales page loads it with <script>); an ES module export works too.
+// Accepted shapes, as window.gwmFormats.FORMATS or a named / default export:
 //   { long_form: { label, family, color, ink }, ... }  an object keyed by format
 //   [ { key|id|format, label|name, family, color|hex, ink }, ... ]   a list
-// Colors are CSS colors; a family is one of long / web / social.
+// Colors are CSS colors; a family is one of long / web / social (pillar,
+// insight and post, the names the sales page uses, map onto them).
 // -----------------------------------------------------------------------------
 const FALLBACK = {
   long_form:     { label: 'Long-form article', family: 'long' },
@@ -88,7 +91,8 @@ export async function loadFormats() {
     const head = await fetch('/shared/formats.js', { method: 'HEAD', cache: 'no-cache' });
     if (head.ok && /javascript|ecmascript/.test(head.headers.get('content-type') || '')) {
       const mod = await import('/shared/formats.js');
-      normalize(mod).forEach((v) => {
+      const api = mod && (mod.FORMATS || mod.formats || mod.default) ? mod : window.gwmFormats;
+      normalize(api).forEach((v) => {
         const cur = FORMATS[v.key] || { label: titleCase(v.key), family: DEFAULT_FAMILY };
         FORMATS[v.key] = { label: v.label || cur.label, family: v.family || cur.family, color: v.color || cur.color, ink: v.ink || cur.ink, classic: !!cur.classic };
       });

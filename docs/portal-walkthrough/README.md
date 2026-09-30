@@ -1,7 +1,7 @@
 # Portal walkthrough: call mode
 
 Every screenshot here comes from `tests/portal/walkthrough.mjs`, which runs
-**375 checks** across these accounts:
+**383 checks** across these accounts:
 
 - **Vedika** (`vedika-bhasin-ycfogw`, internal) at 375px and on desktop, then
   **blendbases** from the other side.
@@ -12,7 +12,7 @@ Every screenshot here comes from `tests/portal/walkthrough.mjs`, which runs
 - **RPR** as it is live: canceled, no window, one test seat.
 - **Sign in with a code.**
 
-The last run passed all 375 (`shots/results.json`).
+The last run passed all 383 (`shots/results.json`).
 
 ## How this was tested
 

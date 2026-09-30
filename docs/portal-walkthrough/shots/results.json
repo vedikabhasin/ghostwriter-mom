@@ -67,7 +67,7 @@
  {
   "name": "375px: feed tooltip never covers the card footer",
   "ok": true,
-  "detail": "{\"bubbleTop\":656.109130859375,\"cardBottom\":582,\"over\":false}"
+  "detail": "{\"bubbleTop\":656.0474853515625,\"cardBottom\":582,\"over\":false}"
  },
  {
   "name": "onboarding: glow on Library after Feed",
@@ -196,7 +196,7 @@
  {
   "name": "split note: hub_items row kind note, created_by me",
   "ok": true,
-  "detail": "{\"id\":\"h1u9fc0yoa1e\",\"ref_id\":\"nxz6aa8qeaf\",\"body\":null,\"emoji\":null,\"x\":539,\"y\":20,\"rotation\":-2.1,\"z\":3,\"hidden\":false,\"updated_at\":\"2026-09-30T19:35:03.927Z\",\"company_id\":\"b22beda7-45cf-486a-931e-d3b429619788\",\"kind\":\"note\",\"created_by\":\"9afe9458-e205-4209-96ec-9c8f6fab77c5\"}"
+  "detail": "{\"id\":\"h1g9ow5ixgkl\",\"ref_id\":\"no5qgdgpxf6\",\"body\":null,\"emoji\":null,\"x\":544,\"y\":23,\"rotation\":0.3999999999999999,\"z\":3,\"hidden\":false,\"updated_at\":\"2026-09-30T21:45:24.021Z\",\"company_id\":\"b22beda7-45cf-486a-931e-d3b429619788\",\"kind\":\"note\",\"created_by\":\"9afe9458-e205-4209-96ec-9c8f6fab77c5\"}"
  },
  {
   "name": "reveal timing: entrance <= 1.2s, transform + opacity only",
@@ -269,7 +269,7 @@
  {
   "name": "Request it: request_card with the card's format, REQUESTED by me",
   "ok": true,
-  "detail": "{\"id\":\"art-3\",\"company_id\":\"b22beda7-45cf-486a-931e-d3b429619788\",\"card_id\":\"838e0b01-8a12-4284-881e-914cb9b84110\",\"format\":\"post\",\"title\":\"Three Questions, Eight Answers, 54.8M Views\",\"status\":\"requested\",\"body_html\":null,\"google_doc_url\":null,\"requested_at\":\"2026-09-30T19:35:19.321Z\",\"requested_by\":\"9afe9458-e205-4209-96ec-9c8f6fab77c5\",\"deliver_by\":null,\"delivered_at\":null,\"live_at\":null,\"created_at\":\"2026-09-30T19:35:19.321Z\"}"
+  "detail": "{\"id\":\"art-3\",\"company_id\":\"b22beda7-45cf-486a-931e-d3b429619788\",\"card_id\":\"838e0b01-8a12-4284-881e-914cb9b84110\",\"format\":\"post\",\"title\":\"Three Questions, Eight Answers, 54.8M Views\",\"status\":\"requested\",\"body_html\":null,\"google_doc_url\":null,\"requested_at\":\"2026-09-30T21:45:39.441Z\",\"requested_by\":\"9afe9458-e205-4209-96ec-9c8f6fab77c5\",\"deliver_by\":null,\"delivered_at\":null,\"live_at\":null,\"created_at\":\"2026-09-30T21:45:39.441Z\"}"
  },
  {
   "name": "Request it: portal-request form posted (company, slug, card_title, format, requester)",
@@ -310,7 +310,7 @@
  {
   "name": "notes readable on the card in the Log",
   "ok": true,
-  "detail": "VBDesigning Overwhelm Without Harm\n\nLIKED\nSPLIT\nSep 30, 7:35 PM\n\n1 NOTE\n\nYOU · SEP 30\nLiked because Grok is my best proof of the way-out idea.\n1\nSun Devil wins "
+  "detail": "VBDesigning Overwhelm Without Harm\n\nLIKED\nSPLIT\nSep 30, 9:45 PM\n\n1 NOTE\n\nYOU · SEP 30\nLiked because Grok is my best proof of the way-out idea.\n1\nSun Devil wins "
  },
  {
   "name": "Up next: vb-02 moved to the top",
@@ -325,7 +325,7 @@
  {
   "name": "library: top card flat, centered, fully opaque",
   "ok": true,
-  "detail": "{\"topText\":\"POST\\nVB\\nDELIVERED\\nI Design for the Moment AI Is Wrong\\nDELIVERED IN 19H · SEP 29, 7:34 PM\",\"topOpaque\":true,\"topFlat\":true,\"backsHidden\":true,\"backRot\":[-8,8,-5,5],\"topZ\":20,\"backZ\":[12,14,16,18],\"tag\":\"Delivered\",\"tagCenter\":true}"
+  "detail": "{\"topText\":\"POST\\nVB\\nDELIVERED\\nI Design for the Moment AI Is Wrong\\nDELIVERED IN 19H · SEP 29, 9:45 PM\",\"topOpaque\":true,\"topFlat\":true,\"backsHidden\":true,\"backRot\":[-8,8,-5,5],\"topZ\":20,\"backZ\":[12,14,16,18],\"tag\":\"Delivered\",\"tagCenter\":true}"
  },
  {
   "name": "library: back cards rotated 5-8 deg, content hidden, below the top",
@@ -335,12 +335,12 @@
  {
   "name": "DELIVERED tag (mono, centered) + \"DELIVERED IN 19H · {Mon D, h:mm AM}\"",
   "ok": true,
-  "detail": "POST\nVB\nDELIVERED\nI Design for the Moment AI Is Wrong\nDELIVERED IN 19H · SEP 29, 7:34 PM"
+  "detail": "POST\nVB\nDELIVERED\nI Design for the Moment AI Is Wrong\nDELIVERED IN 19H · SEP 29, 9:45 PM"
  },
  {
   "name": "375px DELIVERED: status stamp on one line, inside the card",
   "ok": true,
-  "detail": "[{\"text\":\"Delivered in 19h · Sep 29, 7:34 PM\",\"oneLine\":true,\"inside\":true,\"size\":\"8.75px\"}]"
+  "detail": "[{\"text\":\"Delivered in 19h · Sep 29, 9:45 PM\",\"oneLine\":true,\"inside\":true,\"size\":\"8.75px\"}]"
  },
  {
   "name": "library vb-01: title contrast AA (>= 4.5)",
@@ -448,7 +448,7 @@
  {
   "name": "requested from the Hub: the card item became the article in place",
   "ok": true,
-  "detail": "{\"id\":\"hjn6gwbmw1i\",\"ref_id\":\"art-5\",\"body\":null,\"emoji\":null,\"x\":548,\"y\":739,\"rotation\":-2.9,\"z\":10,\"hidden\":false,\"updated_at\":\"2026-09-30T19:35:28.742Z\",\"company_id\":\"b22beda7-45cf-486a-931e-d3b429619788\",\"kind\":\"article\",\"created_by\":null}"
+  "detail": "{\"id\":\"hol3ywjv8qif\",\"ref_id\":\"art-5\",\"body\":null,\"emoji\":null,\"x\":548,\"y\":739,\"rotation\":-2.9,\"z\":10,\"hidden\":false,\"updated_at\":\"2026-09-30T21:45:48.583Z\",\"company_id\":\"b22beda7-45cf-486a-931e-d3b429619788\",\"kind\":\"article\",\"created_by\":null}"
  },
  {
   "name": "drag: x/y saved on drop, comes to front",
@@ -584,7 +584,7 @@
  {
   "name": "desktop: feed tooltip never covers the card footer",
   "ok": true,
-  "detail": "{\"bubbleTop\":710.8458251953125,\"cardBottom\":630,\"over\":false}"
+  "detail": "{\"bubbleTop\":710.8377685546875,\"cardBottom\":630,\"over\":false}"
  },
  {
   "name": "onboarding: glow on Library after Feed",
@@ -763,7 +763,7 @@
  {
   "name": "Request it: request_card with the card's format, REQUESTED by me",
   "ok": true,
-  "detail": "{\"id\":\"art-3\",\"company_id\":\"b22beda7-45cf-486a-931e-d3b429619788\",\"card_id\":\"838e0b01-8a12-4284-881e-914cb9b84110\",\"format\":\"post\",\"title\":\"Three Questions, Eight Answers, 54.8M Views\",\"status\":\"requested\",\"body_html\":null,\"google_doc_url\":null,\"requested_at\":\"2026-09-30T19:35:47.555Z\",\"requested_by\":\"9afe9458-e205-4209-96ec-9c8f6fab77c5\",\"deliver_by\":null,\"delivered_at\":null,\"live_at\":null,\"created_at\":\"2026-09-30T19:35:47.555Z\"}"
+  "detail": "{\"id\":\"art-3\",\"company_id\":\"b22beda7-45cf-486a-931e-d3b429619788\",\"card_id\":\"838e0b01-8a12-4284-881e-914cb9b84110\",\"format\":\"post\",\"title\":\"Three Questions, Eight Answers, 54.8M Views\",\"status\":\"requested\",\"body_html\":null,\"google_doc_url\":null,\"requested_at\":\"2026-09-30T21:46:07.290Z\",\"requested_by\":\"9afe9458-e205-4209-96ec-9c8f6fab77c5\",\"deliver_by\":null,\"delivered_at\":null,\"live_at\":null,\"created_at\":\"2026-09-30T21:46:07.290Z\"}"
  },
  {
   "name": "Request it: portal-request form posted (company, slug, card_title, format, requester)",
@@ -814,7 +814,7 @@
  {
   "name": "library: top card flat, centered, fully opaque",
   "ok": true,
-  "detail": "{\"topText\":\"POST\\nVB\\nDELIVERED\\nI Design for the Moment AI Is Wrong\\nDELIVERED IN 19H · SEP 29, 7:35 PM\",\"topOpaque\":true,\"topFlat\":true,\"backsHidden\":true,\"backRot\":[-8,8,-5,5],\"topZ\":20,\"backZ\":[12,14,16,18],\"tag\":\"Delivered\",\"tagCenter\":true}"
+  "detail": "{\"topText\":\"POST\\nVB\\nDELIVERED\\nI Design for the Moment AI Is Wrong\\nDELIVERED IN 19H · SEP 29, 9:45 PM\",\"topOpaque\":true,\"topFlat\":true,\"backsHidden\":true,\"backRot\":[-8,8,-5,5],\"topZ\":20,\"backZ\":[12,14,16,18],\"tag\":\"Delivered\",\"tagCenter\":true}"
  },
  {
   "name": "library: back cards rotated 5-8 deg, content hidden, below the top",
@@ -824,12 +824,12 @@
  {
   "name": "DELIVERED tag (mono, centered) + \"DELIVERED IN 19H · {Mon D, h:mm AM}\"",
   "ok": true,
-  "detail": "POST\nVB\nDELIVERED\nI Design for the Moment AI Is Wrong\nDELIVERED IN 19H · SEP 29, 7:35 PM"
+  "detail": "POST\nVB\nDELIVERED\nI Design for the Moment AI Is Wrong\nDELIVERED IN 19H · SEP 29, 9:45 PM"
  },
  {
   "name": "desktop DELIVERED: status stamp on one line, inside the card",
   "ok": true,
-  "detail": "[{\"text\":\"Delivered in 19h · Sep 29, 7:35 PM\",\"oneLine\":true,\"inside\":true,\"size\":\"10px\"}]"
+  "detail": "[{\"text\":\"Delivered in 19h · Sep 29, 9:45 PM\",\"oneLine\":true,\"inside\":true,\"size\":\"10px\"}]"
  },
  {
   "name": "library vb-01: title contrast AA (>= 4.5)",
@@ -933,7 +933,7 @@
  {
   "name": "requested from the Hub: the card item became the article in place",
   "ok": true,
-  "detail": "{\"id\":\"hyr4petkzw4\",\"ref_id\":\"art-5\",\"body\":null,\"emoji\":null,\"x\":288,\"y\":503,\"rotation\":-2.9,\"z\":8,\"hidden\":false,\"updated_at\":\"2026-09-30T19:35:55.965Z\",\"company_id\":\"b22beda7-45cf-486a-931e-d3b429619788\",\"kind\":\"article\",\"created_by\":null}"
+  "detail": "{\"id\":\"hfz80x8ltaq\",\"ref_id\":\"art-5\",\"body\":null,\"emoji\":null,\"x\":288,\"y\":503,\"rotation\":-2.9,\"z\":8,\"hidden\":false,\"updated_at\":\"2026-09-30T21:46:15.654Z\",\"company_id\":\"b22beda7-45cf-486a-931e-d3b429619788\",\"kind\":\"article\",\"created_by\":null}"
  },
  {
   "name": "drag: x/y saved on drop, comes to front",
@@ -1100,7 +1100,7 @@
  {
   "name": "Acme 375x812: feed tooltip never covers the card footer",
   "ok": true,
-  "detail": "{\"bubbleTop\":666.168701171875,\"cardBottom\":582,\"over\":false}"
+  "detail": "{\"bubbleTop\":670.5680541992188,\"cardBottom\":582,\"over\":false}"
  },
  {
   "name": "window open: no banner",
@@ -1129,7 +1129,7 @@
  {
   "name": "Acme DELIVERED: status stamp on one line, inside the card",
   "ok": true,
-  "detail": "[{\"text\":\"Delivered in 19h · Sep 29, 2:36 AM\",\"oneLine\":true,\"inside\":true,\"size\":\"8.25px\"}]"
+  "detail": "[{\"text\":\"Delivered in 19h · Sep 29, 4:46 AM\",\"oneLine\":true,\"inside\":true,\"size\":\"8.25px\"}]"
  },
  {
   "name": "format defaults to the card's (pillar)",
@@ -1138,7 +1138,7 @@
  {
   "name": "request_card with the chosen format, requested by Dana",
   "ok": true,
-  "detail": "{\"id\":\"art-2\",\"company_id\":\"a2000000-0000-0000-0000-000000000001\",\"card_id\":\"a3000000-0000-0000-0000-000000000000\",\"format\":\"insight\",\"title\":\"Robots That Ask Before They Move\",\"status\":\"requested\",\"body_html\":null,\"google_doc_url\":null,\"requested_at\":\"2026-09-30T19:36:10.613Z\",\"requested_by\":\"a1000000-0000-0000-0000-000000000001\",\"deliver_by\":null,\"delivered_at\":null,\"live_at\":null,\"created_at\":\"2026-09-30T19:36:10.613Z\"}"
+  "detail": "{\"id\":\"art-2\",\"company_id\":\"a2000000-0000-0000-0000-000000000001\",\"card_id\":\"a3000000-0000-0000-0000-000000000000\",\"format\":\"insight\",\"title\":\"Robots That Ask Before They Move\",\"status\":\"requested\",\"body_html\":null,\"google_doc_url\":null,\"requested_at\":\"2026-09-30T21:46:31.057Z\",\"requested_by\":\"a1000000-0000-0000-0000-000000000001\",\"deliver_by\":null,\"delivered_at\":null,\"live_at\":null,\"created_at\":\"2026-09-30T21:46:31.057Z\"}"
  },
  {
   "name": "portal-request: company, slug, card_title, format, requester_name, requester_email",
@@ -1161,7 +1161,7 @@
  {
   "name": "empty feed: paper card with a faint grid, \"5 new on Tuesday, Oct 6\" (real next-drop count) + live countdown",
   "ok": true,
-  "detail": "5 new on Tuesday, Oct 6\n\nIN 5D 4H\n\n+\nLee hasn’t seen 5 of these.\n+\nSeat 3 is open."
+  "detail": "5 new on Tuesday, Oct 6\n\nIN 5D 2H\n\n+\nLee hasn’t seen 5 of these.\n+\nSeat 3 is open."
  },
  {
   "name": "empty feed: \"Lee hasn’t seen 5 of these.\" with Lee's avatar, and \"Seat 3 is open.\" dashed",
@@ -1342,7 +1342,7 @@
  {
   "name": "375x600: feed tooltip never covers the card footer",
   "ok": true,
-  "detail": "{\"bubbleTop\":598.56982421875,\"cardBottom\":510,\"over\":false}"
+  "detail": "{\"bubbleTop\":598.5811157226562,\"cardBottom\":510,\"over\":false}"
  },
  {
   "name": "375x600: \"Swipe to shuffle. Tap to open.\" above the Feed/Library switch, uncovered",
@@ -1352,12 +1352,12 @@
  {
   "name": "375x600 DELIVERED: status stamp on one line, inside the card",
   "ok": true,
-  "detail": "[{\"text\":\"Delivered in 19h · Sep 29, 2:36 AM\",\"oneLine\":true,\"inside\":true,\"size\":\"8.25px\"}]"
+  "detail": "[{\"text\":\"Delivered in 19h · Sep 29, 4:47 AM\",\"oneLine\":true,\"inside\":true,\"size\":\"8.25px\"}]"
  },
  {
   "name": "375x667: feed tooltip never covers the card footer",
   "ok": true,
-  "detail": "{\"bubbleTop\":598.572509765625,\"cardBottom\":510,\"over\":false}"
+  "detail": "{\"bubbleTop\":590.84130859375,\"cardBottom\":510,\"over\":false}"
  },
  {
   "name": "375x667: \"Swipe to shuffle. Tap to open.\" above the Feed/Library switch, uncovered",
@@ -1367,12 +1367,12 @@
  {
   "name": "375x667 DELIVERED: status stamp on one line, inside the card",
   "ok": true,
-  "detail": "[{\"text\":\"Delivered in 19h · Sep 29, 2:36 AM\",\"oneLine\":true,\"inside\":true,\"size\":\"8.25px\"}]"
+  "detail": "[{\"text\":\"Delivered in 19h · Sep 29, 4:47 AM\",\"oneLine\":true,\"inside\":true,\"size\":\"8.25px\"}]"
  },
  {
   "name": "375x812: feed tooltip never covers the card footer",
   "ok": true,
-  "detail": "{\"bubbleTop\":670.59033203125,\"cardBottom\":582,\"over\":false}"
+  "detail": "{\"bubbleTop\":666.1698608398438,\"cardBottom\":582,\"over\":false}"
  },
  {
   "name": "375x812: swipe buttons clear the Feed/Library switch without scrolling (card 472px)",
@@ -1387,12 +1387,12 @@
  {
   "name": "375x812 DELIVERED: status stamp on one line, inside the card",
   "ok": true,
-  "detail": "[{\"text\":\"Delivered in 19h · Sep 29, 2:36 AM\",\"oneLine\":true,\"inside\":true,\"size\":\"8.25px\"}]"
+  "detail": "[{\"text\":\"Delivered in 19h · Sep 29, 4:47 AM\",\"oneLine\":true,\"inside\":true,\"size\":\"8.25px\"}]"
  },
  {
   "name": "1280x700: feed tooltip never covers the card footer",
   "ok": true,
-  "detail": "{\"bubbleTop\":590.8421020507812,\"cardBottom\":510,\"over\":false}"
+  "detail": "{\"bubbleTop\":594.1666259765625,\"cardBottom\":510,\"over\":false}"
  },
  {
   "name": "1280x700: \"Swipe to shuffle. Tap to open.\" above the Feed/Library switch, uncovered",
@@ -1402,7 +1402,7 @@
  {
   "name": "1280x700 DELIVERED: status stamp on one line, inside the card",
   "ok": true,
-  "detail": "[{\"text\":\"Delivered in 19h · Sep 29, 2:36 AM\",\"oneLine\":true,\"inside\":true,\"size\":\"10px\"}]"
+  "detail": "[{\"text\":\"Delivered in 19h · Sep 29, 4:47 AM\",\"oneLine\":true,\"inside\":true,\"size\":\"10px\"}]"
  },
  {
   "name": "1280px: headline is the heavy display sans with one italic serif word on all three",
@@ -1532,22 +1532,22 @@
  {
   "name": "1280px login: desk shown, nothing overlapped, no layout shift",
   "ok": true,
-  "detail": "{\"on\":true,\"shown\":4,\"hits\":[],\"cls\":0.00014499549865722654,\"hscroll\":false}"
+  "detail": "{\"on\":true,\"shown\":4,\"hits\":[],\"cls\":0.0001453248341878255,\"hscroll\":false}"
  },
  {
   "name": "1280px Feed with cards: no desk objects",
   "ok": true,
-  "detail": "{\"on\":false,\"shown\":0,\"hits\":[],\"cls\":0.0007799234602186415,\"hscroll\":false}"
+  "detail": "{\"on\":false,\"shown\":0,\"hits\":[],\"cls\":0.0007795941246880424,\"hscroll\":false}"
  },
  {
   "name": "1280px Feed caught up: desk behind it, clear of the paper card and bubbles",
   "ok": true,
-  "detail": "{\"on\":true,\"shown\":4,\"hits\":[],\"cls\":0.0007799234602186415,\"hscroll\":false}"
+  "detail": "{\"on\":true,\"shown\":4,\"hits\":[],\"cls\":0.0007795941246880424,\"hscroll\":false}"
  },
  {
   "name": "1280px Library with cards: no desk objects",
   "ok": true,
-  "detail": "{\"on\":false,\"shown\":0,\"hits\":[],\"cls\":0.0007799234602186415,\"hscroll\":false}"
+  "detail": "{\"on\":false,\"shown\":0,\"hits\":[],\"cls\":0.0007795941246880424,\"hscroll\":false}"
  },
  {
   "name": "1280px empty Library: paper panel, YOUR LIBRARY, \"Nothing on the shelf yet.\", one line; desk clear",
@@ -1557,7 +1557,7 @@
  {
   "name": "1920px login: desk shown, nothing overlapped, no layout shift",
   "ok": true,
-  "detail": "{\"on\":true,\"shown\":4,\"hits\":[],\"cls\":0.00006458881519458912,\"hscroll\":false}"
+  "detail": "{\"on\":true,\"shown\":4,\"hits\":[],\"cls\":0.00006444244384765625,\"hscroll\":false}"
  },
  {
   "name": "1920px Feed with cards: no desk objects",
@@ -1747,6 +1747,45 @@
  },
  {
   "name": "formats (shared map): no page errors",
+  "ok": true,
+  "detail": ""
+ },
+ {
+  "name": "sales formats.js: window.gwmFormats read",
+  "ok": true
+ },
+ {
+  "name": "sales formats.js long_form: \"Long-form article\", long family",
+  "ok": true,
+  "detail": "{\"cls\":\"card fmt fmt-long_form fam-long\",\"label\":\"Long-form article\",\"shown\":\"LONG-FORM ARTICLE\",\"bg\":\"rgb(183, 156, 255)\"}"
+ },
+ {
+  "name": "sales formats.js short_insight: \"Short insight\", web family",
+  "ok": true,
+  "detail": "{\"cls\":\"card fmt fmt-short_insight fam-web\",\"label\":\"Short insight\",\"shown\":\"SHORT INSIGHT\",\"bg\":\"rgb(140, 200, 255)\"}"
+ },
+ {
+  "name": "sales formats.js linkedin_post: \"LinkedIn post\", social family",
+  "ok": true,
+  "detail": "{\"cls\":\"card fmt fmt-linkedin_post fam-social\",\"label\":\"LinkedIn post\",\"shown\":\"LINKEDIN POST\",\"bg\":\"rgb(78, 205, 196)\"}"
+ },
+ {
+  "name": "sales formats.js pillar: \"Pillar\", long family",
+  "ok": true,
+  "detail": "{\"cls\":\"card fmt fmt-pillar fam-long\",\"label\":\"Pillar\",\"shown\":\"PILLAR\",\"bg\":\"rgb(183, 156, 255)\"}"
+ },
+ {
+  "name": "sales formats.js insight: \"Insight\", web family",
+  "ok": true,
+  "detail": "{\"cls\":\"card fmt fmt-insight fam-web\",\"label\":\"Insight\",\"shown\":\"INSIGHT\",\"bg\":\"rgb(140, 200, 255)\"}"
+ },
+ {
+  "name": "sales formats.js post: \"Post\", social family",
+  "ok": true,
+  "detail": "{\"cls\":\"card fmt fmt-post fam-social\",\"label\":\"Post\",\"shown\":\"POST\",\"bg\":\"rgb(78, 205, 196)\"}"
+ },
+ {
+  "name": "formats (sales formats.js): no page errors",
   "ok": true,
   "detail": ""
  }
