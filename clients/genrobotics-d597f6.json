@@ -134,36 +134,6 @@
       ]
     },
     {
-      "id": "gnr-05",
-      "format": "short_insight",
-      "title": "100 Hz Control Over the Network: The Transport Problem",
-      "angle": "NVIDIA wants to be the Android of robotics, but Android never had to move camera frames and joint commands between a cloud model and an arm inside a control deadline. The unglamorous spec is the transport layer.",
-      "evidence": "Your Intelligence Grid post commits to 100 Hz+ control and 30 fps+ image transport across 40+ robot platforms, deployable cloud, on-prem or edge, and the Auto Engineering log shows what a pacing mismatch does when that layer slips. No piece on your site explains how a hosted skill meets a real-time deadline.",
-      "formatNote": "One platform spec and one failure it prevents.",
-      "tags": [
-        "real-time-control",
-        "short-insight",
-        "platform-spec"
-      ],
-      "sources": [
-        {
-          "title": "The Intelligence Grid for Physical AI",
-          "publisher": "General Robotics",
-          "url": "https://www.generalrobotics.company/post/intelligence-grid"
-        },
-        {
-          "title": "Introducing Auto Engineering for Robotics",
-          "publisher": "General Robotics",
-          "url": "https://www.generalrobotics.company/post/introducing-auto-engineering-for-robotics"
-        },
-        {
-          "title": "Nvidia wants to be the Android of generalist robotics",
-          "publisher": "TechCrunch",
-          "url": "https://techcrunch.com/2026/01/05/nvidia-wants-to-be-the-android-of-generalist-robotics"
-        }
-      ]
-    },
-    {
       "id": "gnr-06",
       "format": "long_form",
       "title": "Fifty OEMs, One Interface: Fragmentation as the Product",
@@ -190,36 +160,6 @@
           "title": "Introducing Auto Engineering for Robotics",
           "publisher": "General Robotics",
           "url": "https://www.generalrobotics.company/post/introducing-auto-engineering-for-robotics"
-        }
-      ]
-    },
-    {
-      "id": "gnr-07",
-      "format": "linkedin_post",
-      "title": "Fewer Than 1 in 20 ML Engineers Do Robotics",
-      "angle": "NVIDIA's 2 million developer goal assumes people exist to onboard, yet your CEO's public figure is that fewer than 1 in 20 ML engineers work on robotics. The honest piece is how a platform has to absorb the work those missing engineers would have done.",
-      "evidence": "Your Auto Engineering release describes an agent that builds, tests in MuJoCo and Warp, deploys a skill and adds it back to the platform, and you stated the talent gap in the April 2026 Intelligence Grid post. Neither post connects the two.",
-      "formatNote": "One founder claim connecting two of your own posts.",
-      "tags": [
-        "robotics-talent",
-        "linkedin-post",
-        "agentic-tooling"
-      ],
-      "sources": [
-        {
-          "title": "The Intelligence Grid for Physical AI",
-          "publisher": "General Robotics",
-          "url": "https://www.generalrobotics.company/post/intelligence-grid"
-        },
-        {
-          "title": "Introducing Auto Engineering for Robotics",
-          "publisher": "General Robotics",
-          "url": "https://www.generalrobotics.company/post/introducing-auto-engineering-for-robotics"
-        },
-        {
-          "title": "Nvidia wants to be the Android of generalist robotics",
-          "publisher": "TechCrunch",
-          "url": "https://techcrunch.com/2026/01/05/nvidia-wants-to-be-the-android-of-generalist-robotics"
         }
       ]
     }
