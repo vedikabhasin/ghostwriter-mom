@@ -1,0 +1,222 @@
+{
+  "slug": "augmodo-hx87pr",
+  "companyName": "Augmodo",
+  "contactFirstName": null,
+  "greetingName": null,
+  "introBasis": "your Owl hardware, your Chemist Warehouse results, and the questions retailers ask before a pilot",
+  "emailKnown": true,
+  "stripeLink19": "https://buy.stripe.com/7sY8wP0M833Rcx21YugnK09",
+  "directionShape": {
+    "long_form": 1,
+    "short_insight": 2
+  },
+  "offerText": "Your first article is on me.",
+  "signal": null,
+  "cards": [
+    {
+      "id": "aug-01",
+      "format": "short_insight",
+      "title": "Six Hardware Generations: Keeping Shelf Data Comparable",
+      "angle": "Owl Mini and Owl Pro, announced September 16 2026, are your sixth badge generation in 24 months, with weight cut by two thirds and battery life up 3x to 5x, rolling out from Q1 2027. Every camera change risks breaking the week-over-week comparison a category manager pays for.",
+      "evidence": "Your Chemist Warehouse agreement (March 2025) covers expansion to more than 550 stores over two years, so mixed badge generations in one fleet is the operating reality. Nothing on your site explains how realogram accuracy holds when the optics underneath it change.",
+      "formatNote": "One product release and one operating consequence.",
+      "tags": [
+        "wearable-hardware",
+        "short-insight",
+        "product-release"
+      ],
+      "sources": [
+        {
+          "title": "Augmodo Unveils Wearable Owl Mini and Owl Pro",
+          "publisher": "Business Wire via FinancialContent",
+          "url": "https://www.financialcontent.com/article/bizwire-2026-9-16-augmodo-unveils-wearable-owl-mini-and-owl-pro-shrinking-physical-ai-into-smallest-smartest-smartbadge-ever-built"
+        },
+        {
+          "title": "Chemist Warehouse Launches Partnership with Augmodo",
+          "publisher": "Business Wire",
+          "url": "https://www.businesswire.com/news/home/20250331350926/en/Chemist-Warehouse-Launches-Partnership-with-Augmodo-Modernizing-Tech-to-Give-Store-Associates-Spatial-AI-Assistants"
+        },
+        {
+          "title": "Owl Mini and Owl Pro announcement",
+          "publisher": "Augmodo",
+          "url": "https://www.augmodo.com/news-and-announcements/augmodo-unveils-owl-mini-owl-pro"
+        }
+      ]
+    },
+    {
+      "id": "aug-02",
+      "format": "short_insight",
+      "title": "Privacy by Design at 120 Grams",
+      "angle": "Maine's employer monitoring notice law took effect July 14 2026 and Connecticut's expanded rules start October 1, so retailers now field the \"is this surveillance\" question before any pilot. Your answer is architectural: people are blurred on the badge before anything leaves the store.",
+      "evidence": "Your FAQ commits to outward-facing cameras, on-site blurring before encrypted upload, no badge-to-associate mapping (\"a gap in aisle 7, not a person in aisle 7\") and audio only on button press. Doing that on dual 4K fisheye inside an 8 to 10 hour, 120 g power budget is worth explaining; the FAQ states it and stops.",
+      "formatNote": "One buyer objection and one architectural answer.",
+      "tags": [
+        "workplace-privacy",
+        "short-insight",
+        "faq-proof"
+      ],
+      "sources": [
+        {
+          "title": "FAQ",
+          "publisher": "Augmodo",
+          "url": "https://www.augmodo.com/faq"
+        },
+        {
+          "title": "Midyear Employment Law Horizon Report (July 2026)",
+          "publisher": "Seyfarth",
+          "url": "https://www.seyfarth.com/employment-law-horizon-report.html"
+        },
+        {
+          "title": "Owl Mini and Owl Pro release",
+          "publisher": "Business Wire via FinancialContent",
+          "url": "https://www.financialcontent.com/article/bizwire-2026-9-16-augmodo-unveils-wearable-owl-mini-and-owl-pro-shrinking-physical-ai-into-smallest-smartest-smartbadge-ever-built"
+        }
+      ]
+    },
+    {
+      "id": "aug-03",
+      "format": "short_insight",
+      "title": "Inventory Distortion Is a Freshness Problem",
+      "angle": "IHL's July 31 2026 study puts inventory distortion at $1.7T, 6.2 percent of global retail sales, and the default fix is still a scheduled count. Continuous, noisy capture during shifts beats a clean weekly audit because the shelf changes faster than the audit.",
+      "evidence": "Your Chemist Warehouse pilot reported a 30 percent decline in inventory gaps in the first month across four Melbourne stores, and GeekWire reports 186M square feet mapped per month. Coverage is the honest limit, and you can own it before competitors frame it for you.",
+      "formatNote": "One market study and one pilot result.",
+      "tags": [
+        "on-shelf-availability",
+        "short-insight",
+        "pilot-result"
+      ],
+      "sources": [
+        {
+          "title": "The 2026 Inventory Distortion Study",
+          "publisher": "IHL Group",
+          "url": "https://www.ihlservices.com/product/inventory-distortion-study-2026/"
+        },
+        {
+          "title": "Chemist Warehouse partners with Augmodo",
+          "publisher": "Retail Technology Innovation Hub",
+          "url": "https://retailtechinnovationhub.com/home/2024/12/12/chemist-warehouse-partners-with-augmodo-to-give-physical-store-associates-spatial-ai-assistants"
+        },
+        {
+          "title": "Augmodo raises $21M",
+          "publisher": "GeekWire",
+          "url": "https://www.geekwire.com/2026/augmodo-raises-21m-to-push-its-spatial-ai-beyond-just-retail-toward-the-broader-physical-workforce/"
+        }
+      ]
+    },
+    {
+      "id": "aug-04",
+      "format": "long_form",
+      "title": "Badge or Robot: Who Sees the Shelf",
+      "angle": "Simbe passed 3,000 Tally robots under contract on September 22 2026, with Tally 4.0 scanning on a 12-hour schedule. A robot covers every aisle on a timetable; a badge covers wherever a person walks, whenever they walk there.",
+      "evidence": "Your 120 g Owl Mini runs 8 to 10 hours with an on-device NPU and you claim roughly 1/100th the hardware cost of alternatives, but you have never published a coverage comparison. The article that names the gap honestly (aisle coverage per shift, staleness by zone) is the one a VP of store ops forwards.",
+      "formatNote": "A buyer's comparison of two capture models across coverage, freshness and cost.",
+      "tags": [
+        "shelf-analytics",
+        "long-form",
+        "hardware-proof"
+      ],
+      "sources": [
+        {
+          "title": "Simbe Tops 3,000 Contracted Retail Robots",
+          "publisher": "TechRepublic",
+          "url": "https://www.techrepublic.com/article/news-simbe-3000-contracted-retail-robots/"
+        },
+        {
+          "title": "Tally 4.0 announcement",
+          "publisher": "Simbe",
+          "url": "https://www.simberobotics.com/about/newsroom/simbe-unveils-tally-4-0-the-next-generation-of-autonomous-retail-robot-powering-store-intelligence-via-physical-ai"
+        },
+        {
+          "title": "Owl Mini and Owl Pro release",
+          "publisher": "Business Wire via FinancialContent",
+          "url": "https://www.financialcontent.com/article/bizwire-2026-9-16-augmodo-unveils-wearable-owl-mini-and-owl-pro-shrinking-physical-ai-into-smallest-smartest-smartbadge-ever-built"
+        }
+      ]
+    },
+    {
+      "id": "aug-05",
+      "format": "long_form",
+      "title": "Shrink Math: The 21 Percent Nobody Owns",
+      "angle": "Appriss Retail's September 15 2026 benchmark puts inventory errors at 21 percent of $89B in retail loss and operational inefficiency at another 13 percent. Both categories are shelf-truth problems, and every vendor pitches theft instead.",
+      "evidence": "Your Chemist Warehouse 30 percent gap reduction and your live-map dashboard sit exactly on those two categories, yet you have published no shrink claim at all. A piece that separates what a shelf-truth layer can and cannot touch in the Appriss breakdown would be the only one in the category.",
+      "formatNote": "A breakdown the buyer reads category by category against their own loss numbers.",
+      "tags": [
+        "retail-shrink",
+        "long-form",
+        "content-gap"
+      ],
+      "sources": [
+        {
+          "title": "2026 Total Retail Loss Benchmark Report",
+          "publisher": "Appriss Retail",
+          "url": "https://apprissretail.com/2026-total-retail-loss-benchmark-report/"
+        },
+        {
+          "title": "Chemist Warehouse partners with Augmodo",
+          "publisher": "Retail Technology Innovation Hub",
+          "url": "https://retailtechinnovationhub.com/home/2024/12/12/chemist-warehouse-partners-with-augmodo-to-give-physical-store-associates-spatial-ai-assistants"
+        },
+        {
+          "title": "homepage",
+          "publisher": "Augmodo",
+          "url": "https://augmodo.com"
+        }
+      ]
+    },
+    {
+      "id": "aug-06",
+      "format": "short_insight",
+      "title": "Supplier Data From the Retailer's Badge",
+      "angle": "Retail media and supplier analytics are where CPG budgets moved, and the Chemist Warehouse deal named seven suppliers as design partners with a path to 400+ through SpatialView, with L'Oreal ANZ first. Selling one capture stream to two buyers is the business model question retailers will ask about.",
+      "evidence": "Your March 2025 announcement is the only public description of the supplier side, and your dunnhumby collaboration (September 2025) sketched personalized routing on top of the same data. Nothing explains who owns the shelf data, what a supplier sees and what they do not.",
+      "formatNote": "One partnership and one business-model question.",
+      "tags": [
+        "cpg-analytics",
+        "short-insight",
+        "partnership-proof"
+      ],
+      "sources": [
+        {
+          "title": "Chemist Warehouse Launches Partnership with Augmodo",
+          "publisher": "Business Wire",
+          "url": "https://www.businesswire.com/news/home/20250331350926/en/Chemist-Warehouse-Launches-Partnership-with-Augmodo-Modernizing-Tech-to-Give-Store-Associates-Spatial-AI-Assistants"
+        },
+        {
+          "title": "Augmodo and dunnhumby Forecast How Spatial AI Will Revolutionize Retail",
+          "publisher": "StreetInsider via Business Wire",
+          "url": "https://www.streetinsider.com/Business+Wire/Augmodo+++dunnhumby+Forecast+How+Spatial+AI+Will+Revolutionize+Retail/25346374.html"
+        }
+      ]
+    },
+    {
+      "id": "aug-07",
+      "format": "linkedin_post",
+      "title": "From Cheerios to Wrenches: What Transfers Beyond Retail",
+      "angle": "Your July 2026 round was framed around the physical workforce beyond retail: automotive plants, warehouses, hospitals, facility maintenance. Your CEO's line that grabbing a wrench is not that different from grabbing a Cheerios box is a claim, and the article should test it.",
+      "evidence": "Your proof is entirely retail: 186M square feet a month, 50 to 100 new stores a month, Chemist Warehouse and L'Oreal ANZ as the only named partners. A piece that states plainly which parts of the model (object recognition, 3D mapping, passive capture) carry over and which retrain from zero earns trust with the next vertical before the first pilot.",
+      "formatNote": "One founder claim, tested in public.",
+      "tags": [
+        "vertical-expansion",
+        "linkedin-post",
+        "funding-context"
+      ],
+      "sources": [
+        {
+          "title": "Augmodo raises $21M",
+          "publisher": "GeekWire",
+          "url": "https://www.geekwire.com/2026/augmodo-raises-21m-to-push-its-spatial-ai-beyond-just-retail-toward-the-broader-physical-workforce/"
+        },
+        {
+          "title": "$21M announcement",
+          "publisher": "Augmodo",
+          "url": "https://www.augmodo.com/augmodo-secures-21m-to-scale-ai-assistants-for-the-physical-workforce-beyond-retail-at-a-350m-valuation"
+        },
+        {
+          "title": "Our Story",
+          "publisher": "Augmodo",
+          "url": "https://www.augmodo.com/our-story"
+        }
+      ]
+    }
+  ]
+}
