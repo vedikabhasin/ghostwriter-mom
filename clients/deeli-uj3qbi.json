@@ -1,0 +1,277 @@
+{
+  "slug": "deeli-uj3qbi",
+  "companyName": "Deeli AI",
+  "contactFirstName": "Hanson",
+  "greetingName": "Hanson",
+  "introBasis": "your own patent research and the questions R&D and corporate VC buyers ask before they commit",
+  "emailKnown": true,
+  "stripeLink19": "https://buy.stripe.com/7sY8wP0M833Rcx21YugnK09",
+  "directionShape": {
+    "long_form": 1,
+    "short_insight": 1
+  },
+  "offerText": "Your first article is on me.",
+  "signal": null,
+  "cards": [
+    {
+      "id": "dee-01",
+      "format": "long_form",
+      "title": "AI Tech Scouting: What It Does and Doesn't",
+      "angle": "Semiconductor international patent filings grew 6.1% in 2025, tied for the fastest growth among the top 10 fields, per WIPO. AI scouting turns that volume into a cited, scored report in minutes, but it narrows the search. It does not replace the expert who makes the call.",
+      "evidence": "Your homepage shows the full flow: a plain-language question, a read of patents, papers, funding and Chinese-language sources, then a report with every claim cited and contradictions flagged. No article on your site explains what AI technology scouting is or where its limits sit.",
+      "formatNote": "It owns \"AI technology scouting\" and gives every later piece a page to link back to.",
+      "tags": [
+        "ai-technology-scouting",
+        "long-form",
+        "product-method"
+      ],
+      "sources": [
+        {
+          "title": "PCT filings 2025 press release",
+          "publisher": "WIPO",
+          "url": "https://www.wipo.int/pressroom/en/articles/2026/article_0003.html"
+        },
+        {
+          "title": "Deeli homepage",
+          "publisher": "Deeli",
+          "url": "https://deeli.ai/"
+        }
+      ]
+    },
+    {
+      "id": "dee-02",
+      "format": "long_form",
+      "title": "LLM vs Tech Scouting Platform: Which Holds Up?",
+      "angle": "Only 12% of organizations call their AI governance mature, per Cisco's January 2026 benchmark of 5,200 professionals. A general model is fine for brainstorming. A build or buy decision needs live sources, data that stays in-house, and a structured output, and no tool removes the need to check sources.",
+      "evidence": "Your homepage compares a typical LLM with Deeli on five points: sources, where prompts go, output format, workflow, and language coverage. No page on your site expands that table for buyers searching this question.",
+      "formatNote": "It answers the first objection a buyer raises and builds on a table you already publish.",
+      "tags": [
+        "llm-vs-scouting-platform",
+        "long-form",
+        "product-comparison"
+      ],
+      "sources": [
+        {
+          "title": "Deeli homepage, comparison section",
+          "publisher": "Deeli",
+          "url": "https://deeli.ai/#why-llm"
+        },
+        {
+          "title": "2026 Data and Privacy Benchmark",
+          "publisher": "Cisco",
+          "url": "https://newsroom.cisco.com/c/r/newsroom/en/us/a/y2026/m01/ai-data-privacy-investments-governance-cisco-report.html"
+        }
+      ]
+    },
+    {
+      "id": "dee-03",
+      "format": "short_insight",
+      "title": "Silicon Photonics Patents: TSMC Up, Intel Down",
+      "angle": "TSMC says its COUPE photonics platform enters volume production in 2026, per TrendForce (April 1, 2026). The filings showed the split a year earlier, though a few dozen filings a year is a small sample and counts alone do not measure quality.",
+      "evidence": "Your IP Insight #3 with TechSoda found TSMC's silicon photonics filings rose from about 46 in 2023 to about 50 in 2024, while Intel's fell from about 43 to about 26. The analysis lives on TechSoda. No page on your own site hosts it.",
+      "formatNote": "It rests on your own published patent counts, your strongest analytical proof.",
+      "tags": [
+        "silicon-photonics",
+        "short-insight",
+        "patent-analysis"
+      ],
+      "sources": [
+        {
+          "title": "IP Insight #3 (Feb 25, 2026)",
+          "publisher": "TechSoda",
+          "url": "https://techsoda.substack.com/p/ip-insight-3-tsmc-accelerates-in"
+        },
+        {
+          "title": "COUPE production timeline (Apr 1, 2026)",
+          "publisher": "TrendForce",
+          "url": "https://www.trendforce.com/news/2026/04/01/news-silicon-photonics-race-intensifies-as-tsmc-targets-2026-coupe-production-samsung-eyes-2029-cpo-turnkey/"
+        }
+      ]
+    },
+    {
+      "id": "dee-04",
+      "format": "linkedin_post",
+      "title": "Backtesting Tech Scouting: Would We Have Called It?",
+      "angle": "The largest R&D investors raised spending about 6% in 2025, double the 2024 pace, per the OECD. More budget now rides on early picks, and a backtest is the cleanest way to test a scouting tool, but one backtest is a signal, not a track record.",
+      "evidence": "Your founders tested Deeli on an emerging semiconductor technology using only data from two years before MediaTek's investment decision. It flagged the technology's growth potential and the companies later shipping products. No post walks through the method.",
+      "formatNote": "It's a first-person founder story from the MediaTek years.",
+      "tags": [
+        "backtesting",
+        "linkedin-post",
+        "founder-story"
+      ],
+      "sources": [
+        {
+          "title": "Deeli AI profile (Jun 24, 2025)",
+          "publisher": "TechSoda",
+          "url": "https://techsoda.substack.com/p/deeli-ai-revolutionizing-tech-scouting"
+        },
+        {
+          "title": "business R&D tracker (Jun 2026)",
+          "publisher": "OECD",
+          "url": "https://www.oecd.org/en/data/insights/data-explainers/2026/06/tracking-business-rd-in-real-time-the-largest-investors-raised-rd-spending-by-6-in-2025.html"
+        }
+      ]
+    },
+    {
+      "id": "dee-05",
+      "format": "short_insight",
+      "title": "Liquid Cooling Tech Scouting: Map Before You Buy",
+      "angle": "TrendForce expects liquid cooling in 53% of high-end AI infrastructure in 2026, up from about 33% in 2025. The hard choice is which approach, from cold-plate to two-phase immersion. A landscape map shows where patents and players cluster, but it does not pick the vendor.",
+      "evidence": "Your homepage uses liquid cooling as its knowledge-graph example. It links data center thermal, two-phase immersion, cold-plate direct-to-chip, dielectric fluid and AI HPC clusters. No article on your site covers this domain.",
+      "formatNote": "It targets \"liquid cooling technology landscape\", a query teams search before scoping a project.",
+      "tags": [
+        "liquid-cooling",
+        "short-insight",
+        "knowledge-graph"
+      ],
+      "sources": [
+        {
+          "title": "liquid cooling penetration (Aug 17, 2026)",
+          "publisher": "TrendForce",
+          "url": "https://www.trendforce.com/presscenter/news/20260817-13183.html"
+        },
+        {
+          "title": "Deeli homepage, technology section",
+          "publisher": "Deeli",
+          "url": "https://deeli.ai/#technology"
+        }
+      ]
+    },
+    {
+      "id": "dee-06",
+      "format": "short_insight",
+      "title": "Chinese Patent Data: The Blind Spot in R&D",
+      "angle": "China filed 73,718 international patent applications in 2025, up 5.3%, and Huawei led all applicants with 7,523, per WIPO. English-only searches miss part of that signal, though machine-read technical Chinese still needs expert review on high-stakes calls.",
+      "evidence": "Your homepage says Deeli reads Chinese-language patents, papers, funding and disclosures. Your comparison table sets that against \"English-centric general web\" tools. No article on your site explains why this coverage matters.",
+      "formatNote": "It argues for your clearest point of difference and can rank for \"Chinese patent search for R&D\".",
+      "tags": [
+        "chinese-patent-data",
+        "short-insight",
+        "source-coverage"
+      ],
+      "sources": [
+        {
+          "title": "PCT filings 2025 press release",
+          "publisher": "WIPO",
+          "url": "https://www.wipo.int/pressroom/en/articles/2026/article_0003.html"
+        },
+        {
+          "title": "Deeli homepage",
+          "publisher": "Deeli",
+          "url": "https://deeli.ai/"
+        }
+      ]
+    },
+    {
+      "id": "dee-07",
+      "format": "short_insight",
+      "title": "On-Premise AI for R&D: Keep Roadmaps In-House",
+      "angle": "81% of organizations face heavier data localization demands, per Cisco's January 2026 benchmark. Roadmap questions reveal strategy, so the tool should run inside your network, even though on-prem costs more and takes longer to deploy than cloud.",
+      "evidence": "Your homepage says Deeli runs on-premises and data \"never leaves your network.\" A 2025 TechSoda profile describes an on-prem option that connects to internal roadmaps and project data. No article on your site makes the security case.",
+      "formatNote": "It speaks to the security reviewer who can block the purchase.",
+      "tags": [
+        "on-premise-ai",
+        "short-insight",
+        "deployment-model"
+      ],
+      "sources": [
+        {
+          "title": "2026 Data and Privacy Benchmark",
+          "publisher": "Cisco",
+          "url": "https://newsroom.cisco.com/c/r/newsroom/en/us/a/y2026/m01/ai-data-privacy-investments-governance-cisco-report.html"
+        },
+        {
+          "title": "Deeli homepage",
+          "publisher": "Deeli",
+          "url": "https://deeli.ai/"
+        },
+        {
+          "title": "Deeli AI profile (Jun 24, 2025)",
+          "publisher": "TechSoda",
+          "url": "https://techsoda.substack.com/p/deeli-ai-revolutionizing-tech-scouting"
+        }
+      ]
+    },
+    {
+      "id": "dee-08",
+      "format": "long_form",
+      "title": "Build, Buy, Partner, or Invest: Choose With Evidence",
+      "angle": "Crunchbase counted $113B in startup acquisitions of $1B or more in Q2 2026, the highest quarter on record. The right move depends on maturity, cost and who owns the IP. A framework speeds the call but does not replace a company's own strategy.",
+      "evidence": "Your reports end with a build, buy, partner or invest recommendation tailored to internal priorities, and your site pitches data-backed build or buy decisions to the C-suite. No page explains how that recommendation is reached.",
+      "formatNote": "It connects scouting output to the decision the buyer actually has to make.",
+      "tags": [
+        "build-vs-buy",
+        "long-form",
+        "report-output"
+      ],
+      "sources": [
+        {
+          "title": "H1 2026 funding and exits",
+          "publisher": "Crunchbase News",
+          "url": "https://news.crunchbase.com/venture/global-startup-exits-ipo-ma-soar-ai-q2-h1-2026/"
+        },
+        {
+          "title": "Deeli homepage, report section",
+          "publisher": "Deeli",
+          "url": "https://deeli.ai/"
+        }
+      ]
+    },
+    {
+      "id": "dee-09",
+      "format": "linkedin_post",
+      "title": "Patent Counts Mislead: Read What's Protected",
+      "angle": "China's invention patent grants fell 7% to 971,930 in 2025 as examiners tightened review. Volume moves with policy, so what a company protects says more than how much it files, even though quality signals take longer to read.",
+      "evidence": "Your IP Insight #4 argued that TSMC's patents cover manufacturing and integration while Intel's cover system architecture. It concluded that what companies protect matters more than filing counts. Your reports also score maturity and flag contradictions.",
+      "formatNote": "\"Counts vs what's protected\" works as a 6 to 8 slide framework that points readers to the silicon photonics data piece.",
+      "tags": [
+        "patent-quality",
+        "linkedin-post",
+        "framework"
+      ],
+      "sources": [
+        {
+          "title": "IP Insight #4 (Feb 27, 2026)",
+          "publisher": "TechSoda",
+          "url": "https://techsoda.substack.com/p/ip-insight-4-tsmc-vs-intel-in-silicon"
+        },
+        {
+          "title": "CNIPA 2025 statistics",
+          "publisher": "China IP Law Update",
+          "url": "https://www.chinaiplawupdate.com/2026/01/cnipa-releases-2025-statistics-total-patent-grants-down-16-yoy/"
+        }
+      ]
+    },
+    {
+      "id": "dee-10",
+      "format": "short_insight",
+      "title": "Vetting Deep Tech Startups When Money Is Everywhere",
+      "angle": "More than 70% of global startup capital in Q2 2026 went to AI companies, per Crunchbase. Funding shows interest, not technical proof, so corporate VCs need patent, paper and grant signals, and early data on young startups is thin by nature.",
+      "evidence": "Your platform targets corporate VCs who want to \"spot and validate deep tech innovators at the earliest stages.\" Startups can list their technology for free on innovators.deeli.ai. You won the NVIDIA Award at the 2025 InnoVEX pitch contest.",
+      "formatNote": "It targets \"how to vet deep tech startups\" for one of your five named buyer groups.",
+      "tags": [
+        "deep-tech-due-diligence",
+        "short-insight",
+        "platform-proof"
+      ],
+      "sources": [
+        {
+          "title": "H1 2026 funding",
+          "publisher": "Crunchbase News",
+          "url": "https://news.crunchbase.com/venture/global-startup-exits-ipo-ma-soar-ai-q2-h1-2026/"
+        },
+        {
+          "title": "InnoVEX 2025 pitch winners",
+          "publisher": "InnoVEX",
+          "url": "https://innovex.computex.biz/show/pitchTeam.aspx?BNA=6131&pitchId=1114"
+        },
+        {
+          "title": "Deeli homepage",
+          "publisher": "Deeli",
+          "url": "https://deeli.ai/"
+        }
+      ]
+    }
+  ]
+}
