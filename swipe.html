@@ -201,15 +201,32 @@ body.is-dragging{overflow:hidden; touch-action:none;}
    showEndOfDeck() in place of the last card once the deck runs out. */
 .deck-end{
   position:absolute; inset:0;
-  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:16px;
+  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:34px;
   padding:0 22px; text-align:center;
   animation:deck-end-in 320ms var(--ease-spring) both;
 }
+/* End-of-deck iridescent glow. Reuses the button-hover glow recipe: same
+   conic gradient (via --glow / --deck-glow), same 17px blur, opacity in
+   the 0.78-0.95 range set by the button breathe animation. Static here,
+   no animation, no hover. Deck-specific colors come from --deck-glow,
+   computed by showEndOfDeck() from the formats present in this deck. */
 .deck-facedown{
   position:relative; width:140px; height:190px;
+  isolation:isolate;
+}
+.deck-facedown::before{
+  content:'';
+  position:absolute; inset:-20px;
+  border-radius:calc(var(--radius-card) + 20px);
+  background:var(--deck-glow, var(--glow));
+  filter:blur(17px);
+  opacity:0.86;
+  z-index:0;
+  pointer-events:none;
 }
 .deck-facedown .fd-card{
   position:absolute; inset:0; border-radius:var(--radius-card);
+  overflow:hidden;
   background:
     repeating-linear-gradient(135deg, rgba(14,14,14,0.05) 0 6px, rgba(14,14,14,0.02) 6px 12px),
     #F4EFE6;
@@ -219,6 +236,15 @@ body.is-dragging{overflow:hidden; touch-action:none;}
 .deck-facedown .fd-c2{ transform:translate(6px, 6px)   rotate(3deg); opacity:0.75; z-index:2; }
 .deck-facedown .fd-c3{ transform:translate(12px, 12px) rotate(6deg); opacity:0.5;  z-index:1; }
 .deck-facedown .fd-c1{ z-index:3; }
+/* Faint iridescent sheen over the top card's stripe texture. */
+.deck-facedown .fd-c1::after{
+  content:'';
+  position:absolute; inset:0; border-radius:inherit;
+  background:var(--deck-glow, var(--glow));
+  opacity:0.09;
+  mix-blend-mode:screen;
+  pointer-events:none;
+}
 .deck-end-copy{
   font-family:var(--font-display); font-weight:800;
   font-size:clamp(18px, 4.6vw, 22px); letter-spacing:-0.015em; line-height:1.18;
@@ -2579,7 +2605,15 @@ body.dir-save  .ctl-save{
       seriesEl.textContent = String(card.series);
       seriesEl.hidden = false;
     }
-    el.querySelector('[data-slot="title"]').textContent    = String(card.title || '');
+    var titleText = String(card.title || '');
+    if(!titleText){
+      // A card that reaches the DOM without a title is a data or render
+      // pipeline bug: log the card key so it's traceable, and fall back to
+      // the id so no card is ever shown as a title-less blank.
+      try { console.error('[card] missing title for card key:', card && card.id, card); } catch(_){}
+      titleText = String((card && card.id) || 'Untitled');
+    }
+    el.querySelector('[data-slot="title"]').textContent    = titleText;
     var angleEl = el.querySelector('[data-slot="angle"]');
     angleEl.textContent = String(card.angle || '');
     // Proof block: inline "Proof:" label + text, clamped to 2 lines by CSS.
@@ -2739,7 +2773,11 @@ body.dir-save  .ctl-save{
 
   // -- Gestures ------------------------------------------------------------
   var drag = null;
-  function attachGestures(el){ el.addEventListener('pointerdown', onDown); }
+  function attachGestures(el){
+    if(!el || el.dataset.attached === '1') return;
+    el.dataset.attached = '1';
+    el.addEventListener('pointerdown', onDown);
+  }
   function onDown(e){
     if(e.button !== undefined && e.button !== 0) return;
     // Buttons + links suppress swipe start (they're small tap targets). The
@@ -2865,17 +2903,25 @@ body.dir-save  .ctl-save{
     if(next1){ next1.setAttribute('data-depth','0'); attachGestures(next1); }
     if(next2)  next2.setAttribute('data-depth','1');
 
+    // Insert the new depth-2 peek synchronously, right alongside the
+    // promotion. If this ran inside the 640ms exit setTimeout, a rapid
+    // follow-up swipe would find no card at data-depth="2" and skip a
+    // promotion; on the swipe after that, no card at data-depth="1"
+    // either, and the visible peek (with children hidden by CSS) would
+    // read as a solid format-color blank card. Building here keeps the
+    // depth 0/1/2 slots consistent with state.cardIndex on every swipe.
+    var newPeekIdx = state.cardIndex + (VISIBLE_DEPTH - 1);
+    var newPeek = client.cards[newPeekIdx];
+    if(newPeek){
+      var peekEl = buildCard(newPeek, VISIBLE_DEPTH - 1);
+      stage.insertBefore(peekEl, stage.firstChild);
+    }
+
     var nextTop = client.cards[state.cardIndex];
     if(nextTop) setFormatTint(nextTop.format);
 
     setTimeout(function(){
       if(top && top.parentNode) top.parentNode.removeChild(top);
-      var newPeekIdx = state.cardIndex + (VISIBLE_DEPTH - 1);
-      var newPeek = client.cards[newPeekIdx];
-      if(newPeek && document.getElementById('card-stage')){
-        var el = buildCard(newPeek, VISIBLE_DEPTH - 1);
-        document.getElementById('card-stage').insertBefore(el, document.getElementById('card-stage').firstChild);
-      }
       updateCounter();
       // End-of-deck only fires when every card in the deck has a decision
       // from this visitor. A fast-track with cards still unswiped continues
@@ -2946,6 +2992,12 @@ body.dir-save  .ctl-save{
     var el = document.createElement('div');
     el.className = 'deck-end';
     el.setAttribute('aria-live', 'polite');
+    // A conic gradient of the format colors present in this deck. Same
+    // shape as the button-hover glow (var(--glow)); only the color set
+    // is deck-specific, so the end-of-deck stack picks up the flavor of
+    // whatever formats the visitor was swiping through.
+    var g = deckGlow(client && client.cards);
+    if(g) el.style.setProperty('--deck-glow', g);
     el.innerHTML =
       '<div class="deck-facedown" aria-hidden="true">' +
         '<span class="fd-card fd-c1"></span>' +
@@ -2956,6 +3008,24 @@ body.dir-save  .ctl-save{
         "That's all " + total + '. Pick one to write free.' +
       '</p>';
     stage.appendChild(el);
+  }
+  function deckGlow(cards){
+    if(!Array.isArray(cards) || !cards.length) return '';
+    var seen = {};
+    for(var i = 0; i < cards.length; i++){
+      var f = String((cards[i] && cards[i].format) || '').toLowerCase();
+      if(f === 'pillar' || f === 'insight' || f === 'post') seen[f] = true;
+    }
+    var stops = [];
+    if(seen.pillar)  stops.push('var(--f-pillar)');
+    if(seen.insight) stops.push('var(--f-insight)');
+    if(seen.post)    stops.push('var(--f-post)');
+    if(!stops.length) return '';
+    // Close the ring so the conic gradient has no seam. A single-format
+    // deck still reads as a soft halo because of the 17px blur.
+    if(stops.length === 1) stops.push(stops[0]);
+    stops.push(stops[0]);
+    return 'conic-gradient(from 180deg, ' + stops.join(', ') + ')';
   }
 
   // -- Direction -----------------------------------------------------------
