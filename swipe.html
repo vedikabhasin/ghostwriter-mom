@@ -1579,6 +1579,22 @@ body.dir-save  .ctl-save{
   <input type="text"  name="timestamp">
   <input type="text"  name="bot-field">
 </form>
+<!-- link-opened: fires once per browser session per prospect slug, after 3
+     cumulative seconds of page visibility, so email link scanners and
+     preview bots that never render the page don't trigger it. Skipped on
+     localhost, when gw_internal is set, on the swipetemplate slug, and
+     for internal companies. Wired in fireLinkOpened() in swipe.html. -->
+<form name="link-opened" data-netlify="true" netlify-honeypot="bot-field" hidden aria-hidden="true">
+  <input type="text" name="slug">
+  <input type="text" name="companyName">
+  <input type="text" name="openedAt">
+  <input type="text" name="openedAtReadable">
+  <input type="text" name="timezone">
+  <input type="text" name="device">
+  <input type="text" name="referrerHost">
+  <input type="text" name="src">
+  <input type="text" name="bot-field">
+</form>
 
 <div class="bg-tint format" id="tint-format" aria-hidden="true"></div>
 <div class="bg-tint action" id="tint-action" aria-hidden="true"></div>
@@ -2312,6 +2328,96 @@ body.dir-save  .ctl-save{
   }
   // Enhanced-only helper. BASIC slugs skip card_viewed/dwell/paused entirely.
   function _enhanced(){ var T = window.gwmTrack; return !!(T && T.isEnhanced()); }
+
+  // Fire the prospect-open alert once per browser session per slug, after
+  // 3 cumulative seconds of visible time. Waits on visibility so preview
+  // renderers and link scanners (they load the HTML but never keep the
+  // tab visible) don't count as a real open. Wires both a Netlify form
+  // and a PostHog capture with the same field shape.
+  function scheduleLinkOpened(){
+    try {
+      if(!SLUG || SLUG === 'swipetemplate') return;
+      if(client && client.isInternal) return;
+      var host = location.hostname;
+      if(host === 'localhost' || host === '127.0.0.1' || host === '[::1]') return;
+      try { if(localStorage.getItem('gw_internal') === '1') return; } catch(_){}
+      var storageKey = 'gwm-link-opened-' + SLUG;
+      try { if(sessionStorage.getItem(storageKey) === '1') return; } catch(_){}
+
+      var THRESHOLD_MS = 3000;
+      var accum = 0;
+      var since = document.visibilityState === 'visible' ? Date.now() : 0;
+      var fired = false;
+
+      function onVis(){
+        if(fired) return;
+        if(document.visibilityState === 'visible'){
+          since = Date.now();
+        } else if(since){
+          accum += Date.now() - since;
+          since = 0;
+        }
+      }
+      document.addEventListener('visibilitychange', onVis);
+
+      var poll = setInterval(function(){
+        if(fired){ clearInterval(poll); return; }
+        var current = accum + (since ? Date.now() - since : 0);
+        if(current < THRESHOLD_MS) return;
+        fired = true;
+        clearInterval(poll);
+        document.removeEventListener('visibilitychange', onVis);
+        fire();
+      }, 500);
+
+      function fire(){
+        try { sessionStorage.setItem(storageKey, '1'); } catch(_){}
+        var now = new Date();
+        var tz = 'UTC';
+        try { tz = Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC'; } catch(_){}
+        var readable = '';
+        try {
+          readable = new Intl.DateTimeFormat('en-US', {
+            month: 'short', day: 'numeric',
+            hour: 'numeric', minute: '2-digit', timeZone: tz
+          }).format(now);
+        } catch(_){}
+        var w = window.innerWidth || 0;
+        var device = 'desktop';
+        if(w > 0 && w <= 640) device = 'mobile';
+        else if(w > 640 && w <= 1024) device = 'tablet';
+        var refHost = '';
+        try { if(document.referrer) refHost = new URL(document.referrer).hostname; } catch(_){}
+        var src = '';
+        try { src = new URLSearchParams(location.search).get('src') || ''; } catch(_){}
+        var company = (client && client.companyName) || '';
+
+        try {
+          postForm('link-opened', {
+            slug:             SLUG,
+            companyName:      company,
+            openedAt:         now.toISOString(),
+            openedAtReadable: readable,
+            timezone:         tz,
+            device:           device,
+            referrerHost:     refHost,
+            src:              src
+          });
+        } catch(_){}
+        try {
+          if(window.gwmTrack && window.gwmTrack.capture){
+            window.gwmTrack.capture('link_opened', {
+              opened_at:          now.toISOString(),
+              opened_at_readable: readable,
+              timezone:           tz,
+              device:             device,
+              referrer_host:      refHost
+            });
+          }
+        } catch(_){}
+      }
+    } catch(_){}
+  }
   function _armIdle(){
     if(!_cardTiming) return;
     clearTimeout(_cardTiming.idleTimer);
@@ -2494,6 +2600,11 @@ body.dir-save  .ctl-save{
         window.gwmTrack.setSummaryCollector(function(){ return collectSessionSummary(); });
       }
     } catch(_){}
+    // Prospect-page open alert. Skipped for the template, for internal
+    // companies, on localhost, and when gw_internal is set. Waits for 3
+    // cumulative seconds of page visibility so link scanners never trip
+    // it. See the link-opened form declaration up top for the field list.
+    scheduleLinkOpened();
     // "$49 after early access" line is gone by product spec — the price
     // block only shows the current $19/month.
 
