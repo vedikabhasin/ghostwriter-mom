@@ -1,0 +1,232 @@
+{
+  "slug": "groovejones-wlpwpq",
+  "companyName": "Groove Jones",
+  "contactFirstName": null,
+  "greetingName": null,
+  "introBasis": "your Vision Pro, AI and immersive video work, and the questions brand teams ask before they commission a build",
+  "emailKnown": true,
+  "stripeLink19": "https://buy.stripe.com/7sY8wP0M833Rcx21YugnK09",
+  "directionShape": {
+    "long_form": 1,
+    "short_insight": 2
+  },
+  "offerText": "Your first article is on me.",
+  "signal": null,
+  "cards": [
+    {
+      "id": "grv-01",
+      "format": "short_insight",
+      "title": "Vision Pro Experiences: Design for Few Viewers",
+      "angle": "visionOS 26 added enterprise APIs such as Protected Content, yet a lighter Vision Pro successor is not reported before late 2028 or 2029. A small, guided audience can justify a spatial build when the session, headset handoff and follow-up are designed first.",
+      "evidence": "Your HSBC quantum experience reached more than 300 guests over a two-day summit in Hong Kong, with Orchestrator handling calibration and handover between sessions. Your Pfizer piece (Sept 2026) gave patients, providers and internal teams a guided lab, with a build-your-own cancer therapy step.",
+      "formatNote": "One case pair plus one market shift: headset scarcity makes guided sessions the design problem.",
+      "tags": [
+        "vision-pro",
+        "short-insight",
+        "case-study-proof"
+      ],
+      "sources": [
+        {
+          "title": "HSBC case study",
+          "publisher": "Groove Jones",
+          "url": "https://www.groovejones.com/hsbc-apple-vision-pro-visualize-quantum-computing"
+        },
+        {
+          "title": "Pfizer case study",
+          "publisher": "Groove Jones",
+          "url": "https://www.groovejones.com/pfizer-immersive-storytelling-apple-vision-pro"
+        },
+        {
+          "title": "About visionOS 26 Updates",
+          "publisher": "Apple Support",
+          "url": "https://support.apple.com/en-us/123024"
+        },
+        {
+          "title": "successor report",
+          "publisher": "The Apple Post",
+          "url": "https://www.theapplepost.com/2026/09/27/72741/work-continues-on-lighter-apple-vision-pro-successor-report-says/"
+        }
+      ]
+    },
+    {
+      "id": "grv-02",
+      "format": "short_insight",
+      "title": "AI Personalization at Events: A Production Checklist",
+      "angle": "A summary of the AMA's 2026 trends report names AI personalization as the trend that will define activations for years. Scale depends less on the model than on input design, render time, delivery and moderation.",
+      "evidence": "Your Mantra Machine for WPP at Adobe Summit (May 2026) asked guests short questions, took a selfie, rendered a 10-second lip-synced video in the cloud and emailed it before guests left. You trained brand ambassadors, and wait times stayed minimal at peak.",
+      "formatNote": "One recent case and one trend; the checklist angle keeps it distinct from the existing AI mirror measurement piece.",
+      "tags": [
+        "ai-activations",
+        "short-insight",
+        "personalization"
+      ],
+      "sources": [
+        {
+          "title": "Adobe Summit Mantra Machine",
+          "publisher": "Groove Jones",
+          "url": "https://www.groovejones.com/adobe-summit-mantra-machine-ai-powered-personalization-experience"
+        },
+        {
+          "title": "2026 AI trends",
+          "publisher": "PostPop Studios",
+          "url": "https://www.postpopstudios.com/post/2026-ai-trends-experiential-marketing"
+        }
+      ]
+    },
+    {
+      "id": "grv-03",
+      "format": "long_form",
+      "title": "WebGL Configurator or Immersive App: Which Wins?",
+      "angle": "The WebXR Device API reached W3C Candidate Recommendation status in June 2026, but Safari and Firefox support is still limited. Browser reach wins for product education on any device, and native wins when performance or sensors matter.",
+      "evidence": "Your Toyota Mirai configurator runs on desktop and mobile, with two trims, six colors, up to 10 hotspots and a powertrain X-ray view. Your Crown site used only 3D models, not vehicle CAD data, and dealers reached it by QR code.",
+      "formatNote": "A buyer's decision guide comparing two delivery models across reach, performance, sensors and maintenance.",
+      "tags": [
+        "webgl",
+        "long-form",
+        "product-configurators"
+      ],
+      "sources": [
+        {
+          "title": "Toyota Mirai",
+          "publisher": "Groove Jones",
+          "url": "https://www.groovejones.com/toyota-mirai-webgl"
+        },
+        {
+          "title": "Toyota Crown",
+          "publisher": "Groove Jones",
+          "url": "https://www.groovejones.com/toyota-crown-webgl-interactive-experience"
+        },
+        {
+          "title": "WebXR Device API",
+          "publisher": "W3C",
+          "url": "https://www.w3.org/TR/2026/CRD-webxr-20260609/"
+        },
+        {
+          "title": "AR tools 2026",
+          "publisher": "BuildMVPFast",
+          "url": "https://www.buildmvpfast.com/blog/best-ar-spatial-computing-tools-2026"
+        }
+      ]
+    },
+    {
+      "id": "grv-04",
+      "format": "short_insight",
+      "title": "Immersive Video Shoots: What Production Requires",
+      "angle": "Blackmagic's $26,495 URSA Cine Immersive 100G, announced April 2026, made live Apple Immersive Video practical after Lakers games used it in 2025-26. The real decisions are camera placement, proximity, movement, audio and delivery, not the spec sheet.",
+      "evidence": "Your pickleball shoot filled three 8TB modules with no stitching or tripod cleanup. Your Texas Ballet Theater shoot put the camera at standing height in the seating area for a 180-degree view, used a single card and battery, and added audio afterward.",
+      "formatNote": "Two shoots and one hardware shift, written for producers scoping their first immersive capture.",
+      "tags": [
+        "immersive-video",
+        "short-insight",
+        "production-guide"
+      ],
+      "sources": [
+        {
+          "title": "Moneyball match",
+          "publisher": "Groove Jones",
+          "url": "https://www.groovejones.com/inside-the-moneyball-match-how-groove-jones-filmed-pickleball-for_apple_vision_pro"
+        },
+        {
+          "title": "Gazes",
+          "publisher": "Groove Jones",
+          "url": "https://www.groovejones.com/blackmagic-ursa-cine-immersive-gazes"
+        },
+        {
+          "title": "Blackmagic 100G",
+          "publisher": "SVG/NAB",
+          "url": "https://www.sportsvideo.org/2026/04/21/nab-2026-blackmagic-design-announces-ursa-cine-immersive-100g-and-ursa-cine-live-encoder/"
+        }
+      ]
+    },
+    {
+      "id": "grv-05",
+      "format": "short_insight",
+      "title": "Heritage Reconstruction in VR: Show the Uncertainty",
+      "angle": "Apple announced a splat-based Flyover at WWDC on June 8, 2026, and an August 2026 heritage paper argues splats can counter lost site documentation. Responsible reconstruction means showing source material, expert review and what is inferred.",
+      "evidence": "Your Etzanoa experience for Meta Quest 3 grounded its script in Spanish expedition records, reviewed and approved by an Etzanoa Conservancy representative. AI images became splats through Apple's ML Sharp, and locked viewpoints kept the focus on narrative.",
+      "formatNote": "One case and one market shift; the uncertainty angle keeps it distinct from the existing Gaussian splat explainer.",
+      "tags": [
+        "cultural-heritage",
+        "short-insight",
+        "gaussian-splats"
+      ],
+      "sources": [
+        {
+          "title": "Etzanoa",
+          "publisher": "Groove Jones",
+          "url": "https://www.groovejones.com/etzanoa-vr-comfyui-gaussian-splats"
+        },
+        {
+          "title": "UAV splatting paper",
+          "publisher": "MDPI Heritage",
+          "url": "https://www.mdpi.com/2571-9408/9/8/328"
+        },
+        {
+          "title": "Apple Maps splats",
+          "publisher": "Radiance Fields",
+          "url": "https://radiancefields.com/apple-maps-flyover-is-getting-a-gaussian-splatting-upgrade"
+        }
+      ]
+    },
+    {
+      "id": "grv-06",
+      "format": "long_form",
+      "title": "Brand Activation Costs: What Drives the Budget",
+      "angle": "A 2026 budget guide puts custom activations at about $75,000 to $250,000+, and global experiential spend hit a record $128.35B in 2024. A universal price helps no one, so the guide breaks down creative, hardware, software, venue limits, staffing, transport, maintenance and reuse.",
+      "evidence": "Your Southwest activation was a custom CNC-milled airplane-window enclosure with a 4K outdoor display, PC, speakers and depth camera, installed in Denver, Baltimore and Chicago. Your Adobe Mantra Machine shipped preconfigured hardware, onsite install and ambassador training.",
+      "formatNote": "A cost breakdown the buyer compares across several factors; real ranges come from Groove Jones before publishing.",
+      "tags": [
+        "activation-budgets",
+        "long-form",
+        "experiential"
+      ],
+      "sources": [
+        {
+          "title": "activation cost 2026",
+          "publisher": "Barnastics",
+          "url": "https://www.barnastics.com/news/experiential-marketing-activation-cost-2026"
+        },
+        {
+          "title": "experiential statistics",
+          "publisher": "Snapbar",
+          "url": "https://snapbar.com/blog/experiential-marketing-statistics"
+        },
+        {
+          "title": "Southwest Getaways",
+          "publisher": "Groove Jones",
+          "url": "https://www.groovejones.com/southwest-airlines-getaway-vacations-activation-computer-vision-powered-game"
+        },
+        {
+          "title": "Adobe Summit Mantra Machine",
+          "publisher": "Groove Jones",
+          "url": "https://www.groovejones.com/adobe-summit-mantra-machine-ai-powered-personalization-experience"
+        }
+      ]
+    },
+    {
+      "id": "grv-07",
+      "format": "linkedin_post",
+      "title": "Computer Vision or Touchscreen? Choose for the Crowd",
+      "angle": "Experiential spend hit $128.35B in 2024, up 10.5%, so booth attention is contested. Hands-free tracking draws spectators, but lighting, calibration, accessibility and queues decide whether it works on the day.",
+      "evidence": "Your Southwest Getaways game, built with The Infinite Agency, let guests raise a hand to choose an avatar, lean to move and catch icons in a 60-second round. It ran in Denver, Baltimore and Chicago and won a Silver ADDY and a Horizon Gold.",
+      "formatNote": "One claim, one award-winning case.",
+      "tags": [
+        "computer-vision",
+        "linkedin-post",
+        "event-games"
+      ],
+      "sources": [
+        {
+          "title": "Southwest Getaways",
+          "publisher": "Groove Jones",
+          "url": "https://www.groovejones.com/southwest-airlines-getaway-vacations-activation-computer-vision-powered-game"
+        },
+        {
+          "title": "experiential statistics",
+          "publisher": "Snapbar",
+          "url": "https://snapbar.com/blog/experiential-marketing-statistics"
+        }
+      ]
+    }
+  ]
+}
