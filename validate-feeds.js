@@ -2,6 +2,14 @@
 // Build-time schema check for /clients/*.json.
 // Runs from netlify.toml as:  node validate-feeds.js
 //
+// Formats come from /shared/formats.js (one list shared with the sales page):
+// pillar / insight / post (RPR) plus long_form / short_insight / linkedin_post.
+//
+// Optional per-company lead fields: greetingName (string or null; null renders
+// "Hi there."), introBasis (string or null; null keeps RPR's intro sentence).
+// signal may be null for a cold lead (no signals row is imported). Cards may
+// carry formatNote (stored, never rendered).
+//
 // Two feed shapes are accepted:
 //   * Regular client feed (default) — needs stripeLink19, offerText,
 //     directionShape, emailKnown, signal, cards[]. Backs a public sales page.
@@ -17,6 +25,7 @@
 'use strict';
 const fs   = require('fs');
 const path = require('path');
+const gwmFormats = require('./shared/formats.js');
 
 const CLIENTS_DIR = path.join(__dirname, 'clients');
 const REGULAR_REQUIRED  = [
@@ -27,7 +36,7 @@ const REGULAR_REQUIRED  = [
 const INTERNAL_REQUIRED = ['slug', 'companyName', 'signal', 'cards'];
 const CARD_REQUIRED = ['id', 'format', 'title', 'angle', 'evidence', 'sources'];
 // Formats are the visible card categories. "refresh" is a TAG, not a format.
-const FORMATS   = ['pillar', 'insight', 'post'];
+const FORMATS   = gwmFormats.list;
 const SLUG_RE   = /^[a-z0-9_-]{1,64}$/;
 const STRIPE_RE = /^https:\/\/(buy\.stripe\.com|checkout\.stripe\.com)\//;
 const HTTPS_RE  = /^https:\/\//;
@@ -92,14 +101,23 @@ function validateOne(file){
       fail(file + ': directionShape must sum to 1-3 slots (got ' + sum + ')');
     }
   }
-  // Signal object (required for every feed).
+  // Signal: the key is required; null is allowed (cold lead, no signals
+  // row). When present it must be complete.
   const sig = data.signal;
-  if(!sig || typeof sig !== 'object'){
-    fail(file + ': signal must be an object');
+  if(sig !== null){
+    if(!sig || typeof sig !== 'object'){
+      fail(file + ': signal must be an object or null');
+    }
+    ['text','source','date'].forEach(k => {
+      if(typeof sig[k] !== 'string' || !sig[k].trim()){
+        fail(file + ': signal.' + k + ' must be a non-empty string');
+      }
+    });
   }
-  ['text','source','date'].forEach(k => {
-    if(typeof sig[k] !== 'string' || !sig[k].trim()){
-      fail(file + ': signal.' + k + ' must be a non-empty string');
+  // Lead fields: optional, string or null.
+  ['greetingName','introBasis'].forEach(k => {
+    if(k in data && data[k] !== null && (typeof data[k] !== 'string' || !data[k].trim())){
+      fail(file + ': ' + k + ' must be a non-empty string or null');
     }
   });
   // Client-email hygiene: these JSON files are publicly fetchable when regular.
@@ -135,6 +153,9 @@ function validateOne(file){
     }
     if('series' in c && (typeof c.series !== 'string' || !c.series.trim())){
       fail(file + ': ' + label + ' series must be a non-empty string when present');
+    }
+    if('formatNote' in c && c.formatNote !== null && (typeof c.formatNote !== 'string' || !c.formatNote.trim())){
+      fail(file + ': ' + label + ' formatNote must be a non-empty string or null when present');
     }
     // Sources: required, non-empty; each { title, publisher, url } with https URL.
     if(!Array.isArray(c.sources) || c.sources.length === 0){

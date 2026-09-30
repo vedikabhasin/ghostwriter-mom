@@ -18,7 +18,17 @@
 //
 // Cards optionally carry a "series" string (e.g. "VB", "BlendXR"). It lands in
 // the cards.series column and is rendered as a small ink-outline label on the
-// sales page + portal.
+// sales page + portal. Cards may also carry "formatNote" (cards.format_note,
+// stored only, never rendered).
+//
+// Formats: pillar / insight / post (RPR) plus long_form / short_insight /
+// linkedin_post (leads). The list lives in /shared/formats.js; the DB check
+// constraints match it (migration 20260930000014_lead_formats).
+//
+// Lead fields on the top-level object, both optional:
+//   greetingName  string or null -> companies.greeting_name ("Hi there." when null)
+//   introBasis    string or null -> companies.intro_basis  (RPR sentence when null)
+// signal may be null: nothing is written to signals (existing rows are left).
 //
 // Env:
 //   SUPABASE_URL                the project URL (https://xxx.supabase.co)
@@ -27,6 +37,7 @@
 import { createClient } from "@supabase/supabase-js";
 import fs from "node:fs";
 import path from "node:path";
+import { createRequire } from "node:module";
 
 function die(msg) { console.error(msg); process.exit(1); }
 
@@ -49,8 +60,15 @@ try { data = JSON.parse(raw); } catch (err) { die(`invalid JSON: ${err.message}`
 const {
   slug, companyName, contactFirstName, emailKnown,
   directionShape, offerText, signal, cards,
-  isInternal
+  isInternal, greetingName, introBasis
 } = data;
+
+const FORMATS = createRequire(import.meta.url)("../shared/formats.js").list;
+cards?.forEach?.((c, i) => {
+  if (!FORMATS.includes(String(c.format))) {
+    die(`card #${i + 1} (${c.id}) has unknown format "${c.format}"; allowed: ${FORMATS.join(", ")}`);
+  }
+});
 
 if (!slug)        die("client JSON missing 'slug'");
 if (!companyName) die("client JSON missing 'companyName'");
@@ -72,6 +90,8 @@ async function upsertCompany() {
   if (typeof emailKnown === "boolean")    payload.email_known    = emailKnown;
   if (directionShape !== undefined)       payload.direction_shape = directionShape ?? {};
   if (offerText !== undefined)            payload.offer_text     = offerText ?? null;
+  if (greetingName !== undefined)         payload.greeting_name  = greetingName ?? null;
+  if (introBasis !== undefined)           payload.intro_basis    = introBasis ?? null;
 
   const { data: existing, error: selErr } = await supabase
     .from("companies").select("id").eq("slug", slug).maybeSingle();
@@ -106,6 +126,7 @@ async function upsertCards(companyId) {
     tags:       Array.isArray(c.tags) ? c.tags : [],
     sources:    c.sources ?? [],
     series:     c.series ?? null,
+    format_note: c.formatNote ?? null,
     sort_order: order++,
   }));
   const { error } = await supabase

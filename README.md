@@ -271,6 +271,44 @@ The Netlify `approvals` form still fires on every approval alongside the
 `submit_approval` RPC so you keep email notifications until Resend replaces
 that flow.
 
+## Lead pages (one branch per company)
+
+Every prospect page is `swipe.html` fed by `clients/<slug>.json`, imported
+with `scripts/import-client.mjs`. RPR keeps its `pillar` / `insight` / `post`
+formats; every other company uses three lead formats that reuse RPR's colour
+families (no new colours):
+
+| format          | card tag           | colour family |
+|-----------------|--------------------|---------------|
+| `long_form`     | LONG-FORM ARTICLE  | pillar violet |
+| `short_insight` | SHORT INSIGHT      | insight blue  |
+| `linkedin_post` | LINKEDIN POST      | post teal     |
+
+The list lives in `shared/formats.js` (read by the sales page and by
+`validate-feeds.js`); the DB check constraints match it
+(`migrations/20260930000014_lead_formats.sql`).
+
+Per-company fields on the client JSON, all optional:
+
+- `greetingName` (`companies.greeting_name`): "Hi Chloë." when set, "Hi there."
+  when null. RPR keeps "Hi Patrick." through `contactFirstName`.
+- `introBasis` (`companies.intro_basis`): "These {N} directions come from
+  {introBasis}." When null the page keeps RPR's "where {Company} ranks and who
+  AI cites instead" sentence.
+- `signal` may be `null` (cold lead): nothing is written to `signals` and the
+  Signals tile hides itself on the confirmation screen.
+- Cards may carry `formatNote` (`cards.format_note`): stored, never rendered.
+
+The confirmation line follows the free pick's format: `linkedin_post` opens
+"Your LinkedIn post, {title}, lands…"; `long_form` closes "It's a 1,000-word
+version of the long-form piece, and it's yours either way."; everything else
+keeps RPR's wording.
+
+Adding a lead: cut `lead/<prefix>` from `leads-template`, add
+`clients/<prefix>-<6 chars>.json` (slug = filename), run the import, test on
+the branch's draft deploy with `?gw_internal=1`, then reset the company to
+unopened with `scripts/reset-company.mjs <slug> --dry-run` / `--confirm`.
+
 ## Active Netlify forms (post-Session-A)
 
 | Form              | Where it lives              | Purpose |

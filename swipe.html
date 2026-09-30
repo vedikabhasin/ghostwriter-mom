@@ -1527,6 +1527,8 @@ body.dir-save  .ctl-save{
 <!-- Shared desk layer (waitlist / sales intro / portal login). Mounted at
      density=light and only visible while the intro screen is on. -->
 <link rel="stylesheet" href="/shared/desk.css">
+<!-- Card formats + colour families. One list shared with validate-feeds.js. -->
+<script src="/shared/formats.js"></script>
 <style>
   body:not(.on-intro) .gwm-desk{ display:none; }
   /* Push the desk behind the shell so cards + buttons stay above it. */
@@ -1856,13 +1858,19 @@ body.dir-save  .ctl-save{
   // isn't reachable we optimistically show "10 early-client spots".
   var SPOTS_TOTAL     = 10;
   var DEFAULT_OFFER   = { earlyPrice: 19, laterPrice: 49 };
+  // Tints key on the colour FAMILY (pillar / insight / post). Every format
+  // in /shared/formats.js maps to one of these three, so the lead formats
+  // (long_form / short_insight / linkedin_post) reuse RPR's colours.
   var TINT_MAP_FORMAT = {
     pillar:  'rgba(183,156,255,0.30)',
     insight: 'rgba(140,200,255,0.30)',
     post:    'rgba(245,232,74,0.25)'
   };
-  var FORMATS = ['pillar','insight','post'];
-  var ARTICLE_FORMATS = ['pillar','insight'];
+  // Formats, labels and families: /shared/formats.js (window.gwmFormats).
+  var GWF = window.gwmFormats;
+  var FORMATS = GWF.list;
+  function fmtFamily(f){ return GWF.family(f); }
+  function fmtLabel(f){ return GWF.label(f); }
   var TINT_MAP_ACTION = {
     like:  'rgba(184,255,113,0.45)',
     pass:  'rgba(255,157,192,0.42)',
@@ -2031,6 +2039,9 @@ body.dir-save  .ctl-save{
       slug:             rpc.slug,
       companyName:      rpc.name,
       contactFirstName: rpc.contact_first_name || '',
+      // Lead fields (null for RPR: the page then keeps RPR's own wording).
+      greetingName:     rpc.greeting_name || null,
+      introBasis:       rpc.intro_basis || null,
       emailKnown:       !!rpc.email_known,
       directionShape:   rpc.direction_shape || {},
       offerText:        rpc.offer_text || '',
@@ -2106,9 +2117,13 @@ body.dir-save  .ctl-save{
         throw new Error('Card #'+(i+1)+' must include at least one source');
       }
     });
+    // signal is optional: a cold lead ships without one and the Signals
+    // tile hides itself. When present it must be complete.
     var sig = data.signal;
-    if(!sig || typeof sig !== 'object' || !sig.text || !sig.source || !sig.date){
-      throw new Error('signal must have { text, source, date }');
+    if(sig !== null && sig !== undefined){
+      if(typeof sig !== 'object' || !sig.text || !sig.source || !sig.date){
+        throw new Error('signal must be null or { text, source, date }');
+      }
     }
     var shape = data.directionShape || {};
     var total = 0;
@@ -2492,7 +2507,7 @@ body.dir-save  .ctl-save{
 
   function setFormatTint(format){
     var el = document.getElementById('tint-format');
-    var color = TINT_MAP_FORMAT[String(format||'').toLowerCase()] || 'transparent';
+    var color = TINT_MAP_FORMAT[fmtFamily(format)] || 'transparent';
     document.documentElement.style.setProperty('--tint-format', color);
     el.setAttribute('data-on', color === 'transparent' ? '0' : '1');
   }
@@ -2554,8 +2569,9 @@ body.dir-save  .ctl-save{
   }
   function onClientReady(){
     $all('[data-slot="companyName"]').forEach(function(el){ el.textContent = client.companyName; });
-    // Greeting: use the contact's first name in italic; fall back to "there".
-    var greetName = (client.contactFirstName || '').trim() || 'there';
+    // Greeting: greeting_name when the feed carries one, else the contact's
+    // first name (RPR), else "there" — all rendered in italic.
+    var greetName = String(client.greetingName || client.contactFirstName || '').trim() || 'there';
     $all('[data-slot="contactFirstName"]').forEach(function(el){ el.textContent = greetName; });
     $all('[data-slot="offerText"]').forEach(function(el){ el.textContent = String(client.offerText || ''); });
     // Deck size in the eyebrow ("{N} DIRECTIONS FOR"). Reads from the loaded
@@ -2569,9 +2585,13 @@ body.dir-save  .ctl-save{
       var lead = document.createElement('strong');
       lead.textContent = 'Ghostwriter Mom turns search and AI-citation gaps into technical articles.';
       introEl.appendChild(lead);
+      // "These {N} directions come from {intro_basis}." — feeds without an
+      // intro_basis (RPR) keep the original "where {Company} ranks" clause.
+      var basis  = String(client.introBasis || '').trim();
+      var origin = basis || ('where ' + (client.companyName || 'you') + ' ranks and who AI cites instead');
       introEl.appendChild(document.createTextNode(
-        ' These ' + deckN + ' directions come from where ' + (client.companyName || 'you') +
-        ' ranks and who AI cites instead. Swipe to keep or pass. Pick one and ' +
+        ' These ' + deckN + ' directions come from ' + origin +
+        '. Swipe to keep or pass. Pick one and ' +
         "it's written free, in your inbox within 24 hours."
       ));
     }
@@ -2678,15 +2698,13 @@ body.dir-save  .ctl-save{
   function buildCard(card, depth){
     var el = document.createElement('div');
     var format = String(card.format || 'post').toLowerCase();
-    el.className = 'card fmt-' + format;
+    el.className = 'card fmt-' + fmtFamily(format);
     el.setAttribute('data-depth', String(depth));
     el.setAttribute('data-card-id', String(card.id));
     el.setAttribute('data-card-index', String(state.cardIndex + depth));
     el.setAttribute('role', 'group');
     el.setAttribute('aria-label', 'Proposal card, format ' + format);
-    var fmtLabel = format === 'pillar' ? 'Pillar'
-                 : format === 'insight' ? 'Insight'
-                 : 'Post';
+    var fmtText = fmtLabel(format);
     var rawTags = Array.isArray(card.tags) ? card.tags : [];
     var displayTags = [];
     var hasRefresh = false;
@@ -2710,7 +2728,7 @@ body.dir-save  .ctl-save{
       '<span class="card-stamp save"  aria-hidden="true">Saved</span>' +
       '<span class="card-stamp super" aria-hidden="true">Fast-track</span>' +
       '<div class="ghost-hint" data-slot="hint" hidden></div>';
-    el.querySelector('[data-slot="fmt"]').textContent      = fmtLabel;
+    el.querySelector('[data-slot="fmt"]').textContent      = fmtText;
     var seriesEl = el.querySelector('[data-slot="series"]');
     if(card.series){
       seriesEl.textContent = String(card.series);
@@ -3124,8 +3142,8 @@ body.dir-save  .ctl-save{
     if(!Array.isArray(cards) || !cards.length) return '';
     var seen = {};
     for(var i = 0; i < cards.length; i++){
-      var f = String((cards[i] && cards[i].format) || '').toLowerCase();
-      if(f === 'pillar' || f === 'insight' || f === 'post') seen[f] = true;
+      var f = cards[i] && cards[i].format;
+      if(GWF.has(f)) seen[fmtFamily(f)] = true;
     }
     var stops = [];
     if(seen.pillar)  stops.push('var(--f-pillar)');
@@ -3146,7 +3164,7 @@ body.dir-save  .ctl-save{
     return null;
   }
   function planSlotFormats(shape){
-    var pref = ['pillar','insight','post'];
+    var pref = GWF.ORDER;
     var counts = {};
     pref.forEach(function(f){ counts[f] = (shape && shape[f]) | 0; });
     var slots = [];
@@ -3162,7 +3180,7 @@ body.dir-save  .ctl-save{
   }
   function labelForSlot(slotFmts, idx){
     var fmt = slotFmts[idx];
-    var upper = fmt.toUpperCase();
+    var upper = fmtLabel(fmt).toUpperCase();
     var total = slotFmts.filter(function(x){ return x === fmt; }).length;
     if(total <= 1) return upper;
     var n = 0;
@@ -3255,8 +3273,9 @@ body.dir-save  .ctl-save{
     for(var t = 0; t < slotFmts.length; t++){
       if(picks[t]) continue;
       var want = slotFmts[t];
-      if(ARTICLE_FORMATS.indexOf(want) === -1) continue;
-      var other = want === 'pillar' ? 'insight' : 'pillar';
+      if(!GWF.isArticle(want)) continue;
+      var other = GWF.sibling(want);
+      if(!other) continue;
       var pool2 = likesByFormat(other);
       var best2 = pickBest(pool2, anchor, used);
       if(best2){
@@ -3566,16 +3585,25 @@ body.dir-save  .ctl-save{
 
     // Article line: "Your article, {title}, lands in your inbox by
     // {Mon D, h:mm AM}. It's yours either way." Title + time bold.
+    // By format: linkedin_post opens "Your LinkedIn post, {title}, lands…";
+    // long_form closes "It's a 1,000-word version of the long-form piece,
+    // and it's yours either way." Every other format keeps the wording above.
     var arriveEl = document.getElementById('conf-arrive');
     if(arriveEl){
+      var freeCard = findFull(state.freePickCardId);
+      var freeFmt  = String((freeCard && freeCard.format) || '').toLowerCase();
+      var lead = freeFmt === 'linkedin_post' ? 'Your LinkedIn post, ' : 'Your article, ';
+      var tail = freeFmt === 'long_form'
+        ? ". It's a 1,000-word version of the long-form piece, and it's yours either way."
+        : ". It's yours either way.";
       arriveEl.textContent = '';
-      arriveEl.appendChild(document.createTextNode('Your article, '));
+      arriveEl.appendChild(document.createTextNode(lead));
       var s = document.createElement('strong'); s.textContent = freeTitle;
       arriveEl.appendChild(s);
       arriveEl.appendChild(document.createTextNode(', lands in your inbox by '));
       var d2 = document.createElement('strong'); d2.textContent = deliverStr;
       arriveEl.appendChild(d2);
-      arriveEl.appendChild(document.createTextNode(". It's yours either way."));
+      arriveEl.appendChild(document.createTextNode(tail));
     }
 
     // Five-tile portal mock. Each tile calls its own renderer and its own
@@ -3837,8 +3865,8 @@ body.dir-save  .ctl-save{
       var card = beatCards[idx];
       var fmt  = String(card.format || 'post').toLowerCase();
       // Rewrite the card frame.
-      cardEl.className = 'pd-reveal-card fmt-' + fmt;
-      pill.textContent = fmt === 'pillar' ? 'Pillar' : (fmt === 'insight' ? 'Insight' : 'Post');
+      cardEl.className = 'pd-reveal-card fmt-' + fmtFamily(fmt);
+      pill.textContent = fmtLabel(fmt);
       t.textContent = String(card.title || '');
       var n = sourcesCount(card); srcN.textContent = n + ' source' + (n === 1 ? '' : 's');
       // Chip + backdrop swap.
@@ -4037,12 +4065,12 @@ body.dir-save  .ctl-save{
       var fmt2 = String(c.format || 'post').toLowerCase();
       var slot = FAN[i + 1];
       var b = document.createElement('div');
-      b.className = 'pd-book fmt-' + fmt2 + ' back';
+      b.className = 'pd-book fmt-' + fmtFamily(fmt2) + ' back';
       b.style.transform = 'translateX(' + slot.x + 'px) rotate(' + slot.r + 'deg)';
       b.style.zIndex = String(20 - (i + 1) * 2);
       var head2 = document.createElement('div'); head2.className = 'pd-book-head';
       var fmtLbl2 = document.createElement('span'); fmtLbl2.className = 'pd-book-fmt';
-      fmtLbl2.textContent = fmt2 === 'pillar' ? 'Pillar' : (fmt2 === 'insight' ? 'Insight' : 'Post');
+      fmtLbl2.textContent = fmtLabel(fmt2);
       head2.appendChild(fmtLbl2);
       b.appendChild(head2);
       var title2 = document.createElement('h3'); title2.className = 'pd-book-title'; title2.textContent = String(c.title || '');
@@ -4067,9 +4095,9 @@ body.dir-save  .ctl-save{
       var card = books[lidx % books.length];
       var fmt = String(card.format || 'post').toLowerCase();
       // Rewrite the spotlight card frame.
-      spotlight.className = 'pd-book top fmt-' + fmt;
+      spotlight.className = 'pd-book top fmt-' + fmtFamily(fmt);
       spotlight.style.transform = 'translateX(0) rotate(0deg)';
-      fmtLbl.textContent = fmt === 'pillar' ? 'Pillar' : (fmt === 'insight' ? 'Insight' : 'Post');
+      fmtLbl.textContent = fmtLabel(fmt);
       title.textContent = String(card.title || '');
       stamp.className = 'pd-book-stamp on ' + step.cls;
       stamp.textContent = step.label;
@@ -4319,14 +4347,14 @@ body.dir-save  .ctl-save{
   function openCardDetail(card){
     if(!srcSheet || !card) return;
     var fmt = String(card.format || 'post').toLowerCase();
-    var fmtLabel = fmt === 'pillar' ? 'Pillar' : (fmt === 'insight' ? 'Insight' : 'Post');
+    var fmtText = fmtLabel(fmt);
     var fmtEl   = document.getElementById('detail-fmt');
     var titleEl = document.getElementById('src-sheet-title');
     var angleEl = document.getElementById('detail-angle');
     var evEl    = document.getElementById('detail-evidence');
     var tagsEl  = document.getElementById('detail-tags');
     var listEl  = document.getElementById('src-sheet-list');
-    if(fmtEl)   fmtEl.textContent   = fmtLabel;
+    if(fmtEl)   fmtEl.textContent   = fmtText;
     if(titleEl) titleEl.textContent = String(card.title || '');
     if(angleEl) angleEl.textContent = String(card.angle || '');
     if(evEl){
