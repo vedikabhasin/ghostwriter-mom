@@ -1,7 +1,7 @@
 # Portal walkthrough: call mode
 
 Every screenshot here comes from `tests/portal/walkthrough.mjs`, which runs
-**357 checks** across these accounts:
+**376 checks** across these accounts:
 
 - **Vedika** (`vedika-bhasin-ycfogw`, internal) at 375px and on desktop, then
   **blendbases** from the other side.
@@ -12,7 +12,7 @@ Every screenshot here comes from `tests/portal/walkthrough.mjs`, which runs
 - **RPR** as it is live: canceled, no window, one test seat.
 - **Sign in with a code.**
 
-The last run passed all 357 (`shots/results.json`).
+The last run passed all 376 (`shots/results.json`).
 
 ## How this was tested
 
@@ -28,6 +28,31 @@ The last run passed all 357 (`shots/results.json`).
 - `scripts/reset-company.mjs` has its own test, `tests/portal/reset-company.test.mjs`.
 - Not covered here: real email delivery, the live Netlify form inbox, and the
   portal against the live API from a browser.
+
+## Patrick-call path: add-owner (`tests/portal/add-owner.test.mjs`, 14 checks)
+
+swipetemplate in memory: 5 anonymous swipes on the sales page, then the real
+`scripts/add-owner.mjs swipetemplate vedikabhasin+owner@gmail.com --name "Test"`
+and `scripts/reset-company.mjs --member` against `tests/portal/service-mock.mjs`
+(the service API), code sign-in in between.
+
+| | |
+|---|---|
+| ![](shots/o01-owner-log.jpg) Log: "5 calls logged." | ![](shots/o02-owner-library.jpg) Library: "0 delivered · 3 up next". |
+
+## Formats
+
+Labels and colors come from `/shared/formats.js` when it is deployed (the
+sales branch owns it); until then, and for any key it leaves out, each format
+takes its family color: pillar, guide (pillar); insight, article, comparison,
+explainer, data (insight); post, byline, carousel (post).
+
+| | | |
+|---|---|---|
+| ![](shots/f-guide.jpg) Guide, pillar family. | ![](shots/f-comparison.jpg) Comparison, insight family. | ![](shots/f-carousel.jpg) Carousel, post family. |
+| ![](shots/f-guide-request.jpg) Request sheet: the card's own format first. | ![](shots/f-shared-map-data.jpg) With a `/shared/formats.js` served: its label wins. | ![](shots/x-favicon.jpg) `/favicon.ico` |
+
+Every format has its own shot: `shots/f-<format>.jpg`.
 
 ## Sign in (§2)
 

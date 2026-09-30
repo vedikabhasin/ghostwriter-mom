@@ -103,8 +103,11 @@ async function newPage(browser, { mobile, db, token, reduced, height, timezoneId
   const page = await ctx.newPage();
   const errors = [];
   page.on('pageerror', (e) => errors.push(e.message));
-  page.on('console', (m) => { if (m.type() === 'error' && !m.text().includes('ERR_FAILED')) errors.push(m.text()); });
-  page.on('requestfailed', (r) => { if (!/posthog/.test(r.url())) errors.push('requestfailed ' + r.url() + ' ' + (r.failure() && r.failure().errorText)); });
+  // /shared/formats.js belongs to the sales branch; until it ships the portal's
+  // HEAD probe answers 404 and the family colors apply (tests/portal/formats.test.mjs).
+  const optional = (u) => /\/shared\/formats\.js/.test(u || '');
+  page.on('console', (m) => { if (m.type() === 'error' && !m.text().includes('ERR_FAILED') && !optional(m.location() && m.location().url)) errors.push(m.text()); });
+  page.on('requestfailed', (r) => { if (!/posthog/.test(r.url()) && !optional(r.url())) errors.push('requestfailed ' + r.url() + ' ' + (r.failure() && r.failure().errorText)); });
   return { ctx, page, mock, errors };
 }
 const shot = (page, name) => page.screenshot({ path: `${OUT}/${name}.jpg`, type: 'jpeg', quality: 80 });
@@ -1336,6 +1339,92 @@ console.log('\n=== Sign in with a code (375px)');
   const unexpected = p.errors.filter((e) => !/status of (403|429)/.test(e) && !/logout\?scope=local net::ERR_ABORTED/.test(e));
   check('code: no page errors', !unexpected.length, unexpected.join(' | '));
   await p.ctx.close();
+}
+
+console.log('\n=== Formats: all ten, family colors, then /shared/formats.js (375px)');
+{
+  const TEN = ['pillar', 'guide', 'insight', 'article', 'comparison', 'explainer', 'data', 'post', 'byline', 'carousel'];
+  const FAM = { pillar: 'pillar', guide: 'pillar', insight: 'insight', article: 'insight', comparison: 'insight', explainer: 'insight', data: 'insight', post: 'post', byline: 'post', carousel: 'post' };
+  const LABEL = (k) => k[0].toUpperCase() + k.slice(1);
+  const formatsDb = () => {
+    const db = acmeDb();
+    const drop = db.cards[0].drop_date, co = db.companies[0].id;
+    db.cards = db.cards.map((c, i) => ({ ...c, format: TEN[i], title: LABEL(TEN[i]) + ' card: ' + c.title, drop_date: drop, sort_order: i }));
+    db.decisions = [{ id: 'fd0', company_id: co, card_id: db.cards[1].id, member_id: ACME_OWNER, action: 'like', updated_at: new Date().toISOString() }];
+    db.swipe_events = []; db.articles = [];
+    return db;
+  };
+  const famColor = (page, fam) => page.evaluate((f) => {
+    const d = document.createElement('div'); d.style.background = `var(--f-${f})`; document.body.appendChild(d);
+    const c = getComputedStyle(d).backgroundColor; d.remove(); return c;
+  }, fam);
+  const readTop = (page) => page.evaluate(() => {
+    const c = document.querySelector('#card-stage .card[data-depth="0"]'), tag = c.querySelector('.card-format');
+    return { cls: c.className, label: tag.textContent, bg: getComputedStyle(tag).backgroundColor, edge: getComputedStyle(c).getPropertyValue('--f-color').trim() };
+  });
+
+  // 1) No /shared/formats.js yet: labels from the key, colors from the family.
+  {
+    const db = formatsDb();
+    const p = await newPage(browser, { mobile: true, db, token: 'tok-acme' });
+    const page = p.page;
+    await page.goto(BASE + '/portal');
+    await page.waitForSelector('#screen-feed.on');
+    await dismissBubbles(page);
+    const fam = { pillar: await famColor(page, 'pillar'), insight: await famColor(page, 'insight'), post: await famColor(page, 'post') };
+    check('family colors are three different colors', new Set(Object.values(fam)).size === 3, JSON.stringify(fam));
+    const seen = [];
+    for (const k of TEN) {
+      const t = await readTop(page);
+      seen.push(k + ':' + t.label);
+      check(`fallback ${k}: label "${LABEL(k)}", ${FAM[k]} family color, classes fmt-${k} fam-${FAM[k]}`,
+        t.label === LABEL(k) && t.bg === fam[FAM[k]] && t.cls.includes('fmt-' + k) && t.cls.includes('fam-' + FAM[k]), JSON.stringify(t));
+      await closeToasts(page);
+      await shot(page, 'f-' + k);
+      if (k !== TEN.at(-1)) { await page.click('[data-action="feed-next"]'); await wait(260); }
+    }
+    // Library: the liked Guide card is UP NEXT; the request sheet offers its own format first.
+    await page.click('#switch-library');
+    await page.waitForSelector('#screen-library.on');
+    await dismissBubbles(page);
+    await libTo(page, /Guide card/);
+    const book = await page.evaluate(() => { const b = document.querySelector('.book.top'); return { cls: b.className, label: b.querySelector('.card-format').textContent }; });
+    check('Library book: Guide label, pillar-family spine', book.label === 'Guide' && book.cls.includes('fam-pillar'), JSON.stringify(book));
+    await page.click('.book.top');
+    await page.waitForSelector('#ghost-sheet.open');
+    const opts = await page.evaluate(() => Array.from(document.querySelectorAll('#fmt-choice .fmt-opt')).map((b) => b.dataset.fmt + (b.classList.contains('on') ? '*' : '')));
+    check('request sheet: Guide (preselected), then Post, Insight, Pillar', opts.join(',') === 'guide*,post,insight,pillar', opts.join(','));
+    await shot(page, 'f-guide-request');
+    const txt = await pageText(page);
+    check('formats: no em dashes', !txt.includes('—'));
+    check('formats (fallback): no page errors', !p.errors.length, p.errors.join(' | '));
+    await p.ctx.close();
+  }
+
+  // 2) /shared/formats.js deployed: its label and color win; missing keys keep the family.
+  {
+    const db = formatsDb();
+    const p = await newPage(browser, { mobile: true, db, token: 'tok-acme' });
+    const page = p.page;
+    let hits = 0;
+    await p.ctx.route(BASE + '/shared/formats.js', (r) => { hits++; return r.fulfill({ status: 200, contentType: 'text/javascript',
+      body: "export const FORMATS = { guide: { label: 'How-to guide', family: 'pillar', color: '#1f4e79', ink: '#ffffff' }, data: { label: 'Data story' } };" }); });
+    await page.goto(BASE + '/portal');
+    await page.waitForSelector('#screen-feed.on');
+    await dismissBubbles(page);
+    const insight = await famColor(page, 'insight');
+    await page.click('[data-action="feed-next"]'); await wait(260);
+    const g = await readTop(page);
+    check('shared map: guide reads "How-to guide" in its own color', g.label === 'How-to guide' && g.bg === 'rgb(31, 78, 121)', JSON.stringify(g));
+    for (let i = 0; i < 5; i++) { await page.click('[data-action="feed-next"]'); await wait(200); }
+    const d = await readTop(page);
+    check('shared map: data reads "Data story", color falls back to its family', d.label === 'Data story' && d.bg === insight, JSON.stringify(d));
+    check('shared map fetched', hits >= 1);
+    await closeToasts(page);
+    await shot(page, 'f-shared-map-data');
+    check('formats (shared map): no page errors', !p.errors.length, p.errors.join(' | '));
+    await p.ctx.close();
+  }
 }
 
 await browser.close();

@@ -17,6 +17,7 @@
 import { $, $all, h, prefersReduced, fmtWhen, fmtDay, hoursBetween, todayStr, countdownLong, fmtWeekday, dateStr } from '/portal/lib.js';
 import { nextDropDate } from '/shared/drop-day.js';
 import { mountDesk } from '/shared/desk.js';
+import { FORMATS, fmtLabel, fmtClass, fmtColor, formatKeys, loadFormats } from '/portal/formats.js';
 import { avatarSVG, pencilSVG, ICONS } from '/portal/avatars.js';
 import { showReveal, closeReveal, isRevealOpen } from '/portal/reveal.js';
 import { initHub, enterHub, refreshHub, articleRects, slotForNewItem } from '/portal/hub.js';
@@ -30,7 +31,6 @@ const WANTS_WRITTEN = 'wants_written';
 const PRICE_TEXT = { starter: '$495', plan: '$2,000', topupEach: 125 };
 const POSITIVE = ['like', 'fasttrack'];
 const ACTION_LABEL = { like: 'Liked', pass: 'Passed', save: 'Saved', fasttrack: 'Fast-track' };
-const FMT_LABEL = { pillar: 'Pillar', insight: 'Insight', post: 'Post' };
 const SPRING = 'cubic-bezier(0.34,1.56,0.64,1)';
 const PARAMS = new URLSearchParams(location.search);
 const OV_LABEL = { agree: 'Agree', now: 'Now', split: 'Split', timing: 'Timing' };
@@ -102,8 +102,8 @@ function show(view) {
 }
 function setFormatTint(format) {
   const t = $('#tint-format');
-  if (!format || !FMT_LABEL[format]) { t.setAttribute('data-on', '0'); return; }
-  document.documentElement.style.setProperty('--tint-format', `color-mix(in srgb, var(--f-${format}) 30%, transparent)`);
+  if (!format || format === 'signal') { t.setAttribute('data-on', '0'); return; }
+  document.documentElement.style.setProperty('--tint-format', `color-mix(in srgb, ${fmtColor(format)} 30%, transparent)`);
   t.setAttribute('data-on', '1');
 }
 function setActionTint(action, strength) {
@@ -686,14 +686,14 @@ function buildFeedCard(item, depth) {
   }
   const c = item.card;
   const fmt = String(c.format || 'post').toLowerCase();
-  el.classList.add('fmt-' + fmt);
+  el.classList.add(...fmtClass(fmt).split(' '));
   el.setAttribute('role', 'group');
-  el.setAttribute('aria-label', (FMT_LABEL[fmt] || 'Card') + (c.series ? ' · ' + c.series : '') + ': ' + c.title);
+  el.setAttribute('aria-label', fmtLabel(fmt) + (c.series ? ' · ' + c.series : '') + ': ' + c.title);
   const tags = Array.isArray(c.tags) ? c.tags : [];
   if (tags.some((t) => String(t).toLowerCase() === 'refresh')) el.classList.add('has-refresh');
 
   const head = h('div', 'card-head');
-  head.appendChild(h('span', 'card-format gwm-center gwm-mono-tag', FMT_LABEL[fmt] || fmt));
+  head.appendChild(h('span', 'card-format gwm-center gwm-mono-tag', fmtLabel(fmt)));
   if (c.series) head.appendChild(h('span', 'gwm-series-label', c.series));
   if (item.isNew) head.appendChild(h('span', 'gwm-marker', 'New this week'));
   const ov = depth === 0 ? overlap(c.id) : null;
@@ -1034,7 +1034,7 @@ function renderHistory(tab) {
   log.textContent = '';
   if (!calls.length) log.appendChild(h('p', 'hist-empty', 'Swipe a card and it shows up here.'));
   calls.forEach(({ card: c, action, at }) => {
-    const box = h('div', 'hist-card log-row fmt-' + c.format);
+    const box = h('div', 'hist-card log-row ' + fmtClass(c.format));
     const head = h('div', 'log-head');
     const title = h('p', 'hist-title', c.title);
     if (c.series) title.prepend(h('span', 'gwm-series-label', c.series));
@@ -1068,7 +1068,7 @@ function renderHistory(tab) {
   const ranked = upNext().slice(0, 8);
   if (!ranked.length) un.appendChild(h('p', 'hist-empty', 'Like or fast-track cards and they queue up here.'));
   ranked.forEach((x, i) => {
-    const box = h('div', 'hist-card fmt-' + x.card.format);
+    const box = h('div', 'hist-card ' + fmtClass(x.card.format));
     const row = h('div', 'upnext-item');
     row.appendChild(h('span', 'upnext-rank gwm-center', i + 1));
     row.appendChild(h('span', 'hist-title', x.card.title));
@@ -1204,19 +1204,19 @@ function renderLibrary(opts) {
     if (ghost) {
       // The ghost trail: two faint dashed copies, 6px and 12px down-right.
       [2, 1].forEach((k) => {
-        const t = h('div', `book-trail t${k} fmt-${e.format}`);
+        const t = h('div', `book-trail t${k} ${fmtClass(e.format)}`);
         t.style.transform = `${tf} translate(${6 * k}px, ${6 * k}px)`;
         t.style.zIndex = String(z - 1);
         t.setAttribute('aria-hidden', 'true');
         stage.appendChild(t);
       });
     }
-    const b = h('div', 'book fmt-' + e.format + (ghost ? ' ghost' : '') + (i === 0 ? ' top' : ' back'));
+    const b = h('div', 'book ' + fmtClass(e.format) + (ghost ? ' ghost' : '') + (i === 0 ? ' top' : ' back'));
     b.dataset.id = e.id;
     b.style.transform = tf;
     b.style.zIndex = String(z);
     const head = h('div', 'book-head');
-    head.appendChild(h('span', 'card-format gwm-center gwm-mono-tag fmt-' + e.format, FMT_LABEL[e.format] || e.format));
+    head.appendChild(h('span', 'card-format gwm-center gwm-mono-tag ' + fmtClass(e.format), fmtLabel(e.format)));
     if (e.card && e.card.series) head.appendChild(h('span', 'gwm-series-label', e.card.series));
     if (isLive(e.article)) head.appendChild(h('span', 'live-tag gwm-center gwm-mono-tag', 'Live'));
     head.appendChild(statusTag(e.status));
@@ -1347,7 +1347,7 @@ let sheetEntry = null, writeFmt = null, sheetMode = null;
 function openCardSheet(e) {
   sheetEntry = e;
   track('card_detail_opened', { status: e.status, format: e.format });
-  $('#ghost-sheet-fmt').textContent = FMT_LABEL[e.format] || e.format;
+  $('#ghost-sheet-fmt').textContent = fmtLabel(e.format);
   $('#ghost-sheet-title').textContent = e.title;
   const tagWrap = $('#ghost-tag');
   tagWrap.textContent = '';
@@ -1366,9 +1366,24 @@ function openCardSheet(e) {
     if (writable(e.article) && costOf(e.format)) sheetMode = 'credits';
   }
   $('#write-box').hidden = !sheetMode;
-  if (sheetMode) { writeFmt = e.format; renderWriteBox(); }
+  if (sheetMode) { writeFmt = e.format; buildFmtChoice(e.format); renderWriteBox(); }
   renderNotes($('#ghost-notes'), e.card_id);
   openScrim('ghost-sheet');
+}
+/** Format choice for a request: the card's own format first (any format the
+ *  shared map knows), then the classic three. */
+function buildFmtChoice(own) {
+  const wrap = $('#fmt-choice');
+  wrap.textContent = '';
+  const keys = [own].concat(['post', 'insight', 'pillar'].filter((k) => k !== own)).filter((k) => FORMATS[k] || k === own);
+  keys.forEach((k) => {
+    const b = h('button', 'fmt-opt gwm-btn', fmtLabel(k));
+    b.type = 'button';
+    b.setAttribute('role', 'radio');
+    b.dataset.fmt = k;
+    wrap.appendChild(b);
+  });
+  wrap.style.gridTemplateColumns = `repeat(${keys.length}, 1fr)`;
 }
 function renderWriteBox() {
   const credit = sheetMode === 'credits';
@@ -1376,8 +1391,8 @@ function renderWriteBox() {
     const on = b.dataset.fmt === writeFmt;
     b.classList.toggle('on', on);
     b.setAttribute('aria-checked', on ? 'true' : 'false');
-    b.textContent = FMT_LABEL[b.dataset.fmt] + (credit ? ' · ' + costOf(b.dataset.fmt) : '');
-    b.setAttribute('aria-label', FMT_LABEL[b.dataset.fmt] + (credit ? ', ' + credits(costOf(b.dataset.fmt)) : ''));
+    b.textContent = fmtLabel(b.dataset.fmt) + (credit ? ' · ' + costOf(b.dataset.fmt) : '');
+    b.setAttribute('aria-label', fmtLabel(b.dataset.fmt) + (credit ? ', ' + credits(costOf(b.dataset.fmt)) : ''));
   });
   const btn = $('#write-btn');
   const msg = $('#write-msg');
@@ -1697,8 +1712,8 @@ function openReader(a) {
   readerArticle = a;
   track('library_open', { article_id: a.id, status: a.status, format: a.format });
   const fmt = $('#reader-fmt');
-  fmt.className = 'card-format gwm-center gwm-mono-tag fmt-' + a.format;
-  fmt.textContent = FMT_LABEL[a.format] || a.format;
+  fmt.className = 'card-format gwm-center gwm-mono-tag ' + fmtClass(a.format);
+  fmt.textContent = fmtLabel(a.format);
   $('#reader-date').textContent = deliveryState(entryOf(a)).text;
   $('#reader-title').textContent = a.title;
   const body = $('#reader-html');
@@ -2082,6 +2097,8 @@ async function loadPortal(fromLink) {
 }
 
 async function boot() {
+  // Format labels and colors: /shared/formats.js when deployed, else families.
+  const formatsReady = loadFormats();
   const authError = readAuthError();
   const fromLink = /access_token=|type=(magiclink|invite|signup|recovery)/.test(location.hash) || /[?&]code=/.test(location.search);
   try {
@@ -2089,6 +2106,7 @@ async function boot() {
     if (r.ok) runtime = Object.assign(runtime, await r.json());
   } catch (_) {}
   initPosthog();
+  await formatsReady;
   try {
     const mod = await import(SUPABASE_JS);
     sb = mod.createClient(runtime.supabaseUrl, runtime.supabaseAnonKey, {
@@ -2101,7 +2119,7 @@ async function boot() {
   }
   initHub({
     get sb() { return sb; }, S, show, track, toast, firstLine, avatarEl, displayName, memberById,
-    libEntries, entryOf, upNextEntry, exitHub, FMT_LABEL, STATUS_TAG, WANTS_WRITTEN, hubOpen, openEntry, deliveryState, articleFor, upNext,
+    libEntries, entryOf, upNextEntry, exitHub, STATUS_TAG, WANTS_WRITTEN, hubOpen, openEntry, deliveryState, articleFor, upNext,
   });
   const { data } = await sb.auth.getSession();
   S.session = data.session;

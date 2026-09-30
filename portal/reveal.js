@@ -7,6 +7,7 @@
 // -----------------------------------------------------------------------------
 import { $, h, hash, prefersReduced } from '/portal/lib.js';
 import { avatarSVG, ICONS } from '/portal/avatars.js';
+import { fmtClass, fmtLabel } from '/portal/formats.js';
 
 const COPY = {
   agree:  { line: 'Two yeses. Next in line.',              primary: 'Move it up' },
@@ -15,7 +16,6 @@ const COPY = {
   timing: { line: 'Same yes, different week.',             primary: 'Say when' },
 };
 const STAMP = { like: 'Liked', pass: 'Passed', save: 'Saved', fasttrack: 'Fast-track' };
-const FMT = { pillar: 'Pillar', insight: 'Insight', post: 'Post' };
 
 let open = null;
 
@@ -84,9 +84,9 @@ export function showReveal(o) {
   // Stage: avatar, tilted card, avatar.
   const stage = h('div', 'rv-stage');
   stage.appendChild(side('left', o.left));
-  const card = h('div', 'rv-card fmt-' + (o.card.format || 'post'));
+  const card = h('div', 'rv-card ' + fmtClass(o.card.format || 'post'));
   const head = h('div', 'rv-card-head');
-  head.appendChild(h('span', 'card-format gwm-center gwm-mono-tag', FMT[o.card.format] || o.card.format));
+  head.appendChild(h('span', 'card-format gwm-center gwm-mono-tag', fmtLabel(o.card.format)));
   if (o.card.series) head.appendChild(h('span', 'gwm-series-label', o.card.series));
   card.appendChild(head);
   card.appendChild(h('p', 'rv-card-title', o.card.title));
