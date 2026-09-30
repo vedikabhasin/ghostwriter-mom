@@ -1,7 +1,7 @@
 # Portal walkthrough: call mode
 
 Every screenshot here comes from `tests/portal/walkthrough.mjs`, which runs
-**301 checks** across these accounts:
+**383 checks** across these accounts:
 
 - **Vedika** (`vedika-bhasin-ycfogw`, internal) at 375px and on desktop, then
   **blendbases** from the other side.
@@ -12,7 +12,7 @@ Every screenshot here comes from `tests/portal/walkthrough.mjs`, which runs
 - **RPR** as it is live: canceled, no window, one test seat.
 - **Sign in with a code.**
 
-The last run passed all 301 (`shots/results.json`).
+The last run passed all 383 (`shots/results.json`).
 
 ## How this was tested
 
@@ -28,6 +28,39 @@ The last run passed all 301 (`shots/results.json`).
 - `scripts/reset-company.mjs` has its own test, `tests/portal/reset-company.test.mjs`.
 - Not covered here: real email delivery, the live Netlify form inbox, and the
   portal against the live API from a browser.
+
+## Patrick-call path: add-owner (`tests/portal/add-owner.test.mjs`, 14 checks)
+
+swipetemplate in memory: 5 anonymous swipes on the sales page, then the real
+`scripts/add-owner.mjs swipetemplate vedikabhasin+owner@gmail.com --name "Test"`
+and `scripts/reset-company.mjs --member` against `tests/portal/service-mock.mjs`
+(the service API), code sign-in in between.
+
+| | |
+|---|---|
+| ![](shots/o01-owner-log.jpg) Log: "5 calls logged." | ![](shots/o02-owner-library.jpg) Library: "0 delivered · 3 up next". |
+
+## Formats
+
+Labels and colors come from `/shared/formats.js` when it is deployed (the
+sales branch owns it); until then, and for any key it leaves out, the portal
+uses its built-in list, colored by family:
+
+| Format | Label | Family |
+|---|---|---|
+| long_form | Long-form article | long |
+| short_insight | Short insight | web |
+| linkedin_post | LinkedIn post | social |
+| pillar / insight / post | Pillar / Insight / Post | long / web / social (classic, kept for cards already in them) |
+
+A card in a current format can be requested in the current three; a classic
+card only in the classic three.
+
+| | | |
+|---|---|---|
+| ![](shots/f-long_form.jpg) Long-form article, long family. | ![](shots/f-short_insight.jpg) Short insight, web family. | ![](shots/f-linkedin_post.jpg) LinkedIn post, social family. |
+| ![](shots/f-request-current.jpg) Request sheet, current card. | ![](shots/f-request-classic.jpg) Request sheet, classic card. | ![](shots/f-shared-map.jpg) A served `/shared/formats.js` wins. |
+| ![](shots/x-favicon.jpg) `/favicon.ico` | | |
 
 ## Sign in (§2)
 
@@ -80,3 +113,20 @@ The last run passed all 301 (`shots/results.json`).
 ![](shots/l01-library-600.jpg) At 600px high: "SWIPE TO SHUFFLE. TAP TO OPEN." sits above the Feed/Library switch.
 The tooltip is checked at 600, 667 and 812px (375 wide) and 1280x700: it sits
 below the dots, never over the card footer.
+
+## One look with the waitlist and the sales intro
+
+| | |
+|---|---|
+| ![](shots/v00-side-by-side-1280.jpg) 1280px: waitlist, sales intro, portal login. Same headline, pill input, eyebrow and the shared desk layer. | ![](shots/v00-side-by-side-390.jpg) 390px. |
+| ![](shots/e01-caught-up-desk-390.jpg) Caught up, desk layer behind it, clear of the paper card and bubbles. | ![](shots/e02-empty-library-390.jpg) Empty Library: "Nothing on the *shelf* yet." |
+| ![](shots/e03-empty-hub.jpg) Empty unlocked Hub: grid and one line, no desk. | ![](shots/m11a-log.jpg) The Log: "{n} calls logged.", my stamp, MATCH / SPLIT / TIMING, sources. |
+
+The desk layer is `/shared/desk.js` at density "light", shown only on the
+login, the caught-up Feed and an empty Library. Any fragment that would touch
+text, a card, a bubble or a button is hidden (visibility only); checked at
+360, 390, 768, 1280 and 1920px with zero layout shift.
+
+Lighthouse, signed-in Feed included: `node tests/portal/lighthouse-serve.mjs`
+serves the site with Supabase mocked, then point Lighthouse at
+`/portal#access_token=tok-vedika&...`.

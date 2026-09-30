@@ -17,6 +17,7 @@
 // -----------------------------------------------------------------------------
 import { $, $all, h, hash, prefersReduced } from '/portal/lib.js';
 import { ICONS } from '/portal/avatars.js';
+import { fmtClass, fmtLabel } from '/portal/formats.js';
 
 export const EMOJIS = ['📌', '⭐', '🔥', '💡', '❓', '✅', '👀', '🎯'];
 const CELL_W = 260, CELL_H = 236, PAD = 24;
@@ -207,6 +208,8 @@ function render() {
     else { el.style.left = '0px'; el.style.top = '0px'; }
   });
   canvas.classList.toggle('empty', !visible.length);
+  // Unlocked and empty: the grid alone, with one line. Locked keeps its modal.
+  $('#hub-empty').hidden = locked || visible.length > 0;
   $('[data-hub="hidden"]').classList.toggle('on', showHidden);
   $('[data-hub="hidden"]').setAttribute('aria-pressed', showHidden ? 'true' : 'false');
 }
@@ -230,10 +233,10 @@ function itemEl(i) {
     const e = hubEntry(i);
     if (!e) return null;
     const ghost = e.status !== 'delivered';
-    el.classList.add('mini-book', 'fmt-' + e.format);
+    el.classList.add('mini-book', ...fmtClass(e.format).split(' '));
     if (ghost) el.classList.add('ghost', 'tappable');
     const head = h('div', 'mb-head');
-    head.appendChild(h('span', 'card-format gwm-center gwm-mono-tag fmt-' + e.format, app.FMT_LABEL[e.format] || e.format));
+    head.appendChild(h('span', 'card-format gwm-center gwm-mono-tag ' + fmtClass(e.format), fmtLabel(e.format)));
     if (e.card && e.card.series) head.appendChild(h('span', 'gwm-series-label', e.card.series));
     el.appendChild(head);
     el.appendChild(h('span', 'mb-title', e.title));
