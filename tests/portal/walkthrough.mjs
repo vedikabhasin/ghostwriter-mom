@@ -1341,16 +1341,19 @@ console.log('\n=== Sign in with a code (375px)');
   await p.ctx.close();
 }
 
-console.log('\n=== Formats: all ten, family colors, then /shared/formats.js (375px)');
+console.log('\n=== Formats: current set + classic three, family colors, then /shared/formats.js (375px)');
 {
-  const TEN = ['pillar', 'guide', 'insight', 'article', 'comparison', 'explainer', 'data', 'post', 'byline', 'carousel'];
-  const FAM = { pillar: 'pillar', guide: 'pillar', insight: 'insight', article: 'insight', comparison: 'insight', explainer: 'insight', data: 'insight', post: 'post', byline: 'post', carousel: 'post' };
-  const LABEL = (k) => k[0].toUpperCase() + k.slice(1);
+  const SIX = ['long_form', 'short_insight', 'linkedin_post', 'pillar', 'insight', 'post'];
+  const FAM = { long_form: 'long', short_insight: 'web', linkedin_post: 'social', pillar: 'long', insight: 'web', post: 'social' };
+  const LABEL = { long_form: 'Long-form article', short_insight: 'Short insight', linkedin_post: 'LinkedIn post', pillar: 'Pillar', insight: 'Insight', post: 'Post' };
+  const SHOWN = { long_form: 'LONG-FORM ARTICLE', short_insight: 'SHORT INSIGHT', linkedin_post: 'LINKEDIN POST' };
+  const DROPPED = ['guide', 'article', 'comparison', 'explainer', 'data', 'byline', 'carousel'];
   const formatsDb = () => {
     const db = acmeDb();
     const drop = db.cards[0].drop_date, co = db.companies[0].id;
-    db.cards = db.cards.map((c, i) => ({ ...c, format: TEN[i], title: LABEL(TEN[i]) + ' card: ' + c.title, drop_date: drop, sort_order: i }));
-    db.decisions = [{ id: 'fd0', company_id: co, card_id: db.cards[1].id, member_id: ACME_OWNER, action: 'like', updated_at: new Date().toISOString() }];
+    db.cards = db.cards.slice(0, SIX.length).map((c, i) => ({ ...c, format: SIX[i], title: LABEL[SIX[i]] + ' card: ' + c.title, drop_date: drop, sort_order: i }));
+    // Like one current and one classic card so both sit in the Library as UP NEXT.
+    db.decisions = [0, 3].map((i) => ({ id: 'fd' + i, company_id: co, card_id: db.cards[i].id, member_id: ACME_OWNER, action: 'like', updated_at: new Date(Date.now() - i * 60e3).toISOString() }));
     db.swipe_events = []; db.articles = [];
     return db;
   };
@@ -1360,10 +1363,18 @@ console.log('\n=== Formats: all ten, family colors, then /shared/formats.js (375
   }, fam);
   const readTop = (page) => page.evaluate(() => {
     const c = document.querySelector('#card-stage .card[data-depth="0"]'), tag = c.querySelector('.card-format');
-    return { cls: c.className, label: tag.textContent, bg: getComputedStyle(tag).backgroundColor, edge: getComputedStyle(c).getPropertyValue('--f-color').trim() };
+    return { cls: c.className, label: tag.textContent, shown: tag.innerText, bg: getComputedStyle(tag).backgroundColor };
   });
+  const sheetOpts = async (page, re) => {
+    await libTo(page, re);
+    await page.click('.book.top');
+    await page.waitForSelector('#ghost-sheet.open');
+    const o = await page.evaluate(() => Array.from(document.querySelectorAll('#fmt-choice .fmt-opt')).map((b) => ({ k: b.dataset.fmt + (b.classList.contains('on') ? '*' : ''),
+      wraps: b.scrollWidth > b.clientWidth + 1 || b.getBoundingClientRect().height > 60 })));
+    return o;
+  };
 
-  // 1) No /shared/formats.js yet: labels from the key, colors from the family.
+  // 1) No /shared/formats.js yet: the built-in list, colored by family.
   {
     const db = formatsDb();
     const p = await newPage(browser, { mobile: true, db, token: 'tok-acme' });
@@ -1371,32 +1382,35 @@ console.log('\n=== Formats: all ten, family colors, then /shared/formats.js (375
     await page.goto(BASE + '/portal');
     await page.waitForSelector('#screen-feed.on');
     await dismissBubbles(page);
-    const fam = { pillar: await famColor(page, 'pillar'), insight: await famColor(page, 'insight'), post: await famColor(page, 'post') };
-    check('family colors are three different colors', new Set(Object.values(fam)).size === 3, JSON.stringify(fam));
-    const seen = [];
-    for (const k of TEN) {
+    const fam = { long: await famColor(page, 'long'), web: await famColor(page, 'web'), social: await famColor(page, 'social') };
+    check('family colors long / web / social are three different colors', new Set(Object.values(fam)).size === 3, JSON.stringify(fam));
+    for (const k of SIX) {
       const t = await readTop(page);
-      seen.push(k + ':' + t.label);
-      check(`fallback ${k}: label "${LABEL(k)}", ${FAM[k]} family color, classes fmt-${k} fam-${FAM[k]}`,
-        t.label === LABEL(k) && t.bg === fam[FAM[k]] && t.cls.includes('fmt-' + k) && t.cls.includes('fam-' + FAM[k]), JSON.stringify(t));
+      check(`fallback ${k}: "${LABEL[k]}"${SHOWN[k] ? ' (shown ' + SHOWN[k] + ')' : ''}, ${FAM[k]} family color, classes fmt-${k} fam-${FAM[k]}`,
+        t.label === LABEL[k] && (!SHOWN[k] || t.shown === SHOWN[k]) && t.bg === fam[FAM[k]] && t.cls.includes('fmt-' + k) && t.cls.includes('fam-' + FAM[k]), JSON.stringify(t));
       await closeToasts(page);
       await shot(page, 'f-' + k);
-      if (k !== TEN.at(-1)) { await page.click('[data-action="feed-next"]'); await wait(260); }
+      if (k !== SIX.at(-1)) { await page.click('[data-action="feed-next"]'); await wait(260); }
     }
-    // Library: the liked Guide card is UP NEXT; the request sheet offers its own format first.
     await page.click('#switch-library');
     await page.waitForSelector('#screen-library.on');
     await dismissBubbles(page);
-    await libTo(page, /Guide card/);
+    await libTo(page, /Long-form article card/);
     const book = await page.evaluate(() => { const b = document.querySelector('.book.top'); return { cls: b.className, label: b.querySelector('.card-format').textContent }; });
-    check('Library book: Guide label, pillar-family spine', book.label === 'Guide' && book.cls.includes('fam-pillar'), JSON.stringify(book));
-    await page.click('.book.top');
-    await page.waitForSelector('#ghost-sheet.open');
-    const opts = await page.evaluate(() => Array.from(document.querySelectorAll('#fmt-choice .fmt-opt')).map((b) => b.dataset.fmt + (b.classList.contains('on') ? '*' : '')));
-    check('request sheet: Guide (preselected), then Post, Insight, Pillar', opts.join(',') === 'guide*,post,insight,pillar', opts.join(','));
-    await shot(page, 'f-guide-request');
+    check('Library book: Long-form article label, long-family spine', book.label === 'Long-form article' && book.cls.includes('fam-long'), JSON.stringify(book));
+    const cur = await sheetOpts(page, /Long-form article card/);
+    check('request sheet on a current card: Long-form article (preselected), Short insight, LinkedIn post; no classic formats',
+      cur.map((o) => o.k).join(',') === 'long_form*,short_insight,linkedin_post', JSON.stringify(cur));
+    check('request sheet: no label wraps or clips at 375px', cur.every((o) => !o.wraps), JSON.stringify(cur));
+    await shot(page, 'f-request-current');
+    await page.click('[data-close="ghost-sheet"]'); await wait(300);
+    const old = await sheetOpts(page, /Pillar card/);
+    check('request sheet on a classic card: Pillar (preselected), Insight, Post', old.map((o) => o.k).join(',') === 'pillar*,insight,post', JSON.stringify(old));
+    await shot(page, 'f-request-classic');
     const txt = await pageText(page);
     check('formats: no em dashes', !txt.includes('—'));
+    const offered = cur.concat(old).map((o) => o.k.replace('*', ''));
+    check('formats: dropped formats never offered', !DROPPED.some((d) => offered.includes(d)), offered.join(','));
     check('formats (fallback): no page errors', !p.errors.length, p.errors.join(' | '));
     await p.ctx.close();
   }
@@ -1408,20 +1422,19 @@ console.log('\n=== Formats: all ten, family colors, then /shared/formats.js (375
     const page = p.page;
     let hits = 0;
     await p.ctx.route(BASE + '/shared/formats.js', (r) => { hits++; return r.fulfill({ status: 200, contentType: 'text/javascript',
-      body: "export const FORMATS = { guide: { label: 'How-to guide', family: 'pillar', color: '#1f4e79', ink: '#ffffff' }, data: { label: 'Data story' } };" }); });
+      body: "export const FORMATS = { long_form: { label: 'Long read', family: 'long', color: '#1f4e79', ink: '#ffffff' }, short_insight: { label: 'Quick insight', family: 'web' } };" }); });
     await page.goto(BASE + '/portal');
     await page.waitForSelector('#screen-feed.on');
     await dismissBubbles(page);
-    const insight = await famColor(page, 'insight');
+    const web = await famColor(page, 'web');
+    const l = await readTop(page);
+    check('shared map: long_form reads "Long read" in its own color', l.label === 'Long read' && l.bg === 'rgb(31, 78, 121)', JSON.stringify(l));
     await page.click('[data-action="feed-next"]'); await wait(260);
-    const g = await readTop(page);
-    check('shared map: guide reads "How-to guide" in its own color', g.label === 'How-to guide' && g.bg === 'rgb(31, 78, 121)', JSON.stringify(g));
-    for (let i = 0; i < 5; i++) { await page.click('[data-action="feed-next"]'); await wait(200); }
-    const d = await readTop(page);
-    check('shared map: data reads "Data story", color falls back to its family', d.label === 'Data story' && d.bg === insight, JSON.stringify(d));
+    const w = await readTop(page);
+    check('shared map: short_insight reads "Quick insight", color from its family', w.label === 'Quick insight' && w.bg === web, JSON.stringify(w));
     check('shared map fetched', hits >= 1);
     await closeToasts(page);
-    await shot(page, 'f-shared-map-data');
+    await shot(page, 'f-shared-map');
     check('formats (shared map): no page errors', !p.errors.length, p.errors.join(' | '));
     await p.ctx.close();
   }

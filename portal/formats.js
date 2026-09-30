@@ -2,39 +2,41 @@
 // Card formats: label and color for every format a card can carry.
 //
 // The sales branch owns /shared/formats.js (the shared formats map). When that
-// file exists the portal reads it and it wins for label and color. Until then
-// (and for any key it leaves out) the portal falls back to the family colors
-// from /styles/tokens.css:
-//   pillar family  (long form)          --f-pillar
-//   insight family (analysis)           --f-insight
-//   post family    (short, social)      --f-post
+// file is deployed the portal reads it and it wins for label, family and
+// color. Until then (and for any key it leaves out) the portal uses the list
+// below, colored by family:
+//   long    long_form      Long-form article
+//   web     short_insight  Short insight
+//   social  linkedin_post  LinkedIn post
+// The first three formats (pillar, insight, post) stay for cards made before
+// the current set; they share the family colors and are offered only on cards
+// already in one of them.
 //
 // Accepted shapes for /shared/formats.js, as named or default export:
-//   { guide: { label, family, color, ink }, ... }      an object keyed by format
+//   { long_form: { label, family, color, ink }, ... }  an object keyed by format
 //   [ { key|id|format, label|name, family, color|hex, ink }, ... ]   a list
-// Colors are CSS colors; a family is one of pillar / insight / post.
+// Colors are CSS colors; a family is one of long / web / social.
 // -----------------------------------------------------------------------------
 const FALLBACK = {
-  pillar:     { label: 'Pillar',     family: 'pillar' },
-  guide:      { label: 'Guide',      family: 'pillar' },
-  insight:    { label: 'Insight',    family: 'insight' },
-  article:    { label: 'Article',    family: 'insight' },
-  comparison: { label: 'Comparison', family: 'insight' },
-  explainer:  { label: 'Explainer',  family: 'insight' },
-  data:       { label: 'Data',       family: 'insight' },
-  post:       { label: 'Post',       family: 'post' },
-  byline:     { label: 'Byline',     family: 'post' },
-  carousel:   { label: 'Carousel',   family: 'post' },
+  long_form:     { label: 'Long-form article', family: 'long' },
+  short_insight: { label: 'Short insight',     family: 'web' },
+  linkedin_post: { label: 'LinkedIn post',     family: 'social' },
+  pillar:        { label: 'Pillar',            family: 'long',   classic: true },
+  insight:       { label: 'Insight',           family: 'web',    classic: true },
+  post:          { label: 'Post',              family: 'social', classic: true },
 };
-const FAMILIES = ['pillar', 'insight', 'post'];
+const FAMILIES = ['long', 'web', 'social'];
+// Older family names some maps may still use.
+const FAMILY_ALIAS = { pillar: 'long', insight: 'web', post: 'social' };
+const DEFAULT_FAMILY = 'web';
 
 export const FORMATS = Object.fromEntries(Object.entries(FALLBACK).map(([k, v]) => [k, { ...v }]));
 
 const titleCase = (s) => String(s).replace(/[-_]+/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
 /** Label for a format key; unknown keys read as their own name. */
 export function fmtLabel(key) { return (FORMATS[key] && FORMATS[key].label) || titleCase(key || 'Card'); }
-/** Family (pillar / insight / post) for a format key. */
-export function fmtFamily(key) { return (FORMATS[key] && FORMATS[key].family) || 'insight'; }
+/** Family (long / web / social) for a format key. */
+export function fmtFamily(key) { return (FORMATS[key] && FORMATS[key].family) || DEFAULT_FAMILY; }
 /** CSS color for a format (its own, else its family's). */
 export function fmtColor(key) {
   const v = FORMATS[key];
@@ -42,11 +44,16 @@ export function fmtColor(key) {
 }
 /** Classes for an element that carries a format: the format, its family. */
 export function fmtClass(key) {
-  const k = String(key || 'post').toLowerCase().replace(/[^a-z0-9_-]/g, '');
+  const k = String(key || '').toLowerCase().replace(/[^a-z0-9_-]/g, '');
   return 'fmt fmt-' + k + ' fam-' + fmtFamily(k);
 }
-/** Every known format key, the three classic ones first. */
-export function formatKeys() { return ['post', 'insight', 'pillar'].concat(Object.keys(FORMATS).filter((k) => !['post', 'insight', 'pillar'].includes(k))); }
+/** Formats a card can be requested in: its own first, then the others of its
+ *  set (the current formats, or the classic three for a card already in one). */
+export function requestFormats(own) {
+  const classic = !!(FORMATS[own] && FORMATS[own].classic);
+  const set = Object.keys(FORMATS).filter((k) => !!FORMATS[k].classic === classic);
+  return [own].concat(set.filter((k) => k !== own));
+}
 
 function normalize(mod) {
   const src = mod && (mod.FORMATS || mod.formats || mod.default || mod);
@@ -54,7 +61,7 @@ function normalize(mod) {
   return list.map((v) => ({
     key: String(v.key || v.id || v.format || '').toLowerCase(),
     label: v.label || v.name || null,
-    family: FAMILIES.includes(v.family) ? v.family : null,
+    family: FAMILIES.includes(v.family) ? v.family : FAMILY_ALIAS[v.family] || null,
     color: v.color || v.hex || v.bg || null,
     ink: v.ink || v.fg || v.text || null,
   })).filter((v) => /^[a-z][a-z0-9_-]*$/.test(v.key));
@@ -64,7 +71,7 @@ function normalize(mod) {
  *  format brings its own. Written once into a <style> element. */
 function writeCss() {
   const rules = Object.entries(FORMATS).map(([k, v]) => {
-    const fam = FAMILIES.includes(v.family) ? v.family : 'insight';
+    const fam = FAMILIES.includes(v.family) ? v.family : DEFAULT_FAMILY;
     const bg = v.color || `var(--f-${fam})`, ink = v.ink || `var(--f-${fam}-ink)`;
     return `.fmt-${k}{--fmt:${bg};--fmt-ink:${ink};}`;
   }).join('\n');
@@ -82,8 +89,8 @@ export async function loadFormats() {
     if (head.ok && /javascript|ecmascript/.test(head.headers.get('content-type') || '')) {
       const mod = await import('/shared/formats.js');
       normalize(mod).forEach((v) => {
-        const cur = FORMATS[v.key] || { label: titleCase(v.key), family: 'insight' };
-        FORMATS[v.key] = { label: v.label || cur.label, family: v.family || cur.family, color: v.color || cur.color, ink: v.ink || cur.ink };
+        const cur = FORMATS[v.key] || { label: titleCase(v.key), family: DEFAULT_FAMILY };
+        FORMATS[v.key] = { label: v.label || cur.label, family: v.family || cur.family, color: v.color || cur.color, ink: v.ink || cur.ink, classic: !!cur.classic };
       });
       found = true;
       writeCss();

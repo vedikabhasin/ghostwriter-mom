@@ -17,7 +17,7 @@
 import { $, $all, h, prefersReduced, fmtWhen, fmtDay, hoursBetween, todayStr, countdownLong, fmtWeekday, dateStr } from '/portal/lib.js';
 import { nextDropDate } from '/shared/drop-day.js';
 import { mountDesk } from '/shared/desk.js';
-import { FORMATS, fmtLabel, fmtClass, fmtColor, formatKeys, loadFormats } from '/portal/formats.js';
+import { fmtLabel, fmtClass, fmtColor, requestFormats, loadFormats } from '/portal/formats.js';
 import { avatarSVG, pencilSVG, ICONS } from '/portal/avatars.js';
 import { showReveal, closeReveal, isRevealOpen } from '/portal/reveal.js';
 import { initHub, enterHub, refreshHub, articleRects, slotForNewItem } from '/portal/hub.js';
@@ -1370,12 +1370,12 @@ function openCardSheet(e) {
   renderNotes($('#ghost-notes'), e.card_id);
   openScrim('ghost-sheet');
 }
-/** Format choice for a request: the card's own format first (any format the
- *  shared map knows), then the classic three. */
+/** Format choice for a request: the card's own format first, then the rest of
+ *  its set (see requestFormats in formats.js). */
 function buildFmtChoice(own) {
   const wrap = $('#fmt-choice');
   wrap.textContent = '';
-  const keys = [own].concat(['post', 'insight', 'pillar'].filter((k) => k !== own)).filter((k) => FORMATS[k] || k === own);
+  const keys = requestFormats(own);
   keys.forEach((k) => {
     const b = h('button', 'fmt-opt gwm-btn', fmtLabel(k));
     b.type = 'button';

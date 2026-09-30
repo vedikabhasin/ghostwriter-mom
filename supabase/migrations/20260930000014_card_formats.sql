@@ -1,7 +1,7 @@
 -- ---------------------------------------------------------------------------
--- The ten card formats from the shared formats map, in the database.
---   pillar, insight, post (the originals), guide, article, comparison,
---   explainer, data, byline, carousel
+-- The current card formats from the shared formats map, in the database.
+--   long_form, short_insight, linkedin_post (current set)
+--   pillar, insight, post (kept for cards already in them)
 -- Widens the cards and articles format checks and request_card's check, so
 -- a prospect page in a new format can be loaded and requested in the portal.
 -- pieces and spend_credits keep the three credit-priced formats (credits are
@@ -11,7 +11,7 @@
 -- ---------------------------------------------------------------------------
 create or replace function card_formats() returns text[]
 language sql immutable
-as $$ select array['pillar','insight','post','guide','article','comparison','explainer','data','byline','carousel']::text[] $$;
+as $$ select array['pillar','insight','post','long_form','short_insight','linkedin_post']::text[] $$;
 
 alter table cards drop constraint if exists cards_format_check;
 alter table cards add constraint cards_format_check check (format = any (card_formats()));

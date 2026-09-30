@@ -346,6 +346,25 @@ console.log('\n=== call mode: window, swipes, requests, clock');
   await db.exec(`update companies set subscription_status = 'active', portal_access_until = null where id = '${CO}'`);
 }
 
+console.log('\n=== card formats (migration 14)');
+{
+  await asService();
+  await db.exec(`insert into cards (id, company_id, card_key, format, title, angle, evidence) values
+    ('30000000-0000-0000-0000-000000000011', '${CO}', 'k11', 'long_form', 'Eleven', 'a', 'e')`);
+  const guide = await fails(`insert into cards (id, company_id, card_key, format, title, angle, evidence) values ('30000000-0000-0000-0000-000000000012', $1, 'k12', 'guide', 'Twelve', 'a', 'e')`, [CO]);
+  check('cards: long_form accepted, a dropped format (guide) refused', !!guide && /cards_format_check/.test(guide), guide);
+  await asUser(U.a);
+  const own = (await one(`select request_card($1) as r`, ['30000000-0000-0000-0000-000000000011'])).r;
+  check('request_card: the card\'s own long_form', own.format === 'long_form', own);
+  const li = (await one(`select request_card($1, 'linkedin_post') as r`, ['30000000-0000-0000-0000-000000000011'])).r;
+  check('request_card: switch to linkedin_post, same row', li.id === own.id && li.format === 'linkedin_post', li);
+  const bad = await fails(`select request_card($1, 'carousel')`, ['30000000-0000-0000-0000-000000000011']);
+  check('request_card: carousel refused', /invalid format/.test(bad || ''), bad);
+  const classic = (await one(`select request_card($1, 'short_insight') as r`, ['30000000-0000-0000-0000-000000000001'])).r;
+  check('request_card: a classic pillar card can still be requested', classic.format === 'short_insight', classic);
+  await asService();
+}
+
 const failed = results.filter((r) => !r).length;
 console.log(`\n${results.length - failed}/${results.length} passed`);
 process.exit(failed ? 1 : 0);

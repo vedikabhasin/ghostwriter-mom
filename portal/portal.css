@@ -230,8 +230,11 @@ body:not([data-desk="on"]) .gwm-desk{display:none;}
 
 /* Formats: every element with a format carries .fmt .fmt-<key> .fam-<family>.
    --fmt / --fmt-ink come from portal/formats.js (the shared formats map, or
-   the family color); an unknown format reads as the insight family. */
-.fmt{--fmt:var(--f-insight); --fmt-ink:var(--f-insight-ink);}
+   the family color); an unknown format reads as the web family. */
+:root{--f-long:var(--f-pillar); --f-long-ink:var(--f-pillar-ink);
+  --f-web:var(--f-insight); --f-web-ink:var(--f-insight-ink);
+  --f-social:var(--f-post); --f-social-ink:var(--f-post-ink);}
+.fmt{--fmt:var(--f-web); --fmt-ink:var(--f-web-ink);}
 .card.fmt { --f-color:var(--fmt); --f-back:color-mix(in srgb, var(--fmt) 26%, var(--white)); }
 .card.fmt-signal  { --f-color:var(--ink); --f-back:var(--canvas-alt); }
 
@@ -506,9 +509,9 @@ body.dir-like .ctl-like, body.dir-pass .ctl-pass, body.dir-fasttrack .ctl-fasttr
 }
 /* Spine thickness by format: pillar thickest, insight medium, post thinnest. */
 .book.fmt{--f-color:var(--fmt); --f-back:color-mix(in srgb, var(--fmt) 22%, var(--white));}
-.book.fam-pillar {--spine:14px; box-shadow:1px 1px 0 var(--white), 2px 2px 0 var(--grey-300), 3px 3px 0 var(--white), 4px 4px 0 var(--grey-300), 5px 5px 0 var(--white), 6px 6px 0 var(--grey-300), 7px 7px 0 var(--white), 0 22px 40px -22px rgba(14,14,14,0.5);}
-.book.fam-insight{--spine:8px;  box-shadow:1px 1px 0 var(--white), 2px 2px 0 var(--grey-300), 3px 3px 0 var(--white), 0 22px 40px -22px rgba(14,14,14,0.5);}
-.book.fam-post   {--spine:4px;  box-shadow:1px 1px 0 var(--grey-300), 0 22px 40px -22px rgba(14,14,14,0.5);}
+.book.fam-long   {--spine:14px; box-shadow:1px 1px 0 var(--white), 2px 2px 0 var(--grey-300), 3px 3px 0 var(--white), 4px 4px 0 var(--grey-300), 5px 5px 0 var(--white), 6px 6px 0 var(--grey-300), 7px 7px 0 var(--white), 0 22px 40px -22px rgba(14,14,14,0.5);}
+.book.fam-web{--spine:8px;  box-shadow:1px 1px 0 var(--white), 2px 2px 0 var(--grey-300), 3px 3px 0 var(--white), 0 22px 40px -22px rgba(14,14,14,0.5);}
+.book.fam-social {--spine:4px;  box-shadow:1px 1px 0 var(--grey-300), 0 22px 40px -22px rgba(14,14,14,0.5);}
 .book.back > *{visibility:hidden;}
 .book:focus-visible{outline:3px solid var(--ink); outline-offset:3px;}
 .book-head{display:flex; align-items:center; gap:6px; flex-wrap:wrap;}
@@ -746,9 +749,9 @@ body[data-view="library"] .toast{bottom:calc(var(--switch-h) + var(--switch-bott
 .mini-book{width:150px; height:196px; border-radius:6px 12px 12px 6px; padding:12px 12px 12px 18px; display:flex; flex-direction:column; gap:8px;
   background:var(--f-back); border-left:var(--spine) solid var(--f-color);}
 .mini-book.fmt{--f-color:var(--fmt); --f-back:color-mix(in srgb, var(--fmt) 22%, var(--white));}
-.mini-book.fam-pillar {--spine:12px;}
-.mini-book.fam-insight{--spine:7px;}
-.mini-book.fam-post   {--spine:4px;}
+.mini-book.fam-long   {--spine:12px;}
+.mini-book.fam-web{--spine:7px;}
+.mini-book.fam-social {--spine:4px;}
 .mini-book.ghost{background:var(--paper); border:1.5px dashed var(--f-color); border-left:var(--spine) dashed var(--f-color);}
 .mb-head{display:flex; gap:4px; flex-wrap:wrap;}
 .mb-head .card-format{font-size:8.5px; padding:4px 7px 4px 8px;}

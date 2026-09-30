@@ -1,7 +1,7 @@
 # Portal walkthrough: call mode
 
 Every screenshot here comes from `tests/portal/walkthrough.mjs`, which runs
-**376 checks** across these accounts:
+**375 checks** across these accounts:
 
 - **Vedika** (`vedika-bhasin-ycfogw`, internal) at 375px and on desktop, then
   **blendbases** from the other side.
@@ -12,7 +12,7 @@ Every screenshot here comes from `tests/portal/walkthrough.mjs`, which runs
 - **RPR** as it is live: canceled, no window, one test seat.
 - **Sign in with a code.**
 
-The last run passed all 376 (`shots/results.json`).
+The last run passed all 375 (`shots/results.json`).
 
 ## How this was tested
 
@@ -43,16 +43,24 @@ and `scripts/reset-company.mjs --member` against `tests/portal/service-mock.mjs`
 ## Formats
 
 Labels and colors come from `/shared/formats.js` when it is deployed (the
-sales branch owns it); until then, and for any key it leaves out, each format
-takes its family color: pillar, guide (pillar); insight, article, comparison,
-explainer, data (insight); post, byline, carousel (post).
+sales branch owns it); until then, and for any key it leaves out, the portal
+uses its built-in list, colored by family:
+
+| Format | Label | Family |
+|---|---|---|
+| long_form | Long-form article | long |
+| short_insight | Short insight | web |
+| linkedin_post | LinkedIn post | social |
+| pillar / insight / post | Pillar / Insight / Post | long / web / social (classic, kept for cards already in them) |
+
+A card in a current format can be requested in the current three; a classic
+card only in the classic three.
 
 | | | |
 |---|---|---|
-| ![](shots/f-guide.jpg) Guide, pillar family. | ![](shots/f-comparison.jpg) Comparison, insight family. | ![](shots/f-carousel.jpg) Carousel, post family. |
-| ![](shots/f-guide-request.jpg) Request sheet: the card's own format first. | ![](shots/f-shared-map-data.jpg) With a `/shared/formats.js` served: its label wins. | ![](shots/x-favicon.jpg) `/favicon.ico` |
-
-Every format has its own shot: `shots/f-<format>.jpg`.
+| ![](shots/f-long_form.jpg) Long-form article, long family. | ![](shots/f-short_insight.jpg) Short insight, web family. | ![](shots/f-linkedin_post.jpg) LinkedIn post, social family. |
+| ![](shots/f-request-current.jpg) Request sheet, current card. | ![](shots/f-request-classic.jpg) Request sheet, classic card. | ![](shots/f-shared-map.jpg) A served `/shared/formats.js` wins. |
+| ![](shots/x-favicon.jpg) `/favicon.ico` | | |
 
 ## Sign in (§2)
 
