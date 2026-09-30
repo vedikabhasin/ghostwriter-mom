@@ -74,36 +74,6 @@
       ]
     },
     {
-      "id": "aug-03",
-      "format": "short_insight",
-      "title": "Inventory Distortion Is a Freshness Problem",
-      "angle": "IHL's July 31 2026 study puts inventory distortion at $1.7T, 6.2 percent of global retail sales, and the default fix is still a scheduled count. Continuous, noisy capture during shifts beats a clean weekly audit because the shelf changes faster than the audit.",
-      "evidence": "Your Chemist Warehouse pilot reported a 30 percent decline in inventory gaps in the first month across four Melbourne stores, and GeekWire reports 186M square feet mapped per month. Coverage is the honest limit, and you can own it before competitors frame it for you.",
-      "formatNote": "One market study and one pilot result.",
-      "tags": [
-        "on-shelf-availability",
-        "short-insight",
-        "pilot-result"
-      ],
-      "sources": [
-        {
-          "title": "The 2026 Inventory Distortion Study",
-          "publisher": "IHL Group",
-          "url": "https://www.ihlservices.com/product/inventory-distortion-study-2026/"
-        },
-        {
-          "title": "Chemist Warehouse partners with Augmodo",
-          "publisher": "Retail Technology Innovation Hub",
-          "url": "https://retailtechinnovationhub.com/home/2024/12/12/chemist-warehouse-partners-with-augmodo-to-give-physical-store-associates-spatial-ai-assistants"
-        },
-        {
-          "title": "Augmodo raises $21M",
-          "publisher": "GeekWire",
-          "url": "https://www.geekwire.com/2026/augmodo-raises-21m-to-push-its-spatial-ai-beyond-just-retail-toward-the-broader-physical-workforce/"
-        }
-      ]
-    },
-    {
       "id": "aug-04",
       "format": "long_form",
       "title": "Badge or Robot: Who Sees the Shelf",
@@ -160,31 +130,6 @@
           "title": "homepage",
           "publisher": "Augmodo",
           "url": "https://augmodo.com"
-        }
-      ]
-    },
-    {
-      "id": "aug-06",
-      "format": "short_insight",
-      "title": "Supplier Data From the Retailer's Badge",
-      "angle": "Retail media and supplier analytics are where CPG budgets moved, and the Chemist Warehouse deal named seven suppliers as design partners with a path to 400+ through SpatialView, with L'Oreal ANZ first. Selling one capture stream to two buyers is the business model question retailers will ask about.",
-      "evidence": "Your March 2025 announcement is the only public description of the supplier side, and your dunnhumby collaboration (September 2025) sketched personalized routing on top of the same data. Nothing explains who owns the shelf data, what a supplier sees and what they do not.",
-      "formatNote": "One partnership and one business-model question.",
-      "tags": [
-        "cpg-analytics",
-        "short-insight",
-        "partnership-proof"
-      ],
-      "sources": [
-        {
-          "title": "Chemist Warehouse Launches Partnership with Augmodo",
-          "publisher": "Business Wire",
-          "url": "https://www.businesswire.com/news/home/20250331350926/en/Chemist-Warehouse-Launches-Partnership-with-Augmodo-Modernizing-Tech-to-Give-Store-Associates-Spatial-AI-Assistants"
-        },
-        {
-          "title": "Augmodo and dunnhumby Forecast How Spatial AI Will Revolutionize Retail",
-          "publisher": "StreetInsider via Business Wire",
-          "url": "https://www.streetinsider.com/Business+Wire/Augmodo+++dunnhumby+Forecast+How+Spatial+AI+Will+Revolutionize+Retail/25346374.html"
         }
       ]
     },
