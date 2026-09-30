@@ -1,0 +1,327 @@
+{
+  "slug": "acrylic-kybls8",
+  "companyName": "Acrylic Robotics",
+  "contactFirstName": "Chloë",
+  "greetingName": "Chloë",
+  "introBasis": "your Designer Portal, your press, and the hotel and design questions no page of yours answers yet",
+  "emailKnown": true,
+  "stripeLink19": "https://buy.stripe.com/7sY8wP0M833Rcx21YugnK09",
+  "directionShape": {
+    "long_form": 1,
+    "linkedin_post": 2
+  },
+  "offerText": "Your first article is on me.",
+  "signal": null,
+  "cards": [
+    {
+      "id": "acr-01",
+      "format": "long_form",
+      "title": "AI Art vs Commissioned Painting: What Hangs Better",
+      "angle": "In Mattoboard's November 2025 survey, 82% of interior designers use AI regularly and 42% are unhappy with the tools they have. An AI image is a strong brief but a flat finish, and a painted piece costs more and takes longer than printing that image.",
+      "evidence": "Your Designer Portal turns a written brief into named directions. Your curators then turn those into real paintings, framed and delivered on one PO. You offer paper prints, embellished prints and paintings from 18 × 24 in to 36 × 48 in or custom, so the comparison can be honest about when a print is enough. No article on your site compares an AI-generated print with a commissioned painting.",
+      "formatNote": "Designers weighing \"print the AI image or commission it\" search this X vs Y at the point of purchase.",
+      "tags": [
+        "ai-art-vs-painting",
+        "long-form",
+        "product-proof"
+      ],
+      "sources": [
+        {
+          "title": "First State of AI & Interior Design Report",
+          "publisher": "Mattoboard via PR Newswire",
+          "url": "https://finance.yahoo.com/news/first-state-ai-interior-design-140000351.html"
+        },
+        {
+          "title": "Designer Portal",
+          "publisher": "Acrylic",
+          "url": "https://artbyacrylic.com/client-portal"
+        },
+        {
+          "title": "Survey Reveals Widespread Use of AI Among Designers",
+          "publisher": "Kitchen & Bath Design News",
+          "url": "https://www.kitchenbathdesign.com/survey-reveals-widespread-use-of-ai-among-designers/"
+        }
+      ]
+    },
+    {
+      "id": "acr-02",
+      "format": "short_insight",
+      "title": "Hotel Conversion Art: One Program, Every Refresh",
+      "angle": "US hotel conversions hit a record 1,567 projects and 152,044 rooms in Q2 2026, up 15% in projects year over year. A conversion needs art that meets new brand standards fast and can be reordered later. Acrylic can speed its own curation, but not a brand committee's approval cycle.",
+      "evidence": "Your hospitality offer collapses consultants, publishers and local artists into one PO, one contact and one contract for the life of the property. Every piece stays on file for reorder in the same colour, size and framing. No article on your site explains how art procurement works on a brand conversion.",
+      "formatNote": "Procurement teams search \"hotel conversion art program\" at mid intent, and nothing from Acrylic ranks for it.",
+      "tags": [
+        "hotel-conversions",
+        "short-insight",
+        "service-proof"
+      ],
+      "sources": [
+        {
+          "title": "Q2 2026 US Pipeline",
+          "publisher": "Lodging Econometrics via Lodging Magazine",
+          "url": "https://lodgingmagazine.com/lodging-econometrics-u-s-hotel-construction-pipeline-continues-to-grow-in-q2-2026/"
+        },
+        {
+          "title": "US hotel construction pipeline down in Q2",
+          "publisher": "Hotel Dive",
+          "url": "https://www.hoteldive.com/news/hotel-construction-pipeline-q2-2026/826231/"
+        },
+        {
+          "title": "Hospitality",
+          "publisher": "Acrylic",
+          "url": "https://artbyacrylic.com/hospitality"
+        }
+      ]
+    },
+    {
+      "id": "acr-03",
+      "format": "long_form",
+      "title": "Original vs Print Hotel Art: Where Each Wins",
+      "angle": "The US luxury pipeline reached a record 103 projects and 25,496 rooms in Q2 2026, with rooms up 21% year over year. Originals earn their cost where guests linger, and prints still make sense where budgets or sightlines are tight.",
+      "evidence": "Your studio makes all three tiers: prints, embellished prints and originals in real acrylic, with palette knife and impasto where indicated. Your hospitality page assigns originals to lobbies and public areas and series work to corridors. No article on your site explains when a hotel should pay for an original.",
+      "formatNote": "\"Original vs print hotel art\" is a live X vs Y query, and Acrylic sells both sides of it.",
+      "tags": [
+        "luxury-hotel-art",
+        "long-form",
+        "product-proof"
+      ],
+      "sources": [
+        {
+          "title": "Q2 2026 Update on Hotel Pipeline",
+          "publisher": "Lodging Econometrics via Floor Daily",
+          "url": "https://www.floordaily.net/flooring-news/lodging-econometrics-provides-q2-2026-update-on-hotel-pipeline/"
+        },
+        {
+          "title": "About",
+          "publisher": "Acrylic",
+          "url": "https://artbyacrylic.com/about"
+        },
+        {
+          "title": "Hospitality",
+          "publisher": "Acrylic",
+          "url": "https://artbyacrylic.com/hospitality"
+        }
+      ]
+    },
+    {
+      "id": "acr-04",
+      "format": "linkedin_post",
+      "title": "Guestroom Art at Scale: Four Rooms, One Story",
+      "angle": "Upper-midscale holds 2,225 projects and 214,027 rooms in the Q2 2026 US pipeline, the largest of any chain scale. Volume does not have to mean stretched stock, though guestroom art still repeats within a property to stay consistent.",
+      "evidence": "Your hospitality page gives each space a role: statement originals for lobbies, series work for corridors, high-volume runs with original character for guestrooms, and bespoke pieces for F&B. Your portal groups a 40-piece install by property, floor or room. No piece is reused in another client's project.",
+      "formatNote": "The room-by-room framework maps cleanly to one slide per space for designers on LinkedIn.",
+      "tags": [
+        "guestroom-art",
+        "linkedin-post",
+        "framework-proof"
+      ],
+      "sources": [
+        {
+          "title": "Q2 2026 pipeline",
+          "publisher": "Lodging Econometrics via Hotel Interactive",
+          "url": "https://www.hotelinteractive.com/lodging-econometrics-u-s-hotel-construction-pipeline-reaches-5975-projects-in-q2-2026/"
+        },
+        {
+          "title": "Hospitality",
+          "publisher": "Acrylic",
+          "url": "https://artbyacrylic.com/hospitality"
+        },
+        {
+          "title": "Designer Portal",
+          "publisher": "Acrylic",
+          "url": "https://artbyacrylic.com/client-portal"
+        }
+      ]
+    },
+    {
+      "id": "acr-05",
+      "format": "short_insight",
+      "title": "Local Hotel Art: Place Over Palette",
+      "angle": "More than half of designers worry AI will erode originality in their work (Mattoboard, November 2025). Art by artists who know the place is a clear answer. The limit is that local sourcing depends on who is on the roster and who says yes.",
+      "evidence": "Your portal names sourcing an artist from the project's own geography as a specialty, always with the artist's consent. Your named roster spans Montreal, New York, Toronto and Los Angeles. Your sample briefs include a Canadian Rockies hotel built on Canadian landscape tradition. No article on your site explains how to build a place-based art program.",
+      "formatNote": "Designers search \"local artists for hotel art\" when writing a property's story, which is a mid-intent query.",
+      "tags": [
+        "local-artists",
+        "short-insight",
+        "service-proof"
+      ],
+      "sources": [
+        {
+          "title": "Interior designers share mixed feelings about AI use",
+          "publisher": "Home Accents Today",
+          "url": "https://www.homeaccentstoday.com/technology/help-or-hindrance-interior-designers-share-mixed-feelings-about-ai-use/"
+        },
+        {
+          "title": "Designer Portal",
+          "publisher": "Acrylic",
+          "url": "https://artbyacrylic.com/client-portal"
+        },
+        {
+          "title": "Artists",
+          "publisher": "Acrylic",
+          "url": "https://artbyacrylic.com/artists"
+        }
+      ]
+    },
+    {
+      "id": "acr-06",
+      "format": "linkedin_post",
+      "title": "AI Renders to Real Walls: Keep Designer Control",
+      "angle": "Renderings and presentations were designers' top uses of AI in 1stDibs' November 2025 survey. A render sells a mood but is not a specification, and turning it into art the designer can stand behind is still the designer's job.",
+      "evidence": "Your portal lets the designer write the direction, make targeted edits to one region or colour, and version every piece. It exports client-ready presentations with trade pricing and the designer's own markup. Nothing goes to production until the designer approves it.",
+      "formatNote": "A render-to-wall walkthrough mirrors the portal's four steps and fits designers' LinkedIn feeds.",
+      "tags": [
+        "ai-renders",
+        "linkedin-post",
+        "product-proof"
+      ],
+      "sources": [
+        {
+          "title": "2026 Interior Design Trends",
+          "publisher": "1stDibs via Business Wire",
+          "url": "https://www.businesswire.com/news/home/20251117050937/en/2026-Interior-Design-Trends-1stDibs-Survey-Identifies-Maximalism-Chocol"
+        },
+        {
+          "title": "Designer Portal",
+          "publisher": "Acrylic",
+          "url": "https://artbyacrylic.com/client-portal"
+        }
+      ]
+    },
+    {
+      "id": "acr-07",
+      "format": "long_form",
+      "title": "Robotic Painting Explained: Where Humans Decide",
+      "angle": "Acrylic's robot does not choose the art: people brief, direct and approve it. The robot works in acrylic only and cannot splatter or finger-paint.",
+      "evidence": "Your homepage lays out the chain. The designer shares a vision, your system proposes concepts, the designer refines, your robots paint, and your team delivers. Your founder told MobileSyrup in December 2024 that a painting takes a few hours, up to 12 for complex work, with automated paint refills. No article on your site explains the process end to end.",
+      "formatNote": "\"Robotic painting\" is a category term Acrylic can own, and every other piece can link back to it.",
+      "tags": [
+        "robotic-painting",
+        "long-form",
+        "founder-proof"
+      ],
+      "sources": [
+        {
+          "title": "Home",
+          "publisher": "Acrylic Robotics",
+          "url": "https://acrylicrobotics.ca/"
+        },
+        {
+          "title": "Montreal's Acrylic Robotics mixes paint and robots",
+          "publisher": "MobileSyrup",
+          "url": "https://mobilesyrup.com/2024/12/07/montreal-acrylic-robotics-painting/"
+        },
+        {
+          "title": "How AI, robotics and Morrisseau fight art fraud",
+          "publisher": "Pique Newsmagazine (Canadian Press)",
+          "url": "https://www.piquenewsmagazine.com/national-business/how-ai-robotics-and-late-artist-morrisseau-are-helping-fight-art-fraud-10967493"
+        }
+      ]
+    },
+    {
+      "id": "acr-08",
+      "format": "linkedin_post",
+      "title": "Artist Royalties in Hotel Art: Paid Per Piece",
+      "angle": "Canada's median artist income is about $30,000, 39% below the typical worker, per Hill Strategies' analysis of 2021 census data. Acrylic pays a royalty on every piece that ships, but it does not publish the rate, so the post should not imply one.",
+      "evidence": "Your artists page says artists keep their originals, get credit on every reproduction, can decline any project, and choose to be named, aliased or unattributed. Your founder told AFP in September 2025 that the model rests on consent, credit and compensation. She also said her own painting once worked out to about $2 an hour.",
+      "formatNote": "The \"$2 an hour\" origin story is one founder claim, and artists already follow Chloë's feed.",
+      "tags": [
+        "artist-royalties",
+        "linkedin-post",
+        "founder-proof"
+      ],
+      "sources": [
+        {
+          "title": "Stats about the working conditions of artists",
+          "publisher": "Hill Strategies",
+          "url": "https://statsinsights.hillstrategies.com/p/stats-sources-artists-cultural-workers"
+        },
+        {
+          "title": "Artists",
+          "publisher": "Acrylic",
+          "url": "https://artbyacrylic.com/artists"
+        },
+        {
+          "title": "AI-backed robot painting aims to boost artist income",
+          "publisher": "TechXplore (AFP)",
+          "url": "https://techxplore.com/news/2025-09-ai-robot-aims-boost-artist.html"
+        }
+      ]
+    },
+    {
+      "id": "acr-09",
+      "format": "short_insight",
+      "title": "Morrisseau Fakes: What Robot Copies Reveal",
+      "angle": "Police have identified just over 1,600 fake Morrisseau works, and prosecutors say thousands more exist. The Morrisseau estate and NORVAL AI reviewed the robot-painted copies and identified errors that Acrylic worked to correct (Tara Deschamps, The Canadian Press, July 20, 2025).",
+      "evidence": "Your robot has replicated five Morrisseau works with the estate. CBC reported in July 2025 that newer copies scored about 69% against Norval AI. Early copies were caught because the robot paused mid-stroke to reload paint. The Art Newspaper reported authorized copies priced from C$3,240 to C$45,000. Your store blog covered the launch in July 2025, so this piece should lead with the numbers, not recap the story.",
+      "formatNote": "It is built on the brand's own public figures: five works, a 69% score, the stroke-pause finding and the price range.",
+      "tags": [
+        "art-fraud",
+        "short-insight",
+        "partnership-proof"
+      ],
+      "sources": [
+        {
+          "title": "How AI, robotics and Norval Morrisseau are helping fight art fraud",
+          "publisher": "CBC News",
+          "url": "https://www.cbc.ca/news/canada/british-columbia/morrisseau-art-fraud-1.7589690"
+        },
+        {
+          "title": "How AI-trained robots are helping to root out fake paintings",
+          "publisher": "The Art Newspaper",
+          "url": "https://www.theartnewspaper.com/2025/09/16/how-ai-trained-robots-are-helping-to-root-out-fake-paintings-tied-to-a-notorious-forgery-case"
+        },
+        {
+          "title": "Principal architect of Morrisseau forgeries sentenced",
+          "publisher": "Chronicle Journal (Canadian Press)",
+          "url": "https://www.chroniclejournal.com/news/national/quebec/principal-architect-of-morrisseau-mass-forgeries-sentenced-to-five-years-in-prison/article_dc125e46-3a56-5b53-8363-efa2a32cab1a.html"
+        },
+        {
+          "title": "A world first: authorized Morrisseau copies",
+          "publisher": "Acrylic",
+          "url": "https://www.shopacrylic.ca/blog/a-world-first-acrylic-robotics-to-reproduce-authorized-high-fidelity-copies-of-norval-morrisseau-s-works-for-purchase"
+        }
+      ]
+    },
+    {
+      "id": "acr-10",
+      "format": "linkedin_post",
+      "title": "AI in Interior Design: Taste Isn't Enough",
+      "angle": "In 1stDibs' November 2025 survey of 468 design professionals, 24% are strongly against using AI in their practices. Chloë's point: AI makes choosing cheap, so a designer's edge is authorship, and the job is protecting judgment while using the tools. The limit is that the tools only help designers who want to direct the art.",
+      "evidence": "Your homepage promises designers creation, not just selection. Chloë has publicly shared commentary on taste and AI. A Lotus Park Design designer quoted on your portal page says control matters because their reputation is on the line.",
+      "formatNote": "It is one founder claim about keeping judgment, not an adoption stat, and Chloë already comments publicly on taste and AI.",
+      "tags": [
+        "designer-judgment",
+        "linkedin-post",
+        "founder-proof"
+      ],
+      "sources": [
+        {
+          "title": "2026 Interior Design Trends survey",
+          "publisher": "1stDibs Investor Relations",
+          "url": "https://investors.1stdibs.com/news/news-details/2025/2026-Interior-Design-Trends-1stDibs-Survey-Identifies-Maximalism-Chocolate-Brown-and-Vintage-Antiques-as-Top-Designer-Choices/"
+        },
+        {
+          "title": "The Study, Interior Design Trends 2026",
+          "publisher": "1stDibs",
+          "url": "https://www.1stdibs.com/blogs/the-study/interior-design-trends-2026/"
+        },
+        {
+          "title": "X (July 29 post on taste)",
+          "publisher": "Chloë Ryan",
+          "url": "https://x.com/ChloeRyxn"
+        },
+        {
+          "title": "Home",
+          "publisher": "Acrylic Robotics",
+          "url": "https://acrylicrobotics.ca/"
+        },
+        {
+          "title": "Designer Portal",
+          "publisher": "Acrylic",
+          "url": "https://artbyacrylic.com/client-portal"
+        }
+      ]
+    }
+  ]
+}
