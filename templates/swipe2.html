@@ -1543,11 +1543,8 @@ body.dir-save  .ctl-save{
 .reveal{cursor:pointer;}
 .rv-fmt{display:inline-flex; align-items:center; padding:5px 9px 5px 10px; border-radius:999px; background:var(--f-color); color:var(--f-ink);
   font-family:var(--font-mono); font-size:9.5px; font-weight:700; letter-spacing:0.14em; text-transform:uppercase;}
-/* Reduced motion: no rays, no hearts, one opacity fade. */
-.reveal.rv-reduced *, .reveal.rv-reduced *::before, .reveal.rv-reduced *::after{animation:none !important;}
-.reveal.rv-reduced .rv-bg::before{display:none;}
-.reveal.rv-reduced{animation:gwk-fade 260ms ease both;}
-@keyframes gwk-fade{from{opacity:0;}}
+/* Reduced motion follows the portal: .rv-static (portal-kit.css) shows the
+   whole scene, rays and hearts included, at rest. */
 /* Final screen */
 #screen-final{gap:14px;}
 #screen-final .conf-arrive{margin-top:6px;}
@@ -1560,7 +1557,7 @@ body.dir-save  .ctl-save{
   display:flex; align-items:center; justify-content:center; box-shadow:0 6px 14px -6px rgba(14,14,14,0.5); z-index:3;}
 .gwk-lock svg{width:12px; height:12px;}
 /* Signals: neutral skeleton lines, blurred, with redaction bars on top. */
-.gwk-redacted{position:relative; height:86px; border-radius:10px; overflow:hidden; background:rgba(14,14,14,0.03);}
+.gwk-redacted{position:relative; height:43px; border-radius:10px; overflow:hidden; background:rgba(14,14,14,0.03);}
 .gwk-redacted .sk{position:absolute; left:14px; height:9px; border-radius:6px; background:rgba(14,14,14,0.22); filter:blur(3px);}
 .gwk-redacted .rd{position:absolute; height:12px; border-radius:2px; background:var(--ink); opacity:0.88;}
 .gwk-redacted .gwk-lock{left:50%; top:50%; transform:translate(-50%,-50%);}
@@ -1735,7 +1732,6 @@ body.dir-save  .ctl-save{
        Log is open and real; Signals, Library and Hub are locked. -->
   <section class="screen" id="screen-final">
     <p class="conf-arrive" id="final-arrive"></p>
-    <p class="portal-p">Here's what your team gets inside.</p>
     <div class="portal-dashboard">
       <div class="portal-inner">
         <section class="pd-section" id="final-log-section">
@@ -1748,12 +1744,10 @@ body.dir-save  .ctl-save{
         <section class="pd-section">
           <p class="pd-h">Signals <span class="badge new">New</span></p>
           <div class="gwk-redacted gwk-locked" role="button" tabindex="0" data-lock="signals" aria-label="Opens after your onboarding call.">
-            <span class="sk" style="top:14px; width:72%;"></span>
-            <span class="sk" style="top:32px; width:58%;"></span>
-            <span class="sk" style="top:50px; width:80%;"></span>
-            <span class="sk" style="top:68px; width:44%;"></span>
-            <span class="rd" style="left:22%; top:12px; width:30%;"></span>
-            <span class="rd" style="left:48%; top:48px; width:26%;"></span>
+            <span class="sk" style="top:9px; width:72%;"></span>
+            <span class="sk" style="top:25px; width:52%;"></span>
+            <span class="rd" style="left:20%; top:7px; width:30%;"></span>
+            <span class="rd" style="left:46%; top:23px; width:24%;"></span>
             <span class="gwk-lock" aria-hidden="true"></span>
           </div>
           <p class="pd-caption">Where you rank, and who AI cites instead.</p>
@@ -1771,7 +1765,7 @@ body.dir-save  .ctl-save{
     <span class="btn-glow-host final-cta">
       <span class="btn-glow" aria-hidden="true"></span>
       <button type="button" class="btn btn-primary" data-action="final-unlock" id="final-unlock">
-        <span>Unlock portal &middot; 15-minute onboarding</span>
+        <span>UNLOCK YOUR PORTAL &middot; BOOK 15-MIN CALL</span>
         <span class="arr" aria-hidden="true">&#8594;</span>
       </button>
     </span>
@@ -2727,16 +2721,11 @@ body.dir-save  .ctl-save{
       var basis  = String(client.introBasis || '').trim();
       var origin = basis || ('where ' + (client.companyName || 'you') + ' ranks and who AI cites instead');
       introEl.appendChild(document.createTextNode(' These ' + deckN + ' directions come from ' + origin + '.'));
-      [ 'Swipe to keep or pass.',
-        'We pick the best match from your swipes and write it free. It lands in your ' + channelLabel() + ' within 24 hours. No call needed.',
-        'Written and edited by a human for your brand, not an unreviewed AI draft.'
-      ].forEach(function(line){
-        var l = document.createElement('span'); l.className = 'intro-line'; l.textContent = line;
-        introEl.appendChild(l);
-      });
+      var line = document.createElement('span'); line.className = 'intro-line';
+      line.textContent = 'We pick a direction from your swipes, for your brand. Written and edited by a human within 24 hours, no unreviewed AI draft.';
+      introEl.appendChild(line);
       var muted = document.createElement('span'); muted.className = 'intro-muted';
-      muted.textContent = 'A 15-minute call unlocks your portal and ' + lockedCount() +
-        ' more directions. Your swipes stay saved on any device.';
+      muted.textContent = 'A 15 min call unlocks your portal and ' + lockedCount() + ' more directions. 5 new directions each week.';
       introEl.appendChild(muted);
     }
     var sig = client.signal || {};
@@ -3688,7 +3677,7 @@ body.dir-save  .ctl-save{
     var line = kind === 'match' ? 'You both want this one.' : 'Split decision.';
     root.textContent = '';
     root.removeAttribute('style');
-    root.className = 'reveal rv-' + (kind === 'match' ? 'agree' : 'split') + (prefersReduced ? ' rv-reduced' : '');
+    root.className = 'reveal rv-' + (kind === 'match' ? 'agree' : 'split') + (prefersReduced ? ' rv-static' : '');
     root.setAttribute('aria-label', line);
     var bg = document.createElement('div'); bg.className = 'rv-bg';
     if(kind === 'split'){
@@ -3698,7 +3687,7 @@ body.dir-save  .ctl-save{
     } else {
       root.style.setProperty('--rv-c', 'var(--like)');
       root.style.setProperty('--rv-c-ink', 'var(--like-ink)');
-      if(!prefersReduced && K){
+      if(K){
         var icons = document.createElement('div'); icons.className = 'rv-floaters'; icons.setAttribute('aria-hidden', 'true');
         for(var i = 0; i < 12; i++){
           var f = document.createElement('span'); f.className = 'rv-float'; f.innerHTML = K.ICONS.heart;

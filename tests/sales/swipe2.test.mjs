@@ -129,10 +129,8 @@ let deliverText = '';
     small: parseFloat(getComputedStyle(document.querySelector('#intro-offer .intro-muted')).fontSize) < parseFloat(getComputedStyle(document.getElementById('intro-offer')).fontSize) }));
   check('intro: greeting, "3 DIRECTIONS FOR {company}", button', intro.eyebrow === '3 DIRECTIONS FOR' && intro.co === CONFIG.company && intro.hello === 'Hi ' + CONFIG.contactFirstName + '.', intro);
   check('intro: bold first sentence + sourceLine sentence', intro.bold === 'Ghostwriter Mom turns search and AI-citation gaps into technical articles.' && intro.all.includes('These 3 directions come from ' + CONFIG.sourceLine + '.'));
-  check('intro: lines, channel "inbox" for email', JSON.stringify(intro.lines) === JSON.stringify(['Swipe to keep or pass.',
-    'We pick the best match from your swipes and write it free. It lands in your inbox within 24 hours. No call needed.',
-    'Written and edited by a human for your brand, not an unreviewed AI draft.']), intro.lines);
-  check('intro: small muted call line with lockedCount', intro.muted === 'A 15-minute call unlocks your portal and 7 more directions. Your swipes stay saved on any device.' && intro.small);
+  check('intro: the direction line', JSON.stringify(intro.lines) === JSON.stringify(['We pick a direction from your swipes, for your brand. Written and edited by a human within 24 hours, no unreviewed AI draft.']), intro.lines);
+  check('intro: small muted call line with lockedCount', intro.muted === 'A 15 min call unlocks your portal and 7 more directions. 5 new directions each week.' && intro.small, intro.muted);
   await page.screenshot({ path: OUT + '/s01-intro.jpg', type: 'jpeg', quality: 80 });
 
   await page.click('[data-action="start"]');
@@ -207,7 +205,7 @@ let deliverText = '';
     const s = document.getElementById('screen-final');
     const sections = Array.from(s.querySelectorAll('.pd-section')).map((x) => x.querySelector('.pd-h').innerText.replace(/\s+/g, ' ').trim());
     const over = Array.from(s.querySelectorAll('#final-log .log-row')).some((r) => r.scrollWidth > r.clientWidth + 1 || Array.from(r.querySelectorAll('*')).some((el) => el.getBoundingClientRect().right > r.getBoundingClientRect().right + 1));
-    return { arrive: document.getElementById('final-arrive').textContent, inside: s.querySelector('.portal-p').textContent, sections,
+    return { arrive: document.getElementById('final-arrive').textContent, inside: !!s.querySelector('.portal-p'), redH: s.querySelector('.gwk-redacted').getBoundingClientRect().height, sections,
       log: Array.from(s.querySelectorAll('#final-log .log-row')).map((r) => r.querySelector('.hist-title').textContent + '|' + r.querySelector('.result-chip').innerText + '|' + r.querySelectorAll('.history-src-chip').length +
         '|' + Array.from(r.querySelectorAll('.hist-row')).map((x) => x.querySelector('.who').innerText.trim() + ':' + x.querySelector('.pill').innerText + ':' + !!x.querySelector('.av svg')).join(',')),
       captions: Array.from(s.querySelectorAll('.pd-caption')).map((c) => c.textContent),
@@ -217,7 +215,8 @@ let deliverText = '';
       metaTime: Array.from(s.querySelectorAll('#final-log .log-row')).every((r) => !!r.querySelector('.log-meta .when') && !r.querySelector('.hist-row .when')) };
   });
   deliverText = f.arrive;
-  check('top line: "Your article, {title}, lands in your inbox by {date}. It\'s yours either way."', new RegExp('^Your article, ' + title('c1').replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ', lands in your inbox by .+\\. It\'s yours either way\\.$').test(f.arrive) && f.inside === "Here's what your team gets inside.", f.arrive);
+  check('top line: "Your article, {title}, lands in your inbox by {date}. It\'s yours either way."', new RegExp('^Your article, ' + title('c1').replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ', lands in your inbox by .+\\. It\'s yours either way\\.$').test(f.arrive) && !f.inside && !/what your team gets inside/i.test(f.text), f.arrive);
+  check('Signals box at half height (43px)', Math.round(f.redH) === 43, f.redH);
   check('PORTAL frame order: Log, Signals NEW, then Library and Hub in one frame; no Feed', f.sections.join(' / ').toUpperCase() === 'LOG 3 CALLS LOGGED / SIGNALS NEW / LIBRARY NEW', f.sections);
   check('Log: time on the meta line, nothing overflows the row at 390px', f.metaTime && !f.over, f);
   check('Log (portal style): newest first, MATCH / SPLIT / PASS, sources', f.log.length === 3 && f.log[0].startsWith(title('c3') + '|PASS|') && f.log[1].includes('|SPLIT|') && f.log[2].startsWith(title('c1') + '|MATCH|') && f.log.every((r) => +r.split('|')[2] > 0), f.log);
@@ -226,7 +225,7 @@ let deliverText = '';
   check('Signals: no text at all, blurred skeleton, redaction bars, lock', f.signalsText === '' && /blur/.test(f.signalsBlur) && f.redaction === 2 && f.signalsLock, f);
   check('Library: locked stack at 0.5 + "7 more directions"', f.libOpacity === '0.5' && f.more === '7 more directions', f);
   check('Hub: sticky notes around the locked pencil', f.hubPencil && f.hubLock && f.stickies >= 2, f);
-  check('CTA "Unlock portal · 15-minute onboarding"; no email field, no Send my article, no Unlock portal now, no seats, no Feed', f.cta.replace(/\s*→$/, '') === 'Unlock portal · 15-minute onboarding' && f.inputs === 0 &&
+  check('CTA "UNLOCK YOUR PORTAL · BOOK 15-MIN CALL"; no email field, no Send my article, no Unlock portal now, no seats, no Feed', f.cta.replace(/\s*→$/, '') === 'UNLOCK YOUR PORTAL · BOOK 15-MIN CALL' && f.inputs === 0 &&
     !/send my article|unlock portal now|seat|\bfeed\b/i.test(f.text), f.cta);
   await page.screenshot({ path: OUT + '/s05b-final-log-open.jpg', type: 'jpeg', quality: 80, fullPage: true });
 
@@ -313,7 +312,8 @@ console.log('\n=== Device D: prefers-reduced-motion');
   await page.click('.feed-controls [data-action="like"]');
   await page.waitForSelector('#reveal:not([hidden])', { timeout: 2000 });
   const r = await reveal(page);
-  check('reduced motion: match without rays or hearts, a plain fade', r && /rv-reduced/.test(r.cls) && r.floaters === 0 && r.rays === 'none', r);
+  const still = await page.evaluate(() => document.getAnimations().filter((a) => document.getElementById('reveal').contains(a.effect && a.effect.target)).length);
+  check('reduced motion: like the portal, the whole scene (rays + 12 hearts) held still', r && /rv-static/.test(r.cls) && r.floaters === 12 && r.rays !== 'none' && still === 0, { r, still });
   check('Device D: no page errors', !errors.length, errors);
   await ctx.close();
 }
