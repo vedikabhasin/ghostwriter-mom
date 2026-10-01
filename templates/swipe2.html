@@ -1582,6 +1582,25 @@ body.dir-save  .ctl-save{
   font-family:var(--font-mono); font-size:9.5px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase;
   background:var(--white); border:1.5px solid var(--ink); border-radius:999px; padding:4px 9px 4px 10px;}
 #final-hub-tile .gwk-lock{display:none;}
+/* Log: collapsed by default. */
+.gwk-log-toggle{display:flex; align-items:center; gap:8px; width:100%; border:none; background:transparent; padding:0; cursor:pointer; text-align:left; color:inherit;}
+.gwk-log-toggle .pd-h-count{margin-left:auto;}
+.gwk-chev{width:16px; height:16px; flex:none; transition:transform 200ms var(--ease);}
+.gwk-log-toggle[aria-expanded="true"] .gwk-chev{transform:rotate(180deg);}
+.gwk-log-toggle:focus-visible{outline:2px solid var(--ink); outline-offset:3px; border-radius:6px;}
+/* Library and Hub take turns in one frame. */
+.gwk-swap-stage{position:relative; height:176px;}
+.gwk-swap-pane{position:absolute; inset:0; opacity:0; visibility:hidden; transition:opacity 450ms var(--ease), visibility 0s linear 450ms;}
+.gwk-swap-pane.on{opacity:1; visibility:visible; transition:opacity 450ms var(--ease), visibility 0s;}
+.gwk-swap-pane .gwk-lib{padding-top:6px;}
+.gwk-swap-pane .pd-hub{height:170px;}
+@media (prefers-reduced-motion: reduce){ .gwk-swap-pane, .gwk-swap-pane.on{transition:none;} }
+/* A tapped lock wiggles around its own centre. */
+@keyframes gwk-wiggle{0%,100%{rotate:0deg;} 18%{rotate:-16deg;} 36%{rotate:13deg;} 54%{rotate:-9deg;} 72%{rotate:5deg;} 88%{rotate:-2deg;}}
+.gwk-lock.wiggle, .pd-hub-lock.wiggle{animation:gwk-wiggle 560ms var(--ease) 1;}
+/* The final screen's info panel. */
+.info-portal p{margin:0 0 10px; font-size:14.5px; line-height:1.45;}
+.info-portal p:last-child{margin-bottom:0;}
 .final-cta{width:100%;}
 #screen-final .btn-ghost{align-self:center;}
 .bubble.gwk-tip{z-index:210;}
@@ -1720,9 +1739,11 @@ body.dir-save  .ctl-save{
     <div class="portal-dashboard">
       <div class="portal-inner">
         <section class="pd-section" id="final-log-section">
-          <p class="pd-h">Log <span class="pd-h-count" id="final-log-count"></span></p>
-          <div class="final-log" id="final-log"></div>
-          <p class="pd-caption">Every call logged, with the sources behind each card.</p>
+          <button type="button" class="pd-h gwk-log-toggle" id="final-log-toggle" data-action="final-log-toggle" aria-expanded="false" aria-controls="final-log">
+            <span>Log</span> <span class="pd-h-count" id="final-log-count"></span>
+            <svg class="gwk-chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <div class="final-log" id="final-log" hidden></div>
         </section>
         <section class="pd-section">
           <p class="pd-h">Signals <span class="badge new">New</span></p>
@@ -1735,16 +1756,15 @@ body.dir-save  .ctl-save{
             <span class="rd" style="left:48%; top:48px; width:26%;"></span>
             <span class="gwk-lock" aria-hidden="true"></span>
           </div>
-          <p class="pd-caption">Where you rank, and who AI cites instead. Opens after your onboarding call.</p>
+          <p class="pd-caption">Where you rank, and who AI cites instead.</p>
         </section>
-        <section class="pd-section">
-          <p class="pd-h">Library <span class="badge new">New</span></p>
-          <div class="gwk-lib" id="final-library"></div>
-        </section>
-        <section class="pd-section">
-          <p class="pd-h">Hub <span class="badge new">New</span></p>
-          <div class="pd-hub gwk-locked" id="final-hub-tile" role="button" tabindex="0" data-lock="hub" aria-label="Opens with your first content pack."></div>
-          <p class="pd-caption">Your team's drafting board. Opens with your first content pack.</p>
+        <!-- Library and Hub share one frame and take turns. -->
+        <section class="pd-section gwk-swap" id="final-libhub">
+          <p class="pd-h"><span class="gwk-swap-name" id="libhub-name">Library</span> <span class="badge new">New</span></p>
+          <div class="gwk-swap-stage">
+            <div class="gwk-swap-pane on" data-pane="library"><div class="gwk-lib" id="final-library"></div></div>
+            <div class="gwk-swap-pane" data-pane="hub" aria-hidden="true"><div class="pd-hub gwk-locked" id="final-hub-tile" role="button" tabindex="0" data-lock="hub" aria-label="Opens with your first content pack."></div></div>
+          </div>
         </section>
       </div>
     </div>
@@ -1891,6 +1911,7 @@ body.dir-save  .ctl-save{
       <dt>Right / heart</dt><dd>Like it.</dd>
       <dt>Left / X</dt>     <dd>Pass on it.</dd>
     </dl>
+    <div class="info-portal" id="info-portal" hidden></div>
     <button type="button" class="info-close" data-action="close-info" aria-label="Close">&times;</button>
   </div>
 </div>
@@ -3624,6 +3645,8 @@ body.dir-save  .ctl-save{
     var el = document.getElementById('gwk-bubble');
     var text = LOCK_TIPS[anchor.getAttribute('data-lock')];
     if(!el || !text) return;
+    var lk = anchor.querySelector('.gwk-lock, .pd-hub-lock');
+    if(lk && !prefersReduced){ lk.classList.remove('wiggle'); void lk.offsetWidth; lk.classList.add('wiggle'); }
     clearTimeout(bubbleTimer);
     el.className = 'bubble gwk-tip'; el.textContent = text;
     el.style.paddingRight = '14px';
@@ -3806,7 +3829,45 @@ body.dir-save  .ctl-save{
   function goToFinal(){
     renderFinal();
     show('final');
-    watchLog();
+    startSwap();
+  }
+  // Library and Hub take turns every few seconds in one frame.
+  var swapTimer = null;
+  function startSwap(){
+    clearInterval(swapTimer);
+    var NAMES = { library: 'Library', hub: 'Hub' };
+    swapTimer = setInterval(function(){
+      if(state.screen !== 'final' || document.hidden) return;
+      var panes = $all('#final-libhub .gwk-swap-pane');
+      var cur = panes.filter(function(p){ return p.classList.contains('on'); })[0] || panes[0];
+      var next = panes[(panes.indexOf(cur) + 1) % panes.length];
+      cur.classList.remove('on'); cur.setAttribute('aria-hidden', 'true');
+      next.classList.add('on'); next.removeAttribute('aria-hidden');
+      document.getElementById('libhub-name').textContent = NAMES[next.getAttribute('data-pane')];
+    }, 3500);
+  }
+  function toggleLog(force){
+    var btn = document.getElementById('final-log-toggle'), log = document.getElementById('final-log');
+    var open = typeof force === 'boolean' ? force : btn.getAttribute('aria-expanded') !== 'true';
+    btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    log.hidden = !open;
+    if(open) logViewed('expand');
+  }
+  // The "i" panel: how the swipe works on the feed, the portal on the final screen.
+  function renderInfo(){
+    var portal = document.getElementById('info-portal');
+    var dl = document.querySelector('#info-scrim dl');
+    var onFinal = state.screen === 'final';
+    if(dl) dl.hidden = onFinal;
+    if(!portal) return;
+    portal.hidden = !onFinal;
+    if(!onFinal) return;
+    portal.textContent = '';
+    [ 'Turns search and AI-citation gaps into technical articles.',
+      'Written and edited by a human for your brand in 24 hours.',
+      'Not an unreviewed AI draft. No brief, no prompt, no calls needed.',
+      'A 15 min call unlocks your portal with ' + lockedCount() + ' more directions. 5 new ones each week.'
+    ].forEach(function(t){ var p = document.createElement('p'); p.textContent = t; portal.appendChild(p); });
   }
   function lockEl(){ var l = document.createElement('span'); l.className = 'gwk-lock'; l.setAttribute('aria-hidden', 'true'); l.innerHTML = LOCK_SVG; return l; }
   function renderFinal(){
@@ -3883,8 +3944,7 @@ body.dir-save  .ctl-save{
       var nm = document.createElement('span'); nm.textContent = name;
       who.appendChild(av); who.appendChild(nm);
       var pill = document.createElement('span'); pill.className = 'pill gwm-center gwm-mono-tag ' + act; pill.textContent = PILL[act] || act;
-      var w = document.createElement('span'); w.className = 'when'; w.textContent = when ? fmtWhen(when) : '';
-      r.appendChild(who); r.appendChild(pill); r.appendChild(w);
+      r.appendChild(who); r.appendChild(pill);
       return r;
     }
     order.forEach(function(k){
@@ -3896,12 +3956,13 @@ body.dir-save  .ctl-save{
       head.appendChild(t);
       var shown = !!revealed[k];
       var o = shown ? outcome(k) : null;
+      var meta = document.createElement('div'); meta.className = 'log-meta';
       if(o){
-        var meta = document.createElement('div'); meta.className = 'log-meta';
         var chip = document.createElement('span'); chip.className = 'result-chip gwm-center gwm-mono-tag ' + CHIP[o][0]; chip.textContent = CHIP[o][1];
         meta.appendChild(chip);
-        head.appendChild(meta);
       }
+      if(last[k]){ var wt = document.createElement('span'); wt.className = 'when'; wt.textContent = fmtWhen(last[k]); meta.appendChild(wt); }
+      head.appendChild(meta);
       box.appendChild(head);
       box.appendChild(seatRow('ghost', visitorName, visitorReaction(k), last[k]));
       if(shown && vediReaction(k)) box.appendChild(seatRow('worm', 'vedikabhasin', vediReaction(k), last[k]));
@@ -3922,20 +3983,13 @@ body.dir-save  .ctl-save{
       log.appendChild(box);
     });
   }
-  function watchLog(){
-    if(logViewedSent || !('IntersectionObserver' in window)) return;
-    var sec = document.getElementById('final-log-section');
-    var io = new IntersectionObserver(function(entries){
-      if(entries.some(function(e){ return e.isIntersecting; })){ logViewed('scroll'); io.disconnect(); }
-    }, { threshold: 0.6 });
-    io.observe(sec);
-  }
   function logViewed(how){
     if(logViewedSent) return;
     logViewedSent = true;
     track('log_viewed', { how: how });
   }
   function seeLog(){
+    toggleLog(true);
     var sec = document.getElementById('final-log-section');
     if(sec) sec.scrollIntoView({ behavior: prefersReduced ? 'auto' : 'smooth', block: 'start' });
     logViewed('link');
@@ -5309,7 +5363,7 @@ body.dir-save  .ctl-save{
 
   // -- Info panel ----------------------------------------------------------
   var infoScrim = document.getElementById('info-scrim');
-  function openInfo(){ if(infoScrim) infoScrim.classList.add('open'); }
+  function openInfo(){ renderInfo(); if(infoScrim) infoScrim.classList.add('open'); }
   function closeInfo(){ if(infoScrim) infoScrim.classList.remove('open'); }
   if(infoScrim) infoScrim.addEventListener('click', function(e){ if(e.target === infoScrim) closeInfo(); });
   document.addEventListener('keydown', function(e){
@@ -5334,6 +5388,7 @@ body.dir-save  .ctl-save{
       case 'tip-dismiss':  dismissTip(); return;
       case 'final-unlock': finalUnlock(); return;
       case 'final-see-log': seeLog(); return;
+      case 'final-log-toggle': toggleLog(); return;
       case 'approve-direction':   approve(); return;
       case 'change-direction':    changeDirection(); return;
       case 'back-to-direction':   show('direction'); return;

@@ -198,42 +198,68 @@ let deliverText = '';
     Math.abs((new Date(p.deliver_by) - new Date(p.picked_at)) / 36e5 - 24) < 0.01 && JSON.stringify(p.vedi_reactions) === JSON.stringify(CONFIG.vediReactions), p);
   check('approval + article created once, Netlify approvals posted once', db[SLUG].approvals.length === 1 && forms.filter((f) => f['form-name'] === 'approvals').length === 1 &&
     forms.find((f) => f['form-name'] === 'approvals').cardTitle === title('c1'), { approvals: db[SLUG].approvals, forms });
+  const collapsed = await page.evaluate(() => ({ hidden: document.getElementById('final-log').hidden, expanded: document.getElementById('final-log-toggle').getAttribute('aria-expanded') }));
+  check('Log collapsed by default', collapsed.hidden === true && collapsed.expanded === 'false', collapsed);
+  await page.screenshot({ path: OUT + '/s05-final.jpg', type: 'jpeg', quality: 80, fullPage: true });
+  await page.click('#final-log-toggle'); await wait(300);
+  check('Log opens on tap', !(await page.evaluate(() => document.getElementById('final-log').hidden)));
   const f = await page.evaluate(() => {
     const s = document.getElementById('screen-final');
     const sections = Array.from(s.querySelectorAll('.pd-section')).map((x) => x.querySelector('.pd-h').innerText.replace(/\s+/g, ' ').trim());
+    const over = Array.from(s.querySelectorAll('#final-log .log-row')).some((r) => r.scrollWidth > r.clientWidth + 1 || Array.from(r.querySelectorAll('*')).some((el) => el.getBoundingClientRect().right > r.getBoundingClientRect().right + 1));
     return { arrive: document.getElementById('final-arrive').textContent, inside: s.querySelector('.portal-p').textContent, sections,
       log: Array.from(s.querySelectorAll('#final-log .log-row')).map((r) => r.querySelector('.hist-title').textContent + '|' + r.querySelector('.result-chip').innerText + '|' + r.querySelectorAll('.history-src-chip').length +
         '|' + Array.from(r.querySelectorAll('.hist-row')).map((x) => x.querySelector('.who').innerText.trim() + ':' + x.querySelector('.pill').innerText + ':' + !!x.querySelector('.av svg')).join(',')),
       captions: Array.from(s.querySelectorAll('.pd-caption')).map((c) => c.textContent),
       signalsText: s.querySelector('.gwk-redacted').innerText.trim(), signalsBlur: getComputedStyle(s.querySelector('.gwk-redacted .sk')).filter, redaction: s.querySelectorAll('.gwk-redacted .rd').length, signalsLock: !!s.querySelector('.gwk-redacted .gwk-lock svg'),
       libOpacity: getComputedStyle(s.querySelector('.gwk-lib-stack .gwk-lib-books')).opacity, more: s.querySelector('.gwk-lib-label').textContent, hubPencil: !!s.querySelector('#final-hub-tile .pd-hub-pencil'), hubLock: !!s.querySelector('#final-hub-tile .pd-hub-lock'), stickies: s.querySelectorAll('#final-hub-tile .pd-hub-sticky').length,
-      cta: document.getElementById('final-unlock').innerText.replace(/\s+/g, ' ').trim(), text: s.innerText, inputs: s.querySelectorAll('input').length };
+      cta: document.getElementById('final-unlock').innerText.replace(/\s+/g, ' ').trim(), text: s.innerText, inputs: s.querySelectorAll('input').length, over,
+      metaTime: Array.from(s.querySelectorAll('#final-log .log-row')).every((r) => !!r.querySelector('.log-meta .when') && !r.querySelector('.hist-row .when')) };
   });
   deliverText = f.arrive;
   check('top line: "Your article, {title}, lands in your inbox by {date}. It\'s yours either way."', new RegExp('^Your article, ' + title('c1').replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ', lands in your inbox by .+\\. It\'s yours either way\\.$').test(f.arrive) && f.inside === "Here's what your team gets inside.", f.arrive);
-  check('PORTAL frame order: Log, Signals NEW, Library NEW, Hub NEW; no Feed', f.sections.join(' / ').toUpperCase() === 'LOG 3 CALLS LOGGED / SIGNALS NEW / LIBRARY NEW / HUB NEW', f.sections);
+  check('PORTAL frame order: Log, Signals NEW, then Library and Hub in one frame; no Feed', f.sections.join(' / ').toUpperCase() === 'LOG 3 CALLS LOGGED / SIGNALS NEW / LIBRARY NEW', f.sections);
+  check('Log: time on the meta line, nothing overflows the row at 390px', f.metaTime && !f.over, f);
   check('Log (portal style): newest first, MATCH / SPLIT / PASS, sources', f.log.length === 3 && f.log[0].startsWith(title('c3') + '|PASS|') && f.log[1].includes('|SPLIT|') && f.log[2].startsWith(title('c1') + '|MATCH|') && f.log.every((r) => +r.split('|')[2] > 0), f.log);
   check('Log seats: the visitor and vedikabhasin on every row, each with an avatar and a pill', f.log[2].endsWith('|Sam:LIKED:true,vedikabhasin:LIKED:true') && f.log[1].endsWith('|Sam:PASSED:true,vedikabhasin:LIKED:true') && f.log[0].endsWith('|Sam:PASSED:true,vedikabhasin:PASSED:true'), f.log);
-  check('captions', JSON.stringify(f.captions) === JSON.stringify(['Every call logged, with the sources behind each card.', 'Where you rank, and who AI cites instead. Opens after your onboarding call.', "Your team's drafting board. Opens with your first content pack."]), f.captions);
+  check('captions: only Signals, "Where you rank, and who AI cites instead."', JSON.stringify(f.captions) === JSON.stringify(['Where you rank, and who AI cites instead.']), f.captions);
   check('Signals: no text at all, blurred skeleton, redaction bars, lock', f.signalsText === '' && /blur/.test(f.signalsBlur) && f.redaction === 2 && f.signalsLock, f);
   check('Library: locked stack at 0.5 + "7 more directions"', f.libOpacity === '0.5' && f.more === '7 more directions', f);
   check('Hub: sticky notes around the locked pencil', f.hubPencil && f.hubLock && f.stickies >= 2, f);
   check('CTA "Unlock portal · 15-minute onboarding"; no email field, no Send my article, no Unlock portal now, no seats, no Feed', f.cta.replace(/\s*→$/, '') === 'Unlock portal · 15-minute onboarding' && f.inputs === 0 &&
     !/send my article|unlock portal now|seat|\bfeed\b/i.test(f.text), f.cta);
-  await page.screenshot({ path: OUT + '/s05-final.jpg', type: 'jpeg', quality: 80, fullPage: true });
+  await page.screenshot({ path: OUT + '/s05b-final-log-open.jpg', type: 'jpeg', quality: 80, fullPage: true });
 
-  const tips = {};
-  for (const k of ['signals', 'library', 'more', 'hub']) {
+  const tips = {}, wiggles = {};
+  for (const k of ['signals', 'library', 'more']) {
     await page.click(`[data-lock="${k}"]`); await wait(150);
     tips[k] = await page.evaluate(() => { const b = document.getElementById('gwk-bubble'); return b.hidden ? null : b.textContent; });
+    wiggles[k] = await page.evaluate((key) => !!document.querySelector(`[data-lock="${key}"] .gwk-lock.wiggle`), k);
   }
+  // Library and Hub take turns.
+  await page.waitForFunction(() => document.getElementById('libhub-name').textContent === 'Hub', null, { timeout: 5000 });
+  check('Library and Hub swap in the same frame', await page.evaluate(() => document.querySelector('[data-pane="hub"]').classList.contains('on') && !document.querySelector('[data-pane="library"]').classList.contains('on')));
+  await wait(500);
+  await page.screenshot({ path: OUT + '/s05c-final-hub.jpg', type: 'jpeg', quality: 80 });
+  await page.click('[data-lock="hub"]'); await wait(150);
+  tips.hub = await page.evaluate(() => { const b = document.getElementById('gwk-bubble'); return b.hidden ? null : b.textContent; });
+  wiggles.hub = await page.evaluate(() => !!document.querySelector('#final-hub-tile .pd-hub-lock.wiggle'));
+  check('a tapped lock wiggles', Object.values(wiggles).every(Boolean), wiggles);
+  const lockPos = await page.evaluate(() => { const l = document.querySelector('[data-lock="signals"] .gwk-lock'); return getComputedStyle(l).transform; });
+  check('the wiggle keeps the lock centred (rotate only)', /matrix\(1, 0, 0, 1, -13, -13\)/.test(lockPos), lockPos);
   check('tap a locked item: its tooltip', tips.signals === 'Opens after your onboarding call.' && tips.library === 'Every article, from up next to delivered.' &&
     tips.hub === 'Opens with your first content pack.' && tips.more === 'Opens when you unlock the portal.', tips);
   await page.click('[data-lock="library"]'); await wait(200);
   await page.screenshot({ path: OUT + '/s06-locked-tip.jpg', type: 'jpeg', quality: 80 });
   await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight)); await wait(300);
   await page.click('[data-action="final-see-log"]'); await wait(800);
-  check('"See your log" scrolls to the Log', await page.evaluate(() => { const r = document.getElementById('final-log-section').getBoundingClientRect(); return r.top >= -2 && r.top < 200; }));
+  check('"See your log" opens and scrolls to the Log', await page.evaluate(() => { const r = document.getElementById('final-log-section').getBoundingClientRect(); return r.top >= -2 && r.top < 200 && !document.getElementById('final-log').hidden; }));
+  await page.click('[data-action="show-info"]'); await wait(300);
+  const info = await page.evaluate(() => Array.from(document.querySelectorAll('#info-portal p')).map((p) => p.textContent));
+  check('"i" on the final screen: the portal lines', JSON.stringify(info) === JSON.stringify(['Turns search and AI-citation gaps into technical articles.', 'Written and edited by a human for your brand in 24 hours.',
+    'Not an unreviewed AI draft. No brief, no prompt, no calls needed.', 'A 15 min call unlocks your portal with 7 more directions. 5 new ones each week.']) && await page.evaluate(() => document.querySelector('#info-scrim dl').hidden), info);
+  await page.screenshot({ path: OUT + '/s07-info.jpg', type: 'jpeg', quality: 80 });
+  await page.click('[data-action="close-info"]'); await wait(200);
   const [popup] = await Promise.all([ctx.waitForEvent('page'), page.click('#final-unlock')]);
   await popup.waitForLoadState().catch(() => {});
   check('CTA opens cal.com/vedika/ghostwriter-mom', popup.url().startsWith('https://cal.com/vedika/ghostwriter-mom'), popup.url());
@@ -251,6 +277,7 @@ console.log('\n=== Device B (a colleague on the same link)');
   await page.goto(BASE + '/' + SLUG);
   await page.waitForSelector('#screen-final.on', { timeout: 8000 });
   await wait(500);
+  await page.click('#final-log-toggle');
   const v = await page.evaluate(() => ({ arrive: document.getElementById('final-arrive').textContent, log: Array.from(document.querySelectorAll('#final-log .result-chip')).map((c) => c.innerText).join(), seats: document.querySelectorAll('#final-log .hist-row').length }));
   check('opens on the final screen: same pick, same delivery time, same log with both seats', v.arrive === deliverText && v.log === 'PASS,SPLIT,MATCH' && v.seats === 6, v);
   check('no second pick, no second approval or notification', rpcLog.filter((r) => r.name === 'set_collab_pick').length === 1 && db[SLUG].approvals.length === 1 && forms.filter((f) => f['form-name'] === 'approvals').length === 1);

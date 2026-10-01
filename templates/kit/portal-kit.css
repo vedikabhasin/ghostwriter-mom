@@ -181,4 +181,6 @@ body[data-view="library"] .toast{bottom:calc(var(--switch-h) + var(--switch-bott
 .result-chip.pass{background:var(--canvas-alt); color:var(--ink-soft);}
 .log-row .hist-row:first-of-type{margin-top:8px;}
 .log-row .hist-row .who{display:inline-flex; align-items:center; gap:8px;}
-.log-row .hist-row .pill{justify-self:start; margin-left:0;}
+.log-row .hist-row{grid-template-columns:auto 1fr;}
+.log-row .hist-row .who{min-width:0;}
+.log-row .hist-row .pill{justify-self:end; margin-left:0;}
