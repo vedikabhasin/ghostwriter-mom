@@ -37,3 +37,4 @@ build/
 # Portal test cache (bundled supabase-js)
 tests/portal/.cache/
 deno.lock
+tests/sales/.cache/

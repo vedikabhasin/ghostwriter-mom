@@ -162,6 +162,24 @@ function validateOne(file){
       if(allowed.indexOf(f) === -1) fail(file + ': format "' + f + '" is not allowed in the ' + data.template + ' template (allowed: ' + allowed.join(', ') + ')');
     });
     if(EM_DASH_RE.test(stringifyDeep(data))) fail(file + ': no em dashes in page copy');
+    // swipe2 runs the collab3 flow: 3 cards, Vedika's honest reaction to
+    // each, the order to write them in, and how many directions stay locked.
+    if(data.template === 'swipe2'){
+      if(data.flow !== 'collab3') fail(file + ': the swipe2 template runs flow "collab3"');
+      const keys = data.cards.map(c => String(c.id));
+      if(keys.length !== 3) fail(file + ': collab3 shows exactly 3 cards (got ' + keys.length + ')');
+      const vr = data.vediReactions;
+      if(!vr || typeof vr !== 'object') fail(file + ': collab3 needs vediReactions { cardId: "like" | "pass" }');
+      keys.forEach(k => { if(vr[k] !== 'like' && vr[k] !== 'pass') fail(file + ': vediReactions.' + k + ' must be "like" or "pass"'); });
+      Object.keys(vr).forEach(k => { if(keys.indexOf(k) === -1) fail(file + ': vediReactions has unknown card ' + k); });
+      const wo = data.writeOn;
+      if(!Array.isArray(wo) || wo.length !== keys.length || keys.some(k => wo.map(String).indexOf(k) === -1)){
+        fail(file + ': writeOn must list every card id once, in writing order');
+      }
+      if(!Number.isInteger(data.lockedCount) || data.lockedCount < 0) fail(file + ': lockedCount must be a non-negative integer');
+    } else if(data.flow === 'collab3'){
+      fail(file + ': flow "collab3" runs on the swipe2 template');
+    }
     routes.push({ slug: data.slug, to: TEMPLATES[data.template] });
   }
   if('email' in data){
