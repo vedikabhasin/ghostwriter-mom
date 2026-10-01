@@ -124,14 +124,19 @@ let deliverText = '';
   await page.waitForFunction(() => !document.getElementById('screen-loading').classList.contains('on'));
   await wait(900);
   const intro = await page.evaluate(() => ({ eyebrow: document.querySelector('.intro-eyebrow').innerText.trim(), co: document.querySelector('.intro-company').innerText.trim(), hello: document.querySelector('.intro-hello').innerText.trim(),
-    bold: document.querySelector('#intro-offer strong').textContent, all: document.getElementById('intro-offer').textContent,
+    bold: Array.from(document.querySelectorAll('#intro-offer strong')).map((b) => b.textContent), all: document.getElementById('intro-offer').textContent,
     lines: Array.from(document.querySelectorAll('#intro-offer .intro-line')).map((e) => e.textContent), muted: document.querySelector('#intro-offer .intro-muted').textContent,
     small: parseFloat(getComputedStyle(document.querySelector('#intro-offer .intro-muted')).fontSize) < parseFloat(getComputedStyle(document.getElementById('intro-offer')).fontSize) }));
   check('intro: greeting, "3 DIRECTIONS FOR {company}", button', intro.eyebrow === '3 DIRECTIONS FOR' && intro.co === CONFIG.company && intro.hello === 'Hi ' + CONFIG.contactFirstName + '.', intro);
-  check('intro: bold first sentence + sourceLine sentence', intro.bold === 'Ghostwriter Mom turns search and AI-citation gaps into technical articles.' && intro.all.includes('These 3 directions come from ' + CONFIG.sourceLine + '.'));
-  check('intro: the direction line', JSON.stringify(intro.lines) === JSON.stringify(['We pick a direction from your swipes, for your brand. Written and edited by a human within 24 hours, no unreviewed AI draft.']), intro.lines);
+  check('intro: one paragraph, word for word', intro.all.startsWith('Ghostwriter Mom turns search and AI-citation gaps into technical articles. 3 directions from your product pages, press, and audience searches. We pick a direction from your swipes, for your brand. Written and edited by a human within 24 hours, no unreviewed AI draft.') && !intro.lines.length, intro.all);
+  check('intro: the two phrases in bold', JSON.stringify(intro.bold) === JSON.stringify(['search and AI-citation gaps into technical articles', 'Written and edited by a human within 24 hours']), intro.bold);
   check('intro: small muted call line with lockedCount', intro.muted === 'A 15 min call unlocks your portal and 7 more directions. 5 new directions each week.' && intro.small, intro.muted);
   await page.screenshot({ path: OUT + '/s01-intro.jpg', type: 'jpeg', quality: 80 });
+  await page.click('[data-action="show-info"]'); await wait(300);
+  const infoIntro = await page.evaluate(() => ({ p: Array.from(document.querySelectorAll('#info-portal p')).map((x) => x.textContent), dl: document.querySelector('#info-scrim dl').hidden }));
+  check('"i" on the intro: the portal text', JSON.stringify(infoIntro.p) === JSON.stringify(['Turns search and AI-citation gaps into technical articles, written and edited by a human for your brand in 24 hours. Not an unreviewed AI draft. No brief, no prompt, no calls needed.',
+    'A 15 min call unlocks your portal with 7 more directions. 5 new ones each week.']) && infoIntro.dl, infoIntro);
+  await page.click('[data-action="close-info"]'); await wait(300);
 
   await page.click('[data-action="start"]');
   await page.waitForSelector('#card-stage .card[data-depth="0"]');
@@ -255,8 +260,8 @@ let deliverText = '';
   check('"See your log" opens and scrolls to the Log', await page.evaluate(() => { const r = document.getElementById('final-log-section').getBoundingClientRect(); return r.top >= -2 && r.top < 200 && !document.getElementById('final-log').hidden; }));
   await page.click('[data-action="show-info"]'); await wait(300);
   const info = await page.evaluate(() => Array.from(document.querySelectorAll('#info-portal p')).map((p) => p.textContent));
-  check('"i" on the final screen: the portal lines', JSON.stringify(info) === JSON.stringify(['Turns search and AI-citation gaps into technical articles.', 'Written and edited by a human for your brand in 24 hours.',
-    'Not an unreviewed AI draft. No brief, no prompt, no calls needed.', 'A 15 min call unlocks your portal with 7 more directions. 5 new ones each week.']) && await page.evaluate(() => document.querySelector('#info-scrim dl').hidden), info);
+  check('"i" on the final screen: the same portal text', JSON.stringify(info) === JSON.stringify(['Turns search and AI-citation gaps into technical articles, written and edited by a human for your brand in 24 hours. Not an unreviewed AI draft. No brief, no prompt, no calls needed.',
+    'A 15 min call unlocks your portal with 7 more directions. 5 new ones each week.']) && await page.evaluate(() => document.querySelector('#info-scrim dl').hidden), info);
   await page.screenshot({ path: OUT + '/s07-info.jpg', type: 'jpeg', quality: 80 });
   await page.click('[data-action="close-info"]'); await wait(200);
   const [popup] = await Promise.all([ctx.waitForEvent('page'), page.click('#final-unlock')]);

@@ -2720,10 +2720,14 @@ body.dir-save  .ctl-save{
       // intro_basis (RPR) keep the original "where {Company} ranks" clause.
       var basis  = String(client.introBasis || '').trim();
       var origin = basis || ('where ' + (client.companyName || 'you') + ' ranks and who AI cites instead');
-      introEl.appendChild(document.createTextNode(' These ' + deckN + ' directions come from ' + origin + '.'));
-      var line = document.createElement('span'); line.className = 'intro-line';
-      line.textContent = 'We pick a direction from your swipes, for your brand. Written and edited by a human within 24 hours, no unreviewed AI draft.';
-      introEl.appendChild(line);
+      // One paragraph; the two phrases in bold. Then the small call line.
+      introEl.textContent = '';
+      var bold = function(t){ var b = document.createElement('strong'); b.textContent = t; return b; };
+      var txt  = function(t){ return document.createTextNode(t); };
+      [ txt('Ghostwriter Mom turns '), bold('search and AI-citation gaps into technical articles'),
+        txt('. ' + deckN + ' directions from ' + origin + '. We pick a direction from your swipes, for your brand. '),
+        bold('Written and edited by a human within 24 hours'), txt(', no unreviewed AI draft.')
+      ].forEach(function(n){ introEl.appendChild(n); });
       var muted = document.createElement('span'); muted.className = 'intro-muted';
       muted.textContent = 'A 15 min call unlocks your portal and ' + lockedCount() + ' more directions. 5 new directions each week.';
       introEl.appendChild(muted);
@@ -3843,18 +3847,18 @@ body.dir-save  .ctl-save{
     if(open) logViewed('expand');
   }
   // The "i" panel: how the swipe works on the feed, the portal on the final screen.
+  // The "i" panel: the portal text on the intro and the final screen, the
+  // swipe help while swiping.
   function renderInfo(){
     var portal = document.getElementById('info-portal');
     var dl = document.querySelector('#info-scrim dl');
-    var onFinal = state.screen === 'final';
-    if(dl) dl.hidden = onFinal;
+    var showPortal = state.screen !== 'feed';
+    if(dl) dl.hidden = showPortal;
     if(!portal) return;
-    portal.hidden = !onFinal;
-    if(!onFinal) return;
+    portal.hidden = !showPortal;
+    if(!showPortal) return;
     portal.textContent = '';
-    [ 'Turns search and AI-citation gaps into technical articles.',
-      'Written and edited by a human for your brand in 24 hours.',
-      'Not an unreviewed AI draft. No brief, no prompt, no calls needed.',
+    [ 'Turns search and AI-citation gaps into technical articles, written and edited by a human for your brand in 24 hours. Not an unreviewed AI draft. No brief, no prompt, no calls needed.',
       'A 15 min call unlocks your portal with ' + lockedCount() + ' more directions. 5 new ones each week.'
     ].forEach(function(t){ var p = document.createElement('p'); p.textContent = t; portal.appendChild(p); });
   }
