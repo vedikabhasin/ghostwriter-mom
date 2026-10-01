@@ -1563,16 +1563,16 @@ body.dir-save  .ctl-save{
 .gwk-redacted .gwk-lock{left:50%; top:50%; transform:translate(-50%,-50%);}
 /* Library: the deck as a locked stack, and the rest of the deck behind it. */
 .gwk-lib{display:flex; gap:16px; align-items:flex-end; justify-content:center; padding:10px 0 4px;}
-.gwk-lib-stack{position:relative; border:none; background:transparent; padding:0; width:118px; height:160px; font:inherit; color:inherit;}
+.gwk-lib-stack{position:relative; border:none; background:transparent; padding:0; width:132px; height:160px; font:inherit; color:inherit; text-align:left;}
 .gwk-lib-books{position:absolute; inset:0; opacity:0.5;}
-.gwk-lib-stack .mini-book{position:absolute; left:0; top:0; width:110px; height:146px; padding:10px 10px 10px 14px; box-sizing:border-box;
+.gwk-lib-stack .mini-book{position:absolute; left:0; top:0; width:124px; height:146px; padding:10px 10px 10px 14px; box-sizing:border-box; align-items:flex-start;
   box-shadow:0 14px 26px -18px rgba(14,14,14,0.5);}
 /* Like the portal Library: only the top book shows its text. */
 .gwk-lib-stack .mini-book:not(:last-child) > *{visibility:hidden;}
 .gwk-lib-stack .mini-book:nth-child(1){transform:translate(8px,10px) rotate(5deg);}
 .gwk-lib-stack .mini-book:nth-child(2){transform:translate(4px,5px) rotate(-3deg);}
-.gwk-lib-stack .mb-title{font-size:12px; display:-webkit-box; -webkit-line-clamp:4; -webkit-box-orient:vertical; overflow:hidden;}
-.gwk-lib-stack .rv-fmt{font-size:7.5px; padding:3px 6px; letter-spacing:0.1em; max-width:100%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+.gwk-lib-stack .mb-title{font-size:12.5px; line-height:1.25; text-align:left; display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden;}
+.gwk-lib-stack .rv-fmt{font-size:7px; padding:3px 6px 3px 7px; letter-spacing:0.08em; white-space:nowrap;}
 .gwk-lib-stack .gwk-lock{right:-6px; top:-6px;}
 .gwk-lib-more .mini-book{--f-color:var(--ink-soft); --spine:4px;}
 .gwk-lib-label{position:absolute; left:50%; bottom:-6px; transform:translateX(-50%); white-space:nowrap; z-index:4;
@@ -1601,6 +1601,11 @@ body.dir-save  .ctl-save{
 .final-cta{width:100%;}
 #screen-final .btn-ghost{align-self:center;}
 .bubble.gwk-tip{z-index:210;}
+/* Typesetting: no lone last words, brand font on the close buttons. */
+.intro-offer, .pd-caption, .conf-arrive, .rv-card-sub, .bubble span, .bubble.gwk-tip, .info-portal p, .card-angle{text-wrap:pretty;}
+.rv-line, .rv-card-title, .hist-title, .card-title, .gwk-lib-stack .mb-title{text-wrap:balance;}
+.bubble-x, .info-close{font-family:var(--font-body);}
+.nowrap{white-space:nowrap;}
 </style>
 <!-- Card formats + colour families. One list shared with validate-feeds.js. -->
 <script src="/shared/formats.js"></script>
@@ -1765,7 +1770,7 @@ body.dir-save  .ctl-save{
     <span class="btn-glow-host final-cta">
       <span class="btn-glow" aria-hidden="true"></span>
       <button type="button" class="btn btn-primary" data-action="final-unlock" id="final-unlock">
-        <span>UNLOCK YOUR PORTAL &middot; BOOK 15-MIN CALL</span>
+        <span>UNLOCK YOUR PORTAL &middot; BOOK 15 MINS</span>
         <span class="arr" aria-hidden="true">&#8594;</span>
       </button>
     </span>
@@ -2725,7 +2730,7 @@ body.dir-save  .ctl-save{
       var bold = function(t){ var b = document.createElement('strong'); b.textContent = t; return b; };
       var txt  = function(t){ return document.createTextNode(t); };
       [ txt('Ghostwriter Mom turns '), bold('search and AI-citation gaps into technical articles'),
-        txt('. ' + deckN + ' directions from ' + origin + '. We pick a direction from your swipes, for your brand. '),
+        txt('. ' + deckN + ' directions from ' + origin + '. '),
         bold('Written and edited by a human within 24 hours'), txt(', no unreviewed AI draft.')
       ].forEach(function(n){ introEl.appendChild(n); });
       var muted = document.createElement('span'); muted.className = 'intro-muted';
@@ -3481,6 +3486,14 @@ body.dir-save  .ctl-save{
     hub:     'Opens with your first content pack.',
     more:    'Opens when you unlock the portal.'
   };
+  // Keep a short last pair of words together so a title never ends on one
+  // word alone (text-wrap: pretty does this where the browser supports it).
+  function glue(text, max){
+    var s = String(text || '').trim(), i = s.lastIndexOf(' ');
+    if(i < 0) return s;
+    var j = s.lastIndexOf(' ', i - 1);
+    return (s.length - j - 1) <= (max || 18) ? s.slice(0, i) + '\u00A0' + s.slice(i + 1) : s;
+  }
   function track(name, props){ try { window.gwmTrack && window.gwmTrack.capture(name, props || {}); } catch(_){} }
 
   // -- Config ---------------------------------------------------------------
@@ -3727,7 +3740,7 @@ body.dir-save  .ctl-save{
     pill.style.setProperty('--f-ink', 'var(--f-' + fam + '-ink)');
     pill.textContent = fmtLabel(String(card.format || '').toLowerCase());
     head.appendChild(pill); c.appendChild(head);
-    var tt = document.createElement('p'); tt.className = 'rv-card-title'; tt.textContent = String(card.title || ''); c.appendChild(tt);
+    var tt = document.createElement('p'); tt.className = 'rv-card-title'; tt.textContent = glue(card.title, 14); c.appendChild(tt);
     if(card.angle){ var sub = document.createElement('p'); sub.className = 'rv-card-sub'; sub.textContent = String(card.angle); c.appendChild(sub); }
     var nSrc = Array.isArray(card.sources) ? card.sources.length : 0;
     if(nSrc){ var src = document.createElement('span'); src.className = 'rv-card-src gwm-mono-tag'; src.textContent = nSrc === 1 ? '1 source' : nSrc + ' sources'; c.appendChild(src); }
@@ -3870,8 +3883,8 @@ body.dir-save  .ctl-save{
     arrive.appendChild(document.createTextNode('Your article, '));
     var b = document.createElement('strong'); b.textContent = String(pick.title || ''); arrive.appendChild(b);
     arrive.appendChild(document.createTextNode(', lands in your ' + channelLabel() + ' by '));
-    var d = document.createElement('strong'); d.textContent = state.deliverByIso ? fmtDT(state.deliverByIso) : ''; arrive.appendChild(d);
-    arrive.appendChild(document.createTextNode(". It's yours either way."));
+    var d = document.createElement('strong'); d.className = 'nowrap'; d.textContent = state.deliverByIso ? fmtDT(state.deliverByIso) : ''; arrive.appendChild(d);
+    arrive.appendChild(document.createTextNode(". It's yours either\u00A0way."));
 
     renderPortalLog(document.getElementById('final-log'), document.getElementById('final-log-count'), false);
 
@@ -3890,7 +3903,7 @@ body.dir-save  .ctl-save{
       var hd = document.createElement('div'); hd.className = 'mb-head';
       var pl = document.createElement('span'); pl.className = 'rv-fmt'; pl.style.setProperty('--f-ink', 'var(--f-' + fam + '-ink)');
       pl.textContent = fmtLabel(String(c.format || '').toLowerCase()); hd.appendChild(pl);
-      var ti = document.createElement('span'); ti.className = 'mb-title'; ti.textContent = String(c.title || '');
+      var ti = document.createElement('span'); ti.className = 'mb-title'; ti.textContent = glue(c.title, 14);
       mb.appendChild(hd); mb.appendChild(ti);
       bw.appendChild(mb);
     });
@@ -3945,7 +3958,7 @@ body.dir-save  .ctl-save{
       var box = document.createElement('div'); box.className = 'hist-card log-row';
       box.style.setProperty('--f-color', 'var(--f-' + fmtFamily(String(c.format || '').toLowerCase()) + ')');
       var head = document.createElement('div'); head.className = 'log-head';
-      var t = document.createElement('p'); t.className = 'hist-title'; t.textContent = String(c.title || '');
+      var t = document.createElement('p'); t.className = 'hist-title'; t.textContent = glue(c.title);
       head.appendChild(t);
       var shown = !!revealed[k];
       var o = shown ? outcome(k) : null;

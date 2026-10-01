@@ -128,7 +128,7 @@ let deliverText = '';
     lines: Array.from(document.querySelectorAll('#intro-offer .intro-line')).map((e) => e.textContent), muted: document.querySelector('#intro-offer .intro-muted').textContent,
     small: parseFloat(getComputedStyle(document.querySelector('#intro-offer .intro-muted')).fontSize) < parseFloat(getComputedStyle(document.getElementById('intro-offer')).fontSize) }));
   check('intro: greeting, "3 DIRECTIONS FOR {company}", button', intro.eyebrow === '3 DIRECTIONS FOR' && intro.co === CONFIG.company && intro.hello === 'Hi ' + CONFIG.contactFirstName + '.', intro);
-  check('intro: one paragraph, word for word', intro.all.startsWith('Ghostwriter Mom turns search and AI-citation gaps into technical articles. 3 directions from your product pages, press, and audience searches. We pick a direction from your swipes, for your brand. Written and edited by a human within 24 hours, no unreviewed AI draft.') && !intro.lines.length, intro.all);
+  check('intro: one paragraph, word for word', intro.all.startsWith('Ghostwriter Mom turns search and AI-citation gaps into technical articles. 3 directions from your product pages, press, and audience searches. Written and edited by a human within 24 hours, no unreviewed AI draft.') && !intro.lines.length, intro.all);
   check('intro: the two phrases in bold', JSON.stringify(intro.bold) === JSON.stringify(['search and AI-citation gaps into technical articles', 'Written and edited by a human within 24 hours']), intro.bold);
   check('intro: small muted call line with lockedCount', intro.muted === 'A 15 min call unlocks your portal and 7 more directions. 5 new directions each week.' && intro.small, intro.muted);
   await page.screenshot({ path: OUT + '/s01-intro.jpg', type: 'jpeg', quality: 80 });
@@ -206,7 +206,7 @@ let deliverText = '';
   await page.screenshot({ path: OUT + '/s05-final.jpg', type: 'jpeg', quality: 80, fullPage: true });
   await page.click('#final-log-toggle'); await wait(300);
   check('Log opens on tap', !(await page.evaluate(() => document.getElementById('final-log').hidden)));
-  const f = await page.evaluate(() => {
+  const f = JSON.parse((await page.evaluate(() => JSON.stringify((() => {
     const s = document.getElementById('screen-final');
     const sections = Array.from(s.querySelectorAll('.pd-section')).map((x) => x.querySelector('.pd-h').innerText.replace(/\s+/g, ' ').trim());
     const over = Array.from(s.querySelectorAll('#final-log .log-row')).some((r) => r.scrollWidth > r.clientWidth + 1 || Array.from(r.querySelectorAll('*')).some((el) => el.getBoundingClientRect().right > r.getBoundingClientRect().right + 1));
@@ -218,7 +218,8 @@ let deliverText = '';
       libOpacity: getComputedStyle(s.querySelector('.gwk-lib-stack .gwk-lib-books')).opacity, more: s.querySelector('.gwk-lib-label').textContent, hubPencil: !!s.querySelector('#final-hub-tile .pd-hub-pencil'), hubLock: !!s.querySelector('#final-hub-tile .pd-hub-lock'), stickies: s.querySelectorAll('#final-hub-tile .pd-hub-sticky').length,
       cta: document.getElementById('final-unlock').innerText.replace(/\s+/g, ' ').trim(), text: s.innerText, inputs: s.querySelectorAll('input').length, over,
       metaTime: Array.from(s.querySelectorAll('#final-log .log-row')).every((r) => !!r.querySelector('.log-meta .when') && !r.querySelector('.hist-row .when')) };
-  });
+  })()))).replace(/\u00a0/g, ' '));
+  // (Non-breaking spaces keep short last words and the date together; compare as plain spaces.)
   deliverText = f.arrive;
   check('top line: "Your article, {title}, lands in your inbox by {date}. It\'s yours either way."', new RegExp('^Your article, ' + title('c1').replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ', lands in your inbox by .+\\. It\'s yours either way\\.$').test(f.arrive) && !f.inside && !/what your team gets inside/i.test(f.text), f.arrive);
   check('Signals box at half height (43px)', Math.round(f.redH) === 43, f.redH);
@@ -230,7 +231,7 @@ let deliverText = '';
   check('Signals: no text at all, blurred skeleton, redaction bars, lock', f.signalsText === '' && /blur/.test(f.signalsBlur) && f.redaction === 2 && f.signalsLock, f);
   check('Library: locked stack at 0.5 + "7 more directions"', f.libOpacity === '0.5' && f.more === '7 more directions', f);
   check('Hub: sticky notes around the locked pencil', f.hubPencil && f.hubLock && f.stickies >= 2, f);
-  check('CTA "UNLOCK YOUR PORTAL · BOOK 15-MIN CALL"; no email field, no Send my article, no Unlock portal now, no seats, no Feed', f.cta.replace(/\s*→$/, '') === 'UNLOCK YOUR PORTAL · BOOK 15-MIN CALL' && f.inputs === 0 &&
+  check('CTA "UNLOCK YOUR PORTAL · BOOK 15 MINS"; no email field, no Send my article, no Unlock portal now, no seats, no Feed', f.cta.replace(/\s*→$/, '') === 'UNLOCK YOUR PORTAL · BOOK 15 MINS' && f.inputs === 0 &&
     !/send my article|unlock portal now|seat|\bfeed\b/i.test(f.text), f.cta);
   await page.screenshot({ path: OUT + '/s05b-final-log-open.jpg', type: 'jpeg', quality: 80, fullPage: true });
 
@@ -283,7 +284,7 @@ console.log('\n=== Device B (a colleague on the same link)');
   await wait(500);
   await page.click('#final-log-toggle');
   const v = await page.evaluate(() => ({ arrive: document.getElementById('final-arrive').textContent, log: Array.from(document.querySelectorAll('#final-log .result-chip')).map((c) => c.innerText).join(), seats: document.querySelectorAll('#final-log .hist-row').length }));
-  check('opens on the final screen: same pick, same delivery time, same log with both seats', v.arrive === deliverText && v.log === 'PASS,SPLIT,MATCH' && v.seats === 6, v);
+  check('opens on the final screen: same pick, same delivery time, same log with both seats', v.arrive.replace(/\u00a0/g, ' ') === deliverText && v.log === 'PASS,SPLIT,MATCH' && v.seats === 6, v);
   check('no second pick, no second approval or notification', rpcLog.filter((r) => r.name === 'set_collab_pick').length === 1 && db[SLUG].approvals.length === 1 && forms.filter((f) => f['form-name'] === 'approvals').length === 1);
   check('Device B: no page errors', !errors.length, errors);
   await ctx.close();
