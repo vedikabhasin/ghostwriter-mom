@@ -6,7 +6,7 @@ Every slug config in `clients/<slug>.json` names its template:
 |---|---|---|---|
 | `rpr` | `templates/rpr.html` | `/rprtemplate` | `rpr-k7m2qx` |
 | `swipe1` | `templates/swipe1.html` | `/swipe1template` (`/swipetemplate` redirects here) | every lead slug |
-| `swipe2` | `templates/swipe2.html` | `/swipe2template` | nothing yet (flow `collab3`) |
+| `swipe2` | `templates/swipe2.html` | `/swipe2template` | nothing yet |
 
 ## Routing
 
@@ -29,37 +29,62 @@ stays for config-less slugs and for the portal tests that drive it.
   linkedin_post. The build fails otherwise.
 - No em dashes in page copy. The build fails on an em dash in a routed config.
 
-## swipe2: flow collab3
+## swipe2
 
-Built from the frozen swipe1 page, with these changes: a 3-card deck; Keep
-and Pass labels; save and fast-track shown locked (no gesture, no click); the
-pick step replaced by the collab screen (both reactions per card, Match /
-Split / Pass, the auto-picked article with the email field, a locked portal
-preview, "Unlock portal now" to Cal.com).
+Built from the frozen swipe1 page (intro, card stack, swipe gesture, heart and
+X buttons). Changes: 3 cards; Keep and Pass labels; save and fast-track locked;
+portal progress dots and a dark first-card tooltip; Vedika's reaction about
+700ms after each swipe (the portal's match moment for two likes, its split
+moment for a split, a PASS toast for two passes); then the final screen: where
+the article lands, and a PORTAL frame with the real Log and locked Signals,
+Library and Hub, with one CTA to Cal.com.
+
+Portal visuals are copied, not imported, into `templates/kit/` (portal-kit.css
+and portal-kit.js name the portal lines they came from). The portal files are
+never read at runtime.
 
 Auto-pick: the first Match in writeOn order, else the first card the visitor
-kept, else the first card in writeOn.
+kept, else the first card in writeOn. The pick, its delivery time (pick + 24h)
+and a snapshot of vediReactions are stored once; only the device that stored
+them creates the approval and posts the Netlify approvals form. Preview routes
+ending in `template` never notify.
 
 State lives in Supabase, keyed by slug (migration 20261001000015): swipes and
-reactions through log_swipe, the pick through set_collab_pick (first write
-wins), the approval through submit_approval, all read back by
-get_collab_state. Every device on the link sees the same swipes, pick, log
-and sent state. localStorage is a cache; swipes found only there are written
-to the database on first load.
+the log through log_swipe, the pick through set_collab_pick (first write
+wins), all read back by get_collab_state. A new device or a colleague sees the
+same swipes, pick and log; a finished deck opens on the final screen.
+localStorage is a cache; swipes found only there are written to the database
+on first load.
 
-Tests: `tests/sales/collab3.test.mjs` (browser, three devices) and
+Tests: `tests/sales/swipe2.test.mjs` (browser, five devices) and
 `tests/sales/collab-state.test.mjs` (SQL).
 
 ## Slug config fields
 
+rpr and swipe1:
+
 | Field | Required | Values |
 |---|---|---|
-| `template` | yes | `rpr`, `swipe1`, `swipe2` |
+| `template` | yes | `rpr`, `swipe1` |
 | `leadType` | no | `warm`, `cold`, `partner` (PostHog shows `unset` when missing) |
-| `flow` | no | any string; default `swipe_pick_<unlock mode>`. Required `collab3` on swipe2 |
-| `vediReactions` | collab3 | `{ "<cardId>": "like" \| "pass" }` for every card |
-| `writeOn` | collab3 | every card id once, in writing order |
-| `lockedCount` | collab3 | directions the call unlocks (integer) |
+| `flow` | no | any string; default `swipe_pick_<unlock mode>` |
+
+swipe2 has its own shape:
+
+| Field | Values |
+|---|---|
+| `template` | `swipe2` |
+| `company`, `contactFirstName`, `sourceLine` | strings |
+| `cards` | exactly 3, lead formats |
+| `vediReactions` | `{ "<cardId>": "like" \| "pass" }` for every card |
+| `writeOn` | every card id once, in writing order |
+| `lockedCount` | directions the call unlocks (integer) |
+| `deliveryChannel` | `LinkedIn` (shows "LinkedIn messages") or `email` (shows "inbox") |
+| `lead_type` | `warm` or `cold` |
+| `flow` | optional; default `live_reveal` |
+
+`scripts/import-client.mjs` maps company, sourceLine and contactFirstName to
+the database columns.
 
 ## PostHog
 
@@ -68,7 +93,7 @@ Tests: `tests/sales/collab3.test.mjs` (browser, three devices) and
 
 Shared event names on every template: `page_open`, `deal_me_in`,
 `first_swipe`, `swipe_complete`, `email_submitted`, `unlock_clicked`.
-collab3 adds `collab_view_seen`, `article_auto_picked` and
-`local_swipes_migrated`.
+swipe2 adds `match_seen`, `split_seen`, `article_auto_picked`, `log_viewed`
+and `local_swipes_migrated`.
 The older per-step events (`intro_viewed`, `swipe`, `deck_completed`, ...)
 still fire next to them so existing dashboards keep working.

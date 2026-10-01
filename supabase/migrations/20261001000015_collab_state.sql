@@ -1,12 +1,14 @@
 -- ---------------------------------------------------------------------------
--- Shared state for the "collab3" sales flow (templates/swipe2.html).
+-- Shared state for the swipe2 sales template (templates/swipe2.html).
 --
 -- One link, many devices: a visitor, their colleague, or the same visitor on
 -- a new phone all see the same swipes, the same auto-picked article and the
 -- same log. Swipes and reactions already live in swipe_events / decisions
 -- (log_swipe, keyed by slug). This adds:
---   * collab_picks       the auto-picked card per company. First write wins,
---                        so the pick never changes once made.
+--   * collab_picks       the auto-picked card per company, its delivery time
+--                        (24h after the pick) and a snapshot of Vedika's
+--                        reactions. First write wins, so none of it changes
+--                        once made.
 --   * get_collab_state   read everything for a slug in one call (anon). The
 --                        approval email is never returned.
 --   * set_collab_pick    store the pick (anon, first write wins).
@@ -16,7 +18,9 @@
 create table if not exists collab_picks (
   company_id uuid primary key references companies(id) on delete cascade,
   card_id    uuid not null references cards(id) on delete cascade,
-  picked_at  timestamptz not null default now()
+  picked_at  timestamptz not null default now(),
+  deliver_by timestamptz not null default (now() + interval '24 hours'),
+  vedi_reactions jsonb not null default '{}'::jsonb
 );
 -- Read and written only through the security-definer functions below.
 alter table collab_picks enable row level security;
@@ -50,7 +54,8 @@ begin
       where s.company_id = v_company.id and s.member_id is null and s.source = 'sales'
     ), '[]'::jsonb),
     'pick', (
-      select jsonb_build_object('card_key', c.card_key, 'picked_at', p.picked_at)
+      select jsonb_build_object('card_key', c.card_key, 'picked_at', p.picked_at,
+                                'deliver_by', p.deliver_by, 'vedi_reactions', p.vedi_reactions)
       from collab_picks p join cards c on c.id = p.card_id
       where p.company_id = v_company.id
     ),
@@ -67,13 +72,14 @@ end;
 $$;
 grant execute on function get_collab_state(text) to anon, authenticated;
 
-create or replace function set_collab_pick(p_slug text, p_card_key text) returns jsonb
+create or replace function set_collab_pick(p_slug text, p_card_key text, p_vedi_reactions jsonb default '{}'::jsonb) returns jsonb
 language plpgsql security definer
 set search_path = public, pg_temp
 as $$
 declare
   v_company_id uuid;
   v_card_id    uuid;
+  v_created    boolean;
 begin
   select id into v_company_id from companies where slug = p_slug and not is_internal;
   if v_company_id is null then
@@ -84,14 +90,24 @@ begin
     raise exception 'unknown card_key % for slug %', p_card_key, p_slug using errcode = 'no_data_found';
   end if;
 
-  insert into collab_picks (company_id, card_id) values (v_company_id, v_card_id)
-  on conflict (company_id) do nothing;
+  if jsonb_typeof(coalesce(p_vedi_reactions, '{}'::jsonb)) <> 'object' then
+    raise exception 'vedi_reactions must be an object' using errcode = 'invalid_parameter_value';
+  end if;
 
+  insert into collab_picks (company_id, card_id, vedi_reactions)
+    values (v_company_id, v_card_id, coalesce(p_vedi_reactions, '{}'::jsonb))
+  on conflict (company_id) do nothing;
+  v_created := found;
+
+  -- created: true only for the call that made the pick, so exactly one
+  -- device sends the approval and the Netlify notification.
   return (
-    select jsonb_build_object('card_key', c.card_key, 'picked_at', p.picked_at)
+    select jsonb_build_object('card_key', c.card_key, 'picked_at', p.picked_at,
+                              'deliver_by', p.deliver_by, 'vedi_reactions', p.vedi_reactions,
+                              'created', v_created)
     from collab_picks p join cards c on c.id = p.card_id
     where p.company_id = v_company_id
   );
 end;
 $$;
-grant execute on function set_collab_pick(text, text) to anon, authenticated;
+grant execute on function set_collab_pick(text, text, jsonb) to anon, authenticated;

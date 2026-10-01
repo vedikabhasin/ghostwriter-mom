@@ -75,6 +75,48 @@ function stringifyDeep(v){
   try { return JSON.stringify(v); } catch(_){ return String(v); }
 }
 
+// swipe2 configs have their own shape (see templates/README.md):
+//   slug, template "swipe2", company, contactFirstName, sourceLine, cards
+//   (exactly 3, lead formats), vediReactions (like | pass per card), writeOn
+//   (every card id once), lockedCount, deliveryChannel (LinkedIn | email),
+//   lead_type (warm | cold); flow optional.
+function validateSwipe2(file, data){
+  const isTemplate = TEMPLATE_SLUGS.has(data.slug);
+  const str = (k) => { if(typeof data[k] !== 'string' || !data[k].trim()) fail(file + ': "' + k + '" must be a non-empty string'); };
+  ['slug', 'company', 'contactFirstName', 'sourceLine'].forEach(str);
+  if(!SLUG_RE.test(data.slug)) fail(file + ': slug must match ' + SLUG_RE);
+  if(file !== data.slug + '.json') fail(file + ': filename must match slug (expected ' + data.slug + '.json)');
+  if(['LinkedIn', 'email'].indexOf(data.deliveryChannel) === -1) fail(file + ': deliveryChannel must be "LinkedIn" or "email"');
+  if(['warm', 'cold'].indexOf(data.lead_type) === -1) fail(file + ': lead_type must be "warm" or "cold"');
+  if('flow' in data && (typeof data.flow !== 'string' || !data.flow.trim())) fail(file + ': flow must be a non-empty string when present');
+  if(!Number.isInteger(data.lockedCount) || data.lockedCount < 0) fail(file + ': lockedCount must be a non-negative integer');
+  if('email' in data) fail(file + ': client feeds must not contain an "email" field (files are publicly served)');
+  if(!Array.isArray(data.cards) || data.cards.length !== 3) fail(file + ': swipe2 shows exactly 3 cards');
+  const keys = [];
+  data.cards.forEach((c, i) => {
+    const label = file + ': card #' + (i + 1);
+    CARD_REQUIRED.forEach(k => { if(!(k in c)) fail(label + ' missing "' + k + '"'); });
+    if(keys.indexOf(String(c.id)) !== -1) fail(label + ' duplicate id ' + c.id);
+    keys.push(String(c.id));
+    if(LEAD_FORMATS.indexOf(String(c.format).toLowerCase()) === -1) fail(label + ' format must be one of ' + LEAD_FORMATS.join(', '));
+    ['title', 'angle', 'evidence'].forEach(k => { if(typeof c[k] !== 'string' || !c[k].trim()) fail(label + ' "' + k + '" must be a non-empty string'); });
+    if(!Array.isArray(c.sources) || !c.sources.length) fail(label + ' sources must be a non-empty array');
+    c.sources.forEach((src, si) => {
+      ['title', 'publisher', 'url'].forEach(k => { if(!src || typeof src[k] !== 'string' || !src[k].trim()) fail(label + ' source #' + (si + 1) + ' "' + k + '" must be a non-empty string'); });
+      if(!isTemplate && !HTTPS_RE.test(src.url)) fail(label + ' source #' + (si + 1) + ' url must be https://');
+    });
+  });
+  const vr = data.vediReactions;
+  if(!vr || typeof vr !== 'object' || Array.isArray(vr)) fail(file + ': vediReactions must be { cardId: "like" | "pass" }');
+  keys.forEach(k => { if(vr[k] !== 'like' && vr[k] !== 'pass') fail(file + ': vediReactions.' + k + ' must be "like" or "pass"'); });
+  Object.keys(vr).forEach(k => { if(keys.indexOf(k) === -1) fail(file + ': vediReactions has unknown card ' + k); });
+  const wo = data.writeOn;
+  if(!Array.isArray(wo) || wo.length !== keys.length || keys.some(k => wo.map(String).indexOf(k) === -1)) fail(file + ': writeOn must list every card id once, in writing order');
+  if(EM_DASH_RE.test(stringifyDeep(data))) fail(file + ': no em dashes in page copy');
+  if(!isTemplate && /\[REPLACE/i.test(stringifyDeep(data))) fail(file + ': contains "[REPLACE" placeholder text');
+  routes.push({ slug: data.slug, to: TEMPLATES.swipe2 });
+}
+
 function validateOne(file){
   const full = path.join(CLIENTS_DIR, file);
   let data;
@@ -82,6 +124,7 @@ function validateOne(file){
   catch(e){ fail(file + ': invalid JSON — ' + e.message); }
   if(!data || typeof data !== 'object') fail(file + ': must be a JSON object');
 
+  if(data.template === 'swipe2') return validateSwipe2(file, data);
   const isInternal = data.isInternal === true || INTERNAL_FILES.has(file);
   const isTemplate = TEMPLATE_SLUGS.has(data.slug);
   const required = isInternal ? INTERNAL_REQUIRED : REGULAR_REQUIRED;
@@ -162,24 +205,6 @@ function validateOne(file){
       if(allowed.indexOf(f) === -1) fail(file + ': format "' + f + '" is not allowed in the ' + data.template + ' template (allowed: ' + allowed.join(', ') + ')');
     });
     if(EM_DASH_RE.test(stringifyDeep(data))) fail(file + ': no em dashes in page copy');
-    // swipe2 runs the collab3 flow: 3 cards, Vedika's honest reaction to
-    // each, the order to write them in, and how many directions stay locked.
-    if(data.template === 'swipe2'){
-      if(data.flow !== 'collab3') fail(file + ': the swipe2 template runs flow "collab3"');
-      const keys = data.cards.map(c => String(c.id));
-      if(keys.length !== 3) fail(file + ': collab3 shows exactly 3 cards (got ' + keys.length + ')');
-      const vr = data.vediReactions;
-      if(!vr || typeof vr !== 'object') fail(file + ': collab3 needs vediReactions { cardId: "like" | "pass" }');
-      keys.forEach(k => { if(vr[k] !== 'like' && vr[k] !== 'pass') fail(file + ': vediReactions.' + k + ' must be "like" or "pass"'); });
-      Object.keys(vr).forEach(k => { if(keys.indexOf(k) === -1) fail(file + ': vediReactions has unknown card ' + k); });
-      const wo = data.writeOn;
-      if(!Array.isArray(wo) || wo.length !== keys.length || keys.some(k => wo.map(String).indexOf(k) === -1)){
-        fail(file + ': writeOn must list every card id once, in writing order');
-      }
-      if(!Number.isInteger(data.lockedCount) || data.lockedCount < 0) fail(file + ': lockedCount must be a non-negative integer');
-    } else if(data.flow === 'collab3'){
-      fail(file + ': flow "collab3" runs on the swipe2 template');
-    }
     routes.push({ slug: data.slug, to: TEMPLATES[data.template] });
   }
   if('email' in data){

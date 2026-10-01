@@ -52,9 +52,14 @@ s = await state('lead-a');
 check('device 2 sees the same reactions, in card order', s.decisions.map((d) => d.card_key + ':' + d.action).join(',') === 'a1:like,a2:like,a3:pass', s.decisions);
 check('device 2 sees the full log, oldest first', s.log.map((d) => d.card_key + ':' + d.action).join(',') === 'a1:like,a2:pass,a2:like,a3:pass', s.log);
 
-const p1 = (await one(`select set_collab_pick('lead-a', 'a2') p`)).p;
-const p2 = (await one(`select set_collab_pick('lead-a', 'a1') p`)).p;
+const p1 = (await one(`select set_collab_pick('lead-a', 'a2', '{"a1":"like","a2":"like","a3":"pass"}') p`)).p;
+const p2 = (await one(`select set_collab_pick('lead-a', 'a1', '{"a1":"pass"}') p`)).p;
 check('pick: first write wins, a second device cannot change it', p1.card_key === 'a2' && p2.card_key === 'a2' && (await state('lead-a')).pick.card_key === 'a2', { p1, p2 });
+check('pick: only the first call reports created', p1.created === true && p2.created === false, { p1: p1.created, p2: p2.created });
+const lag = (new Date(p1.deliver_by) - new Date(p1.picked_at)) / 3600e3;
+check('pick: delivery time is 24h after the pick, and stays put', Math.abs(lag - 24) < 0.01 && p2.deliver_by === p1.deliver_by, { lag });
+check('pick: reaction snapshot stored once', JSON.stringify(p2.vedi_reactions) === JSON.stringify({ a1: 'like', a2: 'like', a3: 'pass' }) && (await state('lead-a')).pick.vedi_reactions.a3 === 'pass', p2.vedi_reactions);
+check('pick: reactions must be an object', /must be an object/.test(await fails(`select set_collab_pick('lead-b', 'b1', '[1]')`) || ''));
 
 await db.query(`select submit_approval('lead-a', 'a2', array['a1','a2','a3'], 'visitor@lead-a.co')`);
 s = await state('lead-a');

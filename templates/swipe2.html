@@ -1527,47 +1527,65 @@ body.dir-save  .ctl-save{
 <!-- Shared desk layer (waitlist / sales intro / portal login). Mounted at
      density=light and only visible while the intro screen is on. -->
 <link rel="stylesheet" href="/shared/desk.css">
+<link rel="stylesheet" href="/templates/kit/portal-kit.css">
+<script src="/templates/kit/portal-kit.js"></script>
 <style>
-/* -- collab3 ------------------------------------------------------------------ */
+/* -- swipe2 ------------------------------------------------------------------- */
 .intro-offer .intro-line{display:block; margin-top:10px;}
 .intro-offer .intro-muted{display:block; margin-top:14px; font-size:0.8em; line-height:1.45; color:#6b6b6b;}
-/* Save and fast-track: visible, locked. */
 .ctl.ctl-locked{opacity:0.35; pointer-events:none; cursor:default; box-shadow:none;}
 .ctl.ctl-locked:hover{transform:none;}
 .ctl-lock{position:absolute; top:-5px; right:-5px; width:17px; height:17px; border-radius:50%;
   background:var(--ink); color:#fff; display:flex; align-items:center; justify-content:center;}
 .ctl-lock svg{width:9px; height:9px;}
-#screen-collab{gap:18px;}
-.collab-head{font-family:var(--font-display); font-weight:800; font-size:24px; line-height:1.15; letter-spacing:-0.02em; margin:0; text-wrap:balance;}
-.collab-rows{list-style:none; margin:0; padding:0; display:grid; gap:10px;}
-.collab-row{background:#fff; border-radius:18px; padding:14px 16px; box-shadow:0 10px 24px -18px rgba(14,14,14,0.35); display:grid; gap:10px;}
-.collab-row-top{display:flex; align-items:flex-start; justify-content:space-between; gap:10px;}
-.collab-title{font-weight:700; font-size:15px; line-height:1.3;}
-.collab-tag{flex:none; font-family:var(--font-mono); font-size:10.5px; letter-spacing:0.12em; text-transform:uppercase; padding:5px 9px; border-radius:999px; border:1.5px solid var(--ink);}
-.collab-tag.t-match{background:var(--like, #B6FF6E);}
-.collab-tag.t-split{background:#fff;}
-.collab-tag.t-pass{background:rgba(14,14,14,0.06); border-color:rgba(14,14,14,0.3); color:#555;}
-.collab-who{display:grid; grid-template-columns:1fr 1fr; gap:8px;}
-.collab-react{display:flex; align-items:center; gap:8px; font-size:13px; background:rgba(14,14,14,0.04); border-radius:12px; padding:7px 10px; min-width:0;}
-.collab-react .nm{overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
-.collab-react .ic{flex:none; width:22px; height:22px; border-radius:50%; display:flex; align-items:center; justify-content:center;}
-.collab-react .ic svg{width:12px; height:12px;}
-.collab-react .ic.like{background:var(--like, #B6FF6E); color:var(--like-ink, #0E0E0E);}
-.collab-react .ic.pass{background:var(--pass, #FF6B5B); color:var(--pass-ink, #0E0E0E);}
-.collab-react .ic.none{background:rgba(14,14,14,0.08);}
-.collab-pick{background:#fff; border-radius:20px; padding:16px; display:grid; gap:12px; box-shadow:0 12px 28px -20px rgba(14,14,14,0.4);}
-.collab-pick-title{margin:0; font-weight:800; font-size:18px; line-height:1.25;}
-.collab-pick .modal-field{display:block; border:none; padding:0; margin:0; background:none; box-shadow:none;}
-.collab-pick input{width:100%; box-sizing:border-box; font:inherit; font-size:16px; padding:14px 16px; border-radius:999px; border:1.5px solid rgba(14,14,14,0.16); background:#fff;}
-.collab-pick .modal-err{margin:0; min-height:1em;}
-.collab-sent{margin:0; font-size:15px; line-height:1.5;}
-.collab-portal{display:grid; grid-template-columns:1fr 1fr; gap:8px;}
-.collab-tile{position:relative; border-radius:16px; padding:14px; min-height:64px; background:#fff; border:1.5px solid rgba(14,14,14,0.12);
-  font-family:var(--font-mono); font-size:11px; letter-spacing:0.12em; text-transform:uppercase; display:flex; align-items:flex-end;}
-.collab-tile.open{border-color:var(--ink);}
-.collab-tile.locked{opacity:0.35;}
-.collab-tile .tile-lock{position:absolute; top:10px; right:10px; width:14px; height:14px;}
-#screen-collab .btn-ghost{align-self:center;}
+.feed-top .gwk-dots{max-width:none; padding:6px 0;}
+/* Reveal: no buttons on the sales page; tap anywhere continues. */
+.reveal{cursor:pointer;}
+.rv-fmt{display:inline-flex; align-items:center; padding:5px 9px 5px 10px; border-radius:999px; background:var(--f-color); color:var(--f-ink);
+  font-family:var(--font-mono); font-size:9.5px; font-weight:700; letter-spacing:0.14em; text-transform:uppercase;}
+/* Reduced motion: no rays, no hearts, one opacity fade. */
+.reveal.rv-reduced *, .reveal.rv-reduced *::before, .reveal.rv-reduced *::after{animation:none !important;}
+.reveal.rv-reduced .rv-bg::before{display:none;}
+.reveal.rv-reduced{animation:gwk-fade 260ms ease both;}
+@keyframes gwk-fade{from{opacity:0;}}
+/* Final screen */
+#screen-final{gap:14px;}
+#screen-final .conf-arrive{margin-top:6px;}
+.result-chip.pass{background:var(--canvas-alt); color:var(--ink-soft);}
+.final-log .hist-card{margin-bottom:8px;}
+.final-log .hist-card:last-child{margin-bottom:0;}
+.final-log .history-src-row{margin-top:8px;}
+.gwk-locked{position:relative; cursor:pointer; -webkit-tap-highlight-color:transparent;}
+.gwk-locked:focus-visible{outline:2px solid var(--ink); outline-offset:3px; border-radius:12px;}
+.gwk-lock{position:absolute; width:26px; height:26px; border-radius:50%; background:var(--ink); color:#fff;
+  display:flex; align-items:center; justify-content:center; box-shadow:0 6px 14px -6px rgba(14,14,14,0.5); z-index:3;}
+.gwk-lock svg{width:12px; height:12px;}
+/* Signals: neutral skeleton lines, blurred, with redaction bars on top. */
+.gwk-redacted{position:relative; height:86px; border-radius:10px; overflow:hidden; background:rgba(14,14,14,0.03);}
+.gwk-redacted .sk{position:absolute; left:14px; height:9px; border-radius:6px; background:rgba(14,14,14,0.22); filter:blur(3px);}
+.gwk-redacted .rd{position:absolute; height:12px; border-radius:2px; background:var(--ink); opacity:0.88;}
+.gwk-redacted .gwk-lock{left:50%; top:50%; transform:translate(-50%,-50%);}
+/* Library: the deck as a locked stack, and the rest of the deck behind it. */
+.gwk-lib{display:flex; gap:16px; align-items:flex-end; justify-content:center; padding:10px 0 4px;}
+.gwk-lib-stack{position:relative; border:none; background:transparent; padding:0; width:118px; height:160px; font:inherit; color:inherit;}
+.gwk-lib-books{position:absolute; inset:0; opacity:0.5;}
+.gwk-lib-stack .mini-book{position:absolute; left:0; top:0; width:110px; height:146px; padding:10px 10px 10px 14px; box-sizing:border-box;
+  box-shadow:0 14px 26px -18px rgba(14,14,14,0.5);}
+/* Like the portal Library: only the top book shows its text. */
+.gwk-lib-stack .mini-book:not(:last-child) > *{visibility:hidden;}
+.gwk-lib-stack .mini-book:nth-child(1){transform:translate(8px,10px) rotate(5deg);}
+.gwk-lib-stack .mini-book:nth-child(2){transform:translate(4px,5px) rotate(-3deg);}
+.gwk-lib-stack .mb-title{font-size:12px; display:-webkit-box; -webkit-line-clamp:4; -webkit-box-orient:vertical; overflow:hidden;}
+.gwk-lib-stack .rv-fmt{font-size:7.5px; padding:3px 6px; letter-spacing:0.1em; max-width:100%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+.gwk-lib-stack .gwk-lock{right:-6px; top:-6px;}
+.gwk-lib-more .mini-book{--f-color:var(--ink-soft); --spine:4px;}
+.gwk-lib-label{position:absolute; left:50%; bottom:-6px; transform:translateX(-50%); white-space:nowrap; z-index:4;
+  font-family:var(--font-mono); font-size:9.5px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase;
+  background:var(--white); border:1.5px solid var(--ink); border-radius:999px; padding:4px 9px 4px 10px;}
+#final-hub-tile .gwk-lock{display:none;}
+.final-cta{width:100%;}
+#screen-final .btn-ghost{align-self:center;}
+.bubble.gwk-tip{z-index:210;}
 </style>
 <!-- Card formats + colour families. One list shared with validate-feeds.js. -->
 <script src="/shared/formats.js"></script>
@@ -1596,13 +1614,6 @@ body.dir-save  .ctl-save{
      Swipes and referrals used to live here but were replaced by the log_swipe
      RPC and Stripe's own confirmation page respectively.
      ----------------------------------------------------------------------------- -->
-<form name="portal-unlock" data-netlify="true" netlify-honeypot="bot-field" hidden aria-hidden="true">
-  <input type="text"  name="slug">
-  <input type="text"  name="companyName">
-  <input type="text"  name="pickedTitle">
-  <input type="text"  name="clickedAt">
-  <input type="text"  name="bot-field">
-</form>
 <form name="approvals" data-netlify="true" netlify-honeypot="bot-field" hidden aria-hidden="true">
   <input type="text"  name="slug">
   <input type="text"  name="companyName">
@@ -1675,7 +1686,7 @@ body.dir-save  .ctl-save{
   <!-- FEED -->
   <section class="screen" id="screen-feed">
     <div class="feed-top">
-      <span class="feed-counter" id="feed-counter">1 of 10</span>
+      <div class="gwk-dots" id="feed-dots" role="img" aria-label=""></div>
       <button type="button" class="btn-ghost" data-action="show-history">Log</button>
     </div>
     <p class="ft-continue" id="fast-track-line" hidden></p>
@@ -1702,30 +1713,50 @@ body.dir-save  .ctl-save{
     </div>
   </section>
 
-  <!-- COLLAB (flow collab3): both reactions per card, the auto-picked article,
-       the portal preview and the unlock button. Replaces the pick step. -->
-  <section class="screen" id="screen-collab">
-    <h2 class="collab-head">Here's how we reacted. This is how your team sees it in the portal.</h2>
-    <ul class="collab-rows" id="collab-rows"></ul>
-    <div class="collab-pick" id="collab-pick">
-      <p class="collab-pick-title" id="collab-pick-title"></p>
-      <div id="collab-form">
-        <label class="modal-field" for="collab-email">
-          <input type="email" id="collab-email" name="email" data-ph-mask placeholder="you@work.com" autocomplete="email" inputmode="email" required>
-        </label>
-        <p class="modal-err" id="collab-err">&nbsp;</p>
-        <span class="btn-glow-host">
-          <span class="btn-glow" aria-hidden="true"></span>
-          <button type="button" class="btn btn-primary" data-action="collab-send" id="collab-send">
-            <span>Send my article</span> <span class="arr" aria-hidden="true">&#8594;</span>
-          </button>
-        </span>
+  <!-- FINAL (swipe2): where the article lands, then what the portal holds.
+       Log is open and real; Signals, Library and Hub are locked. -->
+  <section class="screen" id="screen-final">
+    <p class="conf-arrive" id="final-arrive"></p>
+    <p class="portal-p">Here's what your team gets inside.</p>
+    <div class="portal-dashboard">
+      <div class="portal-inner">
+        <section class="pd-section" id="final-log-section">
+          <p class="pd-h">Log <span class="pd-h-count" id="final-log-count"></span></p>
+          <div class="final-log" id="final-log"></div>
+          <p class="pd-caption">Every call logged, with the sources behind each card.</p>
+        </section>
+        <section class="pd-section">
+          <p class="pd-h">Signals <span class="badge new">New</span></p>
+          <div class="gwk-redacted gwk-locked" role="button" tabindex="0" data-lock="signals" aria-label="Opens after your onboarding call.">
+            <span class="sk" style="top:14px; width:72%;"></span>
+            <span class="sk" style="top:32px; width:58%;"></span>
+            <span class="sk" style="top:50px; width:80%;"></span>
+            <span class="sk" style="top:68px; width:44%;"></span>
+            <span class="rd" style="left:22%; top:12px; width:30%;"></span>
+            <span class="rd" style="left:48%; top:48px; width:26%;"></span>
+            <span class="gwk-lock" aria-hidden="true"></span>
+          </div>
+          <p class="pd-caption">Where you rank, and who AI cites instead. Opens after your onboarding call.</p>
+        </section>
+        <section class="pd-section">
+          <p class="pd-h">Library <span class="badge new">New</span></p>
+          <div class="gwk-lib" id="final-library"></div>
+        </section>
+        <section class="pd-section">
+          <p class="pd-h">Hub <span class="badge new">New</span></p>
+          <div class="pd-hub gwk-locked" id="final-hub-tile" role="button" tabindex="0" data-lock="hub" aria-label="Opens with your first content pack."></div>
+          <p class="pd-caption">Your team's drafting board. Opens with your first content pack.</p>
+        </section>
       </div>
-      <p class="collab-sent" id="collab-sent" hidden></p>
     </div>
-    <div class="collab-portal" id="collab-portal" aria-label="Portal preview"></div>
-    <button type="button" class="btn btn-primary" data-action="collab-unlock" id="collab-unlock">Unlock portal now</button>
-    <button type="button" class="btn-ghost" data-action="show-history">See your log</button>
+    <span class="btn-glow-host final-cta">
+      <span class="btn-glow" aria-hidden="true"></span>
+      <button type="button" class="btn btn-primary" data-action="final-unlock" id="final-unlock">
+        <span>Unlock portal &middot; 15-minute onboarding</span>
+        <span class="arr" aria-hidden="true">&#8594;</span>
+      </button>
+    </span>
+    <button type="button" class="btn-ghost" data-action="final-see-log">See your log</button>
   </section>
 
   <!-- DIRECTION — slots rendered from directionShape. One tap picks the free article. -->
@@ -1890,6 +1921,10 @@ body.dir-save  .ctl-save{
   </div>
 </div>
 
+<div class="reveal" id="reveal" role="dialog" aria-modal="true" hidden></div>
+<div class="toast" id="gwk-toast" role="status" hidden></div>
+<div class="bubble" id="gwk-bubble" role="status" hidden></div>
+
 <div class="modal-scrim" id="email-modal" role="dialog" aria-modal="true" aria-label="Where should I send it">
   <div class="modal-panel">
     <button type="button" class="modal-close" data-action="close-email-modal" aria-label="Close">&times;</button>
@@ -1975,10 +2010,10 @@ body.dir-save  .ctl-save{
     return '';
   }
   var SLUG        = resolveSlug();
-  // This file is the "swipe2" template, flow "collab3" (see templates/README.md).
+  // This file is the "swipe2" template (see templates/README.md).
   var TEMPLATE    = 'swipe2';
-  var COLLAB_DECK = 3;
-  var COLLAB_BOOKING_URL = 'https://cal.com/vedika/ghostwriter-mom';
+  var DECK_SIZE   = 3;
+  var BOOKING_URL_SWIPE2 = 'https://cal.com/vedika/ghostwriter-mom';
   var FRESH       = new URLSearchParams(location.search).get('fresh') === '1';
 
   // -- Runtime config: Supabase + PostHog credentials, loaded from
@@ -2047,6 +2082,7 @@ body.dir-save  .ctl-save{
   // until Resend replaces them.
   var dataAdapter = {
     getFeed: function(slug){
+      return getSwipe2Feed(slug);
       if(supabase){
         return supabase.rpc('get_feed', { p_slug: slug }).then(function(res){
           if(res.error) throw res.error;
@@ -2150,7 +2186,6 @@ body.dir-save  .ctl-save{
       .then(function(json){
         feed.stripeLink19 = json.stripeLink19;
         feed.template = json.template; feed.leadType = json.leadType; feed.flow = json.flow;
-        feed.vediReactions = json.vediReactions; feed.writeOn = json.writeOn; feed.lockedCount = json.lockedCount;
         return feed;
       })
       .catch(function(){ return feed; });
@@ -2254,6 +2289,7 @@ body.dir-save  .ctl-save{
         state.emailProvided  = s.emailProvided || '';
         state.waitlistJoined = !!s.waitlistJoined;
         state.collabPick     = s.collabPick || '';
+        state.vediSnapshot   = s.vediSnapshot || null;
       }
     }catch(e){}
   }
@@ -2653,7 +2689,7 @@ body.dir-save  .ctl-save{
       });
   }
   function onClientReady(){
-    if(client && Array.isArray(client.cards)) client.cards = client.cards.slice(0, COLLAB_DECK);
+    if(client && Array.isArray(client.cards)) client.cards = client.cards.slice(0, DECK_SIZE);
     $all('[data-slot="companyName"]').forEach(function(el){ el.textContent = client.companyName; });
     // Greeting: greeting_name when the feed carries one, else the contact's
     // first name (RPR), else "there" — all rendered in italic.
@@ -2677,14 +2713,14 @@ body.dir-save  .ctl-save{
       var origin = basis || ('where ' + (client.companyName || 'you') + ' ranks and who AI cites instead');
       introEl.appendChild(document.createTextNode(' These ' + deckN + ' directions come from ' + origin + '.'));
       [ 'Swipe to keep or pass.',
-        'We pick the best match from your swipes and write it free, in your inbox within 24 hours. No call needed.',
+        'We pick the best match from your swipes and write it free. It lands in your ' + channelLabel() + ' within 24 hours. No call needed.',
         'Written and edited by a human for your brand, not an unreviewed AI draft.'
       ].forEach(function(line){
         var l = document.createElement('span'); l.className = 'intro-line'; l.textContent = line;
         introEl.appendChild(l);
       });
       var muted = document.createElement('span'); muted.className = 'intro-muted';
-      muted.textContent = 'A 15-minute call unlocks your portal and ' + collabLockedCount() +
+      muted.textContent = 'A 15-minute call unlocks your portal and ' + lockedCount() +
         ' more directions. Your swipes stay saved on any device.';
       introEl.appendChild(muted);
     }
@@ -2727,7 +2763,7 @@ body.dir-save  .ctl-save{
     // can name the free article + siblings even on a cold reload. Stripe's own
     // hosted page handles post-payment now; ?paid=1 is no longer meaningful.
     syncShared().then(function(){
-      if(state.cardIndex >= client.cards.length){ goToCollab(); return; }
+      if(state.cardIndex >= client.cards.length){ finishDeck(); return; }
       if(state.cardIndex > 0){ show('feed'); renderStack(); return; }
       show('intro');
     });
@@ -2737,7 +2773,8 @@ body.dir-save  .ctl-save{
   // Update the "N of M" counter and, when the deck runs thin, pulse the
   // remaining number once so it's clear the stack is ending. The counter
   // element carries data-remaining so CSS can also thin the visible peek.
-  function updateCounter(){
+  function updateCounter(){ renderDots(); }
+  function updateCounterOld(){
     var n = client.cards.length;
     var i = Math.min(state.cardIndex + 1, n);
     var remaining = Math.max(0, n - state.cardIndex);
@@ -2928,9 +2965,11 @@ body.dir-save  .ctl-save{
       if(!state.onboardingDone.h) return 'h';
       return null;
     }
+    if(state.cardIndex === 1 && !state.onboardingDone.v) return 'v';
     return null;
   }
   function attachOnboardingHint(){
+    showTip(); return;
     var top = document.querySelector('.card[data-depth="0"]');
     if(!top) return;
     if(state.cardIndex >= ONBOARDING_MAX) return;
@@ -3087,6 +3126,12 @@ body.dir-save  .ctl-save{
   function doAction(action, metrics){
     var card = client.cards[state.cardIndex];
     if(!card) return;
+    if(reacting){
+      var held = document.querySelector('#card-stage .card[data-depth="0"]');
+      if(held) held.style.transform = '';
+      return;
+    }
+    hideTip(true);
     var brief = { id: card.id, format: String(card.format||'post').toLowerCase(), title: String(card.title||'') };
     haptic(action === 'super' ? 18 : 8);
     // Flush the leaving card's dwell before we advance the index, then log
@@ -3098,6 +3143,7 @@ body.dir-save  .ctl-save{
     var swipeExtra = Object.assign({}, metrics || {}, { ms_on_card: msOnCard });
     logEvent(card.id, action, swipeExtra);
     dataAdapter.logSwipe(card.id, action);   // Supabase RPC (best-effort, no await)
+    scheduleReaction(card, action, state.cardIndex + 1 >= client.cards.length);
     if(action === 'like')  state.liked.push(brief);
     if(action === 'pass')  state.passed.push(brief);
     if(action === 'save')  state.saved.push(brief);
@@ -3145,7 +3191,6 @@ body.dir-save  .ctl-save{
       // to the next card; a small line above the stack names the most-recent
       // fast-tracked card and offers a jump-to-pick shortcut.
       if(state.cardIndex >= client.cards.length){
-        showEndOfDeck(client.cards.length);
         sendDeckComplete('end_of_deck');
         // Funnel: every card in the deck has a decision. deck_completed is an
         // ENHANCED-only funnel event; the older deck-complete Netlify post
@@ -3162,7 +3207,7 @@ body.dir-save  .ctl-save{
             }, _funnelTiming()));
           }
         } catch(_){}
-        setTimeout(function(){ goToCollab(); }, prefersReduced ? 0 : 900);
+        // The final screen opens from scheduleReaction() once Vedika's reaction to the last card has played.
       } else if(action === 'super'){
         showFastTrackContinuation();
         attachOnboardingHint();
@@ -3405,20 +3450,75 @@ body.dir-save  .ctl-save{
   }
 
   // ===========================================================================
-  // collab3: shared state, auto-pick, the collab screen.
+  // swipe2
   //
-  // The database is the source of truth, keyed by slug: swipes and reactions
-  // (log_swipe -> swipe_events / decisions), the auto-picked card
-  // (set_collab_pick, first write wins) and the approval (submit_approval).
-  // get_collab_state reads all of it, so a new device or a colleague on the
-  // same link sees the same swipes, pick and log. localStorage is only a cache.
-  // Swipes that exist only in this browser's cache are written to the
-  // database on first load.
+  // Config: /clients/<slug>.json (company, contactFirstName, sourceLine, 3
+  // cards, vediReactions, writeOn, lockedCount, deliveryChannel, lead_type).
+  //
+  // State lives in Supabase, keyed by slug: swipes and the log (log_swipe), the
+  // pick with its delivery time and a snapshot of Vedika's reactions
+  // (set_collab_pick, first write wins), all read back by get_collab_state. A
+  // new device or a colleague on the same link sees the same thing; a
+  // finished deck opens on the final screen. localStorage is only a cache, and
+  // swipes found only there are written to the database on first load.
   // ===========================================================================
   var shared = null;
-  var _collabSeen = false;
-  function collabLockedCount(){ var n = client && client.lockedCount; return (typeof n === 'number' && n >= 0) ? n : 0; }
+  var reacting = false;
+  var revealed = Object.create(null);
+  var logViewedSent = false;
+  var LOCK_SVG = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 10V7a5 5 0 0 1 10 0v3h1a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V11a1 1 0 0 1 1-1h1zm2 0h6V7a3 3 0 0 0-6 0v3z"/></svg>';
+  var LOCK_TIPS = {
+    signals: 'Opens after your onboarding call.',
+    library: 'Every article, from up next to delivered.',
+    hub:     'Opens with your first content pack.',
+    more:    'Opens when you unlock the portal.'
+  };
+  function track(name, props){ try { window.gwmTrack && window.gwmTrack.capture(name, props || {}); } catch(_){} }
+
+  // -- Config ---------------------------------------------------------------
+  function getSwipe2Feed(slug){
+    return fetch('/clients/' + encodeURIComponent(slug) + '.json', { cache: 'no-cache' })
+      .then(function(r){ if(!r.ok) throw new Error('feed not found'); return r.json(); })
+      .then(function(j){
+        if(!j || j.template !== 'swipe2' || !Array.isArray(j.cards) || !j.cards.length) throw new Error('not a swipe2 config');
+        return {
+          slug: j.slug, template: 'swipe2', flow: j.flow || 'live_reveal', leadType: j.lead_type,
+          companyName: j.company, contactFirstName: j.contactFirstName || '', greetingName: j.contactFirstName || '',
+          introBasis: j.sourceLine, deliveryChannel: j.deliveryChannel,
+          vediReactions: j.vediReactions || {}, writeOn: j.writeOn || [], lockedCount: j.lockedCount,
+          cards: j.cards.map(function(c){ return Object.assign({}, c, { tags: Array.isArray(c.tags) ? c.tags : [], sources: Array.isArray(c.sources) ? c.sources : [], series: c.series || null }); }),
+          emailKnown: true, directionShape: {}, offerText: '', signal: null, unlockMode: 'call', stripeLink19: null
+        };
+      });
+  }
+  function channelLabel(){ return client && client.deliveryChannel === 'LinkedIn' ? 'LinkedIn messages' : 'inbox'; }
+  function lockedCount(){ var n = client && client.lockedCount; return (typeof n === 'number' && n >= 0) ? n : 0; }
   function deckKeys(){ return (client && client.cards || []).map(function(c){ return String(c.id); }); }
+  function configVedi(){
+    var out = {}, vr = (client && client.vediReactions) || {};
+    deckKeys().forEach(function(k){ if(vr[k] === 'like' || vr[k] === 'pass') out[k] = vr[k]; });
+    return out;
+  }
+  // Once the pick is made, the stored snapshot decides; before that, the config.
+  function vediReaction(k){
+    var snap = state.vediSnapshot;
+    var r = (snap && snap[k]) || ((client && client.vediReactions) || {})[k];
+    return r === 'like' || r === 'pass' ? r : null;
+  }
+  function visitorReaction(k){
+    if(state.liked.some(function(b){ return String(b.id) === k; })) return 'like';
+    if(state.passed.some(function(b){ return String(b.id) === k; })) return 'pass';
+    return null;
+  }
+  function outcome(k){
+    var v = visitorReaction(k), w = vediReaction(k);
+    if(!v || !w) return null;
+    if(v === 'like' && w === 'like') return 'match';
+    if(v === 'pass' && w === 'pass') return 'pass';
+    return 'split';
+  }
+
+  // -- Shared state -----------------------------------------------------------
   function rpc(name, args){
     if(!supabase) return Promise.reject(new Error('no backend'));
     return supabase.rpc(name, args).then(function(r){ if(r.error) throw r.error; return r.data; });
@@ -3426,26 +3526,24 @@ body.dir-save  .ctl-save{
   function syncShared(){
     if(!supabase) return Promise.resolve();
     return rpc('get_collab_state', { p_slug: SLUG }).then(function(s){
-      var hasLocal = (state.liked.length + state.passed.length + state.saved.length) > 0 || !!state.superLiked;
+      var hasLocal = (state.liked.length + state.passed.length) > 0;
       if(s && !(s.decisions || []).length && hasLocal){
         return migrateLocal().then(function(){ return rpc('get_collab_state', { p_slug: SLUG }); }).then(applyShared);
       }
       applyShared(s);
     }).catch(function(err){ console.warn('[swipe] shared state unavailable, using this device:', err && err.message); });
   }
-  // Replay this browser's swipes into the database, oldest first.
   function migrateLocal(){
     var deck = deckKeys();
-    var swipes = state.events.filter(function(e){ return /^(like|pass|save|super)$/.test(e.action) && deck.indexOf(String(e.cardId)) >= 0; })
-      .map(function(e){ return { k: String(e.cardId), a: e.action === 'super' ? 'fasttrack' : e.action }; });
+    var swipes = state.events.filter(function(e){ return /^(like|pass)$/.test(e.action) && deck.indexOf(String(e.cardId)) >= 0; })
+      .map(function(e){ return { k: String(e.cardId), a: e.action }; });
     if(!swipes.length){
       state.liked.forEach(function(b){ swipes.push({ k: String(b.id), a: 'like' }); });
       state.passed.forEach(function(b){ swipes.push({ k: String(b.id), a: 'pass' }); });
     }
     var chain = Promise.resolve();
     swipes.forEach(function(sw){ chain = chain.then(function(){ return rpc('log_swipe', { p_slug: SLUG, p_card_key: sw.k, p_action: sw.a }).catch(function(){}); }); });
-    if(state.collabPick) chain = chain.then(function(){ return rpc('set_collab_pick', { p_slug: SLUG, p_card_key: state.collabPick }).catch(function(){}); });
-    return chain.then(function(){ try { window.gwmTrack && window.gwmTrack.capture('local_swipes_migrated', { swipes: swipes.length }); } catch(_){} });
+    return chain.then(function(){ track('local_swipes_migrated', { swipes: swipes.length }); });
   }
   function briefOf(key){ var c = findFull(key) || {}; return { id: key, format: String(c.format || '').toLowerCase(), title: String(c.title || '') }; }
   function applyShared(s){
@@ -3453,33 +3551,199 @@ body.dir-save  .ctl-save{
     shared = s;
     var deck = deckKeys(), dec = {};
     (s.decisions || []).forEach(function(d){ if(deck.indexOf(d.card_key) >= 0) dec[d.card_key] = d.action; });
-    // Saved or fast-tracked on an older flow counts as kept.
+    // A save or fast-track from an older flow counts as kept.
     state.liked  = deck.filter(function(k){ return dec[k] && dec[k] !== 'pass'; }).map(briefOf);
     state.passed = deck.filter(function(k){ return dec[k] === 'pass'; }).map(briefOf);
     state.saved = []; state.superLiked = null;
     var i = 0; while(i < deck.length && dec[deck[i]]) i++;
     state.cardIndex = i;
+    deck.forEach(function(k){ if(dec[k]) revealed[k] = 1; });
     state.events = (s.log || []).filter(function(l){ return deck.indexOf(l.card_key) >= 0; }).map(function(l){
       return { cardId: l.card_key, action: l.action === 'fasttrack' ? 'super' : l.action, timestamp: l.created_at };
     });
     if(s.pick && deck.indexOf(s.pick.card_key) >= 0){
       state.collabPick = s.pick.card_key;
+      if(s.pick.deliver_by) state.deliverByIso = s.pick.deliver_by;
+      if(s.pick.vedi_reactions && Object.keys(s.pick.vedi_reactions).length) state.vediSnapshot = s.pick.vedi_reactions;
       state.events.push({ cardId: s.pick.card_key, action: 'free_pick', timestamp: s.pick.picked_at });
+    } else {
+      state.collabPick = ''; state.deliverByIso = ''; state.vediSnapshot = null;
     }
-    // The database decides whether the article was sent.
-    var ap = s.approval && s.approval.card_key ? s.approval : null;
-    state.approved = !!ap;
-    state.freePickCardId = ap ? ap.card_key : '';
-    state.approvedAtIso = ap ? (ap.approved_at || '') : '';
-    state.deliverByIso = ap ? (ap.deliver_by || '') : '';
     saveState();
   }
-  function visitorReaction(key){
-    if(state.liked.some(function(b){ return String(b.id) === key; })) return 'like';
-    if(state.passed.some(function(b){ return String(b.id) === key; })) return 'pass';
-    return null;
+
+  // -- Progress dots (portal feed style) -------------------------------------
+  function renderDots(){
+    var host = document.getElementById('feed-dots');
+    if(!host || !client) return;
+    host.textContent = '';
+    var n = client.cards.length;
+    client.cards.forEach(function(c, i){
+      var d = document.createElement('span'); d.className = 'dot';
+      var k = String(c.id);
+      if(i < state.cardIndex){
+        d.classList.add('unread');
+        var o = revealed[k] ? outcome(k) : null;
+        if(o === 'match') d.classList.add('ov-agree');
+        if(o === 'split') d.classList.add('ov-split');
+      } else if(i === state.cardIndex){
+        d.classList.add('current');
+      }
+      host.appendChild(d);
+    });
+    host.setAttribute('aria-label', Math.min(state.cardIndex + 1, n) + ' of ' + n);
   }
-  function vediReaction(key){ var r = (client.vediReactions || {})[key]; return r === 'like' || r === 'pass' ? r : null; }
+
+  // -- Dark bubble: the first-card tooltip and the locked-item tips -----------
+  var bubbleTimer = null;
+  function placeBubble(el, anchor){
+    var r = anchor.getBoundingClientRect();
+    el.style.visibility = 'hidden'; el.hidden = false;
+    var w = el.offsetWidth, h = el.offsetHeight;
+    var left = Math.max(16, Math.min(window.innerWidth - w - 16, r.left + r.width / 2 - w / 2));
+    var below = r.bottom + 12 + h < window.innerHeight - 8;
+    el.classList.toggle('below', below); el.classList.toggle('above', !below);
+    el.style.left = left + 'px';
+    el.style.top = (below ? r.bottom + 12 : r.top - 12 - h) + 'px';
+    el.style.setProperty('--arrow-x', Math.max(14, Math.min(w - 14, r.left + r.width / 2 - left)) + 'px');
+    el.style.visibility = '';
+  }
+  function showTip(){
+    if(state.cardIndex !== 0 || (state.onboardingDone && state.onboardingDone.tip)) return;
+    var dots = document.getElementById('feed-dots'), el = document.getElementById('gwk-bubble');
+    if(!dots || !el || state.screen !== 'feed') { setTimeout(function(){ if(state.screen === 'feed') showTip(); }, 400); return; }
+    el.className = 'bubble'; el.textContent = '';
+    var t = document.createElement('span'); t.textContent = 'Swipe to decide. Vedika reacts as you go.';
+    var x = document.createElement('button'); x.type = 'button'; x.className = 'bubble-x'; x.setAttribute('data-action', 'tip-dismiss'); x.setAttribute('aria-label', 'Dismiss'); x.innerHTML = '&times;';
+    el.appendChild(t); el.appendChild(x);
+    placeBubble(el, dots);
+  }
+  function hideTip(markDone){
+    var el = document.getElementById('gwk-bubble');
+    if(el && !el.classList.contains('gwk-tip')) el.hidden = true;
+    if(markDone && state.cardIndex === 0 && !(state.onboardingDone && state.onboardingDone.tip)){
+      state.onboardingDone = Object.assign({}, state.onboardingDone, { tip: true }); saveState();
+    }
+  }
+  function dismissTip(){ hideTip(true); }
+  function showLockTip(anchor){
+    var el = document.getElementById('gwk-bubble');
+    var text = LOCK_TIPS[anchor.getAttribute('data-lock')];
+    if(!el || !text) return;
+    clearTimeout(bubbleTimer);
+    el.className = 'bubble gwk-tip'; el.textContent = text;
+    el.style.paddingRight = '14px';
+    placeBubble(el, anchor);
+    bubbleTimer = setTimeout(function(){ el.hidden = true; el.style.paddingRight = ''; }, 2400);
+  }
+
+  // -- Vedika's reaction after each swipe ---------------------------------------
+  function scheduleReaction(card, action, isLast){
+    reacting = true;
+    var key = String(card.id);
+    setTimeout(function(){
+      revealed[key] = 1;
+      var o = outcome(key);
+      var done = function(){ reacting = false; renderDots(); if(isLast) finishDeck(); };
+      if(o === 'match' || o === 'split'){
+        track(o === 'match' ? 'match_seen' : 'split_seen', { card_key: key });
+        showMoment(o, card, visitorReaction(key), vediReaction(key), done);
+      } else {
+        showToast('PASS');
+        renderDots();
+        if(isLast) setTimeout(done, 1200); else done();
+      }
+    }, 700);
+  }
+  function showToast(text){
+    var t = document.getElementById('gwk-toast');
+    if(!t) return;
+    t.textContent = text; t.hidden = false;
+    t.style.animation = 'none'; void t.offsetWidth; t.style.animation = '';
+    setTimeout(function(){ t.hidden = true; }, 1300);
+  }
+  // The portal's overlap reveal (portal/reveal.js), without buttons: tap or
+  // ~2s continues. Match: like-green sunburst and floating hearts. Split: the
+  // two reactions' colours meeting at the card.
+  function showMoment(kind, card, vAct, wAct, done){
+    var K = window.gwmPortalKit;
+    var root = document.getElementById('reveal');
+    var line = kind === 'match' ? 'You both want this one.' : 'Split decision.';
+    root.textContent = '';
+    root.removeAttribute('style');
+    root.className = 'reveal rv-' + (kind === 'match' ? 'agree' : 'split') + (prefersReduced ? ' rv-reduced' : '');
+    root.setAttribute('aria-label', line);
+    var bg = document.createElement('div'); bg.className = 'rv-bg';
+    if(kind === 'split'){
+      var side = function(a){ return a === 'pass' ? 'var(--pass)' : 'var(--like)'; };
+      bg.style.setProperty('--rv-a', side(vAct));
+      bg.style.setProperty('--rv-b', side(wAct));
+    } else {
+      root.style.setProperty('--rv-c', 'var(--like)');
+      root.style.setProperty('--rv-c-ink', 'var(--like-ink)');
+      if(!prefersReduced && K){
+        var icons = document.createElement('div'); icons.className = 'rv-floaters'; icons.setAttribute('aria-hidden', 'true');
+        for(var i = 0; i < 12; i++){
+          var f = document.createElement('span'); f.className = 'rv-float'; f.innerHTML = K.ICONS.heart;
+          var r = K.mix(K.hash(card.title) + i * 0x9e3779b9);
+          f.style.left = (4 + (r % 92)) + '%';
+          var band = (r >>> 12) % 2 ? [4, 30] : [80, 94];
+          f.style.top = (band[0] + ((r >>> 7) % (band[1] - band[0]))) + '%';
+          f.style.setProperty('--d', ((r >>> 3) % 500) + 'ms');
+          f.style.setProperty('--s', (0.7 + ((r >>> 5) % 6) / 10).toFixed(2));
+          icons.appendChild(f);
+        }
+        bg.appendChild(icons);
+      }
+    }
+    root.appendChild(bg);
+    var STAMP = { like: 'Liked', pass: 'Passed' };
+    function seat(which, shape, act, name){
+      var wrap = document.createElement('div'); wrap.className = 'rv-side rv-' + which;
+      var av = document.createElement('div'); av.className = 'rv-av';
+      av.innerHTML = K ? K.avatarSVG({ avatar_shape: shape }, 96) : '';
+      var st = document.createElement('span'); st.className = 'rv-stamp gwm-center rv-a-' + act; st.textContent = STAMP[act] || act;
+      var nm = document.createElement('span'); nm.className = 'rv-name'; nm.textContent = name;
+      wrap.appendChild(av); wrap.appendChild(st); wrap.appendChild(nm);
+      return wrap;
+    }
+    var stage = document.createElement('div'); stage.className = 'rv-stage';
+    stage.appendChild(seat('left', 'ghost', vAct, 'You'));
+    var fam = fmtFamily(String(card.format || '').toLowerCase());
+    var c = document.createElement('div'); c.className = 'rv-card';
+    c.style.setProperty('--f-color', 'var(--f-' + fam + ')');
+    var head = document.createElement('div'); head.className = 'rv-card-head';
+    var pill = document.createElement('span'); pill.className = 'rv-fmt';
+    pill.style.setProperty('--f-ink', 'var(--f-' + fam + '-ink)');
+    pill.textContent = fmtLabel(String(card.format || '').toLowerCase());
+    head.appendChild(pill); c.appendChild(head);
+    var tt = document.createElement('p'); tt.className = 'rv-card-title'; tt.textContent = String(card.title || ''); c.appendChild(tt);
+    if(card.angle){ var sub = document.createElement('p'); sub.className = 'rv-card-sub'; sub.textContent = String(card.angle); c.appendChild(sub); }
+    var nSrc = Array.isArray(card.sources) ? card.sources.length : 0;
+    if(nSrc){ var src = document.createElement('span'); src.className = 'rv-card-src gwm-mono-tag'; src.textContent = nSrc === 1 ? '1 source' : nSrc + ' sources'; c.appendChild(src); }
+    stage.appendChild(c);
+    stage.appendChild(seat('right', 'worm', wAct, 'vedikabhasin'));
+    root.appendChild(stage);
+    var h2 = document.createElement('h2'); h2.className = 'rv-line'; h2.textContent = line; root.appendChild(h2);
+    root.hidden = false;
+    document.body.classList.add('rv-open');
+    var closed = false, timer = null;
+    function onKey(e){ if(e.key === 'Escape' || e.key === 'Enter' || e.key === ' ') close(); }
+    function close(){
+      if(closed) return; closed = true;
+      clearTimeout(timer);
+      root.hidden = true; root.textContent = '';
+      document.body.classList.remove('rv-open');
+      root.removeEventListener('click', close);
+      document.removeEventListener('keydown', onKey);
+      done();
+    }
+    root.addEventListener('click', close);
+    document.addEventListener('keydown', onKey);
+    timer = setTimeout(close, 2000);
+  }
+
+  // -- Auto-pick and the final screen -----------------------------------------
   function writeOrder(){
     var deck = deckKeys();
     var order = (Array.isArray(client.writeOn) ? client.writeOn.map(String) : []).filter(function(k){ return deck.indexOf(k) >= 0; });
@@ -3490,158 +3754,181 @@ body.dir-save  .ctl-save{
   // the first card in writeOn.
   function computePick(){
     var order = writeOrder();
-    var m = order.filter(function(k){ return visitorReaction(k) === 'like' && vediReaction(k) === 'like'; })[0];
+    var m = order.filter(function(k){ return outcome(k) === 'match'; })[0];
     if(m) return { key: m, reason: 'match' };
     var l = order.filter(function(k){ return visitorReaction(k) === 'like'; })[0];
     if(l) return { key: l, reason: 'liked' };
     return { key: order[0], reason: 'first' };
   }
-  function goToCollab(){
+  function finishDeck(){
     var deck = deckKeys();
-    var fresh = !state.collabPick || deck.indexOf(state.collabPick) === -1;
-    if(fresh){
+    var have = state.collabPick && deck.indexOf(state.collabPick) >= 0 && state.deliverByIso;
+    var reason = 'stored', fresh = false;
+    if(!have){
       var p = computePick();
-      state.collabPick = p.key;
-      state.events.push({ cardId: p.key, action: 'free_pick', timestamp: new Date().toISOString() });
+      state.collabPick = p.key; reason = p.reason; fresh = true;
+      state.deliverByIso = new Date(Date.now() + DAY_MS).toISOString();
+      state.vediSnapshot = configVedi();
       saveState();
-      try { window.gwmTrack && window.gwmTrack.capture('article_auto_picked', { card_key: p.key, reason: p.reason }); } catch(_){}
     }
-    // Store the pick unless the database already has one. First write wins:
-    // if another device picked first, show that pick.
+    // Store the pick once. The database keeps the first one, its delivery time
+    // and the reactions; every device then shows those.
     if(supabase && !(shared && shared.pick)){
-      rpc('set_collab_pick', { p_slug: SLUG, p_card_key: state.collabPick }).then(function(saved){
+      rpc('set_collab_pick', { p_slug: SLUG, p_card_key: state.collabPick, p_vedi_reactions: state.vediSnapshot || configVedi() }).then(function(saved){
+        if(!saved) return;
         if(shared) shared.pick = saved;
-        if(saved && saved.card_key && saved.card_key !== state.collabPick && !state.approved){
-          state.collabPick = saved.card_key; saveState(); renderCollab();
-        }
-      }).catch(function(){});
+        state.collabPick = saved.card_key;
+        if(saved.deliver_by) state.deliverByIso = saved.deliver_by;
+        if(saved.vedi_reactions && Object.keys(saved.vedi_reactions).length) state.vediSnapshot = saved.vedi_reactions;
+        saveState();
+        if(saved.created) pickMade(reason);
+        if(state.screen === 'final') renderFinal();
+      }).catch(function(){ if(fresh) pickMade(reason); });
+    } else if(fresh && !supabase){
+      pickMade(reason);
     }
-    if(state.approved && state.freePickCardId) state.collabPick = state.freePickCardId;
-    renderCollab();
-    show('collab');
-    if(!_collabSeen){
-      _collabSeen = true;
-      var deckK = deckKeys();
-      var counts = { match: 0, split: 0, pass: 0 };
-      deckK.forEach(function(k){ counts[collabTag(k)] += 1; });
-      try { window.gwmTrack && window.gwmTrack.capture('collab_view_seen', { matches: counts.match, splits: counts.split, passes: counts.pass, picked_card_key: state.collabPick, sent: !!state.approved }); } catch(_){}
-    }
+    goToFinal();
   }
-  function collabTag(k){
-    var v = visitorReaction(k), w = vediReaction(k);
-    if(v === 'like' && w === 'like') return 'match';
-    if(v === 'pass' && w === 'pass') return 'pass';
-    return 'split';
-  }
-  var ICON = {
-    like: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 21s-7-4.35-10-9.5C.5 8 2.7 4 6.5 4c2 0 3.5 1 5.5 3 2-2 3.5-3 5.5-3 3.8 0 6 4 4.5 7.5C19 16.65 12 21 12 21z"/></svg>',
-    pass: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>',
-    lock: '<svg class="tile-lock" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 10V7a5 5 0 0 1 10 0v3h1a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V11a1 1 0 0 1 1-1h1zm2 0h6V7a3 3 0 0 0-6 0v3z"/></svg>'
-  };
-  function reactEl(name, r){
-    var box = document.createElement('span'); box.className = 'collab-react';
-    var ic = document.createElement('span'); ic.className = 'ic ' + (r || 'none');
-    ic.innerHTML = r ? ICON[r] : '';
-    ic.setAttribute('aria-label', r === 'like' ? 'Keep' : r === 'pass' ? 'Pass' : '');
-    var nm = document.createElement('span'); nm.className = 'nm'; nm.textContent = name;
-    box.appendChild(ic); box.appendChild(nm);
-    return box;
-  }
-  function renderCollab(){
-    var visitor = String(client.greetingName || client.contactFirstName || '').trim() || 'You';
-    var writer  = String((runtime && runtime.writerName) || 'Vedika');
-    var rows = document.getElementById('collab-rows');
-    rows.textContent = '';
-    var TAG = { match: 'Match', split: 'Split', pass: 'Pass' };
-    deckKeys().forEach(function(k){
-      var c = findFull(k) || {};
-      var li = document.createElement('li'); li.className = 'collab-row';
-      var top = document.createElement('div'); top.className = 'collab-row-top';
-      var t = document.createElement('span'); t.className = 'collab-title'; t.textContent = String(c.title || '');
-      var tag = collabTag(k);
-      var tg = document.createElement('span'); tg.className = 'collab-tag t-' + tag; tg.textContent = TAG[tag];
-      top.appendChild(t); top.appendChild(tg);
-      var who = document.createElement('div'); who.className = 'collab-who';
-      var vn = reactEl(visitor, visitorReaction(k)); vn.setAttribute('data-ph-mask', '');
-      who.appendChild(vn); who.appendChild(reactEl(writer, vediReaction(k)));
-      li.appendChild(top); li.appendChild(who);
-      rows.appendChild(li);
-    });
-    var pick = findFull(state.collabPick) || {};
-    document.getElementById('collab-pick-title').textContent = String(pick.title || '');
-    var sent = document.getElementById('collab-sent');
-    document.getElementById('collab-form').hidden = !!state.approved;
-    sent.hidden = !state.approved;
-    if(state.approved){
-      // Same sentence as the confirmation screen on the other flows.
-      var fmt = String(pick.format || '').toLowerCase();
-      sent.textContent = '';
-      sent.appendChild(document.createTextNode(fmt === 'linkedin_post' ? 'Your LinkedIn post, ' : 'Your article, '));
-      var b = document.createElement('strong'); b.textContent = String(pick.title || ''); sent.appendChild(b);
-      sent.appendChild(document.createTextNode(', lands in your inbox by '));
-      var d = document.createElement('strong'); d.textContent = state.deliverByIso ? fmtDT(state.deliverByIso) : 'soon'; sent.appendChild(d);
-      sent.appendChild(document.createTextNode('.'));
-    } else {
-      var inp = document.getElementById('collab-email');
-      if(inp && !inp.value && state.emailProvided) inp.value = state.emailProvided;
-    }
-    var portal = document.getElementById('collab-portal');
-    portal.textContent = '';
-    [ { label: 'Feed', open: true }, { label: 'Library' }, { label: 'Hub' }, { label: collabLockedCount() + ' more directions' } ].forEach(function(tile){
-      var el = document.createElement('div'); el.className = 'collab-tile ' + (tile.open ? 'open' : 'locked');
-      el.textContent = tile.label;
-      if(!tile.open) el.insertAdjacentHTML('beforeend', ICON.lock);
-      portal.appendChild(el);
-    });
-  }
-  function sendCollab(){
-    var inp = document.getElementById('collab-email'), err = document.getElementById('collab-err');
-    var raw = String(inp.value || '').trim();
-    if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(raw)){ err.textContent = 'That email address does not look right.'; inp.focus(); return; }
-    err.textContent = ' ';
-    try { window.gwmTrack && window.gwmTrack.capture('email_submitted', { intent: 'approval' }); } catch(_){}
-    var now = new Date(), due = new Date(now.getTime() + DAY_MS);
-    var deck = deckKeys(), pickKey = state.collabPick;
-    var pick = findFull(pickKey) || {};
-    state.approved = true;
-    state.freePickCardId = pickKey;
-    state.approvedAtIso = now.toISOString();
-    state.deliverByIso = due.toISOString();
-    state.emailProvided = raw;
-    saveState();
-    logEvent('', 'approved');
-    // Database first (approval row + the article), then the Netlify form.
-    dataAdapter.submitApproval(pickKey, deck, raw);
+  // Runs on exactly one device: the one whose pick was stored.
+  function pickMade(reason){
+    track('article_auto_picked', { card_key: state.collabPick, reason: reason, delivery_channel: client.deliveryChannel || '' });
+    if(/template$/.test(SLUG)) return;
+    var deck = deckKeys(), pick = findFull(state.collabPick) || {};
+    // Approval row + the article (writing), then the Netlify notification.
+    dataAdapter.submitApproval(state.collabPick, deck, '');
     dataAdapter.postApproval({
       slug:             SLUG,
       companyName:      String(client.companyName || ''),
       cardTitle:        String(pick.title || ''),
       cardFormat:       String(pick.format || ''),
-      email:            raw,
+      email:            '',
       freeArticleTitle: String(pick.title || ''),
       directionTitles:  deck.map(function(k){ return String((findFull(k) || {}).title || ''); }).join(' | '),
-      approvedAt:       state.approvedAtIso,
+      approvedAt:       new Date().toISOString(),
       deliverBy:        state.deliverByIso,
-      landsBy:          fmtLandsBy(due)
+      landsBy:          fmtLandsBy(new Date(state.deliverByIso)) + ' via ' + (client.deliveryChannel || 'email')
     });
-    sendDeckComplete('approved');
-    renderCollab();
   }
-  // Netlify capture first, then Cal.com in the same tab.
-  function collabUnlock(){
+  function goToFinal(){
+    renderFinal();
+    show('final');
+    watchLog();
+  }
+  function lockEl(){ var l = document.createElement('span'); l.className = 'gwk-lock'; l.setAttribute('aria-hidden', 'true'); l.innerHTML = LOCK_SVG; return l; }
+  function renderFinal(){
+    var pick = findFull(state.collabPick) || {};
+    var arrive = document.getElementById('final-arrive');
+    arrive.textContent = '';
+    arrive.appendChild(document.createTextNode('Your article, '));
+    var b = document.createElement('strong'); b.textContent = String(pick.title || ''); arrive.appendChild(b);
+    arrive.appendChild(document.createTextNode(', lands in your ' + channelLabel() + ' by '));
+    var d = document.createElement('strong'); d.textContent = state.deliverByIso ? fmtDT(state.deliverByIso) : ''; arrive.appendChild(d);
+    arrive.appendChild(document.createTextNode(". It's yours either way."));
+
+    // Log: one row per swipe, in swipe order, with the result and sources.
+    var order = [], when = {};
+    state.events.forEach(function(e){
+      if(/^(like|pass|super|save)$/.test(e.action)){ var k = String(e.cardId); if(order.indexOf(k) === -1) order.push(k); when[k] = e.timestamp; }
+    });
+    deckKeys().forEach(function(k){ if(order.indexOf(k) === -1 && visitorReaction(k)) order.push(k); });
+    var log = document.getElementById('final-log');
+    log.textContent = '';
+    document.getElementById('final-log-count').textContent = order.length + ' call' + (order.length === 1 ? '' : 's') + ' logged';
+    var CHIP = { match: ['agree', 'Match'], split: ['split', 'Split'], pass: ['pass', 'Pass'] };
+    order.forEach(function(k){
+      var c = findFull(k) || {};
+      var row = document.createElement('div'); row.className = 'hist-card log-row';
+      row.style.setProperty('--f-color', 'var(--f-' + fmtFamily(String(c.format || '').toLowerCase()) + ')');
+      var t = document.createElement('p'); t.className = 'hist-title'; t.textContent = String(c.title || '');
+      var meta = document.createElement('div'); meta.className = 'log-meta';
+      var o = CHIP[outcome(k) || 'pass'];
+      var chip = document.createElement('span'); chip.className = 'result-chip ' + o[0]; chip.textContent = o[1];
+      meta.appendChild(chip);
+      if(when[k]){ var w = document.createElement('span'); w.className = 'when'; w.textContent = fmtWhen(when[k]); meta.appendChild(w); }
+      row.appendChild(t); row.appendChild(meta);
+      var srcs = Array.isArray(c.sources) ? c.sources : [];
+      if(srcs.length){
+        var srow = document.createElement('div'); srow.className = 'history-src-row';
+        srcs.slice(0, 5).forEach(function(src, i){
+          var url = String((src && src.url) || '').trim();
+          var a = document.createElement('a'); a.className = 'history-src-chip'; a.href = url || '#'; a.target = '_blank'; a.rel = 'noopener noreferrer';
+          var n = document.createElement('span'); n.className = 'history-src-n'; n.textContent = String(i + 1);
+          var p = document.createElement('span'); p.className = 'history-src-p'; p.textContent = shortPub(String((src && src.publisher) || url));
+          a.appendChild(n); a.appendChild(p);
+          a.addEventListener('click', function(){ logEvent(k, 'source_opened', { url: url }); });
+          srow.appendChild(a);
+        });
+        row.appendChild(srow);
+      }
+      log.appendChild(row);
+    });
+
+    // Library: the deck as a locked stack (pick on top), and the rest behind a lock.
+    var lib = document.getElementById('final-library');
+    lib.textContent = '';
+    var stack = document.createElement('button'); stack.type = 'button'; stack.className = 'gwk-lib-stack gwk-locked';
+    stack.setAttribute('data-lock', 'library'); stack.setAttribute('aria-label', LOCK_TIPS.library);
+    var books = deckKeys().filter(function(k){ return k !== state.collabPick; }).concat(state.collabPick ? [state.collabPick] : []);
+    var bw = document.createElement('div'); bw.className = 'gwk-lib-books'; stack.appendChild(bw);
+    books.slice(-3).forEach(function(k){
+      var c = findFull(k) || {}, fam = fmtFamily(String(c.format || '').toLowerCase());
+      var mb = document.createElement('div'); mb.className = 'mini-book fam-' + fam;
+      mb.style.setProperty('--f-color', 'var(--f-' + fam + ')');
+      mb.style.setProperty('--f-back', 'color-mix(in srgb, var(--f-' + fam + ') 22%, var(--white))');
+      var hd = document.createElement('div'); hd.className = 'mb-head';
+      var pl = document.createElement('span'); pl.className = 'rv-fmt'; pl.style.setProperty('--f-ink', 'var(--f-' + fam + '-ink)');
+      pl.textContent = fmtLabel(String(c.format || '').toLowerCase()); hd.appendChild(pl);
+      var ti = document.createElement('span'); ti.className = 'mb-title'; ti.textContent = String(c.title || '');
+      mb.appendChild(hd); mb.appendChild(ti);
+      bw.appendChild(mb);
+    });
+    stack.appendChild(lockEl());
+    var more = document.createElement('button'); more.type = 'button'; more.className = 'gwk-lib-stack gwk-lib-more gwk-locked';
+    more.setAttribute('data-lock', 'more'); more.setAttribute('aria-label', LOCK_TIPS.more);
+    var gw = document.createElement('div'); gw.className = 'gwk-lib-books'; more.appendChild(gw);
+    for(var g = 0; g < 3; g++){ var gb = document.createElement('div'); gb.className = 'mini-book ghost'; gw.appendChild(gb); }
+    var lbl = document.createElement('span'); lbl.className = 'gwk-lib-label'; lbl.textContent = lockedCount() + ' more directions';
+    more.appendChild(lbl); more.appendChild(lockEl());
+    lib.appendChild(stack); lib.appendChild(more);
+
+    // Hub: the sticky notes and the locked pencil.
+    renderHubTile(document.getElementById('final-hub-tile'));
+    // Signals lock icon.
+    $all('#screen-final .gwk-redacted .gwk-lock').forEach(function(l){ l.innerHTML = LOCK_SVG; });
+  }
+  function watchLog(){
+    if(logViewedSent || !('IntersectionObserver' in window)) return;
+    var sec = document.getElementById('final-log-section');
+    var io = new IntersectionObserver(function(entries){
+      if(entries.some(function(e){ return e.isIntersecting; })){ logViewed('scroll'); io.disconnect(); }
+    }, { threshold: 0.6 });
+    io.observe(sec);
+  }
+  function logViewed(how){
+    if(logViewedSent) return;
+    logViewedSent = true;
+    track('log_viewed', { how: how });
+  }
+  function seeLog(){
+    var sec = document.getElementById('final-log-section');
+    if(sec) sec.scrollIntoView({ behavior: prefersReduced ? 'auto' : 'smooth', block: 'start' });
+    logViewed('link');
+  }
+  function finalUnlock(){
     _bumpStep('cta_clicked');
-    try { window.gwmTrack && window.gwmTrack.capture('unlock_clicked', { unlock_mode: 'call', from: 'collab' }); } catch(_){}
+    track('unlock_clicked', { unlock_mode: 'call', from: 'final' });
     state.events.push({ action: 'cta_walkthrough_clicked', cardId: '', timestamp: new Date().toISOString() });
     saveState();
-    var url = COLLAB_BOOKING_URL + '?metadata%5Bslug%5D=' + encodeURIComponent(SLUG) +
-      (state.emailProvided ? '&email=' + encodeURIComponent(state.emailProvided) : '');
-    var capture = postForm('portal-unlock', {
-      slug: SLUG, companyName: String(client.companyName || ''),
-      pickedTitle: String((findFull(state.collabPick) || {}).title || ''), clickedAt: new Date().toISOString()
-    }, { keepalive: true });
-    var go = function(){ window.location.href = url; };
-    Promise.race([capture, new Promise(function(r){ setTimeout(r, 1500); })]).then(go, go);
+    window.open(BOOKING_URL_SWIPE2 + '?metadata%5Bslug%5D=' + encodeURIComponent(SLUG), '_blank', 'noopener,noreferrer');
   }
+  document.addEventListener('click', function(e){
+    var t = e.target.closest && e.target.closest('[data-lock]');
+    if(t) showLockTip(t);
+  });
+  document.addEventListener('keydown', function(e){
+    var t = document.activeElement;
+    if((e.key === 'Enter' || e.key === ' ') && t && t.getAttribute && t.getAttribute('data-lock') && t.tagName !== 'BUTTON'){ e.preventDefault(); showLockTip(t); }
+  });
   var lastDirection = null;
   function goToDirection(){
     var d = computeDirection();
@@ -4456,8 +4743,8 @@ body.dir-save  .ctl-save{
   // (sticky notes, text boxes, books, stickers) semi-blurry around it. Not
   // clickable; hints at what the Hub becomes once content lands.
   // ==============================
-  function renderHubTile(){
-    var host = document.getElementById('pd-hub');
+  function renderHubTile(hostEl){
+    var host = hostEl || document.getElementById('pd-hub');
     if(!host) return;
     host.textContent = '';
     var grid = document.createElement('div'); grid.className = 'pd-hub-grid';
@@ -5018,8 +5305,9 @@ body.dir-save  .ctl-save{
       case 'pass': case 'like':
         doAction(a); return;
       case 'save': case 'super': return;
-      case 'collab-send':   sendCollab(); return;
-      case 'collab-unlock': collabUnlock(); return;
+      case 'tip-dismiss':  dismissTip(); return;
+      case 'final-unlock': finalUnlock(); return;
+      case 'final-see-log': seeLog(); return;
       case 'approve-direction':   approve(); return;
       case 'change-direction':    changeDirection(); return;
       case 'back-to-direction':   show('direction'); return;

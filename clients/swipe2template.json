@@ -1,23 +1,15 @@
 {
   "slug": "swipe2template",
   "template": "swipe2",
-  "flow": "collab3",
-  "companyName": "Beacon Labs",
+  "lead_type": "warm",
+  "deliveryChannel": "email",
+  "company": "Beacon Labs",
   "contactFirstName": "Sam",
-  "greetingName": "Sam",
-  "introBasis": "your product pages, your press, and the wearable privacy questions no page of yours answers yet",
-  "emailKnown": false,
-  "stripeLink19": "https://buy.stripe.com/7sY8wP0M833Rcx21YugnK09",
-  "directionShape": {
-    "long_form": 1,
-    "short_insight": 2
-  },
-  "offerText": "Your first article is on me.",
-  "signal": null,
+  "sourceLine": "your product pages, your press, and the wearable privacy questions no page of yours answers yet",
   "vediReactions": {
     "c1": "like",
-    "c2": "pass",
-    "c3": "like"
+    "c2": "like",
+    "c3": "pass"
   },
   "writeOn": [
     "c3",

@@ -57,6 +57,13 @@ const raw = fs.readFileSync(filePath, "utf8");
 let data;
 try { data = JSON.parse(raw); } catch (err) { die(`invalid JSON: ${err.message}`); }
 
+// swipe2 configs (templates/README.md) name three fields differently.
+if (data.template === "swipe2") {
+  data.companyName  = data.companyName  ?? data.company;
+  data.introBasis   = data.introBasis   ?? data.sourceLine;
+  data.greetingName = data.greetingName ?? data.contactFirstName;
+}
+
 const {
   slug, companyName, contactFirstName, emailKnown,
   directionShape, offerText, signal, cards,
