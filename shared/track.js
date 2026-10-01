@@ -9,7 +9,12 @@
 //   * Local capture   Suppressed on localhost / 127.0.0.1 unless ?ph_debug=1.
 //   * Personal device ?gw_internal=1 flips a localStorage flag that opts the
 //                     device out entirely; ?gw_internal=0 clears it.
-//   * Super props     Attached to every event.
+//   * Super props     Attached to every event. Every template registers
+//                     template, slug, lead_type, cards_count and flow (from
+//                     the slug config in clients/<slug>.json).
+//   * Event names     Shared by every template: page_open, deal_me_in,
+//                     first_swipe, swipe_complete, email_submitted,
+//                     unlock_clicked. The older per-step events still fire.
 //   * Session replay  ENHANCED only. Inputs masked. [data-ph-mask] elements
 //                     have their text redacted so the greeting name never
 //                     appears in replays.
@@ -24,8 +29,10 @@
 // -----------------------------------------------------------------------------
 
 const APP           = 'sales_page';
-const PAGE_VERSION  = '2026-09-30-a';
-const BASIC_SLUGS   = new Set(['swipetemplate']);
+const PAGE_VERSION  = '2026-10-01-a';
+// The template routes are internal previews: BASIC, like swipetemplate.
+const BASIC_SLUGS   = new Set(['swipetemplate', 'swipe1template', 'rprtemplate', 'swipe2template']);
+const LEAD_TYPES    = ['warm', 'cold', 'partner'];
 const OPT_OUT_KEY   = 'gw_internal';
 
 let cfg          = null;
@@ -60,13 +67,18 @@ function ph(){
 function superProps(){
   const feed = (cfg && cfg.feed) || {};
   const N    = (feed.cards && feed.cards.length) || 0;
+  const unlock = feed.unlockMode || 'call';
   return {
     app:          APP,
+    template:     (cfg && cfg.template) || feed.template || 'legacy',
     slug:         (cfg && cfg.slug) || '',
+    lead_type:    LEAD_TYPES.indexOf(feed.leadType) >= 0 ? feed.leadType : 'unset',
+    cards_count:  N,
+    flow:         feed.flow || ('swipe_pick_' + unlock),
     company_name: feed.companyName || '',
     page_version: PAGE_VERSION,
     deck_size:    N,
-    unlock_mode:  feed.unlockMode || 'call',
+    unlock_mode:  unlock,
     src:          q('src') || 'direct'
   };
 }

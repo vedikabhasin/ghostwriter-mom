@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#F1F0EC">
+<meta name="robots" content="noindex, nofollow">
+<meta name="referrer" content="no-referrer">
+<title>Ghostwriter Mom | Swipe</title>
+<link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png">
+<!-- -----------------------------------------------------------------------------
+     Template "swipe2": scaffold. The flow is not built yet.
+     Wired now, so the build can start from it:
+       * slug from ?slug= (the _redirects rewrite) or the first path segment
+       * the slug config from /clients/<slug>.json (template must be "swipe2")
+       * PostHog through /shared/track.js: template, slug, lead_type,
+         cards_count and flow are registered on every event; page_open fires
+         on load. The other shared events (deal_me_in, first_swipe,
+         swipe_complete, email_submitted, unlock_clicked) go through
+         window.gwmTrack.capture(name, props) once the flow exists.
+     Copy rules: no RPR terms (pillar, insight article), no em dashes.
+     ----------------------------------------------------------------------------- -->
+<!-- PostHog stub (same snippet as the other templates). -->
+<script>
+!function(t,e){var o,n,p,r;e.__SV||(window.posthog=e,e._i=[],e.init=function(i,s,a){function g(t,e){var o=e.split(".");2==o.length&&(t=t[o[0]],e=o[1]),t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}}(p=t.createElement("script")).type="text/javascript",p.crossOrigin="anonymous",p.async=!0,p.src=s.api_host.replace(".i.posthog.com","-assets.i.posthog.com")+"/static/array.js",(r=t.getElementsByTagName("script")[0]).parentNode.insertBefore(p,r);var u=e;for(void 0!==a?u=e[a]=[]:a="posthog",u.people=u.people||[],u.toString=function(t){var e="posthog";return"posthog"!==a&&(e+="."+a),t||(e+=" (stub)"),e},u.people.toString=function(){return u.toString(1)+".people (stub)"},o="init capture register register_once register_for_session unregister unregister_for_session getFeatureFlag getFeatureFlagPayload isFeatureEnabled reloadFeatureFlags updateEarlyAccessFeatureEnrollment getEarlyAccessFeatures on onFeatureFlags onSessionId getSurveys getActiveMatchingSurveys renderSurvey canRenderSurvey identify setPersonProperties group resetGroups setPersonPropertiesForFlags resetPersonPropertiesForFlags setGroupPropertiesForFlags resetGroupPropertiesForFlags reset get_distinct_id getGroups get_session_id get_session_replay_url alias set_config startSessionRecording stopSessionRecording sessionRecordingStarted captureException loadToolbar get_property getSessionProperty createPersonProfile opt_in_capturing opt_out_capturing has_opted_in_capturing has_opted_out_capturing clear_opt_in_out_capturing debug getPageViewId".split(" "),n=0;n<o.length;n++)g(u,o[n]);e._i.push([i,s,a])},e.__SV=1)}(document,window.posthog||[]);
+</script>
+<style>
+@import url('/styles/tokens.css');
+@import url('https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;600;800&display=swap');
+:root{ --canvas:#F1F0EC; --ink:#0E0E0E; }
+html,body{margin:0; background:var(--canvas); color:var(--ink); font-family:"Inter Tight", system-ui, sans-serif;}
+.shell{max-width:480px; margin:0 auto; padding:48px 24px;}
+.eyebrow{font:500 13px/1 ui-monospace, monospace; letter-spacing:0.18em; text-transform:uppercase; opacity:0.7; margin:0 0 12px;}
+h1{font-size:32px; line-height:1.1; margin:0 0 12px;}
+p{font-size:17px; line-height:1.5; margin:0;}
+</style>
+</head>
+<body>
+<main class="shell" id="swipe2-root">
+  <p class="eyebrow">swipe2 template</p>
+  <h1 id="swipe2-company">Loading</h1>
+  <p id="swipe2-status">This template is a scaffold. The flow is not built yet.</p>
+</main>
+<script type="module">
+  import * as T from '/shared/track.js';
+  window.gwmTrack = T;
+
+  const TEMPLATE = 'swipe2';
+  function resolveSlug(){
+    const q = new URLSearchParams(location.search).get('slug');
+    if (q) return q.replace(/[^a-z0-9_-]/gi, '').toLowerCase();
+    return (location.pathname.replace(/^\/+/, '').split('/')[0] || '').toLowerCase();
+  }
+  const SLUG = resolveSlug();
+
+  async function loadJson(url){
+    const r = await fetch(url, { cache: 'no-cache' });
+    if (!r.ok) throw new Error(url + ' ' + r.status);
+    return r.json();
+  }
+  async function initPosthog(){
+    try {
+      const rt = await loadJson('/config/runtime.json');
+      if (!rt.posthogKey || rt.posthogKey === 'REPLACE_ME' || !window.posthog) return;
+      window.posthog.init(rt.posthogKey, {
+        api_host: rt.posthogHost || 'https://us.i.posthog.com',
+        person_profiles: 'identified_only',
+        disable_session_recording: true,
+        capture_pageview: true,
+        autocapture: false
+      });
+    } catch (_) {}
+  }
+
+  (async () => {
+    await initPosthog();
+    let feed = null;
+    try { feed = await loadJson('/clients/' + encodeURIComponent(SLUG) + '.json'); } catch (_) {}
+    if (!feed || feed.template !== TEMPLATE){
+      document.getElementById('swipe2-company').textContent = 'Not found';
+      document.getElementById('swipe2-status').textContent = 'No swipe2 config for this link.';
+      return;
+    }
+    document.getElementById('swipe2-company').textContent = feed.companyName || '';
+    T.initTracking({ slug: SLUG, feed, isInternal: !!feed.isInternal, template: TEMPLATE });
+    T.capture('page_open');
+  })();
+</script>
+</body>
+</html>

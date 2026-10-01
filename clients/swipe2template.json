@@ -1,0 +1,127 @@
+{
+  "slug": "swipe2template",
+  "template": "swipe2",
+  "companyName": "Beacon Labs",
+  "contactFirstName": "Sam",
+  "greetingName": "Sam",
+  "introBasis": "your product pages, your press, and the wearable privacy questions no page of yours answers yet",
+  "emailKnown": false,
+  "stripeLink19": "https://buy.stripe.com/7sY8wP0M833Rcx21YugnK09",
+  "directionShape": {
+    "long_form": 1,
+    "short_insight": 2
+  },
+  "offerText": "Your first article is on me.",
+  "signal": null,
+  "cards": [
+    {
+      "id": "c1",
+      "format": "long_form",
+      "title": "Bedside manner: wearables' positioning problem",
+      "angle": "Consumer neurotech keeps marketing to biohackers when the real ROI is helping doctors run harder conversations. Reposition around that reader and the enterprise pipeline gets warmer.",
+      "evidence": "Beacon's investor teardown on The Information (July 2026) lists three enterprise sleep-clinic pilots. beaconlabs.com still opens with 'biohack your brain.'",
+      "tags": [
+        "positioning",
+        "healthcare",
+        "GTM"
+      ],
+      "sources": [
+        {
+          "title": "Beacon Labs teardown",
+          "publisher": "The Information",
+          "url": "https://www.theinformation.com/articles/beacon-labs-teardown-2026"
+        },
+        {
+          "title": "beaconlabs.com homepage",
+          "publisher": "Beacon Labs",
+          "url": "https://beaconlabs.com/"
+        }
+      ]
+    },
+    {
+      "id": "c2",
+      "format": "short_insight",
+      "title": "12-hour sensors: the clinician trust threshold",
+      "angle": "Short datasets make clinicians skeptical. Battery life is not a spec issue, it is a credibility issue.",
+      "evidence": "Nature Sleep Medicine review (June 2026, doi:10.1038/nsm.2026.4471) cites 10-plus hours of continuous recording as the accepted clinical trust cutoff.",
+      "tags": [
+        "credibility",
+        "product",
+        "medical"
+      ],
+      "sources": [
+        {
+          "title": "Continuous sleep recording thresholds (review, June 2026)",
+          "publisher": "Nature Sleep Medicine",
+          "url": "https://www.nature.com/articles/nsm.2026.4471"
+        }
+      ]
+    },
+    {
+      "id": "c3",
+      "format": "linkedin_post",
+      "title": "Compliance moats wearable startups keep ignoring",
+      "angle": "FDA clearance is table stakes. The real moat is HIPAA-BAA-signed cloud storage, and it is cheaper to prove than most founders realize.",
+      "evidence": "Beacon's AWS re:Invent 2026 healthcare track talk (recording on YouTube) walks through a BAA-signed setup. The marketing site never surfaces it.",
+      "tags": [
+        "regulatory",
+        "moat",
+        "differentiation"
+      ],
+      "sources": [
+        {
+          "title": "AWS re:Invent 2026 healthcare track: Beacon Labs session",
+          "publisher": "AWS",
+          "url": "https://aws.amazon.com/events/reinvent/2026/healthcare/beacon-labs/"
+        },
+        {
+          "title": "AWS re:Invent 2026: Beacon BAA walkthrough (recording)",
+          "publisher": "YouTube",
+          "url": "https://www.youtube.com/watch?v=example-beacon-baa"
+        }
+      ]
+    },
+    {
+      "id": "c5",
+      "format": "short_insight",
+      "title": "Wearables' hidden B2B2C business model",
+      "angle": "The reviews complain about your app UX, but the real customer is the clinic that recommends you. Their UX starts with a clinician dashboard that does not exist yet.",
+      "evidence": "Amazon reviews for Beacon Ring average 4.1 stars from verified consumers and 4.8 stars from reviewers whose profiles identify as sleep clinicians.",
+      "tags": [
+        "positioning",
+        "product-strategy"
+      ],
+      "sources": [
+        {
+          "title": "Beacon Ring product reviews",
+          "publisher": "Amazon",
+          "url": "https://www.amazon.com/beacon-ring/product-reviews/example"
+        },
+        {
+          "title": "Beacon Ring product page",
+          "publisher": "Beacon Labs",
+          "url": "https://beaconlabs.com/product/ring"
+        }
+      ]
+    },
+    {
+      "id": "c6",
+      "format": "long_form",
+      "title": "Wearable privacy: 2026's open trust category",
+      "angle": "The privacy-first wearable brand is unclaimed. Whoever writes the plain-language biometric-data manifesto owns the trust conversation for a decade.",
+      "evidence": "Consumer Reports 2026 Wearable Privacy Audit (September) shows every top-10 policy buries data-retention terms behind an appendix link.",
+      "tags": [
+        "privacy",
+        "trust",
+        "category-leadership"
+      ],
+      "sources": [
+        {
+          "title": "Wearable Privacy Audit 2026",
+          "publisher": "Consumer Reports",
+          "url": "https://www.consumerreports.org/electronics/wearables/wearable-privacy-audit-2026/"
+        }
+      ]
+    }
+  ]
+}
