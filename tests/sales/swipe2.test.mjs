@@ -162,6 +162,17 @@ let deliverText = '';
   await page.waitForSelector('#reveal', { state: 'hidden', timeout: 3000 });
   check('match auto-advances after ~2s', true);
   check('dot 1 done with a match ring', (await dots(page))[0] === 'unread ov-agree', await dots(page));
+  // The feed's Log after one swipe: the portal Log with both seats.
+  await page.click('#screen-feed [data-action="show-history"]');
+  await page.waitForSelector('#screen-history.on');
+  const hl = await page.evaluate(() => ({ count: document.getElementById('hist-log-count').textContent, rows: Array.from(document.querySelectorAll('#history-log .log-row')).map((r) =>
+    (r.querySelector('.result-chip') || {}).innerText + '|' + Array.from(r.querySelectorAll('.hist-row')).map((x) => x.querySelector('.who').innerText.trim() + ':' + x.querySelector('.pill').innerText).join(',')) }));
+  check('feed Log after the first swipe: "1 call logged.", MATCH, both seats', hl.count === '1 call logged.' && JSON.stringify(hl.rows) === JSON.stringify(['MATCH|Sam:LIKED,vedikabhasin:LIKED']), hl);
+  await wait(900);
+  await page.screenshot({ path: OUT + '/s03b-feed-log.jpg', type: 'jpeg', quality: 80 });
+  await page.click('[data-action="close-history"]');
+  await page.waitForSelector('#screen-feed.on');
+  await wait(400);
 
   // Card 2: pass. Vedika liked it -> split.
   await swipe(page, 'left');
@@ -191,7 +202,8 @@ let deliverText = '';
     const s = document.getElementById('screen-final');
     const sections = Array.from(s.querySelectorAll('.pd-section')).map((x) => x.querySelector('.pd-h').innerText.replace(/\s+/g, ' ').trim());
     return { arrive: document.getElementById('final-arrive').textContent, inside: s.querySelector('.portal-p').textContent, sections,
-      log: Array.from(s.querySelectorAll('#final-log .log-row')).map((r) => r.querySelector('.hist-title').textContent + '|' + r.querySelector('.result-chip').innerText + '|' + r.querySelectorAll('.history-src-chip').length),
+      log: Array.from(s.querySelectorAll('#final-log .log-row')).map((r) => r.querySelector('.hist-title').textContent + '|' + r.querySelector('.result-chip').innerText + '|' + r.querySelectorAll('.history-src-chip').length +
+        '|' + Array.from(r.querySelectorAll('.hist-row')).map((x) => x.querySelector('.who').innerText.trim() + ':' + x.querySelector('.pill').innerText + ':' + !!x.querySelector('.av svg')).join(',')),
       captions: Array.from(s.querySelectorAll('.pd-caption')).map((c) => c.textContent),
       signalsText: s.querySelector('.gwk-redacted').innerText.trim(), signalsBlur: getComputedStyle(s.querySelector('.gwk-redacted .sk')).filter, redaction: s.querySelectorAll('.gwk-redacted .rd').length, signalsLock: !!s.querySelector('.gwk-redacted .gwk-lock svg'),
       libOpacity: getComputedStyle(s.querySelector('.gwk-lib-stack .gwk-lib-books')).opacity, more: s.querySelector('.gwk-lib-label').textContent, hubPencil: !!s.querySelector('#final-hub-tile .pd-hub-pencil'), hubLock: !!s.querySelector('#final-hub-tile .pd-hub-lock'), stickies: s.querySelectorAll('#final-hub-tile .pd-hub-sticky').length,
@@ -200,7 +212,8 @@ let deliverText = '';
   deliverText = f.arrive;
   check('top line: "Your article, {title}, lands in your inbox by {date}. It\'s yours either way."', new RegExp('^Your article, ' + title('c1').replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ', lands in your inbox by .+\\. It\'s yours either way\\.$').test(f.arrive) && f.inside === "Here's what your team gets inside.", f.arrive);
   check('PORTAL frame order: Log, Signals NEW, Library NEW, Hub NEW; no Feed', f.sections.join(' / ').toUpperCase() === 'LOG 3 CALLS LOGGED / SIGNALS NEW / LIBRARY NEW / HUB NEW', f.sections);
-  check('Log: one row per swipe with MATCH / SPLIT / PASS and its sources', f.log.length === 3 && f.log[0].startsWith(title('c1') + '|MATCH|') && f.log[1].includes('|SPLIT|') && f.log[2].includes('|PASS|') && f.log.every((r) => +r.split('|')[2] > 0), f.log);
+  check('Log (portal style): newest first, MATCH / SPLIT / PASS, sources', f.log.length === 3 && f.log[0].startsWith(title('c3') + '|PASS|') && f.log[1].includes('|SPLIT|') && f.log[2].startsWith(title('c1') + '|MATCH|') && f.log.every((r) => +r.split('|')[2] > 0), f.log);
+  check('Log seats: the visitor and vedikabhasin on every row, each with an avatar and a pill', f.log[2].endsWith('|Sam:LIKED:true,vedikabhasin:LIKED:true') && f.log[1].endsWith('|Sam:PASSED:true,vedikabhasin:LIKED:true') && f.log[0].endsWith('|Sam:PASSED:true,vedikabhasin:PASSED:true'), f.log);
   check('captions', JSON.stringify(f.captions) === JSON.stringify(['Every call logged, with the sources behind each card.', 'Where you rank, and who AI cites instead. Opens after your onboarding call.', "Your team's drafting board. Opens with your first content pack."]), f.captions);
   check('Signals: no text at all, blurred skeleton, redaction bars, lock', f.signalsText === '' && /blur/.test(f.signalsBlur) && f.redaction === 2 && f.signalsLock, f);
   check('Library: locked stack at 0.5 + "7 more directions"', f.libOpacity === '0.5' && f.more === '7 more directions', f);
@@ -238,8 +251,8 @@ console.log('\n=== Device B (a colleague on the same link)');
   await page.goto(BASE + '/' + SLUG);
   await page.waitForSelector('#screen-final.on', { timeout: 8000 });
   await wait(500);
-  const v = await page.evaluate(() => ({ arrive: document.getElementById('final-arrive').textContent, log: Array.from(document.querySelectorAll('#final-log .result-chip')).map((c) => c.innerText).join() }));
-  check('opens on the final screen: same pick, same delivery time, same log', v.arrive === deliverText && v.log === 'MATCH,SPLIT,PASS', v);
+  const v = await page.evaluate(() => ({ arrive: document.getElementById('final-arrive').textContent, log: Array.from(document.querySelectorAll('#final-log .result-chip')).map((c) => c.innerText).join(), seats: document.querySelectorAll('#final-log .hist-row').length }));
+  check('opens on the final screen: same pick, same delivery time, same log with both seats', v.arrive === deliverText && v.log === 'PASS,SPLIT,MATCH' && v.seats === 6, v);
   check('no second pick, no second approval or notification', rpcLog.filter((r) => r.name === 'set_collab_pick').length === 1 && db[SLUG].approvals.length === 1 && forms.filter((f) => f['form-name'] === 'approvals').length === 1);
   check('Device B: no page errors', !errors.length, errors);
   await ctx.close();

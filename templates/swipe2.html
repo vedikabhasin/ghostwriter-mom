@@ -1551,7 +1551,6 @@ body.dir-save  .ctl-save{
 /* Final screen */
 #screen-final{gap:14px;}
 #screen-final .conf-arrive{margin-top:6px;}
-.result-chip.pass{background:var(--canvas-alt); color:var(--ink-soft);}
 .final-log .hist-card{margin-bottom:8px;}
 .final-log .hist-card:last-child{margin-bottom:0;}
 .final-log .history-src-row{margin-top:8px;}
@@ -1867,15 +1866,10 @@ body.dir-save  .ctl-save{
   <!-- HISTORY -->
   <section class="screen" id="screen-history">
     <p class="dir-eyebrow">Your log</p>
-    <div class="hist-tabs" role="tablist" aria-label="Log views">
-      <button type="button" class="hist-tab active" role="tab" data-action="hist-tab-actions" aria-selected="true">Actions</button>
-      <button type="button" class="hist-tab"        role="tab" data-action="hist-tab-sources" aria-selected="false">Sources</button>
-    </div>
-    <ol class="history-list" id="history-list" role="tabpanel"></ol>
-    <div class="src-view" id="history-sources" role="tabpanel" hidden></div>
+    <p class="log-count" id="hist-log-count"></p>
+    <div class="final-log" id="history-log"></div>
     <div style="display:flex; justify-content:space-between; gap:12px; align-items:center;">
       <button type="button" class="btn btn-secondary" data-action="close-history" style="flex:1;">Back</button>
-      <button type="button" class="btn-ghost" data-action="start-over">Start over</button>
     </div>
   </section>
 
@@ -3825,43 +3819,7 @@ body.dir-save  .ctl-save{
     var d = document.createElement('strong'); d.textContent = state.deliverByIso ? fmtDT(state.deliverByIso) : ''; arrive.appendChild(d);
     arrive.appendChild(document.createTextNode(". It's yours either way."));
 
-    // Log: one row per swipe, in swipe order, with the result and sources.
-    var order = [], when = {};
-    state.events.forEach(function(e){
-      if(/^(like|pass|super|save)$/.test(e.action)){ var k = String(e.cardId); if(order.indexOf(k) === -1) order.push(k); when[k] = e.timestamp; }
-    });
-    deckKeys().forEach(function(k){ if(order.indexOf(k) === -1 && visitorReaction(k)) order.push(k); });
-    var log = document.getElementById('final-log');
-    log.textContent = '';
-    document.getElementById('final-log-count').textContent = order.length + ' call' + (order.length === 1 ? '' : 's') + ' logged';
-    var CHIP = { match: ['agree', 'Match'], split: ['split', 'Split'], pass: ['pass', 'Pass'] };
-    order.forEach(function(k){
-      var c = findFull(k) || {};
-      var row = document.createElement('div'); row.className = 'hist-card log-row';
-      row.style.setProperty('--f-color', 'var(--f-' + fmtFamily(String(c.format || '').toLowerCase()) + ')');
-      var t = document.createElement('p'); t.className = 'hist-title'; t.textContent = String(c.title || '');
-      var meta = document.createElement('div'); meta.className = 'log-meta';
-      var o = CHIP[outcome(k) || 'pass'];
-      var chip = document.createElement('span'); chip.className = 'result-chip ' + o[0]; chip.textContent = o[1];
-      meta.appendChild(chip);
-      if(when[k]){ var w = document.createElement('span'); w.className = 'when'; w.textContent = fmtWhen(when[k]); meta.appendChild(w); }
-      row.appendChild(t); row.appendChild(meta);
-      var srcs = Array.isArray(c.sources) ? c.sources : [];
-      if(srcs.length){
-        var srow = document.createElement('div'); srow.className = 'history-src-row';
-        srcs.slice(0, 5).forEach(function(src, i){
-          var url = String((src && src.url) || '').trim();
-          var a = document.createElement('a'); a.className = 'history-src-chip'; a.href = url || '#'; a.target = '_blank'; a.rel = 'noopener noreferrer';
-          var n = document.createElement('span'); n.className = 'history-src-n'; n.textContent = String(i + 1);
-          var p = document.createElement('span'); p.className = 'history-src-p'; p.textContent = shortPub(String((src && src.publisher) || url));
-          a.appendChild(n); a.appendChild(p);
-          a.addEventListener('click', function(){ logEvent(k, 'source_opened', { url: url }); });
-          srow.appendChild(a);
-        });
-        row.appendChild(srow);
-      }
-      log.appendChild(row);
-    });
+    renderPortalLog(document.getElementById('final-log'), document.getElementById('final-log-count'), false);
 
     // Library: the deck as a locked stack (pick on top), and the rest behind a lock.
     var lib = document.getElementById('final-library');
@@ -3895,6 +3853,74 @@ body.dir-save  .ctl-save{
     renderHubTile(document.getElementById('final-hub-tile'));
     // Signals lock icon.
     $all('#screen-final .gwk-redacted .gwk-lock').forEach(function(l){ l.innerHTML = LOCK_SVG; });
+  }
+  // The portal Log: one card per call, newest first. Each card shows the
+  // seats that reacted (the visitor's pick, then Vedika's once it has played),
+  // the result chip, the time and the sources.
+  function renderPortalLog(log, countEl, sentence){
+    if(!log) return;
+    var K = window.gwmPortalKit;
+    var last = {}, order = [];
+    state.events.forEach(function(e){
+      if(!/^(like|pass|super|save)$/.test(e.action)) return;
+      var k = String(e.cardId);
+      if(order.indexOf(k) === -1) order.push(k);
+      last[k] = e.timestamp;
+    });
+    deckKeys().forEach(function(k){ if(order.indexOf(k) === -1 && visitorReaction(k)) order.push(k); });
+    order.sort(function(a, b){ return String(last[b] || '') < String(last[a] || '') ? -1 : 1; });
+    var n = order.length;
+    if(countEl) countEl.textContent = n + (sentence ? (n === 1 ? ' call logged.' : ' calls logged.') : (n === 1 ? ' call logged' : ' calls logged'));
+    log.textContent = '';
+    if(!n){ var em = document.createElement('p'); em.className = 'hist-empty'; em.textContent = 'Swipe a card and it shows up here.'; log.appendChild(em); return; }
+    var PILL = { like: 'Liked', pass: 'Passed' };
+    var CHIP = { match: ['agree', 'Match'], split: ['split', 'Split'], pass: ['pass', 'Pass'] };
+    var visitorName = String(client.greetingName || client.contactFirstName || '').trim() || 'You';
+    function seatRow(shape, name, act, when){
+      var r = document.createElement('div'); r.className = 'hist-row';
+      var who = document.createElement('span'); who.className = 'who';
+      var av = document.createElement('span'); av.className = 'av'; av.innerHTML = K ? K.avatarSVG({ avatar_shape: shape }, 20) : '';
+      var nm = document.createElement('span'); nm.textContent = name;
+      who.appendChild(av); who.appendChild(nm);
+      var pill = document.createElement('span'); pill.className = 'pill gwm-center gwm-mono-tag ' + act; pill.textContent = PILL[act] || act;
+      var w = document.createElement('span'); w.className = 'when'; w.textContent = when ? fmtWhen(when) : '';
+      r.appendChild(who); r.appendChild(pill); r.appendChild(w);
+      return r;
+    }
+    order.forEach(function(k){
+      var c = findFull(k) || {};
+      var box = document.createElement('div'); box.className = 'hist-card log-row';
+      box.style.setProperty('--f-color', 'var(--f-' + fmtFamily(String(c.format || '').toLowerCase()) + ')');
+      var head = document.createElement('div'); head.className = 'log-head';
+      var t = document.createElement('p'); t.className = 'hist-title'; t.textContent = String(c.title || '');
+      head.appendChild(t);
+      var shown = !!revealed[k];
+      var o = shown ? outcome(k) : null;
+      if(o){
+        var meta = document.createElement('div'); meta.className = 'log-meta';
+        var chip = document.createElement('span'); chip.className = 'result-chip gwm-center gwm-mono-tag ' + CHIP[o][0]; chip.textContent = CHIP[o][1];
+        meta.appendChild(chip);
+        head.appendChild(meta);
+      }
+      box.appendChild(head);
+      box.appendChild(seatRow('ghost', visitorName, visitorReaction(k), last[k]));
+      if(shown && vediReaction(k)) box.appendChild(seatRow('worm', 'vedikabhasin', vediReaction(k), last[k]));
+      var srcs = Array.isArray(c.sources) ? c.sources : [];
+      if(srcs.length){
+        var srow = document.createElement('div'); srow.className = 'history-src-row';
+        srcs.slice(0, 5).forEach(function(src, i){
+          var url = String((src && src.url) || '').trim();
+          var a = document.createElement('a'); a.className = 'history-src-chip'; a.href = url || '#'; a.target = '_blank'; a.rel = 'noopener noreferrer';
+          var nn = document.createElement('span'); nn.className = 'history-src-n'; nn.textContent = String(i + 1);
+          var p = document.createElement('span'); p.className = 'history-src-p'; p.textContent = shortPub(String((src && src.publisher) || url));
+          a.appendChild(nn); a.appendChild(p);
+          a.addEventListener('click', function(){ logEvent(k, 'source_opened', { url: url }); });
+          srow.appendChild(a);
+        });
+        box.appendChild(srow);
+      }
+      log.appendChild(box);
+    });
   }
   function watchLog(){
     if(logViewedSent || !('IntersectionObserver' in window)) return;
@@ -5087,7 +5113,7 @@ body.dir-save  .ctl-save{
   // PostHog and stay in state.events so the portal can read them; they just
   // don't clutter the visitor's Actions list.
   var HISTORY_VISIBLE_ACTIONS = { like:1, pass:1, save:1, super:1, free_pick:1 };
-  function openHistory(){ renderActionsTab(); show('history'); }
+  function openHistory(){ renderPortalLog(document.getElementById('history-log'), document.getElementById('hist-log-count'), true); show('history'); }
   function renderActionsTab(){
     var list = document.getElementById('history-list');
     if(!list) return;

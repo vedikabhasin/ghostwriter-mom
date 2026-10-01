@@ -3,8 +3,8 @@
    2026-10-01 so the sales page looks and moves like the portal; the portal
    files are untouched and nothing here imports from /portal.
    Sources (portal/portal.css): reveal 633-709 and 903-908, bubble 576-583,
-   toast 584-592, dots 397-409 (scoped to .gwk-dots), Log rows 471-475 and
-   911-921, mini books 749-760. Avatars and icons: portal/avatars.js.
+   toast 584-592, dots 397-409 (scoped to .gwk-dots), Log rows 471-475, 476-485 and
+   911-921, seat avatars 325-327, mini books 749-760. Avatars and icons: portal/avatars.js.
    ----------------------------------------------------------------------------- */
 
 /* -- Reveal: the match and split moments -- */
@@ -152,6 +152,24 @@ body[data-view="library"] .toast{bottom:calc(var(--switch-h) + var(--switch-bott
 .mb-title{font-family:var(--font-display); font-weight:800; font-size:14px; line-height:1.2;}
 .mb-state{margin-top:auto; font-family:var(--font-mono); font-size:9px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--ink-soft);}
 
+/* -- Log seats: avatar, seat rows, action pills -- */
+.av{display:inline-flex; width:22px; height:22px; border-radius:50%; background:var(--white); align-items:center; justify-content:center;
+  box-shadow:0 0 0 1.5px var(--white), 0 2px 6px -2px rgba(14,14,14,0.3); flex:0 0 auto;}
+.av .av-svg{width:20px; height:20px;}
+.hist-row{display:grid; grid-template-columns:auto 1fr auto; gap:8px; align-items:center; padding:5px 0; border-top:1px dashed rgba(14,14,14,0.08); font-size:13px;}
+.hist-row .who{font-weight:600;}
+.hist-row .when{font-family:var(--font-mono); font-size:10.5px; letter-spacing:0.04em; color:var(--ink-soft); white-space:nowrap;}
+.hist-row .src{font-family:var(--font-mono); font-size:9.5px; color:var(--ink-soft); text-transform:uppercase; letter-spacing:0.08em;}
+.pill{padding:2px 7px 2px 8px; border-radius:999px; font-family:var(--font-mono); font-size:9.5px; text-transform:uppercase; font-weight:700; margin-left:4px; vertical-align:1px;}
+.pill.like{background:var(--like); color:var(--like-ink);}
+.pill.pass{background:var(--pass); color:var(--pass-ink);}
+.pill.fasttrack{background:var(--fasttrack); color:var(--fasttrack-ink);}
+.pill.save{background:var(--save); color:var(--save-ink);}
+.hist-empty{padding:18px; text-align:center; color:var(--ink-soft); font-family:var(--font-mono); font-size:12px;}
+/* Log: one row per card this member called. */
+.log-count{margin:0; font-weight:700;}
+.log-head{display:flex; flex-direction:column; gap:8px;}
+
 /* -- Sales-page addendum (not from the portal) --------------------------------
    The sales page names format families pillar / insight / post (see
    /shared/formats.js); the portal names them long / web / social. The toast
@@ -160,3 +178,7 @@ body[data-view="library"] .toast{bottom:calc(var(--switch-h) + var(--switch-bott
 .mini-book.fam-insight{--spine:7px;}
 .mini-book.fam-post   {--spine:4px;}
 .toast{bottom:calc(150px + env(safe-area-inset-bottom, 0px));}
+.result-chip.pass{background:var(--canvas-alt); color:var(--ink-soft);}
+.log-row .hist-row:first-of-type{margin-top:8px;}
+.log-row .hist-row .who{display:inline-flex; align-items:center; gap:8px;}
+.log-row .hist-row .pill{justify-self:start; margin-left:0;}
