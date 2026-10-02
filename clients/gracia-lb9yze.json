@@ -1,0 +1,110 @@
+{
+  "slug": "gracia-lb9yze",
+  "template": "swipe2",
+  "lead_type": "warm",
+  "deliveryChannel": "email",
+  "company": "Gracia",
+  "contactFirstName": "Georgii",
+  "sourceLine": "your 4DGS streaming and PortAventura work, and the questions producers ask before they book a capture",
+  "directionShape": "1 long-form article + 2 short insights",
+  "emailKnown": true,
+  "vediReactions": {
+    "r3-28": "like",
+    "r3-29": "like",
+    "r3-30": "pass"
+  },
+  "writeOn": [
+    "r3-28",
+    "r3-29",
+    "r3-30"
+  ],
+  "cards": [
+    {
+      "id": "r3-28",
+      "format": "short_insight",
+      "title": "Volumetric Video's Walls Are Bitrate and Capture Cost",
+      "angle": "Streamed 4D Gaussian splats now play on phones and headsets, so the playback problem is solved. What remains is how much bandwidth, capture work and processing a creator spends to make a scene worth watching.",
+      "evidence": "Your WebXR tier runs 120K splats per frame at 75 Mbps with keyframe plus delta encoding, with a 15K-splat mode at 17 Mbps, and your Vision Pro app cut bandwidth 10x against your earlier tech. The codec story and the capture-cost story are both told in press coverage; the piece tells them in your words.",
+      "tags": [
+        "gaussian-splatting",
+        "short-insight",
+        "launch-proof"
+      ],
+      "sources": [
+        {
+          "title": "Gracia's Moving Volumetric Captures Are Now Streamable",
+          "publisher": "UploadVR",
+          "url": "https://www.uploadvr.com/gracia-moving-volumetric-captures-now-streamable/"
+        },
+        {
+          "title": "DNE and Gracia release 4-minute streamable 4DGS performance",
+          "publisher": "CG Channel",
+          "url": "https://www.cgchannel.com/2026/04/dne-and-gracia-release-4-minute-streamable-4dgs-performance/"
+        },
+        {
+          "title": "Gracia launches first 4DGS app for Apple Vision Pro",
+          "publisher": "MacTech",
+          "url": "https://www.mactech.com/2026/06/22/gracia-launches-first-4d-gaussian-splatting-app-for-the-apple-vision-pro/"
+        }
+      ]
+    },
+    {
+      "id": "r3-29",
+      "format": "long_form",
+      "title": "A 78-Camera Rig for One Theme Park Character",
+      "angle": "Production 4DGS still needs tens of synchronised cameras and a studio session, which keeps capture out of reach for most productions. The playback side runs on a standalone headset; the capture side is still a soundstage.",
+      "evidence": "Your PortAventura build used 78 cameras in London, compressed tens of GB to about 850MB per minute, and plays at 72-plus fps on a PICO 4 Ultra Enterprise, while UploadVR reports around 60 cameras and studio sessions from about $15,000 for other captures. The article is what would have to change for productions without that stage.",
+      "tags": [
+        "volumetric-capture",
+        "long-form",
+        "customer-deployment"
+      ],
+      "sources": [
+        {
+          "title": "Gracia AI Powers First Photorealistic Digital Human in Live Theme Park",
+          "publisher": "Menlo Times",
+          "url": "https://www.menlotimes.com/post/gracia-ai-powers-first-photorealistic-digital-human-in-live-theme-park-mixed-reality-experience-usin"
+        },
+        {
+          "title": "Gracia's Moving Volumetric Captures Are Now Streamable",
+          "publisher": "UploadVR",
+          "url": "https://www.uploadvr.com/gracia-moving-volumetric-captures-now-streamable/"
+        },
+        {
+          "title": "Gaussian splatting videos can now be streamed like regular videos",
+          "publisher": "80.lv",
+          "url": "https://80.lv/articles/gaussian-splatting-videos-can-now-be-streamed-like-regular-videos"
+        }
+      ]
+    },
+    {
+      "id": "r3-30",
+      "format": "short_insight",
+      "title": "Capture Rigs as Physical AI Training Data",
+      "angle": "Nvidia's Cosmos 3 (June 2026) trained on 400M real and synthetic videos plus robot action data, and world-model teams want multi-view human motion with depth. The same rig that films a performer can produce it, with conditions.",
+      "evidence": "Your /data page extends the capture pipeline toward physical AI, listing multi-camera and stereo POV capture with depth, hand tracking and semantic splats. A first article would show exactly what a robotics team receives from one capture (synchronisation, calibration, labels, licensing) and which steps still separate that asset from model training.",
+      "tags": [
+        "physical-ai-data",
+        "short-insight",
+        "product-page-proof"
+      ],
+      "sources": [
+        {
+          "title": "Data",
+          "publisher": "Gracia",
+          "url": "https://gracia.ai/data"
+        },
+        {
+          "title": "Nvidia's Cosmos 3 open AI world model",
+          "publisher": "Axios",
+          "url": "https://www.axios.com/2026/06/01/nvidia-ai-push-cosmos-3-world-model"
+        },
+        {
+          "title": "Gracia AI raises $1.7M",
+          "publisher": "Startups Magazine",
+          "url": "https://startupsmagazine.co.uk/article-gracia-ai-raises-17m-build-first-infrastructure-4d-gaussian-splatting"
+        }
+      ]
+    }
+  ]
+}
