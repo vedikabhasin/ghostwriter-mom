@@ -9,22 +9,22 @@
   "directionShape": "1 long-form article + 2 short insights",
   "emailKnown": true,
   "vediReactions": {
-    "r2-01": "pass",
+    "r2-01": "like",
     "r2-02": "like",
-    "r2-03": "like"
+    "r2-03": "pass"
   },
   "writeOn": [
+    "r2-01",
     "r2-02",
-    "r2-03",
-    "r2-01"
+    "r2-03"
   ],
   "cards": [
     {
       "id": "r2-01",
       "format": "short_insight",
       "title": "Why the App Runtime Moved to the Phone",
-      "angle": "Meta opened Ray-Ban Display to third-party apps in May 2026 but runs them on the phone, not the glasses. Mentra reached the same architecture from the open-source side, and the reason is latency and ownership, not fashion.",
-      "evidence": "Your June 2026 roadmap post describes the old path (glasses to phone to cloud relay to developer app and back) and the control, privacy and OEM concerns it raised; Mentra 3.0 moved every miniapp onto the phone with offline STT and TTS. Confirm the round-trip figure with your engineers before it goes in a headline.",
+      "angle": "Meta opened Ray-Ban Display to third-party apps in May 2026 but runs them on the phone, not the glasses. Mentra reached the same architecture from the open-source side, and its own account says latency and ownership forced the move.",
+      "evidence": "Your June 2026 roadmap post describes the glasses to phone to cloud relay to developer app path and puts a button response at hundreds of milliseconds even in a good case; Mentra 3.0 (August 2026) moved every miniapp onto the phone with local STT and TTS models for when the connection drops. That is your own measurement, not a benchmark, and the article should say so.",
       "tags": [
         "smart-glasses-architecture",
         "short-insight",
@@ -53,7 +53,7 @@
       "format": "short_insight",
       "title": "Streaming Heat Is the Real Battery Ceiling",
       "angle": "Meta says third-party apps cannot run on its glasses because of compute, thermal and battery limits. Your build log is the only public account of what that limit looks like on a bench.",
-      "evidence": "Your Making Mentra Live post describes the first chip overheating after extended high-quality streaming and the board redesign that separated WiFi from the processor; the product page rates 40+ minutes of livestreaming against 10+ hours mixed use. The ratio between those two numbers is the article.",
+      "evidence": "Making Mentra Live (December 2025) names the original MTK6765, says high-quality streaming overheated it after 15-plus minutes, and describes the MTK8766 upgrade and separating the WiFi chip from the processor. The product page rates 40-plus minutes of livestreaming and 10-plus hours of mixed use, two different use profiles, and the piece is what you changed in the board and video pipeline between them.",
       "tags": [
         "wearable-thermals",
         "short-insight",
@@ -80,9 +80,9 @@
     {
       "id": "r2-03",
       "format": "linkedin_post",
-      "title": "One Vendor Ships Two Thirds of Smart Glasses",
-      "angle": "IDC put Meta at 68.7 percent of Q2 2026 smart glasses shipments, and its developer program is a preview with no stated review process. An open OS is only an argument if it runs on hardware people can buy.",
-      "evidence": "MentraOS is Apache 2.0 with 2.3k GitHub stars and supports Mentra Live, Even Realities G1 and G2 and Vuzix Z100, and your first 1,000-unit batch sold out in under a month. No post on your site makes the platform-risk case to an enterprise buyer in those terms.",
+      "title": "One Vendor Ships Two Thirds of XR Devices",
+      "angle": "IDC put Meta at 68.7 percent of Q2 2026 shipments across its combined XR headset and glasses tracker, and Meta's developer program is a preview with no stated review process. An open OS is only an argument if it runs on hardware people can buy.",
+      "evidence": "MentraOS is Apache 2.0, supports Mentra Live, Even Realities G1 and G2 and Vuzix Z100, and your first 1,000-unit batch sold out in under a month. Your August post makes the open-platform case in general terms; the specific piece is what an open runtime lets an enterprise control across those devices.",
       "tags": [
         "open-source-hardware",
         "linkedin-post",
