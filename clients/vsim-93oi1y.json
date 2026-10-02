@@ -23,8 +23,8 @@
       "id": "r2-19",
       "format": "short_insight",
       "title": "Why Simulation Speed Matters on the Robot Itself",
-      "angle": "Nvidia's Newton 1.0 (March 2026) sells thousands of parallel environments on datacenter GPUs. A robot in the field has one embedded GPU and a deadline measured in milliseconds, and that is a different engineering problem.",
-      "evidence": "The BBC's September 2026 feature reports Vsim running its simulator on compute carried by the robot, with Storey describing it looking about one second ahead across 20,000 possible combinations. No Vsim-authored piece explains the memory and latency budget that makes that possible.",
+      "angle": "Nvidia's Newton 1.0 (March 2026) sells thousands of parallel environments on datacenter GPUs. Running a simulator on the hardware a robot carries is a different engineering problem, and the two are complements, not rivals.",
+      "evidence": "The BBC's September 2026 feature reports your simulator running on compute carried by Freddo, with Storey describing it looking about a second ahead across 20,000 combinations, his description rather than a published benchmark. What has to fit the onboard budget and what still belongs in large-scale training is the article.",
       "tags": [
         "on-robot-simulation",
         "short-insight",
@@ -52,8 +52,8 @@
       "id": "r2-20",
       "format": "linkedin_post",
       "title": "What Legacy Contact Solvers Cost on GPUs",
-      "angle": "Isaac Sim 6.0 ships two physics backends and moved its core to Warp, a sign that solver architecture is now a live question. Storey's public position is that contact algorithms from the 1970s and 80s were not designed for GPU parallelism.",
-      "evidence": "Your founders spent a decade each on PhysX and Isaac Sim at Nvidia, and your 2024 round was raised on an up to 100x RL training speedup claim that has never been benchmarked in public. A piece that shows one concrete solver bottleneck and your alternative would be your first published content.",
+      "angle": "Isaac Sim 6.0 now ships two physics backends, which makes solver architecture a live question in the field. Storey's public position is that many familiar physics algorithms were built before GPUs became central to robot learning.",
+      "evidence": "Your founders spent a decade each on PhysX and Isaac Sim at Nvidia, and your 2024 round cited an up-to-100x RL training speedup that has no public baseline. A piece showing one contact-heavy task, where the mismatch costs time and what you do differently, would be your first published content and would make the 100x claim checkable.",
       "tags": [
         "physics-simulation",
         "linkedin-post",
@@ -61,14 +61,14 @@
       ],
       "sources": [
         {
-          "title": "Isaac Sim 6.0 Early Developer Release",
-          "publisher": "NVIDIA Forums",
-          "url": "https://forums.developer.nvidia.com/t/announcement-isaac-sim-6-0-early-developer-release-for-gtc26/363709"
-        },
-        {
           "title": "Robotics: Firms race to improve robot training systems",
           "publisher": "BBC",
           "url": "https://www.bbc.co.uk/news/articles/c79g0j3d4q9o"
+        },
+        {
+          "title": "Isaac Sim 6.0 Early Developer Release",
+          "publisher": "NVIDIA Forums",
+          "url": "https://forums.developer.nvidia.com/t/announcement-isaac-sim-6-0-early-developer-release-for-gtc26/363709"
         },
         {
           "title": "Vsim, founded by Nvidia alums, raises $21.5M",
@@ -81,12 +81,12 @@
       "id": "r2-21",
       "format": "short_insight",
       "title": "Speed Versus Realism in Sim-to-Real",
-      "angle": "Physical AI took $8.73B across 32 rounds in the year to July 2026, and NEURA partnered with Dassault specifically on the sim-to-real gap. Faster simulation only helps if the physics it runs holds up on the real robot.",
-      "evidence": "Lu describes Vsim's approach as reduced approximation, accuracy first, then speed, and the BBC piece quotes Cambridge's Rika Antonova on the same tension. Your bottle-grasp demo is the only public evidence; the article makes the argument the demo implies.",
+      "angle": "NEURA partnered with Dassault in April 2026 specifically on the sim-to-real gap, and a faster simulator only helps when the behaviour it teaches survives contact with the real world. Where a simulator accepts approximation is a design decision, not a detail.",
+      "evidence": "Lu describes Vsim's approach as reduced approximation, and the BBC piece quotes Cambridge's Rika Antonova on the limits of simulated worlds. Freddo's bottle grasp is a demonstration, not proof of transfer across robots; the article is where you accept approximation, where you refuse it, and how you test the difference on hardware.",
       "tags": [
         "sim-to-real",
         "short-insight",
-        "market-data"
+        "press-proof"
       ],
       "sources": [
         {
@@ -100,9 +100,9 @@
           "url": "https://www.therobotreport.com/neura-robotics-raise-up-1-4b-in-series-c-funding-physical-ai/"
         },
         {
-          "title": "Physical AI Startup Funding 2026",
-          "publisher": "NewMarketPitch",
-          "url": "https://newmarketpitch.com/blogs/news/physical-ai-funding-analysis"
+          "title": "Newton and Isaac Sim",
+          "publisher": "NVIDIA Perspectives",
+          "url": "https://perspectives.nvidia.com/isaac-sim/newtons-integration-isaac-sim-and-isaac-lab/"
         }
       ]
     }
