@@ -1,0 +1,110 @@
+{
+  "slug": "startbeyond-duipnb",
+  "template": "swipe2",
+  "lead_type": "warm",
+  "deliveryChannel": "email",
+  "company": "Start Beyond",
+  "contactFirstName": "Angus",
+  "sourceLine": "your Woolworths and aged care deployments, and the questions training leads ask before they scale VR",
+  "directionShape": "1 long-form article + 2 short insights",
+  "emailKnown": true,
+  "vediReactions": {
+    "r2-16": "pass",
+    "r2-17": "like",
+    "r2-18": "like"
+  },
+  "writeOn": [
+    "r2-17",
+    "r2-18",
+    "r2-16"
+  ],
+  "cards": [
+    {
+      "id": "r2-16",
+      "format": "short_insight",
+      "title": "Managing Enterprise VR Fleets as Meta's Offer Changes",
+      "angle": "Meta ended commercial Quest sales and new Horizon Managed Services subscriptions on February 20 2026; existing customers keep support to January 4 2030. The clock on provisioning, kiosk lockdown and remote wipe is now visible.",
+      "evidence": "Your Woolworths deployment runs 2,000 headsets across 1,000+ stores on Strivr, the largest fleet of its kind in Australian retail. No piece on your site tells a retail IT lead what the next four years of fleet management look like.",
+      "tags": [
+        "vr-fleet-management",
+        "short-insight",
+        "customer-story"
+      ],
+      "sources": [
+        {
+          "title": "Meta Is Shutting Down Its Quest For Business Program",
+          "publisher": "UploadVR",
+          "url": "https://www.uploadvr.com/meta-is-shutting-down-its-quest-for-business-program/"
+        },
+        {
+          "title": "Woolworths Group Training",
+          "publisher": "Start Beyond",
+          "url": "https://www.startbeyond.co/case-studies/woolworths-vr-training"
+        },
+        {
+          "title": "Meta to stop selling Quest headsets to businesses",
+          "publisher": "SiliconANGLE",
+          "url": "https://siliconangle.com/2026/01/16/meta-stop-selling-quest-headsets-businesses-discontinue-multiple-vr-features/"
+        }
+      ]
+    },
+    {
+      "id": "r2-17",
+      "format": "long_form",
+      "title": "360 Video or Real-Time 3D for Accredited Training",
+      "angle": "World Labs opened a World API in January 2026 that generates navigable 3D scenes from text or panoramas. Accredited units still need actor realism, a tablet fallback and an auditor who accepts the scenario, and generative 3D has none of that yet.",
+      "evidence": "Your Limestone Coast build delivers ASQA-compliant aged care and disability units on live-action 360 with branching, one facilitator to 28 learners on headsets and iPads. The tradeoff piece (reshoot cost versus assessment validity) is one only a studio that has shipped both can write.",
+      "tags": [
+        "immersive-content-format",
+        "long-form",
+        "customer-story"
+      ],
+      "sources": [
+        {
+          "title": "Limestone Coast case study",
+          "publisher": "Start Beyond",
+          "url": "https://www.startbeyond.co/case-studies/limestone-coast"
+        },
+        {
+          "title": "Announcing the World API",
+          "publisher": "World Labs",
+          "url": "https://www.worldlabs.ai/blog/announcing-the-world-api"
+        },
+        {
+          "title": "Interactive 360 Aged Care Training",
+          "publisher": "Start Beyond",
+          "url": "https://www.startbeyond.co/case-studies/interactive-360-aged-care-training"
+        }
+      ]
+    },
+    {
+      "id": "r2-18",
+      "format": "short_insight",
+      "title": "Confidence Is Not Competence Under the Aged Care Act",
+      "angle": "The new Aged Care Act commenced November 1 2025 and providers now report training against it. Self-reported confidence is the easiest outcome to collect and the weakest one to defend.",
+      "evidence": "Sacadi VR launched in February 2026 for aged care compliance, and your strongest published outcome is Reject Shop's \"very confident\" rising from 18 to 68 percent (n=95), explicitly a participant confidence measure. The article maps the ladder from confidence to observed competence and what each rung costs.",
+      "tags": [
+        "training-measurement",
+        "short-insight",
+        "case-study"
+      ],
+      "sources": [
+        {
+          "title": "About the new Aged Care Act",
+          "publisher": "Aged Care Quality and Safety Commission",
+          "url": "https://www.agedcarequality.gov.au/providers/reform-changes-providers/about-new-aged-care-act-and-key-changes-providers"
+        },
+        {
+          "title": "Start Beyond rolls out VR training to help aged care meet new compliance rules",
+          "publisher": "iTWire",
+          "url": "https://itwire.com/science-news/health/start-beyond-rolls-out-vr-training-to-help-aged-care-meet-new-compliance-rules"
+        },
+        {
+          "title": "Minaca VR case study",
+          "publisher": "Start Beyond",
+          "url": "https://www.startbeyond.co/case-studies/minaca-vr"
+        }
+      ]
+    }
+  ]
+}
