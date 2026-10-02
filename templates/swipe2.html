@@ -1764,6 +1764,7 @@ body.dir-save  .ctl-save{
             <div class="gwk-swap-pane on" data-pane="library"><div class="gwk-lib" id="final-library"></div></div>
             <div class="gwk-swap-pane" data-pane="hub" aria-hidden="true"><div class="pd-hub gwk-locked" id="final-hub-tile" role="button" tabindex="0" data-lock="hub" aria-label="Opens with your first content pack."></div></div>
           </div>
+          <p class="pd-caption">Your team's collections and drafting board.</p>
         </section>
       </div>
     </div>
@@ -1774,7 +1775,6 @@ body.dir-save  .ctl-save{
         <span class="arr" aria-hidden="true">&#8594;</span>
       </button>
     </span>
-    <button type="button" class="btn-ghost" data-action="final-see-log">See your log</button>
   </section>
 
   <!-- DIRECTION — slots rendered from directionShape. One tap picks the free article. -->
@@ -2982,7 +2982,6 @@ body.dir-save  .ctl-save{
     return null;
   }
   function attachOnboardingHint(){
-    showTip(); return;
     var top = document.querySelector('.card[data-depth="0"]');
     if(!top) return;
     if(state.cardIndex >= ONBOARDING_MAX) return;
@@ -3000,10 +2999,21 @@ body.dir-save  .ctl-save{
     var txt = document.createElement('div');
     txt.textContent =
       kind === 't' ? 'Tap card to expand.'
-    : kind === 'h' ? 'Swipe right to like. Left to pass.'
+    : kind === 'h' ? 'Swipe to decide. Vedika reacts as you go.'
     :                'Swipe up to fast-track. Down to save.';
     hint.appendChild(txt);
     top.classList.add('hint-visible', 'hint-' + kind);
+    if(kind === 't'){
+      clearTimeout(onbTimer);
+      onbTimer = setTimeout(function(){
+        var open = document.querySelector('.sheet-scrim.open');
+        if(state.cardIndex !== 0 || state.onboardingDone.t || open || state.screen !== 'feed') return;
+        var cur = document.querySelector('.card[data-depth="0"]');
+        if(cur){ cur.classList.remove('hint-visible','hint-t'); }
+        state.onboardingDone.t = true; saveState();
+        attachOnboardingHint();
+      }, 2500);
+    }
   }
   function stopOnboardingHint(top){
     if(!top) return;
@@ -3476,6 +3486,7 @@ body.dir-save  .ctl-save{
   // swipes found only there are written to the database on first load.
   // ===========================================================================
   var shared = null;
+  var onbTimer = null;
   var reacting = false;
   var revealed = Object.create(null);
   var logViewedSent = false;
@@ -3655,6 +3666,7 @@ body.dir-save  .ctl-save{
     if(lk && !prefersReduced){ lk.classList.remove('wiggle'); void lk.offsetWidth; lk.classList.add('wiggle'); }
     clearTimeout(bubbleTimer);
     el.className = 'bubble gwk-tip'; el.textContent = text;
+    tipScrollY = window.scrollY;
     el.style.paddingRight = '14px';
     placeBubble(el, anchor);
     bubbleTimer = setTimeout(function(){ el.hidden = true; el.style.paddingRight = ''; }, 2400);
@@ -3862,7 +3874,15 @@ body.dir-save  .ctl-save{
   // The "i" panel: how the swipe works on the feed, the portal on the final screen.
   // The "i" panel: the portal text on the intro and the final screen, the
   // swipe help while swiping.
+  function closeLockTip(){
+    var el = document.getElementById('gwk-bubble');
+    if(el && el.classList.contains('gwk-tip')){ clearTimeout(bubbleTimer); el.hidden = true; el.style.paddingRight = ''; }
+  }
+  // Scrolling away closes it; the small scroll a tap can trigger does not.
+  var tipScrollY = 0;
+  window.addEventListener('scroll', function(){ if(Math.abs(window.scrollY - tipScrollY) > 60) closeLockTip(); }, { passive: true });
   function renderInfo(){
+    closeLockTip();
     var portal = document.getElementById('info-portal');
     var dl = document.querySelector('#info-scrim dl');
     var showPortal = state.screen !== 'feed';
@@ -3871,9 +3891,14 @@ body.dir-save  .ctl-save{
     portal.hidden = !showPortal;
     if(!showPortal) return;
     portal.textContent = '';
-    [ 'Turns search and AI-citation gaps into technical articles, written and edited by a human for your brand in 24 hours. Not an unreviewed AI draft. No brief, no prompt, no calls needed.',
-      'A 15 min call unlocks your portal with ' + lockedCount() + ' more directions. 5 new ones each week.'
-    ].forEach(function(t){ var p = document.createElement('p'); p.textContent = t; portal.appendChild(p); });
+    var p1 = document.createElement('p');
+    var b = document.createElement('strong'); b.textContent = 'technical articles, written and edited by a human';
+    p1.appendChild(document.createTextNode('Turns search and AI-citation gaps into '));
+    p1.appendChild(b);
+    p1.appendChild(document.createTextNode(' for your brand in 24 hours. Not an unreviewed AI draft. No brief, no prompt, no calls needed.'));
+    var p2 = document.createElement('p');
+    p2.textContent = 'A 15 min call unlocks your portal with ' + lockedCount() + ' more directions. 5 new ones each week.';
+    portal.appendChild(p1); portal.appendChild(p2);
   }
   function lockEl(){ var l = document.createElement('span'); l.className = 'gwk-lock'; l.setAttribute('aria-hidden', 'true'); l.innerHTML = LOCK_SVG; return l; }
   function renderFinal(){
