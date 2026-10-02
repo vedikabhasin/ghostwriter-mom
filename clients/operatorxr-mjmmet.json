@@ -1,0 +1,110 @@
+{
+  "slug": "operatorxr-mjmmet",
+  "template": "swipe2",
+  "lead_type": "warm",
+  "deliveryChannel": "email",
+  "company": "Operator XR",
+  "contactFirstName": "Wayne",
+  "sourceLine": "your Texas DPS and Interceptor work, and the questions agencies ask before they buy VR training",
+  "directionShape": "1 long-form article + 2 short insights",
+  "emailKnown": true,
+  "vediReactions": {
+    "r3-46": "like",
+    "r3-47": "like",
+    "r3-48": "pass"
+  },
+  "writeOn": [
+    "r3-46",
+    "r3-47",
+    "r3-48"
+  ],
+  "cards": [
+    {
+      "id": "r3-46",
+      "format": "long_form",
+      "title": "Offline VR Is the Real Procurement Requirement",
+      "angle": "Texas DPS selected OP-2 in August 2025 for a statewide deployment, and agency IT reviews turn heavily on connectivity, updates and where training data lives. Running multi-user tracked scenarios with real-weapon recoil on standalone headsets is what makes those answers easy.",
+      "evidence": "OP-2 carries its own offline claims and shipped to Texas DPS on an initial AUD 4.3M order, up to AUD 5.71M with options; Interceptor, a separate product, runs with no backpack PC, no external tracking, no WiFi, at about 23 kg per two users. Your insights posts cover growth and events; the offline-architecture piece is the one a procurement officer forwards.",
+      "tags": [
+        "standalone-vr",
+        "long-form",
+        "contract-proof"
+      ],
+      "sources": [
+        {
+          "title": "Operator XR $5.71M Texas contract",
+          "publisher": "xReality Group",
+          "url": "https://xrgroup.com.au/news/operatorxr-5-71m-texas-contract/"
+        },
+        {
+          "title": "Operator XR Launches Interceptor",
+          "publisher": "iTWire",
+          "url": "https://itwire.com/it-people-news/education/operator-xr-launches-interceptor-purpose-built-c-suas-training-system.html"
+        },
+        {
+          "title": "Company spotlight Operator XR",
+          "publisher": "Police1",
+          "url": "https://www.police1.com/company-spotlight-operator-xr-delivers-immersive-vr-police-training-for-high-risk-decision-making"
+        }
+      ]
+    },
+    {
+      "id": "r3-47",
+      "format": "short_insight",
+      "title": "Counter-Drone Training Outruns Live Ranges",
+      "angle": "Live exercises cannot conveniently reproduce every drone threat or electronic-warfare condition, and counter-UAS skills decay without reps. The useful question is which decisions teams can rehearse in simulation and what still has to be tested in the field.",
+      "evidence": "Interceptor launched in April 2026 with FPV, ISR and swarm scenarios and EW effects, and a non-binding MOU with Thales Australia followed in June. Your ADM feature argues for simulated runs before live evaluation; the piece underneath it is how you decide what the simulation has to get right.",
+      "tags": [
+        "counter-uas",
+        "short-insight",
+        "defence-partnership"
+      ],
+      "sources": [
+        {
+          "title": "Operator XR Elevates Counter-Drone Training",
+          "publisher": "The Defense Post",
+          "url": "https://thedefensepost.com/2026/04/15/virtual-counter-drone-training/"
+        },
+        {
+          "title": "MOU with Thales Australia",
+          "publisher": "Operator XR",
+          "url": "https://operatorxr.com/insights/xtof27qur1rpgqbi27bdwo0pwqxwvx"
+        },
+        {
+          "title": "ADM feature on simulation and force readiness",
+          "publisher": "Operator XR",
+          "url": "https://operatorxr.com/insights/featured-in-australian-defence-magazine-why-simulation-is-the-missing-piece-in-force-readiness"
+        }
+      ]
+    },
+    {
+      "id": "r3-48",
+      "format": "short_insight",
+      "title": "Grant-Funded VR Needs a Plan Past the Purchase",
+      "angle": "DOJ's FY2026 Safer Outcomes program funded agency awards in capped, time-limited tracks. A grant buys the kit; keeping scenarios current, training instructors and maintaining equipment needs a budget line that outlives it, and most vendors avoid saying so.",
+      "evidence": "Your parent company reports a growing base of agency clients and a recurring-revenue model built on scenarios, analytics and support. A plain piece on how an agency should budget beyond the grant year is one no competitor has written, and it positions the subscription as the point rather than the catch.",
+      "tags": [
+        "public-safety-funding",
+        "short-insight",
+        "buyer-guide"
+      ],
+      "sources": [
+        {
+          "title": "Safer Outcomes program",
+          "publisher": "US DOJ COPS Office",
+          "url": "https://cops.usdoj.gov/saferoutcomes"
+        },
+        {
+          "title": "xReality Group Reports $20 Million Revenue in FY2026",
+          "publisher": "Kalkine Media",
+          "url": "https://kalkinemedia.com/au/news/announcements/xreality-group-reports-20-million-revenue-in-fy2026-reduces-net-loss-to-122000"
+        },
+        {
+          "title": "Maximizing Grant Opportunities",
+          "publisher": "Operator XR",
+          "url": "https://operatorxr.com/insights"
+        }
+      ]
+    }
+  ]
+}
