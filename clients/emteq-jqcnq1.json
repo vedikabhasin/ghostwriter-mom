@@ -1,0 +1,110 @@
+{
+  "slug": "emteq-jqcnq1",
+  "template": "swipe2",
+  "lead_type": "warm",
+  "deliveryChannel": "email",
+  "company": "Emteq Labs",
+  "contactFirstName": "Steen",
+  "sourceLine": "your OCO sensing and eating research, and the questions researchers ask before they put sensors on a face",
+  "directionShape": "1 long-form article + 2 short insights",
+  "emailKnown": true,
+  "vediReactions": {
+    "r3-37": "like",
+    "r3-38": "like",
+    "r3-39": "pass"
+  },
+  "writeOn": [
+    "r3-37",
+    "r3-38",
+    "r3-39"
+  ],
+  "cards": [
+    {
+      "id": "r3-37",
+      "format": "short_insight",
+      "title": "Face Sensing Without a Camera on the Face",
+      "angle": "Meta holds 94 percent of display-less AI glasses in H1 2026 using outward cameras and microphones, and an inward-facing camera is the privacy fight nobody wants. Reading facial movement optically at the skin is the alternative the category has not had to consider.",
+      "evidence": "Your OCO optomyography sensors measure facial movement without cameras or electrodes, sampling across 4 to 30 mm, and your referenced research reports 93 percent expression classification (F1 0.90); the Sense product separately uses an outward camera for food logging. The honest piece states what those signals tell researchers reliably and what they should not be asked to infer, and you have published nothing in 2026.",
+      "tags": [
+        "emotion-sensing-eyewear",
+        "short-insight",
+        "sensor-spec"
+      ],
+      "sources": [
+        {
+          "title": "AI glasses shipments surged 263% in H1 2026",
+          "publisher": "9to5Mac",
+          "url": "https://9to5mac.com/2026/09/21/report-ai-glasses-shipments-surged-263-in-h1-2026-as-apple-prepares-to-enter-the-market/"
+        },
+        {
+          "title": "From Biometrics to Emotion",
+          "publisher": "Emteq Labs",
+          "url": "https://www.emteqlabs.com/blog/from-biometrics-to-emotion-engineering-the-future-of-smart-wearables"
+        },
+        {
+          "title": "Emteq's Eyewear Detects Emotions",
+          "publisher": "IEEE Spectrum",
+          "url": "https://spectrum.ieee.org/glasses-health-tech"
+        }
+      ]
+    },
+    {
+      "id": "r3-38",
+      "format": "long_form",
+      "title": "Detecting a Meal Is Not Knowing What Was Eaten",
+      "angle": "Purdue's NIH-funded 200-person study (August 2026) exists because 24-hour recalls take 30 to 45 minutes a day and underreport calories by an estimated 5 to 15 percent; its device adds a camera triggered by chewing. Passive eating detection now has federal money behind it, and the boundary between detection and intake is the open question.",
+      "evidence": "Your validation reports over 90 percent chewing detection and identification of 96 percent of self-reported eating episodes across 100-plus participants, and Bristol's Consumer Lab is testing haptic feedback with OCOsense. You have written about eating detection already; the rigorous follow-up draws the line between chewing signals, eating episodes and nutritional estimates.",
+      "tags": [
+        "dietary-sensing",
+        "long-form",
+        "validation-proof"
+      ],
+      "sources": [
+        {
+          "title": "New technology captures eating habits in real time",
+          "publisher": "Purdue HHS",
+          "url": "https://www.purdue.edu/hhs/news/2026/08/new-technology-captures-eating-habits-in-real-time-to-advance-nutrition-research/"
+        },
+        {
+          "title": "Revolutionizing Dietary Health via Mindful Eating",
+          "publisher": "Emteq Labs",
+          "url": "https://www.emteqlabs.com/blog/revolutionizing-dietary-health-via-mindful-eating-and-real-time-data"
+        },
+        {
+          "title": "smart glasses eating project",
+          "publisher": "University of Bristol Consumer Lab",
+          "url": "https://consumer-lab.bristol.ac.uk/project/using-smart-glasses-to-track-and-manipulate-eating-in-the-real-world/"
+        }
+      ]
+    },
+    {
+      "id": "r3-39",
+      "format": "short_insight",
+      "title": "Where Valence Ends and Diagnosis Begins",
+      "angle": "FDA's January 2026 wellness guidance turns on intended use, not on a banned word. Facial-activity research can explore relationships with emotional state without turning a finding into a diagnostic claim, and the line has to be drawn deliberately.",
+      "evidence": "Your referenced research includes arousal and valence work with adults with depression alongside the 93 percent expression result, and your 2024 launch cited 27 patents and 28 publications. The piece states where you draw that line in products and publications, reviewed by your regulatory lead before it ships.",
+      "tags": [
+        "wellness-regulation",
+        "short-insight",
+        "research-proof"
+      ],
+      "sources": [
+        {
+          "title": "General Wellness: Policy for Low Risk Devices",
+          "publisher": "FDA",
+          "url": "https://www.fda.gov/media/90652/download"
+        },
+        {
+          "title": "Research using Emteq devices",
+          "publisher": "Emteq Labs",
+          "url": "https://www.emteqlabs.com/research-using-emteq-labs-devices"
+        },
+        {
+          "title": "Emteq Labs Unveils Emotion-Sensing Eyewear",
+          "publisher": "GlobeNewswire",
+          "url": "https://www.globenewswire.com/news-release/2024/10/15/2963261/0/en/Emteq-Labs-Unveils-World-s-First-Emotion-Sensing-Eyewear.html"
+        }
+      ]
+    }
+  ]
+}
