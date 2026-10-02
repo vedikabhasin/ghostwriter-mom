@@ -1,0 +1,110 @@
+{
+  "slug": "startbeyond-duipnb",
+  "template": "swipe2",
+  "lead_type": "warm",
+  "deliveryChannel": "email",
+  "company": "Start Beyond",
+  "contactFirstName": "Angus",
+  "sourceLine": "your Woolworths and aged care deployments, and the questions training leads ask before they scale VR",
+  "directionShape": "1 long-form article + 2 short insights",
+  "emailKnown": true,
+  "vediReactions": {
+    "r2-16": "pass",
+    "r2-17": "like",
+    "r2-18": "like"
+  },
+  "writeOn": [
+    "r2-17",
+    "r2-18",
+    "r2-16"
+  ],
+  "cards": [
+    {
+      "id": "r2-16",
+      "format": "short_insight",
+      "title": "Managing Enterprise VR Fleets as Meta's Offer Changes",
+      "angle": "Meta ended commercial Quest sales and new Horizon Managed Services subscriptions on February 20 2026; existing customers keep support to January 4 2030. Large deployments now depend on three parties, and the clock on who does what is visible.",
+      "evidence": "Your Woolworths program spans more than 1,000 stores and 2,000 headsets, with your case crediting Strivr's infrastructure for hardware, security, deployment and analytics. A joint piece on which parts of that deployment sit with the headset maker, the management platform and the content studio is one retail IT leads will read.",
+      "tags": [
+        "vr-fleet-management",
+        "short-insight",
+        "customer-story"
+      ],
+      "sources": [
+        {
+          "title": "An update on Meta for Work",
+          "publisher": "Meta for Work",
+          "url": "https://work.meta.com/help/1964851097790493"
+        },
+        {
+          "title": "Woolworths Group Training",
+          "publisher": "Start Beyond",
+          "url": "https://www.startbeyond.co/case-studies/woolworths-vr-training"
+        },
+        {
+          "title": "Meta Is Shutting Down Its Quest For Business Program",
+          "publisher": "UploadVR",
+          "url": "https://www.uploadvr.com/meta-is-shutting-down-its-quest-for-business-program/"
+        }
+      ]
+    },
+    {
+      "id": "r2-17",
+      "format": "long_form",
+      "title": "360 Video or Real-Time 3D for Accredited Training",
+      "angle": "World Labs opened a World API in January 2026 that generates navigable 3D scenes from text or panoramas. Live-action 360 puts a learner face to face with a believable care interaction; real-time 3D gives a team freedom to change the environment, and each serves a different assessment design.",
+      "evidence": "Your Limestone Coast build delivers aged care and disability units on live-action branching 360, one facilitator to 28 learners on headsets and iPads, alongside accredited training. The comparison a studio that has shipped both can write is actor performance, repeatability, update cost and the evidence an assessor needs for a specific course.",
+      "tags": [
+        "immersive-content-format",
+        "long-form",
+        "customer-story"
+      ],
+      "sources": [
+        {
+          "title": "Limestone Coast case study",
+          "publisher": "Start Beyond",
+          "url": "https://www.startbeyond.co/case-studies/limestone-coast"
+        },
+        {
+          "title": "Announcing the World API",
+          "publisher": "World Labs",
+          "url": "https://www.worldlabs.ai/blog/announcing-the-world-api"
+        },
+        {
+          "title": "Interactive 360 Aged Care Training",
+          "publisher": "Start Beyond",
+          "url": "https://www.startbeyond.co/case-studies/interactive-360-aged-care-training"
+        }
+      ]
+    },
+    {
+      "id": "r2-18",
+      "format": "short_insight",
+      "title": "Confidence Is Not Competence in Aged Care",
+      "angle": "The new Aged Care Act commenced November 1 2025 and providers are building evidence of how staff make and apply care decisions. Self-reported confidence is the easiest outcome to collect and the weakest to defend.",
+      "evidence": "Your Reject Shop pilot of Minaca measured \"very confident\" rising from 18 to 68 percent across 95 retail staff, and Sacadi VR (February 2026) is described as supporting assessment in structured aged care programs. The article maps what a scenario record can show and what still has to be observed on the job, without splicing the retail result into an aged care claim.",
+      "tags": [
+        "training-measurement",
+        "short-insight",
+        "case-study"
+      ],
+      "sources": [
+        {
+          "title": "About the new Aged Care Act",
+          "publisher": "Aged Care Quality and Safety Commission",
+          "url": "https://www.agedcarequality.gov.au/providers/reform-changes-providers/about-new-aged-care-act-and-key-changes-providers"
+        },
+        {
+          "title": "Sacadi VR",
+          "publisher": "Start Beyond",
+          "url": "https://www.startbeyond.co/sacadivr"
+        },
+        {
+          "title": "Minaca VR case study",
+          "publisher": "Start Beyond",
+          "url": "https://www.startbeyond.co/case-studies/minaca-vr"
+        }
+      ]
+    }
+  ]
+}
