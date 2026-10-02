@@ -1,0 +1,110 @@
+{
+  "slug": "canopy-72uicf",
+  "template": "swipe2",
+  "lead_type": "warm",
+  "deliveryChannel": "email",
+  "company": "Canopy",
+  "contactFirstName": "Sean",
+  "sourceLine": "your content filter and chatbot work, and the questions parents ask before they trust a safeguard",
+  "directionShape": "1 long-form article + 2 short insights",
+  "emailKnown": true,
+  "vediReactions": {
+    "r3-49": "like",
+    "r3-50": "like",
+    "r3-51": "pass"
+  },
+  "writeOn": [
+    "r3-49",
+    "r3-50",
+    "r3-51"
+  ],
+  "cards": [
+    {
+      "id": "r3-49",
+      "format": "short_insight",
+      "title": "Chatbot Filtering Without the Provider's Help",
+      "angle": "California SB 243 (effective January 1 2026) puts duties on companion-chatbot operators, with a private remedy for people who suffer injury. The law binds some operators; the protection gap is every chatbot and account a child can reach that it does not cover.",
+      "evidence": "Your March 2026 filter works at the browser and device level across ChatGPT, Gemini, Grok, Perplexity and Claude, routes native apps to filtered browser versions, and holds even when a family switches accounts. You explained the feature already; the deeper follow-up is the protection boundary, what happens in native apps, and how the filter keeps pace with changing outputs.",
+      "tags": [
+        "ai-safety-for-minors",
+        "short-insight",
+        "regulation"
+      ],
+      "sources": [
+        {
+          "title": "Canopy's Chatbot Content Filter",
+          "publisher": "Canopy",
+          "url": "https://canopy.us/blog/chatbot-content-filter/"
+        },
+        {
+          "title": "California SB 243 compliance requirements for AI companion chatbots",
+          "publisher": "Gunderson Dettmer",
+          "url": "https://www.gunder.com/en/news-insights/insights/client-insight-california-sb-243-new-compliance-requirements-for-operators-of-ai-companion-chatbots"
+        },
+        {
+          "title": "Our Technology",
+          "publisher": "Canopy",
+          "url": "https://canopy.us/our-technology/"
+        }
+      ]
+    },
+    {
+      "id": "r3-50",
+      "format": "long_form",
+      "title": "Age Verification Laws Do Not Filter Content",
+      "angle": "Texas's App Store Accountability Act took effect May 28 2026 after a Fifth Circuit stay, with further state laws on their own timelines. These laws move age categories and consent signals between stores and developers; they do not inspect what a child sees inside an app.",
+      "evidence": "Your position is that screen-time limits and content filtering are different jobs, and your product replaces explicit images inside otherwise allowed pages in milliseconds. A piece that tells parents which job each safeguard actually does is a traffic piece with a multi-year shelf life.",
+      "tags": [
+        "age-verification",
+        "long-form",
+        "product-positioning"
+      ],
+      "sources": [
+        {
+          "title": "Key Developments With State App Store Accountability Acts",
+          "publisher": "Wiley",
+          "url": "https://www.wiley.law/alert-Key-Developments-With-State-App-Store-Accountability-Acts-as-Texas-Act-Takes-Effect"
+        },
+        {
+          "title": "Screen Time Limits vs Content Filtering",
+          "publisher": "Canopy",
+          "url": "https://canopy.us/blog/screen-time-limits-vs-content-filtering/"
+        },
+        {
+          "title": "homepage",
+          "publisher": "Canopy",
+          "url": "https://canopy.us/"
+        }
+      ]
+    },
+    {
+      "id": "r3-51",
+      "format": "short_insight",
+      "title": "Replacing Pixels Beats Blocking Pages",
+      "angle": "Blocking a whole website is blunt when the unwanted material is one image on an otherwise useful page. Selective replacement needs a classifier fast enough that the page still loads normally, and honest numbers on what it gets wrong.",
+      "evidence": "Your patented SafeSmart filter replaces explicit images with white rectangles in browsers and some apps, decides in milliseconds, and serves 200,000-plus families by your own count. You publish no latency distribution, false-positive rate or statement of where the model runs; the article that does would separate you from every blocklist competitor.",
+      "tags": [
+        "real-time-image-classification",
+        "short-insight",
+        "patent-proof"
+      ],
+      "sources": [
+        {
+          "title": "Our Technology",
+          "publisher": "Canopy",
+          "url": "https://canopy.us/our-technology/"
+        },
+        {
+          "title": "Chatbot Content Filter",
+          "publisher": "Canopy",
+          "url": "https://canopy.us/blog/chatbot-content-filter/"
+        },
+        {
+          "title": "Key Developments With State App Store Accountability Acts",
+          "publisher": "Wiley",
+          "url": "https://www.wiley.law/alert-Key-Developments-With-State-App-Store-Accountability-Acts-as-Texas-Act-Takes-Effect"
+        }
+      ]
+    }
+  ]
+}
