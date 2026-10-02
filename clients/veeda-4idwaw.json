@@ -1,0 +1,110 @@
+{
+  "slug": "veeda-4idwaw",
+  "template": "swipe2",
+  "lead_type": "warm",
+  "deliveryChannel": "email",
+  "company": "Veeda AI",
+  "contactFirstName": "Sanja",
+  "sourceLine": "your founding thesis on simulated worlds, and the questions robotics teams ask before they trust one",
+  "directionShape": "1 long-form article + 1 short insight + 1 LinkedIn post",
+  "emailKnown": true,
+  "vediReactions": {
+    "r3-40": "pass",
+    "r3-41": "like",
+    "r3-42": "like"
+  },
+  "writeOn": [
+    "r3-41",
+    "r3-42",
+    "r3-40"
+  ],
+  "cards": [
+    {
+      "id": "r3-40",
+      "format": "linkedin_post",
+      "title": "Why Imitation Learning Alone Will Not Scale",
+      "angle": "Most of the robotics field is still collecting teleoperated demonstrations, and your founding thesis is that embodied intelligence will not emerge from imitation learning alone. Robots must also act, fail and try again, and that needs a world to do it in.",
+      "evidence": "Your homepage states the claim, your $90M seed from Khosla and Radical (August 2026) funds it, and your founders led Nvidia's 3D and simulation research. One site page and press quotes are your entire public voice, so the first article defines what a simulated world needs to make that learning useful.",
+      "tags": [
+        "world-models",
+        "linkedin-post",
+        "funding-proof"
+      ],
+      "sources": [
+        {
+          "title": "homepage",
+          "publisher": "Veeda AI",
+          "url": "https://veeda.ai/"
+        },
+        {
+          "title": "Former Nvidia lab leader Sanja Fidler launches Veeda AI",
+          "publisher": "BetaKit",
+          "url": "https://betakit.com/former-nvidia-lab-leader-sanja-fidler-launches-veeda-ai-to-tackle-world-models/"
+        },
+        {
+          "title": "Sanja Fidler raises over US$90M for Veeda AI",
+          "publisher": "The Logic",
+          "url": "https://thelogic.co/news/exclusive/veeda-ai-sanja-fidler-nvidia/"
+        }
+      ]
+    },
+    {
+      "id": "r3-41",
+      "format": "long_form",
+      "title": "Trial and Error on Hardware Is Slow and Costly",
+      "angle": "Real robots provide experience nothing else can, and running trial and error on them is slow, expensive and sometimes unsafe. Simulated interaction adds practice only where it transfers, and the test for that is the article.",
+      "evidence": "Your site makes the slow-and-costly argument directly and frames simulated reality as infrastructure for all of robotics. The piece that would stand out is the arithmetic on hours of useful experience per dollar, sim versus hardware, with a stated transfer test, and it doubles as a recruiting document.",
+      "tags": [
+        "data-economics",
+        "long-form",
+        "press-proof"
+      ],
+      "sources": [
+        {
+          "title": "homepage",
+          "publisher": "Veeda AI",
+          "url": "https://veeda.ai/"
+        },
+        {
+          "title": "Ex-Nvidia researchers raise $90M seed for world model startup Veeda",
+          "publisher": "Dealroom",
+          "url": "https://dealroom.co/news/146065-ex-nvidia-researchers-raise-90m-seed-for-world-model-startup-veeda/"
+        },
+        {
+          "title": "Fidler launches Veeda AI",
+          "publisher": "BetaKit",
+          "url": "https://betakit.com/former-nvidia-lab-leader-sanja-fidler-launches-veeda-ai-to-tackle-world-models/"
+        }
+      ]
+    },
+    {
+      "id": "r3-42",
+      "format": "short_insight",
+      "title": "Looks Right Versus Responds Right",
+      "angle": "A generated world can look convincing and still teach a robot the wrong lesson. A world model an agent acts inside has to be judged by what happens after the action, and that is harder to evaluate than a frame.",
+      "evidence": "Your site specifies multimodal world models for embodied agents to interact with, not video generation. The piece explains how you judge a world by its response to an agent rather than its appearance, naming the evaluation work you are willing to describe.",
+      "tags": [
+        "world-model-evaluation",
+        "short-insight",
+        "founding-thesis"
+      ],
+      "sources": [
+        {
+          "title": "homepage",
+          "publisher": "Veeda AI",
+          "url": "https://veeda.ai/"
+        },
+        {
+          "title": "Veeda seed coverage",
+          "publisher": "Dealroom",
+          "url": "https://dealroom.co/news/146065-ex-nvidia-researchers-raise-90m-seed-for-world-model-startup-veeda/"
+        },
+        {
+          "title": "Fidler launches Veeda AI",
+          "publisher": "BetaKit",
+          "url": "https://betakit.com/former-nvidia-lab-leader-sanja-fidler-launches-veeda-ai-to-tackle-world-models/"
+        }
+      ]
+    }
+  ]
+}
