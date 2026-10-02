@@ -1606,7 +1606,9 @@ body.dir-save  .ctl-save{
 /* Desk emojis stay hidden until the scatter starts (removed on start or
    after 3s at the latest). */
 body.gwk-scatter-pending .gwm-desk-frag{opacity:0;}
-.gwk-deal{position:fixed; inset:0; z-index:0; pointer-events:none; overflow:hidden;}
+/* Absolute, in page coordinates (height set from the page in JS), so the
+   cards scroll with the text on short screens. */
+.gwk-deal{position:absolute; left:0; top:0; width:100%; z-index:0; pointer-events:none; overflow:hidden;}
 body:not(.on-intro) .gwk-deal{display:none;}
 .gwk-deal-card{position:absolute; width:var(--w); height:calc(var(--w) * 1.3); border-radius:16px; background:#fff; box-sizing:border-box;
   padding:12px; display:flex; flex-direction:column; gap:8px; box-shadow:inset 0 0 0 2px var(--f-color), 0 22px 40px -22px rgba(14,14,14,0.45);
@@ -2993,7 +2995,6 @@ body:not(.on-intro) .gwk-deal{display:none;}
       if(!state.onboardingDone.h) return 'h';
       return null;
     }
-    if(state.cardIndex === 1 && !state.onboardingDone.v) return 'v';
     return null;
   }
   function attachOnboardingHint(){
@@ -3014,8 +3015,7 @@ body:not(.on-intro) .gwk-deal{display:none;}
     var txt = document.createElement('div');
     txt.textContent =
       kind === 't' ? 'Tap card to expand.'
-    : kind === 'h' ? 'Swipe to decide. Vedika reacts as you go.'
-    :                'Swipe up to fast-track. Down to save.';
+    :                'Swipe to decide. Vedika reacts as you go.';
     hint.appendChild(txt);
     top.classList.add('hint-visible', 'hint-' + kind);
     if(kind === 't'){
@@ -3698,9 +3698,13 @@ body:not(.on-intro) .gwk-deal{display:none;}
     setTimeout(function(){ document.body.classList.remove('gwk-scatter-pending'); }, 3000);
   }
   // The desk module mounts on its own schedule; wait up to 1.5s for it.
-  function scatterDesk(tries){
+  // onStart runs the moment the scatter begins (or is skipped), so the deal
+  // is timed from the emojis, not from page load.
+  function scatterDesk(onStart, tries){
     tries = tries || 0;
-    if(!document.querySelector('.gwm-desk-frag') && tries < 90){ requestAnimationFrame(function(){ scatterDesk(tries + 1); }); return; }
+    if(!document.querySelector('.gwm-desk-frag') && tries < 90){ requestAnimationFrame(function(){ scatterDesk(onStart, tries + 1); }); return; }
+    mark('gwk-scatter-start');
+    onStart();
     var frags = $all('.gwm-desk-frag').filter(function(el){ return el.getClientRects().length && getComputedStyle(el).display !== 'none'; });
     if(!frags.length || !frags[0].animate){ document.body.classList.remove('gwk-scatter-pending'); return; }
     var cx = window.innerWidth / 2, cy = window.innerHeight / 2;
@@ -3722,7 +3726,10 @@ body:not(.on-intro) .gwk-deal{display:none;}
     var vw = window.innerWidth;
     var card = document.getElementById('intro-offer'), hello = document.querySelector('.intro-hello'), btn = document.querySelector('#screen-intro [data-action="start"]');
     if(!card || !hello || !btn) return [];
-    var R = card.getBoundingClientRect(), H = hello.getBoundingClientRect(), B = btn.getBoundingClientRect();
+    // Page coordinates: viewport rects plus the scroll offset.
+    var sy = window.scrollY || window.pageYOffset || 0;
+    var page = function(el){ var q = el.getBoundingClientRect(); return { left: q.left, right: q.right, top: q.top + sy, bottom: q.bottom + sy }; };
+    var R = page(card), H = page(hello), B = page(btn);
     var w = Math.round(Math.max(104, Math.min(170, vw * 0.24))), h = w * 1.3;
     var clampX = function(x){ return Math.max(-w * 0.15, Math.min(vw - w * 0.85, x)); };
     return [
@@ -3737,6 +3744,10 @@ body:not(.on-intro) .gwk-deal{display:none;}
     if(!layer || !client) return;
     var spots = dealSpots();
     if(!spots.length) return;
+    // Cover the whole page; cards hanging past the bottom are clipped, not
+    // scrollable.
+    layer.style.height = '0px';
+    layer.style.height = Math.max(document.documentElement.scrollHeight, window.innerHeight) + 'px';
     var fresh = !layer.children.length;
     if(fresh){
       client.cards.slice(0, 3).forEach(function(c){
@@ -3757,7 +3768,7 @@ body:not(.on-intro) .gwk-deal{display:none;}
       el.style.left = sp.x + 'px'; el.style.top = sp.y + 'px';
       if(fresh && animate && el.animate){
         // Thrown from below the button, spinning, one after another.
-        var fromX = window.innerWidth / 2 - sp.x - sp.w / 2, fromY = window.innerHeight - sp.y + 40;
+        var fromX = window.innerWidth / 2 - sp.x - sp.w / 2, fromY = (window.scrollY || 0) + window.innerHeight - sp.y + 40;
         el.animate([
           { transform: 'translate(' + fromX + 'px,' + fromY + 'px) rotate(' + (sp.r - 70) + 'deg) scale(0.8)', opacity: 0 },
           { transform: 'translate(0,0) rotate(' + sp.r + 'deg) scale(1)', opacity: 0.92 }
@@ -3767,6 +3778,7 @@ body:not(.on-intro) .gwk-deal{display:none;}
   }
   // show() can finish on a later frame (view transition), so wait for the
   // intro to be on screen, up to a second.
+  function mark(name){ try{ performance.mark(name); }catch(_){} }
   function introAnimations(tries){
     if(dealt) return;
     tries = tries || 0;
@@ -3774,8 +3786,9 @@ body:not(.on-intro) .gwk-deal{display:none;}
     dealt = true;
     if(prefersReduced){ dealCards(false); return; }
     if(state.screen !== 'intro'){ document.body.classList.remove('gwk-scatter-pending'); return; }
-    scatterDesk();
-    setTimeout(function(){ if(state.screen === 'intro') dealCards(true); }, 2500);
+    scatterDesk(function(){
+      setTimeout(function(){ if(state.screen === 'intro'){ mark('gwk-deal-start'); dealCards(true); } }, 2500);
+    });
   }
   window.addEventListener('resize', function(){ if(document.getElementById('gwk-deal').children.length) dealCards(false); });
 

@@ -83,7 +83,7 @@ function rpc(name, a) {
 
 const browser = await chromium.launch();
 async function device(opts = {}) {
-  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, reducedMotion: opts.reduced ? 'reduce' : 'no-preference' });
+  const ctx = await browser.newContext({ viewport: opts.viewport || { width: 390, height: 844 }, isMobile: !!opts.mobile, hasTouch: !!opts.mobile, deviceScaleFactor: 2, reducedMotion: opts.reduced ? 'reduce' : 'no-preference' });
   await ctx.route('https://esm.sh/**', (r) => r.fulfill({ status: 200, contentType: 'application/javascript', headers: { 'access-control-allow-origin': '*' }, body: BUNDLE }));
   await ctx.route(/posthog\.com|fonts\.(googleapis|gstatic)/, (r) => r.abort());
   await ctx.route('https://cal.com/**', (r) => r.fulfill({ status: 200, contentType: 'text/html', body: '<title>Cal</title>' }));
@@ -120,7 +120,8 @@ let deliverText = '';
 {
   const { ctx, page, errors, events } = await device();
   // Record every Web Animation started on a desk emoji (the scatter).
-  await page.addInitScript(() => { window.__scatter = []; const an = Element.prototype.animate;
+  await page.addInitScript(() => { window.__hints = new Set(); new MutationObserver(() => document.querySelectorAll('.ghost-hint').forEach((h) => h.textContent && window.__hints.add(h.textContent))).observe(document, { subtree: true, childList: true, characterData: true });
+    window.__scatter = []; const an = Element.prototype.animate;
     Element.prototype.animate = function (k, o) { if (this.classList && this.classList.contains('gwm-desk-frag')) window.__scatter.push({ from: k[0], d: o.duration, delay: o.delay, t: performance.now() }); return an.call(this, k, o); }; });
   await page.goto(BASE + '/' + SLUG + '?ph_debug=1');
   await page.waitForSelector('[data-action="start"]', { state: 'visible' });
@@ -139,7 +140,7 @@ let deliverText = '';
     new Set(sc.list.map((x) => x.delay)).size === sc.list.length && Math.max(...sc.list.map((x) => x.delay)) === (sc.list.length - 1) * 55, sc);
   check('no cards dealt before 2.5s', sc.dealt === 0, sc.dealt);
   await page.waitForFunction(() => document.querySelectorAll('.gwk-deal-card').length === 3);
-  const dealAt = await page.evaluate(() => performance.now() - window.__scatter[0].t);
+  const dealAt = await page.evaluate(() => { const m = (n) => performance.getEntriesByName(n)[0].startTime; return { gap: m('gwk-deal-start') - m('gwk-scatter-start'), firstFrag: window.__scatter[0].t - m('gwk-scatter-start') }; });
   await wait(1200);
   const deal = await page.evaluate((titles) => {
     const cards = Array.from(document.querySelectorAll('.gwk-deal-card'));
@@ -149,7 +150,7 @@ let deliverText = '';
       layerZ: getComputedStyle(layer).zIndex, btn: onTop('#screen-intro [data-action="start"]'), offer: onTop('#intro-offer'), hello: onTop('.intro-hello'),
       inView: cards.every((c) => { const r = c.getBoundingClientRect(); return r.right > 0 && r.left < innerWidth && r.bottom > 0 && r.top < innerHeight; }), titlesWant: titles };
   }, CONFIG.cards.map((c) => c.title));
-  check('the 3 deck cards are dealt ~2.5s after the scatter starts', dealAt >= 2400 && dealAt < 3200, Math.round(dealAt));
+  check('the 3 deck cards are dealt 2.5s after the emojis start', dealAt.gap >= 2490 && dealAt.gap < 2700 && dealAt.firstFrag >= 0 && dealAt.firstFrag < 50, dealAt);
   check('dealt cards: the deck titles, blurred, hidden from screen readers, not clickable', JSON.stringify(deal.titles) === JSON.stringify(deal.titlesWant) && deal.blur.every((f) => /blur\(3px\)/.test(f)) && deal.ariaHidden === 'true' && deal.pe === 'none' && deal.inView, deal);
   check('heading, intro card and button stay on top of the cards and emojis', deal.btn && deal.offer && deal.hello, deal);
   await page.screenshot({ path: OUT + '/s01-intro.jpg', type: 'jpeg', quality: 80 });
@@ -189,6 +190,9 @@ let deliverText = '';
   await page.waitForSelector('#reveal', { state: 'hidden', timeout: 3000 });
   check('match auto-advances after ~2s', true);
   check('dot 1 done with a match ring', (await dots(page))[0] === 'unread ov-agree', await dots(page));
+  await wait(800);
+  const card2Hint = await page.evaluate(() => { const c = document.querySelector('#card-stage .card[data-depth="0"]'); const h = c && c.querySelector('.ghost-hint'); return { shown: !!(h && !h.hidden && c.classList.contains('hint-visible')), text: h ? h.textContent : '' }; });
+  check('card 2: no up / down hint (fast-track and save are locked)', !card2Hint.shown && !/fast-track|save/i.test(card2Hint.text), card2Hint);
   // The feed's Log after one swipe: the portal Log with both seats.
   await page.click('#screen-feed [data-action="show-history"]');
   await page.waitForSelector('#screen-history.on');
@@ -296,6 +300,8 @@ let deliverText = '';
   for (const e of ['page_open', 'deal_me_in', 'first_swipe', 'match_seen', 'split_seen', 'swipe_complete', 'article_auto_picked', 'log_viewed', 'unlock_clicked']) check('PostHog: ' + e, names.includes(e), names);
   const pr = events.find((e) => e.name === 'match_seen').props;
   check('PostHog props on events: template, slug, lead_type, cards_count, flow', pr.template === 'swipe2' && pr.slug === SLUG && pr.lead_type === 'warm' && pr.cards_count === 3 && !!pr.flow, pr);
+  const hints = await page.evaluate(() => Array.from(window.__hints));
+  check('onboarding hints over the whole deck: only tap and swipe-to-decide, never fast-track / save', hints.length >= 1 && hints.every((t) => /^(Tap card to expand\.|Swipe to decide\. Vedika reacts as you go\.)$/.test(t)), hints);
   check('Device A: no page errors', !errors.length, errors);
   await ctx.close();
 }
@@ -354,6 +360,24 @@ console.log('\n=== Device D: prefers-reduced-motion');
   const still = await page.evaluate(() => document.getAnimations().filter((a) => document.getElementById('reveal').contains(a.effect && a.effect.target)).length);
   check('reduced motion: like the portal, the whole scene (rays + 12 hearts) held still', r && /rv-static/.test(r.cls) && r.floaters === 12 && r.rays !== 'none' && still === 0, { r, still });
   check('Device D: no page errors', !errors.length, errors);
+  await ctx.close();
+}
+
+console.log('\n=== Intro scatter and deal on every screen size');
+for (const [name, width, height, mobile] of [['iPhone SE', 320, 568, 1], ['Pixel', 412, 915, 1], ['phone landscape', 844, 390, 1], ['iPad', 768, 1024, 1], ['desktop', 1440, 900, 0]]) {
+  delete db[SLUG];
+  const { ctx, page, errors } = await device({ viewport: { width, height }, mobile });
+  await page.addInitScript(() => { window.__frags = 0; const an = Element.prototype.animate; Element.prototype.animate = function (k, o) { if (this.classList && this.classList.contains('gwm-desk-frag')) window.__frags++; return an.call(this, k, o); }; });
+  await page.goto(BASE + '/' + SLUG);
+  await page.waitForSelector('.gwk-deal-card', { timeout: 10000 }); await wait(1200);
+  const r = await page.evaluate(() => {
+    const m = (n) => performance.getEntriesByName(n)[0].startTime;
+    const onTop = (s) => { const e = document.querySelector(s); e.scrollIntoView({ block: 'center' }); const q = e.getBoundingClientRect(); return [0.1, 0.5, 0.9].every((fx) => e.contains(document.elementFromPoint(q.left + q.width * fx, q.top + q.height / 2))); };
+    const cards = Array.from(document.querySelectorAll('.gwk-deal-card')).map((c) => c.getBoundingClientRect());
+    return { frags: window.__frags, gap: Math.round(m('gwk-deal-start') - m('gwk-scatter-start')), cards: cards.filter((q) => q.right > 0 && q.left < innerWidth).length,
+      hScroll: document.documentElement.scrollWidth > innerWidth, onTop: onTop('#screen-intro [data-action="start"]') && onTop('#intro-offer') && onTop('.intro-hello') };
+  });
+  check(name + ': emojis scatter, 3 cards dealt 2.5s later, text and button on top, no sideways scroll', r.frags >= 3 && r.gap >= 2490 && r.gap < 2700 && r.cards === 3 && !r.hScroll && r.onTop && !errors.length, { r, errors });
   await ctx.close();
 }
 
