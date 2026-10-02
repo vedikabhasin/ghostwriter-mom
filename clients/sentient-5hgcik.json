@@ -1,0 +1,110 @@
+{
+  "slug": "sentient-5hgcik",
+  "template": "swipe2",
+  "lead_type": "warm",
+  "deliveryChannel": "email",
+  "company": "Sentient Computing",
+  "contactFirstName": "Chris",
+  "sourceLine": "your StockyardViz and InDI twins, your mine safety work, and the questions operators ask before they fund a twin",
+  "directionShape": "1 long-form article + 2 short insights",
+  "emailKnown": true,
+  "vediReactions": {
+    "r2-10": "pass",
+    "r2-11": "like",
+    "r2-12": "like"
+  },
+  "writeOn": [
+    "r2-11",
+    "r2-12",
+    "r2-10"
+  ],
+  "cards": [
+    {
+      "id": "r2-10",
+      "format": "short_insight",
+      "title": "What Makes a Stockyard Twin Trustworthy",
+      "angle": "Around 90 percent of surveyed miners are using or piloting digital twins, and Datamine shipped one inside MineScape 2026 in March. Most twins are renders; a trustworthy one has a stated accuracy and a data path an operator can audit.",
+      "evidence": "StockyardViz publishes roughly 25 cm geometric accuracy and an approximately 15 percent Q1 material-allocation efficiency gain at an iron ore producer, with an 8 to 12 week implementation. How stacker positions, assays and weightometer data reach the model is a question for your engineers, and the answer is the article.",
+      "tags": [
+        "mining-digital-twin",
+        "short-insight",
+        "product-proof"
+      ],
+      "sources": [
+        {
+          "title": "StockyardViz",
+          "publisher": "Sentient Computing",
+          "url": "https://sencom.com.au/stockyardviz/"
+        },
+        {
+          "title": "Sentient at GRX26 Innovation Zone",
+          "publisher": "Sentient Computing",
+          "url": "https://sencom.com.au/2026/grx26/"
+        },
+        {
+          "title": "The optimisation of digital twins for mine safety",
+          "publisher": "Mine Australia",
+          "url": "https://mine.nridigital.com/mine_australia_dec25/the_optimisation_of_digital_twins_for_mine_safety"
+        }
+      ]
+    },
+    {
+      "id": "r2-11",
+      "format": "long_form",
+      "title": "Site Tourism Is the Twin ROI Nobody Models",
+      "angle": "Vendors sell twins on commissioning-time savings; the figure a CFO signs off on is flights. A twin that replaces a site visit has to integrate with permits, SCADA and ERP first, or the visit still happens.",
+      "evidence": "Your InDI page cites a resource company saving upwards of $3M a year on remote trips costing around 10k AUD each, with payback in months, and lists ERP, SCADA, permit, IoT and DMS integrations. No article shows the integration surface that made the number real.",
+      "tags": [
+        "digital-twin-roi",
+        "long-form",
+        "product-proof"
+      ],
+      "sources": [
+        {
+          "title": "Digital Twin (InDI)",
+          "publisher": "Sentient Computing",
+          "url": "https://sencom.com.au/products/digital-twin/"
+        },
+        {
+          "title": "5 Industry Trends for 2026",
+          "publisher": "Unity",
+          "url": "https://unity.com/blog/top-trends-redefining-industry-in-2026"
+        },
+        {
+          "title": "Sentient Joins Unity Partner Program",
+          "publisher": "Sentient Computing",
+          "url": "https://sencom.com.au/2026/sentient-joins-unity-partner-program-as-a-certified-authorized-service-partner/"
+        }
+      ]
+    },
+    {
+      "id": "r2-12",
+      "format": "linkedin_post",
+      "title": "LTIs Rise While Fatalities Fall",
+      "angle": "WA mineral industry fatalities dropped to one in 2023-24 while lost-time injuries rose to 591 and LTIFR climbed to 2.126 per million hours. The gap between the two curves is the case for training that targets habits, not rule knowledge.",
+      "evidence": "Your Barminco modules (2021) report zero pedestrian-to-vehicle incidents among 200+ trainees, and your 2026 Macmahon work uses a classroom, VR driving module and field verification sequence on priority rules. Pair the dated Barminco figure with the fresh WorkSafe data.",
+      "tags": [
+        "mine-safety-training",
+        "linkedin-post",
+        "case-study"
+      ],
+      "sources": [
+        {
+          "title": "Safety performance in the Western Australian mineral industry 2023-24",
+          "publisher": "WorkSafe WA",
+          "url": "https://www.worksafe.wa.gov.au/system/files/documents/2025-11/MS_RP_Safety-performance-2023-24.pdf"
+        },
+        {
+          "title": "Barminco VR Underground Safety Modules",
+          "publisher": "Sentient Computing",
+          "url": "https://sencom.com.au/case-studies/barminco-vr-underground-safety-modules/"
+        },
+        {
+          "title": "Closing the Gap Between Training and Performance",
+          "publisher": "Sentient Computing",
+          "url": "https://sencom.com.au/case-studies/closing-the-gap-between-training-and-performance/"
+        }
+      ]
+    }
+  ]
+}
