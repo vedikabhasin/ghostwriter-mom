@@ -1,0 +1,110 @@
+{
+  "slug": "sanctuary-lnixng",
+  "template": "swipe2",
+  "lead_type": "warm",
+  "deliveryChannel": "email",
+  "company": "Sanctuary AI",
+  "contactFirstName": "Olivia",
+  "sourceLine": "your hydraulic hand and industrial results, and the questions line engineers ask before they deploy",
+  "directionShape": "1 long-form article + 2 short insights",
+  "emailKnown": true,
+  "vediReactions": {
+    "r2-22": "like",
+    "r2-23": "like",
+    "r2-24": "pass"
+  },
+  "writeOn": [
+    "r2-22",
+    "r2-23",
+    "r2-24"
+  ],
+  "cards": [
+    {
+      "id": "r2-22",
+      "format": "short_insight",
+      "title": "Cycle Time Is the Production Gate",
+      "angle": "A wire-insertion task is not production-ready because a robot succeeds once. A line engineer reads success rate and takt together or not at all, and most humanoid announcements publish only the first.",
+      "evidence": "Your June 2026 proof of concept hit 99.5 percent or better success at a 2.54 second cycle, judged against a Tier 1 supplier's live production benchmarks, on commercial robotic platforms rather than Phoenix. The release states both numbers; the article explains why the second is the harder one and what \"matched live-line throughput\" required.",
+      "tags": [
+        "industrial-robotics",
+        "short-insight",
+        "customer-result"
+      ],
+      "sources": [
+        {
+          "title": "Sanctuary AI Expands Physical AI Strategy to Industrial Robotics",
+          "publisher": "Sanctuary AI",
+          "url": "https://sanctuary.ai/news/sanctuary-ai-expands-physical-ai-strategy-to-industrial-robotics-demonstrating-production-ready-ai-performance/"
+        },
+        {
+          "title": "Video Friday (June 19 2026)",
+          "publisher": "IEEE Spectrum",
+          "url": "https://spectrum.ieee.org/video-friday-agentic-ai-robot"
+        },
+        {
+          "title": "Robot plugs wires with 99.5% accuracy",
+          "publisher": "Interesting Engineering",
+          "url": "https://interestingengineering.com/ai-robotics/robot-plugs-wires-with-99-5-accuracy"
+        }
+      ]
+    },
+    {
+      "id": "r2-23",
+      "format": "short_insight",
+      "title": "Zero-Shot Sim-to-Real on a Hydraulic Hand",
+      "angle": "Teleoperation data is expensive to collect at scale, and a policy trained entirely in simulation shifts part of that cost to compute. Hydraulic actuators are harder to simulate than electric ones, which makes a successful transfer worth more than the demo suggests.",
+      "evidence": "Your April 2026 demo transferred a sim-only policy to a real hydraulic hand, reorienting a lettered cube ten consecutive times without a drop, after training thousands of hands in parallel in Isaac Lab. What the simulation had to capture well enough for that first transfer to work is the engineering story.",
+      "tags": [
+        "sim-to-real",
+        "short-insight",
+        "demo-proof"
+      ],
+      "sources": [
+        {
+          "title": "Zero-Shot In-Hand Manipulation on Hydraulic Hand",
+          "publisher": "Sanctuary AI",
+          "url": "https://sanctuary.ai/news/sanctuary-ai-demonstrates-zero-shot-in-hand-manipulation-on-hydraulic-hand/"
+        },
+        {
+          "title": "Sanctuary AI Leverages NVIDIA Isaac Lab",
+          "publisher": "Sanctuary AI",
+          "url": "https://sanctuary.ai/news/sanctuary-ai-leverages-isaac-lab/"
+        },
+        {
+          "title": "Controlling Advanced Hydraulic Hands Using RL",
+          "publisher": "Sanctuary AI",
+          "url": "https://sanctuary.ai/news/sanctuary-ai-controlling-advanced-hydraulic-hands/"
+        }
+      ]
+    },
+    {
+      "id": "r2-24",
+      "format": "long_form",
+      "title": "What DoF Counts Do Not Tell You About Hands",
+      "angle": "Degrees of freedom tell a buyer how many motions a hand can command. They say nothing about what it can hold, how it responds to a disturbance, or how it performs after repeated factory cycles.",
+      "evidence": "Your RL hand work (April 2025) reports in-hand reorientation under a 500 g load not encountered in training, a separate demonstration from the 2026 cube result, and the May 2026 Zeon partnership targets elastomers balancing toughness with tactile precision. The piece sets out the tests a buyer should ask for alongside a spec sheet, without claiming yours win each one.",
+      "tags": [
+        "robot-hands",
+        "long-form",
+        "partnership-proof"
+      ],
+      "sources": [
+        {
+          "title": "Controlling Advanced Hydraulic Hands Using RL",
+          "publisher": "Sanctuary AI",
+          "url": "https://sanctuary.ai/news/sanctuary-ai-controlling-advanced-hydraulic-hands/"
+        },
+        {
+          "title": "Zeon Invests in Sanctuary AI",
+          "publisher": "Sanctuary AI",
+          "url": "https://sanctuary.ai/news/zeon-invests-in-sanctuary-ai-and-partners-to-advance-specialized-materials-for-dexterous-robotics/"
+        },
+        {
+          "title": "Zero-Shot In-Hand Manipulation on Hydraulic Hand",
+          "publisher": "Sanctuary AI",
+          "url": "https://sanctuary.ai/news/sanctuary-ai-demonstrates-zero-shot-in-hand-manipulation-on-hydraulic-hand/"
+        }
+      ]
+    }
+  ]
+}
