@@ -1,0 +1,110 @@
+{
+  "slug": "nextworld-zpf50v",
+  "template": "swipe2",
+  "lead_type": "warm",
+  "deliveryChannel": "email",
+  "company": "Next World XR",
+  "contactFirstName": "Hayden",
+  "sourceLine": "your VR training analytics and the questions safety managers ask before they trust a VR certificate",
+  "directionShape": "1 long-form article + 2 short insights",
+  "emailKnown": true,
+  "vediReactions": {
+    "r2-07": "like",
+    "r2-08": "like",
+    "r2-09": "pass"
+  },
+  "writeOn": [
+    "r2-07",
+    "r2-08",
+    "r2-09"
+  ],
+  "cards": [
+    {
+      "id": "r2-07",
+      "format": "long_form",
+      "title": "Measuring Transfer, Not Completion",
+      "angle": "A March 2026 Scientific Reports study compared VR-trained substation workers against observations at a real site, and the field is starting to ask for that kind of evidence instead of completion rates. Your LMS already captures the inputs; the follow-up design is missing.",
+      "evidence": "Your analytics page logs actions, decisions, accuracy and timing per trainee, while your Komatsu case reports a potential 55.13 percent time-efficiency saving per class for the 2022 cohort, a throughput figure. Logged decisions become a transfer measure only with later on-site assessment, and the article is how a safety manager designs that step.",
+      "tags": [
+        "training-measurement",
+        "long-form",
+        "lms-proof"
+      ],
+      "sources": [
+        {
+          "title": "Virtual reality to enhance risk management and safety in electrical substations",
+          "publisher": "Nature Scientific Reports",
+          "url": "https://www.nature.com/articles/s41598-026-35534-1"
+        },
+        {
+          "title": "VR Training Analytics",
+          "publisher": "Next World XR",
+          "url": "https://www.nextworldxr.com/vr-training-analytics"
+        },
+        {
+          "title": "Komatsu case study",
+          "publisher": "Next World XR",
+          "url": "https://www.nextworldxr.com/case-studies/komatsu"
+        }
+      ]
+    },
+    {
+      "id": "r2-08",
+      "format": "short_insight",
+      "title": "Where a VR Record Sits in the Evidence Trail",
+      "angle": "WorkSafe WA's transition for mine statutory positions ended March 30 2026, and appointees must meet role-specific criteria including examinations. A VR session is not that evidence, and your own FAQ says so.",
+      "evidence": "Your FAQ states the platform cannot be used solely to certify someone in a course; it supplements learning or records refresher completion, and exports data in multiple formats without naming SCORM or xAPI. The piece defines what a VR record can show (what was practiced, how the learner responded) and where it fits inside a wider assessment.",
+      "tags": [
+        "training-compliance",
+        "short-insight",
+        "lms-proof"
+      ],
+      "sources": [
+        {
+          "title": "WorkSafe extends transition period for mines statutory positions",
+          "publisher": "WorkSafe WA",
+          "url": "https://www.worksafe.wa.gov.au/announcements/worksafe-extends-transition-period-mines-statutory-positions-0"
+        },
+        {
+          "title": "FAQ",
+          "publisher": "Next World XR",
+          "url": "https://www.nextworldxr.com/faq"
+        },
+        {
+          "title": "VR Training Analytics",
+          "publisher": "Next World XR",
+          "url": "https://www.nextworldxr.com/vr-training-analytics"
+        }
+      ]
+    },
+    {
+      "id": "r2-09",
+      "format": "short_insight",
+      "title": "Headset Fleets After Quest for Business",
+      "angle": "Meta stopped selling commercial Quest SKUs and new managed-services subscriptions on February 20 2026, with existing Horizon Managed Services customers supported to January 4 2030. Everyone else standing up a fleet now is on consumer hardware plus third-party MDM.",
+      "evidence": "Your pricing page lists seven compatible headsets, your FAQ names two Pico models for bring-your-own hardware, and offline mode appears as an Unlimited-tier feature while the FAQ says downloaded courses run without WiFi. A mine-site buyer needs those three answers in one place, and reconciling them is the article.",
+      "tags": [
+        "vr-fleet-management",
+        "short-insight",
+        "platform-shift"
+      ],
+      "sources": [
+        {
+          "title": "An update on Meta for Work",
+          "publisher": "Meta for Work",
+          "url": "https://work.meta.com/help/1964851097790493"
+        },
+        {
+          "title": "Pricing",
+          "publisher": "Next World XR",
+          "url": "https://www.nextworldxr.com/vr-training-pricing"
+        },
+        {
+          "title": "FAQ",
+          "publisher": "Next World XR",
+          "url": "https://www.nextworldxr.com/faq"
+        }
+      ]
+    }
+  ]
+}
