@@ -1,0 +1,110 @@
+{
+  "slug": "phoria-bpoyfs",
+  "template": "swipe2",
+  "lead_type": "warm",
+  "deliveryChannel": "email",
+  "company": "Phoria",
+  "contactFirstName": "Trent",
+  "sourceLine": "your digital twin and REWILD work, and the questions clients ask before they back a new headset",
+  "directionShape": "1 long-form article + 2 short insights",
+  "emailKnown": true,
+  "vediReactions": {
+    "r3-31": "pass",
+    "r3-32": "like",
+    "r3-33": "like"
+  },
+  "writeOn": [
+    "r3-32",
+    "r3-33",
+    "r3-31"
+  ],
+  "cards": [
+    {
+      "id": "r3-31",
+      "format": "short_insight",
+      "title": "How Julaymba Decided What Could Be Filmed, Built and Shared",
+      "angle": "Screen Australia's September 2026 report says games outgrow every other screen sector and names no XR funding line. Original XR in Australia has to argue for itself, and the production decisions behind Julaymba are that argument.",
+      "evidence": "Julaymba combines 180 and 360 video with constructed 3D environments, with Jabalbina Aboriginal Corporation as production partner safeguarding cultural integrity; it sold at $4.99 on Quest and your project page reports 15,000 views. The piece is how those decisions were made and who made them, written with your partners' account and approval.",
+      "tags": [
+        "indigenous-xr",
+        "short-insight",
+        "original-ip"
+      ],
+      "sources": [
+        {
+          "title": "Julaymba project page",
+          "publisher": "Phoria",
+          "url": "https://www.phoria.com.au/projects/julaymba"
+        },
+        {
+          "title": "Julaymba offers Indigenous perspective of the Daintree",
+          "publisher": "National Indigenous Times",
+          "url": "https://nit.com.au/26-03-2025/17030/julaymba-collaboration-offers-indigenous-perspective-of-the-daintree-rainforest"
+        },
+        {
+          "title": "Screen Currency 2026 and games funding",
+          "publisher": "Screen Australia",
+          "url": "https://www.screenaustralia.gov.au/screen-australia-funds-games-projects-in-every-state-and-territory-as-screen-currency-2026-points-to-sector-growth/"
+        }
+      ]
+    },
+    {
+      "id": "r3-32",
+      "format": "long_form",
+      "title": "Passthrough Glasses Reopen the On-Site Digital Twin",
+      "angle": "Meta's VR Glasses, announced September 2026 for spring 2027, bring full-colour passthrough at around 100 grams. Lighter hardware does not solve registration; it makes the registration problem worth solving again.",
+      "evidence": "You put a building model reported as 99 percent accurate into an on-site AR experience at 60 Martin Place in 2020 with Willow and Investa, and your project list includes twins for Arup, Aurecon and the University of Melbourne. The enduring lesson is how the model stays aligned to the building while someone walks through it, and it predates the new headsets.",
+      "tags": [
+        "ar-digital-twin",
+        "long-form",
+        "case-study"
+      ],
+      "sources": [
+        {
+          "title": "Everything announced at Meta Connect 2026",
+          "publisher": "Engadget",
+          "url": "https://www.engadget.com/2267230/everything-announced-at-meta-connect-2026/"
+        },
+        {
+          "title": "Digital Twin Sixty Martin Place",
+          "publisher": "Phoria",
+          "url": "https://www.phoria.com.au/projects/digital-twin-sixty-martin-place"
+        },
+        {
+          "title": "Sydney skyscraper built with AR digital twin tech",
+          "publisher": "Building Connection",
+          "url": "https://buildingconnection.com.au/2020/02/28/sydney-skyscraper-built-with-worlds-first-ar-digital-twin-tech/"
+        }
+      ]
+    },
+    {
+      "id": "r3-33",
+      "format": "short_insight",
+      "title": "Deciding Whether a New Platform Deserves an Early Release",
+      "angle": "Apple cut Vision Pro production and marketing in January 2026 after weak demand, and every studio that ported early now has a case study in platform timing. The useful version of that story is about what carried across, not what it earned.",
+      "evidence": "REWILD Spatial Nature Series is your free visionOS app adapted from the 2019 AR piece made with Netflix, WWF and Google, and Trent has written about the port on LinkedIn. A studio piece on what was reused, what was rebuilt, and how you decide a platform is worth being early on is one other studios will share.",
+      "tags": [
+        "platform-strategy",
+        "short-insight",
+        "app-proof"
+      ],
+      "sources": [
+        {
+          "title": "REWILD Spatial Nature Series",
+          "publisher": "Apple App Store",
+          "url": "https://apps.apple.com/us/app/rewild-spatial-nature-series/id6478364193"
+        },
+        {
+          "title": "Apple Retreats on Vision Pro as Consumer Demand Falls Short",
+          "publisher": "PYMNTS",
+          "url": "https://www.pymnts.com/apple/2026/apple-retreats-on-vision-pro-as-consumer-demand-falls-short/"
+        },
+        {
+          "title": "REWILD on Apple Vision Pro",
+          "publisher": "Trent Clews-de Castella on LinkedIn",
+          "url": "https://www.linkedin.com/pulse/rewild-apple-vision-pro-how-spatial-experiences-can-trent-adigc"
+        }
+      ]
+    }
+  ]
+}
