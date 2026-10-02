@@ -1,0 +1,110 @@
+{
+  "slug": "vividq-uzcfpn",
+  "template": "swipe2",
+  "lead_type": "warm",
+  "deliveryChannel": "email",
+  "company": "VividQ",
+  "contactFirstName": "Darran",
+  "sourceLine": "your holography work with JVCKenwood, iView and Call of Duty, and the questions glasses and car makers ask before they commit to a display",
+  "directionShape": "1 long-form article + 1 short insight + 1 LinkedIn post",
+  "emailKnown": true,
+  "vediReactions": {
+    "r3-25": "like",
+    "r3-26": "pass",
+    "r3-27": "like"
+  },
+  "writeOn": [
+    "r3-25",
+    "r3-27",
+    "r3-26"
+  ],
+  "cards": [
+    {
+      "id": "r3-25",
+      "format": "linkedin_post",
+      "title": "Display Glasses Are 4 Percent of AI Glasses",
+      "angle": "Counterpoint says 96 percent of AI glasses shipped in H1 2026 had no display, while the display segment grows fast from a small base. As displays enter more glasses, the question becomes what changes for the wearer when imagery can sit at different depths.",
+      "evidence": "Your position is that per-pixel-depth holography addresses the vergence-accommodation problem that fixed-focus displays carry, and your public proof runs from retina-resolution holograms on a 4K JVCKenwood LCoS (January 2024) to the 2025 Call of Duty holographic display announcement. Your blog has been silent since April 2024, in the year the category took off.",
+      "tags": [
+        "computer-generated-holography",
+        "linkedin-post",
+        "demo-proof"
+      ],
+      "sources": [
+        {
+          "title": "AI Glasses Shipments Surged 263% in H1 2026",
+          "publisher": "Xenospectrum",
+          "url": "https://xenospectrum.com/en/ai-glasses-h1-2026-shipments/"
+        },
+        {
+          "title": "World's first retina resolution holograms are here",
+          "publisher": "TNW",
+          "url": "https://thenextweb.com/news/vividq-first-retina-resolution-holograms"
+        },
+        {
+          "title": "Technology",
+          "publisher": "VividQ",
+          "url": "https://www.vividq.com/technology"
+        }
+      ]
+    },
+    {
+      "id": "r3-26",
+      "format": "short_insight",
+      "title": "Meta's Display Cost Target Versus the Holography Compute Bill",
+      "angle": "Meta has sketched what a mass-market glasses display stack would need to cost, and computed holography is not in most near-term roadmaps. For a glasses maker the open questions are power, compute, image quality and integration cost, in that order.",
+      "evidence": "You ran real-time CGH on an Arm Mali mobile GPU in 2020, claim 100 FPS generation today, and hold a patent on a 3D waveguide combiner that removes mechanical IPD adjustment. No public piece from you states what a hologram costs in power per frame, and that number decides the argument.",
+      "tags": [
+        "display-cost",
+        "short-insight",
+        "partner-proof"
+      ],
+      "sources": [
+        {
+          "title": "CES and AR/VR/MR 2026 Quick Takeaways Part 1",
+          "publisher": "KGOnTech",
+          "url": "https://kguttag.com/2026/03/09/ces-ar-vr-mr-2026-quick-takeaways-part-1-android-google-xr-and-meta/"
+        },
+        {
+          "title": "Arm on mobile holographic display",
+          "publisher": "VividQ",
+          "url": "https://www.vividq.com/news/arm-writes-about-the-magic-and-science-behind-mobile-holographic-display-with-vividq"
+        },
+        {
+          "title": "Partners",
+          "publisher": "VividQ",
+          "url": "https://www.vividq.com/partners"
+        }
+      ]
+    },
+    {
+      "id": "r3-27",
+      "format": "long_form",
+      "title": "Holographic Windshield Film Is Not a Holographic HUD",
+      "angle": "Hyundai Mobis, ZEISS, tesa and Saint-Gobain formed a supply alliance in February 2026 around holographic optical-element windshield film at 10,000-plus nits with a 2029 commercialisation target. That film directs projected light; a computer-generated hologram represents depth.",
+      "evidence": "Your CoReality HUD product and your 2021 iView licence for automotive optical modules sit on the other side of that distinction. An automotive buyer needs to know what each approach does, what it needs behind the glass, and what depth the driver actually sees, and VividQ is placed to say it plainly.",
+      "tags": [
+        "automotive-hud",
+        "long-form",
+        "product-proof"
+      ],
+      "sources": [
+        {
+          "title": "Hyundai Mobis Forms Global Alliance for Next-Generation Display Technologies",
+          "publisher": "PR Newswire",
+          "url": "https://www.prnewswire.com/news-releases/hyundai-mobis-forms-global-alliance-for-next-generation-display-technologies-302676003.html"
+        },
+        {
+          "title": "Products",
+          "publisher": "VividQ",
+          "url": "https://www.vividq.com/products"
+        },
+        {
+          "title": "VividQ teams up with iView",
+          "publisher": "Cambridge Independent",
+          "url": "https://www.cambridgeindependent.co.uk/business/vividq-teams-up-with-iview-to-bring-holography-to-the-consum-9218172/"
+        }
+      ]
+    }
+  ]
+}
