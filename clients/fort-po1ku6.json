@@ -1,0 +1,110 @@
+{
+  "slug": "fort-po1ku6",
+  "template": "swipe2",
+  "lead_type": "warm",
+  "deliveryChannel": "email",
+  "company": "FORT Robotics",
+  "contactFirstName": "Samuel",
+  "sourceLine": "your Agility, NVIDIA and wireless safety work, and the questions safety engineers ask before robots work beside people",
+  "directionShape": "1 long-form article + 2 short insights",
+  "emailKnown": true,
+  "vediReactions": {
+    "r3-43": "like",
+    "r3-44": "like",
+    "r3-45": "pass"
+  },
+  "writeOn": [
+    "r3-43",
+    "r3-44",
+    "r3-45"
+  ],
+  "cards": [
+    {
+      "id": "r3-43",
+      "format": "long_form",
+      "title": "Humanoid Safety Has No Finished Standard",
+      "angle": "ISO/CD 25785-1, the standard for actively balanced industrial mobile robots, is listed by ISO as under development with no firm date. Digit is moving toward closer work with people in the meantime, so the safety architecture has to be designed before the standard says how.",
+      "evidence": "Your October 1 2026 MOU with Agility covers a safety pendant, on-robot comms and an Offboard Safety Bridge being developed for the forthcoming Digit 5, while Digit's predecessors hold 65,000-plus operating hours at Schaeffler, GXO and Toyota. Nothing on your site explains how you design for a standard that is still being written.",
+      "tags": [
+        "humanoid-safety",
+        "long-form",
+        "partnership-proof"
+      ],
+      "sources": [
+        {
+          "title": "ISO/CD 25785-1",
+          "publisher": "ISO",
+          "url": "https://www.iso.org/standard/91469.html"
+        },
+        {
+          "title": "Agility and FORT partnership",
+          "publisher": "FORT Robotics",
+          "url": "https://www.fortrobotics.com/news/agility-and-fort-robotics-announce-strategic-partnership-to-advance-humanoid-robot-safety"
+        },
+        {
+          "title": "Agility Unveils Humanoid That Can Work Safely Alongside People",
+          "publisher": "Claims Journal",
+          "url": "https://www.claimsjournal.com/news/national/2026/09/16/340160.htm"
+        }
+      ]
+    },
+    {
+      "id": "r3-44",
+      "format": "short_insight",
+      "title": "Keeping a GPU in the Safety Loop",
+      "angle": "NVIDIA's Halos program and its accredited inspection lab formalised off-robot safety in 2026. A building camera feeding a GPU that can influence a robot's behaviour is a perception path that functional safety was never designed around.",
+      "evidence": "Your June 2026 Outside-In Safety release runs building-mounted cameras through NVIDIA IGX Thor via Holoscan Sensor Bridge and calls the approach safety-certifiable, and your Advantech partnership embeds the NSC Pro beside that compute. How new perception informs behaviour while the safety controls stay dependable and auditable is the article, with your engineers describing the split.",
+      "tags": [
+        "functional-safety",
+        "short-insight",
+        "nvidia-partnership"
+      ],
+      "sources": [
+        {
+          "title": "Outside-In Safety with NVIDIA Halos",
+          "publisher": "FORT Robotics",
+          "url": "https://www.fortrobotics.com/news/outside-in-safety-with-nvidia-halos-for-robotics"
+        },
+        {
+          "title": "Advantech and FORT on NVIDIA IGX Thor",
+          "publisher": "FORT Robotics",
+          "url": "https://www.fortrobotics.com/news/advantech-fort-partner-on-safety-for-physical-ai-powered-by-nvidia-igx-thor"
+        },
+        {
+          "title": "ISO 10218 overhaul",
+          "publisher": "The Robot Report",
+          "url": "https://www.therobotreport.com/iso-10218-industrial-robot-safety-standard-receives-major-overhaul/"
+        }
+      ]
+    },
+    {
+      "id": "r3-45",
+      "format": "short_insight",
+      "title": "Wireless E-Stop Range Is a Certification Problem",
+      "angle": "ISO 10218:2025 tightened functional safety requirements and brought cybersecurity into scope. A wireless stop is only useful if its failure behaviour is understood, and holding that over a radio link on a congested worksite is a harder claim than a range figure.",
+      "evidence": "Your February 2026 Wireless E-Stop Pro is described as SIL 3 certified with 200 metre range over Long Range Bluetooth, and FORT 26.1 adds a long-range BLE option for specified Endpoint Controller configurations, across a fleet of 19,500-plus devices. The piece is what had to be tested and documented before a team could rely on that link in a safety function, with the certificate scope confirmed first.",
+      "tags": [
+        "wireless-safety",
+        "short-insight",
+        "product-launch"
+      ],
+      "sources": [
+        {
+          "title": "FORT Robotics launches real-time wireless safety device",
+          "publisher": "For Construction Pros",
+          "url": "https://www.forconstructionpros.com/construction-technology/construction-safety-technology/article/22960442/fort-robotics-fort-robotics-launches-realtime-wireless-safety-device-for-largescale-autonomous-operations"
+        },
+        {
+          "title": "What's New in FORT 26.1",
+          "publisher": "FORT Robotics",
+          "url": "https://www.fortrobotics.com/news/whats-new-in-our-latest-release-fort-26.1"
+        },
+        {
+          "title": "ISO 10218 overhaul",
+          "publisher": "The Robot Report",
+          "url": "https://www.therobotreport.com/iso-10218-industrial-robot-safety-standard-receives-major-overhaul/"
+        }
+      ]
+    }
+  ]
+}
