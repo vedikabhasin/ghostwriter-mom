@@ -1601,6 +1601,19 @@ body.dir-save  .ctl-save{
 .final-cta{width:100%;}
 #screen-final .btn-ghost{align-self:center;}
 .bubble.gwk-tip{z-index:210;}
+/* Intro: three deck cards dealt in behind the text (above the desk, below
+   the shell, which sits at z-index 1). */
+/* Desk emojis stay hidden until the scatter starts (removed on start or
+   after 3s at the latest). */
+body.gwk-scatter-pending .gwm-desk-frag{opacity:0;}
+.gwk-deal{position:fixed; inset:0; z-index:0; pointer-events:none; overflow:hidden;}
+body:not(.on-intro) .gwk-deal{display:none;}
+.gwk-deal-card{position:absolute; width:var(--w); height:calc(var(--w) * 1.3); border-radius:16px; background:#fff; box-sizing:border-box;
+  padding:12px; display:flex; flex-direction:column; gap:8px; box-shadow:inset 0 0 0 2px var(--f-color), 0 22px 40px -22px rgba(14,14,14,0.45);
+  filter:blur(3px); opacity:0.92; transform:rotate(var(--r));}
+.gwk-deal-card .dl-pill{align-self:flex-start; width:60%; height:12px; border-radius:999px; background:var(--f-color);}
+.gwk-deal-card .dl-title{font-family:var(--font-display); font-weight:800; font-size:calc(var(--w) * 0.1); line-height:1.15; color:var(--ink);}
+.gwk-deal-card .dl-line{height:7px; border-radius:4px; background:rgba(14,14,14,0.14);}
 /* Typesetting: no lone last words, brand font on the close buttons. */
 .intro-offer, .pd-caption, .conf-arrive, .rv-card-sub, .bubble span, .bubble.gwk-tip, .info-portal p, .card-angle{text-wrap:pretty;}
 .rv-line, .rv-card-title, .hist-title, .card-title, .gwk-lib-stack .mb-title{text-wrap:balance;}
@@ -1615,6 +1628,7 @@ body.dir-save  .ctl-save{
   .gwm-desk{ z-index:0; }
 </style>
 <div id="desk-mount"></div>
+<div class="gwk-deal" id="gwk-deal" aria-hidden="true"></div>
 <script type="module">
   import { mountDesk } from '/shared/desk.js';
   mountDesk(document.getElementById('desk-mount'), { density: 'light' });
@@ -2779,6 +2793,7 @@ body.dir-save  .ctl-save{
       if(state.cardIndex >= client.cards.length){ finishDeck(); return; }
       if(state.cardIndex > 0){ show('feed'); renderStack(); return; }
       show('intro');
+      introAnimations();
     });
   }
 
@@ -3671,6 +3686,98 @@ body.dir-save  .ctl-save{
     placeBubble(el, anchor);
     bubbleTimer = setTimeout(function(){ el.hidden = true; el.style.paddingRight = ''; }, 2400);
   }
+
+  // -- Intro: the desk scatters in, then the deck is dealt ---------------------
+  // Scatter: the waitlist's original entrance (git 88e04bf). Each fragment
+  // starts 75% of the way to the screen centre at 60% size, invisible, then
+  // settles over 1s (power3.out) in random order, 55ms apart.
+  var EASE_OUT3 = 'cubic-bezier(0.215, 0.61, 0.355, 1)';
+  var scatterReduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if(!scatterReduced){
+    document.body.classList.add('gwk-scatter-pending');
+    setTimeout(function(){ document.body.classList.remove('gwk-scatter-pending'); }, 3000);
+  }
+  // The desk module mounts on its own schedule; wait up to 1.5s for it.
+  function scatterDesk(tries){
+    tries = tries || 0;
+    if(!document.querySelector('.gwm-desk-frag') && tries < 90){ requestAnimationFrame(function(){ scatterDesk(tries + 1); }); return; }
+    var frags = $all('.gwm-desk-frag').filter(function(el){ return el.getClientRects().length && getComputedStyle(el).display !== 'none'; });
+    if(!frags.length || !frags[0].animate){ document.body.classList.remove('gwk-scatter-pending'); return; }
+    var cx = window.innerWidth / 2, cy = window.innerHeight / 2;
+    var order = frags.map(function(_, i){ return i; }).sort(function(){ return Math.random() - 0.5; });
+    frags.forEach(function(el, i){
+      var r = el.getBoundingClientRect();
+      var dx = -((r.left + r.width / 2) - cx) * 0.75, dy = -((r.top + r.height / 2) - cy) * 0.75;
+      var rest = el.style.transform || 'rotate(0deg)';
+      el.animate([
+        { transform: 'translate(' + dx.toFixed(1) + 'px,' + dy.toFixed(1) + 'px) scale(0.6) ' + rest, opacity: 0 },
+        { transform: rest, opacity: 1 }
+      ], { duration: 1000, easing: EASE_OUT3, delay: order.indexOf(i) * 55, fill: 'backwards' });
+    });
+    document.body.classList.remove('gwk-scatter-pending');
+  }
+  // Deal: the three deck cards, blurred, thrown in 2.5s after the scatter,
+  // placed around the intro text (one by the heading, two by the button).
+  function dealSpots(){
+    var vw = window.innerWidth;
+    var card = document.getElementById('intro-offer'), hello = document.querySelector('.intro-hello'), btn = document.querySelector('#screen-intro [data-action="start"]');
+    if(!card || !hello || !btn) return [];
+    var R = card.getBoundingClientRect(), H = hello.getBoundingClientRect(), B = btn.getBoundingClientRect();
+    var w = Math.round(Math.max(104, Math.min(170, vw * 0.24))), h = w * 1.3;
+    var clampX = function(x){ return Math.max(-w * 0.15, Math.min(vw - w * 0.85, x)); };
+    return [
+      { w: w, x: clampX(R.right - w * 0.6), y: H.top - h * 0.75, r: 12 },
+      { w: w, x: clampX(R.left - w * 0.7), y: B.bottom - h * 0.15, r: -14 },
+      { w: w, x: clampX(R.right - w * 0.3), y: B.top - h * 0.45, r: 17 }
+    ];
+  }
+  var dealt = false;
+  function dealCards(animate){
+    var layer = document.getElementById('gwk-deal');
+    if(!layer || !client) return;
+    var spots = dealSpots();
+    if(!spots.length) return;
+    var fresh = !layer.children.length;
+    if(fresh){
+      client.cards.slice(0, 3).forEach(function(c){
+        var fam = fmtFamily(String(c.format || '').toLowerCase());
+        var el = document.createElement('div'); el.className = 'gwk-deal-card';
+        el.style.setProperty('--f-color', 'var(--f-' + fam + ')');
+        var pill = document.createElement('span'); pill.className = 'dl-pill';
+        var t = document.createElement('span'); t.className = 'dl-title'; t.textContent = String(c.title || '');
+        el.appendChild(pill); el.appendChild(t);
+        [0.9, 0.7].forEach(function(f){ var l = document.createElement('span'); l.className = 'dl-line'; l.style.width = (f * 100) + '%'; el.appendChild(l); });
+        layer.appendChild(el);
+      });
+    }
+    Array.prototype.forEach.call(layer.children, function(el, i){
+      var sp = spots[i]; if(!sp) return;
+      el.style.setProperty('--w', sp.w + 'px');
+      el.style.setProperty('--r', sp.r + 'deg');
+      el.style.left = sp.x + 'px'; el.style.top = sp.y + 'px';
+      if(fresh && animate && el.animate){
+        // Thrown from below the button, spinning, one after another.
+        var fromX = window.innerWidth / 2 - sp.x - sp.w / 2, fromY = window.innerHeight - sp.y + 40;
+        el.animate([
+          { transform: 'translate(' + fromX + 'px,' + fromY + 'px) rotate(' + (sp.r - 70) + 'deg) scale(0.8)', opacity: 0 },
+          { transform: 'translate(0,0) rotate(' + sp.r + 'deg) scale(1)', opacity: 0.92 }
+        ], { duration: 650, easing: 'cubic-bezier(0.2, 0.9, 0.25, 1.05)', delay: i * 170, fill: 'backwards' });
+      }
+    });
+  }
+  // show() can finish on a later frame (view transition), so wait for the
+  // intro to be on screen, up to a second.
+  function introAnimations(tries){
+    if(dealt) return;
+    tries = tries || 0;
+    if(state.screen !== 'intro' && tries < 60){ requestAnimationFrame(function(){ introAnimations(tries + 1); }); return; }
+    dealt = true;
+    if(prefersReduced){ dealCards(false); return; }
+    if(state.screen !== 'intro'){ document.body.classList.remove('gwk-scatter-pending'); return; }
+    scatterDesk();
+    setTimeout(function(){ if(state.screen === 'intro') dealCards(true); }, 2500);
+  }
+  window.addEventListener('resize', function(){ if(document.getElementById('gwk-deal').children.length) dealCards(false); });
 
   // -- Vedika's reaction after each swipe ---------------------------------------
   function scheduleReaction(card, action, isLast){

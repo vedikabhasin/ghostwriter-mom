@@ -32,7 +32,9 @@ stays for config-less slugs and for the portal tests that drive it.
 ## swipe2
 
 Built from the frozen swipe1 page (intro, card stack, swipe gesture, heart and
-X buttons). Changes: 3 cards; Keep and Pass labels; save and fast-track locked;
+X buttons). Changes: the intro plays the waitlist's original desk scatter
+(emojis fly out from the centre) and 2.5s later deals the 3 deck cards,
+blurred, around the text and behind it; 3 cards; Keep and Pass labels; save and fast-track locked;
 portal progress dots and a dark first-card tooltip; Vedika's reaction about
 700ms after each swipe (the portal's match moment for two likes, its split
 moment for a split, a PASS toast for two passes); then the final screen: where

@@ -119,6 +119,9 @@ console.log('\n=== Device A: intro, three swipes with live reactions, final scre
 let deliverText = '';
 {
   const { ctx, page, errors, events } = await device();
+  // Record every Web Animation started on a desk emoji (the scatter).
+  await page.addInitScript(() => { window.__scatter = []; const an = Element.prototype.animate;
+    Element.prototype.animate = function (k, o) { if (this.classList && this.classList.contains('gwm-desk-frag')) window.__scatter.push({ from: k[0], d: o.duration, delay: o.delay, t: performance.now() }); return an.call(this, k, o); }; });
   await page.goto(BASE + '/' + SLUG + '?ph_debug=1');
   await page.waitForSelector('[data-action="start"]', { state: 'visible' });
   await page.waitForFunction(() => !document.getElementById('screen-loading').classList.contains('on'));
@@ -131,6 +134,24 @@ let deliverText = '';
   check('intro: one paragraph, word for word', intro.all.startsWith('Ghostwriter Mom turns search and AI-citation gaps into technical articles. 3 directions from your product pages, press, and audience searches. Written and edited by a human within 24 hours, no unreviewed AI draft.') && !intro.lines.length, intro.all);
   check('intro: the two phrases in bold', JSON.stringify(intro.bold) === JSON.stringify(['search and AI-citation gaps into technical articles', 'Written and edited by a human within 24 hours']), intro.bold);
   check('intro: small muted call line with lockedCount', intro.muted === 'A 15 min call unlocks your portal and 7 more directions. 5 new directions each week.' && intro.small, intro.muted);
+  const sc = await page.evaluate(() => ({ list: window.__scatter, frags: document.querySelectorAll('.gwm-desk-frag').length, dealt: document.querySelectorAll('.gwk-deal-card').length }));
+  check('desk emojis scatter in on load: from 60% size, transparent, toward the centre, 1s, staggered', sc.list.length >= 3 && sc.list.every((x) => /scale\(0\.6\)/.test(x.from.transform) && x.from.opacity === 0 && x.d === 1000) &&
+    new Set(sc.list.map((x) => x.delay)).size === sc.list.length && Math.max(...sc.list.map((x) => x.delay)) === (sc.list.length - 1) * 55, sc);
+  check('no cards dealt before 2.5s', sc.dealt === 0, sc.dealt);
+  await page.waitForFunction(() => document.querySelectorAll('.gwk-deal-card').length === 3);
+  const dealAt = await page.evaluate(() => performance.now() - window.__scatter[0].t);
+  await wait(1200);
+  const deal = await page.evaluate((titles) => {
+    const cards = Array.from(document.querySelectorAll('.gwk-deal-card'));
+    const onTop = (sel) => { const e = document.querySelector(sel); const r = e.getBoundingClientRect(); return [[0.15, 0.5], [0.5, 0.5], [0.85, 0.5], [0.5, 0.15], [0.5, 0.85]].every(([fx, fy]) => e.contains(document.elementFromPoint(r.left + r.width * fx, r.top + r.height * fy))); };
+    const layer = document.getElementById('gwk-deal');
+    return { titles: cards.map((c) => c.querySelector('.dl-title').textContent), blur: cards.map((c) => getComputedStyle(c).filter), ariaHidden: layer.getAttribute('aria-hidden'), pe: getComputedStyle(layer).pointerEvents,
+      layerZ: getComputedStyle(layer).zIndex, btn: onTop('#screen-intro [data-action="start"]'), offer: onTop('#intro-offer'), hello: onTop('.intro-hello'),
+      inView: cards.every((c) => { const r = c.getBoundingClientRect(); return r.right > 0 && r.left < innerWidth && r.bottom > 0 && r.top < innerHeight; }), titlesWant: titles };
+  }, CONFIG.cards.map((c) => c.title));
+  check('the 3 deck cards are dealt ~2.5s after the scatter starts', dealAt >= 2400 && dealAt < 3200, Math.round(dealAt));
+  check('dealt cards: the deck titles, blurred, hidden from screen readers, not clickable', JSON.stringify(deal.titles) === JSON.stringify(deal.titlesWant) && deal.blur.every((f) => /blur\(3px\)/.test(f)) && deal.ariaHidden === 'true' && deal.pe === 'none' && deal.inView, deal);
+  check('heading, intro card and button stay on top of the cards and emojis', deal.btn && deal.offer && deal.hello, deal);
   await page.screenshot({ path: OUT + '/s01-intro.jpg', type: 'jpeg', quality: 80 });
   await page.click('[data-action="show-info"]'); await wait(300);
   const infoIntro = await page.evaluate(() => ({ p: Array.from(document.querySelectorAll('#info-portal p')).map((x) => x.textContent), dl: document.querySelector('#info-scrim dl').hidden }));
@@ -315,6 +336,10 @@ console.log('\n=== Device D: prefers-reduced-motion');
   const { ctx, page, errors } = await device({ reduced: true });
   await page.goto(BASE + '/' + SLUG);
   await page.waitForSelector('[data-action="start"]', { state: 'visible' });
+  await wait(400);
+  const rm = await page.evaluate(() => ({ cards: document.querySelectorAll('.gwk-deal-card').length, moving: document.getAnimations().filter((a) => a.effect && a.effect.target && a.effect.target.closest && a.effect.target.closest('.gwm-desk, .gwk-deal')).length,
+    fragOpacity: Array.from(document.querySelectorAll('.gwm-desk-frag')).map((f) => getComputedStyle(f).opacity) }));
+  check('reduced motion intro: no scatter, cards already in place, emojis visible', rm.cards === 3 && rm.moving === 0 && rm.fragOpacity.every((o) => o === '1'), rm);
   await page.click('[data-action="start"]');
   await page.waitForSelector('#card-stage .card[data-depth="0"]');
   await wait(500);
