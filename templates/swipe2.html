@@ -2812,7 +2812,7 @@ body:not(.on-intro) .gwk-deal{display:none;}
       var txt  = function(t){ return document.createTextNode(t); };
       [ txt('Ghostwriter Mom turns '), bold('search and AI-citation gaps into technical articles'),
         txt('. ' + deckN + ' directions from ' + origin + '. '),
-        bold('Written and edited by a human within 24 hours'), txt(', no unreviewed AI draft.')
+        bold('Written and edited by a human within 24 hours, free, no unreviewed AI draft.')
       ].forEach(function(n){ introEl.appendChild(n); });
       var muted = document.createElement('span'); muted.className = 'intro-muted';
       muted.textContent = lockedCount() === 0 ? 'A 15 min call unlocks your portal. 5 new directions each week.' : 'A 15 min call unlocks your portal and ' + moreDirections() + '. 5 new directions each week.';
