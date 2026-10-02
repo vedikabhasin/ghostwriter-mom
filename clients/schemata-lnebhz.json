@@ -23,8 +23,8 @@
       "id": "r2-13",
       "format": "short_insight",
       "title": "Cited Answers From Technical Orders",
-      "angle": "The Pentagon's January 2026 AI strategy put GenAI.mil in front of millions of personnel. A maintainer does not need a chat window; they need the right paragraph of the right TO, with the citation, at the aircraft.",
-      "evidence": "Your July 2026 release answers questions only from ingested Technical Orders, manuals, SOPs and videos, with citations, at Whiteman AFB. How retrieval behaves when the TO is silent or two documents conflict is the piece, and it needs your engineers in the room.",
+      "angle": "The Pentagon's January 2026 AI strategy made general-purpose AI a stated priority across the department. A maintainer does not need a chat window; they need the right paragraph of the right TO, with its citation, at the aircraft.",
+      "evidence": "Your July 2026 release retrieves and cites ingested Technical Orders, manuals, SOPs and videos, with a Whiteman AFB maintainer example, and already explains why citations matter. The next piece is what happens when approved documents disagree, an equipment variant changes the procedure, or the answer is not there.",
       "tags": [
         "grounded-retrieval",
         "short-insight",
@@ -51,9 +51,9 @@
     {
       "id": "r2-14",
       "format": "long_form",
-      "title": "One Scan, Twice the Training Slots",
-      "angle": "Boeing's 2026 outlook calls for 728,000 technicians over 20 years, and units train on single physical assets that are also needed on the line. The ROI of a scan shows up in asset availability before it shows up in learning outcomes.",
-      "evidence": "Altus AFB reported a 20 percent increase in bus availability and doubled inspection opportunities after one bus was scanned into tablet-based training. The equipment-availability math is the argument your site states once as a quote and never works through.",
+      "title": "One Scan, Twice the Inspection Opportunities",
+      "angle": "Boeing's 2026 outlook calls for 728,000 technicians over 20 years, and units train on single physical assets that are also needed on the line. The payoff of a scan shows up in asset availability before it shows up in learning outcomes.",
+      "evidence": "An Altus AFB instructor reported 20 percent more bus availability and double the inspection opportunities after one bus was scanned into tablet-based training. That is an attributed customer report; the article asks for the baseline and schedule and works through what changed when the physical bus no longer served every lesson.",
       "tags": [
         "training-digital-twin",
         "long-form",
@@ -81,8 +81,8 @@
       "id": "r2-15",
       "format": "short_insight",
       "title": "Animating a Scan Is Harder Than Scanning It",
-      "angle": "Nvidia's Cosmos 3 (June 2026) generates plausible worlds; maintenance training needs the exact asset, with parts that move the way the real ones do. A photoreal capture has no part hierarchy, so motion is a second job.",
-      "evidence": "Your August 2026 release adds system motion, animation and exploded views to scanned assets, viewable on a personal device. What it takes to segment a capture into articulated parts and keep it rendering on a tablet is the engineering story, pending an interview.",
+      "angle": "A faithful-looking scan is enough for recognition. Maintenance training also needs trainees to see how a component moves and fits with the rest of the system, and a photoreal capture has no part hierarchy on its own.",
+      "evidence": "Your August 2026 release adds system motion, animation and exploded views to scanned assets, viewable on a personal device. How a capture becomes a set of parts a trainee can manipulate (segmentation, rigging, validated movement) is an interview-led piece, and nothing on your site describes it.",
       "tags": [
         "reality-capture",
         "short-insight",
@@ -95,14 +95,14 @@
           "url": "https://www.schemata.com/news/the-schemata-drop-simulating-how-your-systems-work-together"
         },
         {
-          "title": "Nvidia's Cosmos 3 open AI world model",
-          "publisher": "Axios",
-          "url": "https://www.axios.com/2026/06/01/nvidia-ai-push-cosmos-3-world-model"
-        },
-        {
           "title": "The Next Frontier is Physical",
           "publisher": "Schemata",
           "url": "https://www.schemata.com/news/the-schematic-the-next-frontier-is-physical"
+        },
+        {
+          "title": "A First Look at Schemata's Platform",
+          "publisher": "Schemata",
+          "url": "https://www.schemata.com/news/a-first-look-at-schematas-platform"
         }
       ]
     }
