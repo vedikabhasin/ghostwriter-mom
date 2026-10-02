@@ -1606,6 +1606,41 @@ body.dir-save  .ctl-save{
 /* Desk emojis stay hidden until the scatter starts (removed on start or
    after 3s at the latest). */
 body.gwk-scatter-pending .gwm-desk-frag{opacity:0;}
+.rv-card-title, .gwk-deal-card .dl-title, .ghost-hint > div{text-wrap:balance;}
+/* Small phones (iPhone SE, 320px): reveal seats stay on screen, the Library
+   stack stays in its frame, the CTA keeps "BOOK 15 MINS" together. */
+@media (max-width:360px){
+  .rv-split .rv-left, .rv-split .rv-right{translate:0 0;}
+  .rv-card{width:40vw;}
+  .rv-name{font-size:9.5px; letter-spacing:0.03em; padding:3px 6px;}
+  .rv-card .rv-fmt{white-space:nowrap; font-size:8.5px; letter-spacing:0.06em;}
+  .gwk-lib{zoom:0.8;}
+  .gwk-swap-pane .gwk-lib{padding-top:26px;}
+  .final-cta .btn-primary{padding:14px 16px;}
+}
+/* Log pills: green / red outline, no fill (darker tones of the like and
+   pass colours, readable on white). */
+.pill.like, .pill.pass{background:transparent; box-shadow:inset 0 0 0 1.5px currentColor;}
+.pill.like{color:#2E8A12;}
+.pill.pass{color:#D23A28;}
+/* Button glow. Hover only where hover is real; on touch it fades in on the
+   tap and back out (a tap would otherwise leave :hover stuck on). The box
+   is larger and its edges are masked to transparent, so the blur never
+   ends in a hard edge (WebKit clips filter output). */
+.btn-glow{inset:-22px -14px; filter:blur(14px);
+  -webkit-mask-image:linear-gradient(90deg, transparent, #000 24px, #000 calc(100% - 24px), transparent), linear-gradient(180deg, transparent, #000 24px, #000 calc(100% - 24px), transparent);
+  -webkit-mask-composite:source-in;
+  mask-image:linear-gradient(90deg, transparent, #000 24px, #000 calc(100% - 24px), transparent), linear-gradient(180deg, transparent, #000 24px, #000 calc(100% - 24px), transparent);
+  mask-composite:intersect;
+  transition:opacity 360ms var(--ease);}
+@media (hover:none), (pointer:coarse){
+  .btn-glow-host:not(.glow-off):hover .btn-glow{opacity:0; animation:none;}
+  .btn-glow-host.glow-tap:not(.glow-off) .btn-glow{opacity:0.9; transition:opacity 160ms var(--ease);}
+}
+/* Log opens with a short fade; the PASS toast fades out. */
+@keyframes gwk-log-in{from{opacity:0; transform:translateY(-4px);}}
+#final-log:not([hidden]){animation:gwk-log-in 260ms var(--ease) both;}
+.toast.out{opacity:0; transform:translate(-50%, 6px); transition:opacity 220ms var(--ease), transform 220ms var(--ease);}
 /* Absolute, in page coordinates (height set from the page in JS), so the
    cards scroll with the text on short screens. */
 .gwk-deal{position:absolute; left:0; top:0; width:100%; z-index:0; pointer-events:none; overflow:hidden;}
@@ -1787,7 +1822,7 @@ body:not(.on-intro) .gwk-deal{display:none;}
     <span class="btn-glow-host final-cta">
       <span class="btn-glow" aria-hidden="true"></span>
       <button type="button" class="btn btn-primary" data-action="final-unlock" id="final-unlock">
-        <span>UNLOCK YOUR PORTAL &middot; BOOK 15 MINS</span>
+        <span><span class="nowrap">UNLOCK YOUR PORTAL</span> &middot; <span class="nowrap">BOOK 15 MINS</span></span>
         <span class="arr" aria-hidden="true">&#8594;</span>
       </button>
     </span>
@@ -3693,16 +3728,16 @@ body:not(.on-intro) .gwk-deal{display:none;}
   // settles over 1s (power3.out) in random order, 55ms apart.
   var EASE_OUT3 = 'cubic-bezier(0.215, 0.61, 0.355, 1)';
   var scatterReduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  if(!scatterReduced){
-    document.body.classList.add('gwk-scatter-pending');
-    setTimeout(function(){ document.body.classList.remove('gwk-scatter-pending'); }, 3000);
-  }
+  document.body.classList.add('gwk-scatter-pending');
+  setTimeout(function(){ document.body.classList.remove('gwk-scatter-pending'); }, 6000);
   // The desk module mounts on its own schedule; wait up to 1.5s for it.
   // onStart runs the moment the scatter begins (or is skipped), so the deal
   // is timed from the emojis, not from page load.
-  function scatterDesk(onStart, tries){
-    tries = tries || 0;
-    if(!document.querySelector('.gwm-desk-frag') && tries < 90){ requestAnimationFrame(function(){ scatterDesk(onStart, tries + 1); }); return; }
+  // Waits are timed, not counted in frames: a 120Hz phone runs frames twice
+  // as fast, and a frame budget ran out before the intro was on screen.
+  function scatterDesk(onStart, since){
+    since = since || Date.now();
+    if(!document.querySelector('.gwm-desk-frag') && Date.now() - since < 4000){ setTimeout(function(){ scatterDesk(onStart, since); }, 30); return; }
     mark('gwk-scatter-start');
     onStart();
     var frags = $all('.gwm-desk-frag').filter(function(el){ return el.getClientRects().length && getComputedStyle(el).display !== 'none'; });
@@ -3713,7 +3748,8 @@ body:not(.on-intro) .gwk-deal{display:none;}
       var r = el.getBoundingClientRect();
       var dx = -((r.left + r.width / 2) - cx) * 0.75, dy = -((r.top + r.height / 2) - cy) * 0.75;
       var rest = el.style.transform || 'rotate(0deg)';
-      el.animate([
+      // Reduce Motion: the same timing as a fade, no travel.
+      el.animate(scatterReduced ? [{ opacity: 0 }, { opacity: 1 }] : [
         { transform: 'translate(' + dx.toFixed(1) + 'px,' + dy.toFixed(1) + 'px) scale(0.6) ' + rest, opacity: 0 },
         { transform: rest, opacity: 1 }
       ], { duration: 1000, easing: EASE_OUT3, delay: order.indexOf(i) * 55, fill: 'backwards' });
@@ -3766,7 +3802,9 @@ body:not(.on-intro) .gwk-deal{display:none;}
       el.style.setProperty('--w', sp.w + 'px');
       el.style.setProperty('--r', sp.r + 'deg');
       el.style.left = sp.x + 'px'; el.style.top = sp.y + 'px';
-      if(fresh && animate && el.animate){
+      if(fresh && animate && el.animate && scatterReduced){
+        el.animate([{ opacity: 0 }, { opacity: 0.92 }], { duration: 600, easing: EASE_OUT3, delay: i * 170, fill: 'backwards' });
+      } else if(fresh && animate && el.animate){
         // Thrown from below the button, spinning, one after another.
         var fromX = window.innerWidth / 2 - sp.x - sp.w / 2, fromY = (window.scrollY || 0) + window.innerHeight - sp.y + 40;
         el.animate([
@@ -3779,13 +3817,13 @@ body:not(.on-intro) .gwk-deal{display:none;}
   // show() can finish on a later frame (view transition), so wait for the
   // intro to be on screen, up to a second.
   function mark(name){ try{ performance.mark(name); }catch(_){} }
-  function introAnimations(tries){
+  function introAnimations(since){
     if(dealt) return;
-    tries = tries || 0;
-    if(state.screen !== 'intro' && tries < 60){ requestAnimationFrame(function(){ introAnimations(tries + 1); }); return; }
+    since = since || Date.now();
+    var onIntro = state.screen === 'intro' && document.body.classList.contains('on-intro');
+    if(!onIntro && Date.now() - since < 5000){ setTimeout(function(){ introAnimations(since); }, 30); return; }
     dealt = true;
-    if(prefersReduced){ dealCards(false); return; }
-    if(state.screen !== 'intro'){ document.body.classList.remove('gwk-scatter-pending'); return; }
+    if(!onIntro){ document.body.classList.remove('gwk-scatter-pending'); return; }
     scatterDesk(function(){
       setTimeout(function(){ if(state.screen === 'intro'){ mark('gwk-deal-start'); dealCards(true); } }, 2500);
     });
@@ -3813,9 +3851,12 @@ body:not(.on-intro) .gwk-deal{display:none;}
   function showToast(text){
     var t = document.getElementById('gwk-toast');
     if(!t) return;
+    clearTimeout(t._hide); clearTimeout(t._out);
+    t.classList.remove('out');
     t.textContent = text; t.hidden = false;
     t.style.animation = 'none'; void t.offsetWidth; t.style.animation = '';
-    setTimeout(function(){ t.hidden = true; }, 1300);
+    t._out = setTimeout(function(){ t.classList.add('out'); }, 1080);
+    t._hide = setTimeout(function(){ t.hidden = true; t.classList.remove('out'); }, 1300);
   }
   // The portal's overlap reveal (portal/reveal.js), without buttons: tap or
   // ~2s continues. Match: like-green sunburst and floating hearts. Split: the
@@ -4152,6 +4193,16 @@ body:not(.on-intro) .gwk-deal{display:none;}
     saveState();
     window.open(BOOKING_URL_SWIPE2 + '?metadata%5Bslug%5D=' + encodeURIComponent(SLUG), '_blank', 'noopener,noreferrer');
   }
+  // Touch: the button glow fades in on press and out ~0.7s after release.
+  document.addEventListener('pointerdown', function(e){
+    if(e.pointerType === 'mouse') return;
+    var h = e.target.closest && e.target.closest('.btn-glow-host');
+    if(!h) return;
+    clearTimeout(h._glow); h.classList.add('glow-tap');
+    var off = function(){ clearTimeout(h._glow); h._glow = setTimeout(function(){ h.classList.remove('glow-tap'); }, 700); };
+    document.addEventListener('pointerup', off, { once: true });
+    document.addEventListener('pointercancel', off, { once: true });
+  }, { passive: true });
   document.addEventListener('click', function(e){
     var t = e.target.closest && e.target.closest('[data-lock]');
     if(t) showLockTip(t);

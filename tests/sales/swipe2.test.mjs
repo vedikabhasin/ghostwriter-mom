@@ -220,6 +220,10 @@ let deliverText = '';
   await swipe(page, 'left');
   await page.waitForFunction(() => !document.getElementById('gwk-toast').hidden, null, { timeout: 1500 });
   check('both passed: PASS toast only', (await page.textContent('#gwk-toast')) === 'PASS' && (await reveal(page)) === null);
+  await page.waitForFunction(() => document.getElementById('gwk-toast').classList.contains('out'), null, { timeout: 2000 });
+  const toastFade = await page.evaluate(() => getComputedStyle(document.getElementById('gwk-toast')).transition);
+  await page.waitForSelector('#gwk-toast', { state: 'hidden', timeout: 2000 });
+  check('PASS toast fades out (eased) before it goes', /opacity 0\.22s/.test(toastFade) && /cubic-bezier/.test(toastFade), toastFade);
   await page.waitForSelector('#screen-final.on', { timeout: 4000 });
   await wait(700);
 
@@ -234,6 +238,12 @@ let deliverText = '';
   await page.screenshot({ path: OUT + '/s05-final.jpg', type: 'jpeg', quality: 80, fullPage: true });
   await page.click('#final-log-toggle'); await wait(300);
   check('Log opens on tap', !(await page.evaluate(() => document.getElementById('final-log').hidden)));
+  const logIn = await page.evaluate(() => getComputedStyle(document.getElementById('final-log')).animationName);
+  check('Log opens with a short fade', logIn === 'gwk-log-in', logIn);
+  await wait(400);
+  const pills = await page.evaluate(() => ['like', 'pass'].map((k) => { const p = document.querySelector('#final-log .pill.' + k); const cs = getComputedStyle(p); return { k, bg: cs.backgroundColor, color: cs.color, ring: cs.boxShadow }; }));
+  check('Log pills: LIKED green outline, PASSED red outline, no fill', pills[0].bg === 'rgba(0, 0, 0, 0)' && pills[1].bg === 'rgba(0, 0, 0, 0)' && pills[0].color === 'rgb(46, 138, 18)' && pills[1].color === 'rgb(210, 58, 40)' &&
+    pills.every((p) => p.ring.includes(p.color) && /inset/.test(p.ring)), pills);
   const f = JSON.parse((await page.evaluate(() => JSON.stringify((() => {
     const s = document.getElementById('screen-final');
     const sections = Array.from(s.querySelectorAll('.pd-section')).map((x) => x.querySelector('.pd-h').innerText.replace(/\s+/g, ' ').trim());
@@ -342,10 +352,15 @@ console.log('\n=== Device D: prefers-reduced-motion');
   const { ctx, page, errors } = await device({ reduced: true });
   await page.goto(BASE + '/' + SLUG);
   await page.waitForSelector('[data-action="start"]', { state: 'visible' });
-  await wait(400);
-  const rm = await page.evaluate(() => ({ cards: document.querySelectorAll('.gwk-deal-card').length, moving: document.getAnimations().filter((a) => a.effect && a.effect.target && a.effect.target.closest && a.effect.target.closest('.gwm-desk, .gwk-deal')).length,
-    fragOpacity: Array.from(document.querySelectorAll('.gwm-desk-frag')).map((f) => getComputedStyle(f).opacity) }));
-  check('reduced motion intro: no scatter, cards already in place, emojis visible', rm.cards === 3 && rm.moving === 0 && rm.fragOpacity.every((o) => o === '1'), rm);
+  await wait(300);
+  const kf = () => document.getAnimations().filter((a) => a.effect && a.effect.target && a.effect.target.closest && a.effect.target.closest('.gwm-desk, .gwk-deal')).map((a) => a.effect.getKeyframes().map((k) => Object.keys(k).filter((x) => !['offset', 'computedOffset', 'easing', 'composite'].includes(x)).join('+')).join(','));
+  const rm1 = await page.evaluate(`(${kf})()`);
+  const early = await page.evaluate(() => document.querySelectorAll('.gwk-deal-card').length);
+  await page.waitForFunction(() => document.querySelectorAll('.gwk-deal-card').length === 3);
+  const rm2 = await page.evaluate(`(${kf})()`);
+  const gap = await page.evaluate(() => Math.round(performance.getEntriesByName('gwk-deal-start')[0].startTime - performance.getEntriesByName('gwk-scatter-start')[0].startTime));
+  check('reduced motion intro: emojis fade in (no travel), cards fade in 2.5s later (no throw)', rm1.length >= 3 && rm1.every((k) => k === 'opacity,opacity') && early === 0 && rm2.length === 3 && rm2.every((k) => k === 'opacity,opacity') && gap >= 2490 && gap < 2700, { rm1, rm2, gap });
+  await wait(900);
   await page.click('[data-action="start"]');
   await page.waitForSelector('#card-stage .card[data-depth="0"]');
   await wait(500);
@@ -378,6 +393,30 @@ for (const [name, width, height, mobile] of [['iPhone SE', 320, 568, 1], ['Pixel
       hScroll: document.documentElement.scrollWidth > innerWidth, onTop: onTop('#screen-intro [data-action="start"]') && onTop('#intro-offer') && onTop('.intro-hello') };
   });
   check(name + ': emojis scatter, 3 cards dealt 2.5s later, text and button on top, no sideways scroll', r.frags >= 3 && r.gap >= 2490 && r.gap < 2700 && r.cards === 3 && !r.hScroll && r.onTop && !errors.length, { r, errors });
+  await ctx.close();
+}
+
+console.log('\n=== Intro on a 120Hz phone with a slow screen transition');
+{
+  delete db[SLUG];
+  const { ctx, page, errors } = await device({ viewport: { width: 390, height: 844 }, mobile: 1 });
+  // Frames every 8ms, and the intro screen lands 1.2s after show() asks for it.
+  await page.addInitScript(() => { window.requestAnimationFrame = (f) => setTimeout(() => f(performance.now()), 8);
+    document.startViewTransition = (fn) => { const p = new Promise((ok) => setTimeout(() => { fn(); ok(); }, 1200)); return { finished: p, ready: p, updateCallbackDone: p }; }; });
+  await page.goto(BASE + '/' + SLUG);
+  await page.waitForSelector('.gwk-deal-card', { timeout: 10000 }); await wait(900);
+  const r = await page.evaluate(() => ({ cards: document.querySelectorAll('.gwk-deal-card').length, gap: Math.round(performance.getEntriesByName('gwk-deal-start')[0].startTime - performance.getEntriesByName('gwk-scatter-start')[0].startTime),
+    frags: Array.from(document.querySelectorAll('.gwm-desk-frag')).filter((f) => f.getClientRects().length).map((f) => getComputedStyle(f).opacity) }));
+  // Touch: the button glow fades in on press and out after release; no hard edge.
+  const host = '#screen-intro .btn-glow-host';
+  await page.dispatchEvent(host + ' .btn', 'pointerdown', { pointerType: 'touch', bubbles: true });
+  await wait(300);
+  const on = await page.evaluate((h) => { const g = document.querySelector(h + ' .btn-glow'); const cs = getComputedStyle(g); return { op: cs.opacity, mask: cs.maskImage || cs.webkitMaskImage }; }, host);
+  await page.evaluate(() => document.dispatchEvent(new PointerEvent('pointerup', { pointerType: 'touch' })));
+  await wait(1300);
+  const off = await page.evaluate((h) => getComputedStyle(document.querySelector(h + ' .btn-glow')).opacity, host);
+  check('touch: button glow fades in on press, back out after release, edges masked soft', on.op === '0.9' && off === '0' && /linear-gradient/.test(on.mask), { on, off });
+  check('120Hz + slow transition: emojis still scatter and cards still deal 2.5s later', r.cards === 3 && r.gap >= 2490 && r.gap < 2700 && r.frags.length >= 3 && r.frags.every((o) => o === '1') && !errors.length, { r, errors });
   await ctx.close();
 }
 
