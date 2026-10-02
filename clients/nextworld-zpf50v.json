@@ -1,0 +1,110 @@
+{
+  "slug": "nextworld-zpf50v",
+  "template": "swipe2",
+  "lead_type": "warm",
+  "deliveryChannel": "email",
+  "company": "Next World XR",
+  "contactFirstName": "Srividhya",
+  "sourceLine": "your VR training analytics and the questions safety managers ask before they trust a VR certificate",
+  "directionShape": "1 long-form article + 2 short insights",
+  "emailKnown": true,
+  "vediReactions": {
+    "r2-07": "like",
+    "r2-08": "like",
+    "r2-09": "pass"
+  },
+  "writeOn": [
+    "r2-07",
+    "r2-08",
+    "r2-09"
+  ],
+  "cards": [
+    {
+      "id": "r2-07",
+      "format": "long_form",
+      "title": "Measuring Transfer, Not Completion",
+      "angle": "A March 2026 Scientific Reports study compared VR-trained substation workers against observations at a real site, and the field is starting to ask for that kind of evidence instead of completion rates. Your LMS already captures the inputs; the measurement guide is missing.",
+      "evidence": "Your analytics page logs actions, decisions, accuracy and timing per trainee, while your Komatsu case reports a potential 55.13 percent time-efficiency saving per class for the 2022 cohort, a throughput figure. The article is how to turn logged decisions into a transfer measure a safety manager trusts.",
+      "tags": [
+        "training-measurement",
+        "long-form",
+        "lms-proof"
+      ],
+      "sources": [
+        {
+          "title": "Virtual reality to enhance risk management and safety in electrical substations",
+          "publisher": "Nature Scientific Reports",
+          "url": "https://www.nature.com/articles/s41598-026-35534-1"
+        },
+        {
+          "title": "VR Training Analytics",
+          "publisher": "Next World XR",
+          "url": "https://www.nextworldxr.com/vr-training-analytics"
+        },
+        {
+          "title": "Komatsu case study",
+          "publisher": "Next World XR",
+          "url": "https://www.nextworldxr.com/case-studies/komatsu"
+        }
+      ]
+    },
+    {
+      "id": "r2-08",
+      "format": "short_insight",
+      "title": "What a VR Training Record Should Contain",
+      "angle": "WA mining statutory role holders face new competency and examination criteria from March 30 2026. A certificate from a VR LMS is only evidence if an assessor can see what was tested, how and when.",
+      "evidence": "Your LMS issues certificates and exports data in multiple formats to a client LMS but names no SCORM or xAPI standard. The piece defines the fields a defensible record needs and where exports fall short.",
+      "tags": [
+        "training-compliance",
+        "short-insight",
+        "lms-proof"
+      ],
+      "sources": [
+        {
+          "title": "WHS Regulatory Updates Australia January 2026",
+          "publisher": "Action OHS Consulting",
+          "url": "https://www.actionohs.com.au/whs-regulatory-updates-australia-january-2026/"
+        },
+        {
+          "title": "FAQ",
+          "publisher": "Next World XR",
+          "url": "https://www.nextworldxr.com/faq"
+        },
+        {
+          "title": "VR Training Analytics",
+          "publisher": "Next World XR",
+          "url": "https://www.nextworldxr.com/vr-training-analytics"
+        }
+      ]
+    },
+    {
+      "id": "r2-09",
+      "format": "short_insight",
+      "title": "Headset Fleets After Quest for Business",
+      "angle": "Meta stopped selling commercial Quest SKUs and new managed-services subscriptions on February 20 2026, with existing customers supported to January 2030. Any fleet standing up now is consumer hardware plus third-party MDM.",
+      "evidence": "Your pricing page lists seven supported headsets across Meta and Pico while your FAQ names only two Pico devices, and offline mode is gated to the top tier. A fleet-ops guide for remote sites would resolve the inconsistency and answer the first question a mine site IT lead asks.",
+      "tags": [
+        "vr-fleet-management",
+        "short-insight",
+        "platform-shift"
+      ],
+      "sources": [
+        {
+          "title": "Meta Quest for Business Ends: What It Means for VR Training",
+          "publisher": "Skillsive",
+          "url": "https://www.skillsive.com/blog/meta-quest-for-business-ends-what-it-means-for-vr-training"
+        },
+        {
+          "title": "Pricing",
+          "publisher": "Next World XR",
+          "url": "https://www.nextworldxr.com/vr-training-pricing"
+        },
+        {
+          "title": "FAQ",
+          "publisher": "Next World XR",
+          "url": "https://www.nextworldxr.com/faq"
+        }
+      ]
+    }
+  ]
+}
