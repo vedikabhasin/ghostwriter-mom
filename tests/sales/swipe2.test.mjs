@@ -349,8 +349,8 @@ console.log('\n=== Device C: swipes only in this browser are migrated on first l
 console.log('\n=== Device D: prefers-reduced-motion');
 {
   delete db[SLUG];
-  const { ctx, page, errors } = await device({ reduced: true });
-  await page.goto(BASE + '/' + SLUG);
+  const { ctx, page, errors, events } = await device({ reduced: true });
+  await page.goto(BASE + '/' + SLUG + '?ph_debug=1');
   await page.waitForSelector('[data-action="start"]', { state: 'visible' });
   await wait(300);
   const kf = () => document.getAnimations().filter((a) => a.effect && a.effect.target && a.effect.target.closest && a.effect.target.closest('.gwm-desk, .gwk-deal')).map((a) => a.effect.getKeyframes().map((k) => Object.keys(k).filter((x) => !['offset', 'computedOffset', 'easing', 'composite'].includes(x)).join('+')).join(','));
@@ -372,8 +372,14 @@ console.log('\n=== Device D: prefers-reduced-motion');
   await page.click('.feed-controls [data-action="like"]');
   await page.waitForSelector('#reveal:not([hidden])', { timeout: 2000 });
   const r = await reveal(page);
-  const still = await page.evaluate(() => document.getAnimations().filter((a) => document.getElementById('reveal').contains(a.effect && a.effect.target)).length);
-  check('reduced motion: like the portal, the whole scene (rays + 12 hearts) held still', r && /rv-static/.test(r.cls) && r.floaters === 12 && r.rays !== 'none' && still === 0, { r, still });
+  const gentle = await page.evaluate(() => document.getAnimations().filter((a) => a.effect && a.effect.target && document.getElementById('reveal').contains(a.effect.target.nodeType ? a.effect.target : null))
+    .map((a) => ({ name: a.animationName, d: a.effect.getTiming().duration, it: a.effect.getTiming().iterations, ease: getComputedStyle(a.effect.target, a.effect.pseudoElement || null).animationTimingFunction })));
+  const names = [...new Set(gentle.map((g) => g.name))].sort();
+  check('reduced motion: match plays gently (fades, small scale / slide) for card, both seats, stamps, line and 12 hearts', r && /rv-gentle/.test(r.cls) && r.floaters === 12 &&
+    ['rv-g-card', 'rv-g-fade', 'rv-g-float', 'rv-g-left', 'rv-g-right', 'rv-g-rise', 'rv-g-stamp-l', 'rv-g-stamp-r'].every((n) => names.includes(n)) &&
+    gentle.every((g) => /^rv-g-/.test(g.name) && g.d <= 700 && g.it === 1 && /cubic-bezier/.test(g.ease)), { cls: r && r.cls, names, bad: gentle.filter((g) => !(/^rv-g-/.test(g.name) && g.d <= 700 && g.it === 1 && /cubic-bezier/.test(g.ease))) });
+  const rm = events.filter((e) => e.name === 'match_seen').map((e) => e.props.reduced_motion);
+  check('PostHog: match_seen says reduced_motion: true', rm.length && rm.every((v) => v === true), rm);
   check('Device D: no page errors', !errors.length, errors);
   await ctx.close();
 }
