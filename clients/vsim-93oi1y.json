@@ -1,0 +1,110 @@
+{
+  "slug": "vsim-93oi1y",
+  "template": "swipe2",
+  "lead_type": "warm",
+  "deliveryChannel": "email",
+  "company": "Vsim",
+  "contactFirstName": "Michelle",
+  "sourceLine": "your founders' simulation work and the questions robotics teams ask before they trust a faster simulator",
+  "directionShape": "1 long-form article + 2 short insights",
+  "emailKnown": true,
+  "vediReactions": {
+    "r2-19": "pass",
+    "r2-20": "like",
+    "r2-21": "like"
+  },
+  "writeOn": [
+    "r2-20",
+    "r2-21",
+    "r2-19"
+  ],
+  "cards": [
+    {
+      "id": "r2-19",
+      "format": "short_insight",
+      "title": "Why Simulation Speed Matters on the Robot Itself",
+      "angle": "Nvidia's Newton 1.0 (March 2026) sells thousands of parallel environments on datacenter GPUs. Running a simulator on the hardware a robot carries is a different engineering problem, and the two are complements, not rivals.",
+      "evidence": "The BBC's September 2026 feature reports your simulator running on compute carried by Freddo, with Storey describing it looking about a second ahead across 20,000 combinations, his description rather than a published benchmark. What has to fit the onboard budget and what still belongs in large-scale training is the article.",
+      "tags": [
+        "on-robot-simulation",
+        "short-insight",
+        "press-proof"
+      ],
+      "sources": [
+        {
+          "title": "Robotics: Firms race to improve robot training systems",
+          "publisher": "BBC",
+          "url": "https://www.bbc.co.uk/news/articles/c79g0j3d4q9o"
+        },
+        {
+          "title": "Newton adds contact-rich manipulation and locomotion capabilities",
+          "publisher": "NVIDIA Developer Blog",
+          "url": "https://developer.nvidia.com/blog/newton-adds-contact-rich-manipulation-and-locomotion-capabilities-for-industrial-robotics"
+        },
+        {
+          "title": "Isaac Sim 6.0 Early Developer Release",
+          "publisher": "NVIDIA Forums",
+          "url": "https://forums.developer.nvidia.com/t/announcement-isaac-sim-6-0-early-developer-release-for-gtc26/363709"
+        }
+      ]
+    },
+    {
+      "id": "r2-20",
+      "format": "linkedin_post",
+      "title": "What Legacy Contact Solvers Cost on GPUs",
+      "angle": "Isaac Sim 6.0 now ships two physics backends, which makes solver architecture a live question in the field. Storey's public position is that many familiar physics algorithms were built before GPUs became central to robot learning.",
+      "evidence": "Your founders spent a decade each on PhysX and Isaac Sim at Nvidia, and your 2024 round cited an up-to-100x RL training speedup that has no public baseline. A piece showing one contact-heavy task, where the mismatch costs time and what you do differently, would be your first published content and would make the 100x claim checkable.",
+      "tags": [
+        "physics-simulation",
+        "linkedin-post",
+        "founder-credibility"
+      ],
+      "sources": [
+        {
+          "title": "Robotics: Firms race to improve robot training systems",
+          "publisher": "BBC",
+          "url": "https://www.bbc.co.uk/news/articles/c79g0j3d4q9o"
+        },
+        {
+          "title": "Isaac Sim 6.0 Early Developer Release",
+          "publisher": "NVIDIA Forums",
+          "url": "https://forums.developer.nvidia.com/t/announcement-isaac-sim-6-0-early-developer-release-for-gtc26/363709"
+        },
+        {
+          "title": "Vsim, founded by Nvidia alums, raises $21.5M",
+          "publisher": "TechCrunch",
+          "url": "https://techcrunch.com/2024/09/25/vsim-founded-by-nvidia-alums-raises-21-5m-for-robotics-simulation-tech/"
+        }
+      ]
+    },
+    {
+      "id": "r2-21",
+      "format": "short_insight",
+      "title": "Speed Versus Realism in Sim-to-Real",
+      "angle": "NEURA partnered with Dassault in April 2026 specifically on the sim-to-real gap, and a faster simulator only helps when the behaviour it teaches survives contact with the real world. Where a simulator accepts approximation is a design decision, not a detail.",
+      "evidence": "Lu describes Vsim's approach as reduced approximation, and the BBC piece quotes Cambridge's Rika Antonova on the limits of simulated worlds. Freddo's bottle grasp is a demonstration, not proof of transfer across robots; the article is where you accept approximation, where you refuse it, and how you test the difference on hardware.",
+      "tags": [
+        "sim-to-real",
+        "short-insight",
+        "press-proof"
+      ],
+      "sources": [
+        {
+          "title": "Robotics: Firms race to improve robot training systems",
+          "publisher": "BBC",
+          "url": "https://www.bbc.co.uk/news/articles/c79g0j3d4q9o"
+        },
+        {
+          "title": "NEURA Robotics to raise up to $1.4B in Series C",
+          "publisher": "The Robot Report",
+          "url": "https://www.therobotreport.com/neura-robotics-raise-up-1-4b-in-series-c-funding-physical-ai/"
+        },
+        {
+          "title": "Newton and Isaac Sim",
+          "publisher": "NVIDIA Perspectives",
+          "url": "https://perspectives.nvidia.com/isaac-sim/newtons-integration-isaac-sim-and-isaac-lab/"
+        }
+      ]
+    }
+  ]
+}
