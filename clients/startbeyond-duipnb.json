@@ -23,8 +23,8 @@
       "id": "r2-16",
       "format": "short_insight",
       "title": "Managing Enterprise VR Fleets as Meta's Offer Changes",
-      "angle": "Meta ended commercial Quest sales and new Horizon Managed Services subscriptions on February 20 2026; existing customers keep support to January 4 2030. The clock on provisioning, kiosk lockdown and remote wipe is now visible.",
-      "evidence": "Your Woolworths deployment runs 2,000 headsets across 1,000+ stores on Strivr, the largest fleet of its kind in Australian retail. No piece on your site tells a retail IT lead what the next four years of fleet management look like.",
+      "angle": "Meta ended commercial Quest sales and new Horizon Managed Services subscriptions on February 20 2026; existing customers keep support to January 4 2030. Large deployments now depend on three parties, and the clock on who does what is visible.",
+      "evidence": "Your Woolworths program spans more than 1,000 stores and 2,000 headsets, with your case crediting Strivr's infrastructure for hardware, security, deployment and analytics. A joint piece on which parts of that deployment sit with the headset maker, the management platform and the content studio is one retail IT leads will read.",
       "tags": [
         "vr-fleet-management",
         "short-insight",
@@ -32,9 +32,9 @@
       ],
       "sources": [
         {
-          "title": "Meta Is Shutting Down Its Quest For Business Program",
-          "publisher": "UploadVR",
-          "url": "https://www.uploadvr.com/meta-is-shutting-down-its-quest-for-business-program/"
+          "title": "An update on Meta for Work",
+          "publisher": "Meta for Work",
+          "url": "https://work.meta.com/help/1964851097790493"
         },
         {
           "title": "Woolworths Group Training",
@@ -42,9 +42,9 @@
           "url": "https://www.startbeyond.co/case-studies/woolworths-vr-training"
         },
         {
-          "title": "Meta to stop selling Quest headsets to businesses",
-          "publisher": "SiliconANGLE",
-          "url": "https://siliconangle.com/2026/01/16/meta-stop-selling-quest-headsets-businesses-discontinue-multiple-vr-features/"
+          "title": "Meta Is Shutting Down Its Quest For Business Program",
+          "publisher": "UploadVR",
+          "url": "https://www.uploadvr.com/meta-is-shutting-down-its-quest-for-business-program/"
         }
       ]
     },
@@ -52,8 +52,8 @@
       "id": "r2-17",
       "format": "long_form",
       "title": "360 Video or Real-Time 3D for Accredited Training",
-      "angle": "World Labs opened a World API in January 2026 that generates navigable 3D scenes from text or panoramas. Accredited units still need actor realism, a tablet fallback and an auditor who accepts the scenario, and generative 3D has none of that yet.",
-      "evidence": "Your Limestone Coast build delivers ASQA-compliant aged care and disability units on live-action 360 with branching, one facilitator to 28 learners on headsets and iPads. The tradeoff piece (reshoot cost versus assessment validity) is one only a studio that has shipped both can write.",
+      "angle": "World Labs opened a World API in January 2026 that generates navigable 3D scenes from text or panoramas. Live-action 360 puts a learner face to face with a believable care interaction; real-time 3D gives a team freedom to change the environment, and each serves a different assessment design.",
+      "evidence": "Your Limestone Coast build delivers aged care and disability units on live-action branching 360, one facilitator to 28 learners on headsets and iPads, alongside accredited training. The comparison a studio that has shipped both can write is actor performance, repeatability, update cost and the evidence an assessor needs for a specific course.",
       "tags": [
         "immersive-content-format",
         "long-form",
@@ -80,9 +80,9 @@
     {
       "id": "r2-18",
       "format": "short_insight",
-      "title": "Confidence Is Not Competence Under the Aged Care Act",
-      "angle": "The new Aged Care Act commenced November 1 2025 and providers now report training against it. Self-reported confidence is the easiest outcome to collect and the weakest one to defend.",
-      "evidence": "Sacadi VR launched in February 2026 for aged care compliance, and your strongest published outcome is Reject Shop's \"very confident\" rising from 18 to 68 percent (n=95), explicitly a participant confidence measure. The article maps the ladder from confidence to observed competence and what each rung costs.",
+      "title": "Confidence Is Not Competence in Aged Care",
+      "angle": "The new Aged Care Act commenced November 1 2025 and providers are building evidence of how staff make and apply care decisions. Self-reported confidence is the easiest outcome to collect and the weakest to defend.",
+      "evidence": "Your Reject Shop pilot of Minaca measured \"very confident\" rising from 18 to 68 percent across 95 retail staff, and Sacadi VR (February 2026) is described as supporting assessment in structured aged care programs. The article maps what a scenario record can show and what still has to be observed on the job, without splicing the retail result into an aged care claim.",
       "tags": [
         "training-measurement",
         "short-insight",
@@ -95,9 +95,9 @@
           "url": "https://www.agedcarequality.gov.au/providers/reform-changes-providers/about-new-aged-care-act-and-key-changes-providers"
         },
         {
-          "title": "Start Beyond rolls out VR training to help aged care meet new compliance rules",
-          "publisher": "iTWire",
-          "url": "https://itwire.com/science-news/health/start-beyond-rolls-out-vr-training-to-help-aged-care-meet-new-compliance-rules"
+          "title": "Sacadi VR",
+          "publisher": "Start Beyond",
+          "url": "https://www.startbeyond.co/sacadivr"
         },
         {
           "title": "Minaca VR case study",
