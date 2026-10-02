@@ -1,56 +1,39 @@
 {
   "slug": "rpr-k7m2qx",
-  "template": "rpr",
-  "companyName": "Rock Paper Reality",
+  "template": "swipe2",
+  "lead_type": "warm",
+  "deliveryChannel": "email",
+  "company": "Rock Paper Reality",
   "contactFirstName": "Patrick",
-  "emailKnown": true,
-  "stripeLink19": "https://buy.stripe.com/7sY8wP0M833Rcx21YugnK09",
-  "directionShape": { "pillar": 1, "insight": 2 },
-  "offerText": "Your first article is on me.",
-  "signal": {
-    "text": "RPR ranks #1 for 'augmented reality in events', but Google's AI Overview above it cites Onirix.",
-    "source": "Google search",
-    "date": "2026-09-24"
+  "sourceLine": "where Rock Paper Reality ranks and who AI cites instead",
+  "vediReactions": {
+    "rpr-06": "like",
+    "rpr-04": "like",
+    "rpr-09": "pass"
   },
+  "writeOn": [
+    "rpr-06",
+    "rpr-04",
+    "rpr-09"
+  ],
   "cards": [
     {
-      "id": "rpr-01",
-      "format": "pillar",
-      "title": "Wine and Spirits Marketing: Make the Bottle a Door",
-      "angle": "Younger adults are drinking less, and tasting rooms and wine clubs now bring in 53% of the average winery's sales. The label is the one thing every buyer holds, so let it open an experience.",
-      "evidence": "Your Glenlivet Sample Room portal (2022) held people for 12 minutes on average. De Bortoli's Sinister Collection (2022) got a 40% return rate. Purple Paradise, your AI sommelier for Chronic Cellars, averaged five interactions per visit. No Insights article connects these three for drinks buyers.",
-      "tags": ["wine-spirits", "owned-proof", "experiential"],
-      "sources": [
-        { "title": "State of the US Wine Industry 2026", "publisher": "SVB", "url": "https://www.svb.com/trends-insights/reports/wine-report/" },
-        { "title": "The Glenlivet", "publisher": "Rock Paper Reality", "url": "https://rockpaperreality.com/our-work/the-glenlivet/" },
-        { "title": "De Bortoli", "publisher": "Rock Paper Reality", "url": "https://rockpaperreality.com/our-work/de-bortoli/" },
-        { "title": "Chronic Cellars AI Sommelier", "publisher": "Rock Paper Reality", "url": "https://rockpaperreality.com/our-work/chronic-cellars-ai-sommelier/" }
-      ]
-    },
-    {
-      "id": "rpr-02",
+      "id": "rpr-06",
       "format": "insight",
-      "title": "AR Public Art: Give People a Reason to Walk Downtown",
-      "angle": "Downtowns are winning back foot traffic through visitors, festivals and art trails, not office workers. AR public art turns a whole neighborhood into the installation without building anything physical.",
-      "evidence": "Your Paper Tree project filled SF Japantown with 3D digital origami, built almost entirely remotely with one designer on site. Portland's September 2026 foot traffic report credits festivals and an art trail for its best month since 2020.",
-      "tags": ["placemaking", "location-ar", "tourism"],
+      "title": "WebAR Games That Move Event Attendees",
+      "angle": "At big events, most attendees stop at the first attraction they see. A phone-based AR quest gives them a reason to move between zones and engage with the product stories along the way.",
+      "evidence": "Your four-part WebAR game at the 2022 Intel Innovation event was played by 30% of attendees, and demo stands with the AR experience drew six times more visitors than stands without it.",
+      "tags": [
+        "events",
+        "webar",
+        "gamification"
+      ],
       "sources": [
-        { "title": "Paper Tree with Adobe Aero and Google Geospatial", "publisher": "Rock Paper Reality", "url": "https://rockpaperreality.com/rpr-launches-first-of-its-kind-experience-with-adobe-aero-and-google-geospatial/" },
-        { "title": "2026 Summer Foot Traffic Report", "publisher": "Downtown Portland", "url": "https://downtownportland.org/2026-summer-foot-traffic-report/" },
-        { "title": "Small and Midsized Downtown Recovery", "publisher": "Brookings", "url": "https://www.brookings.edu/articles/small-and-midsized-downtown-recovery-overcoming-obstacles-and-uplifting-innovative-solutions-in-four-regions/" }
-      ]
-    },
-    {
-      "id": "rpr-03",
-      "format": "pillar",
-      "title": "Mixed Reality for Brands: Your Room Is the Stage",
-      "angle": "New headsets blend digital content into the room you're standing in, and Meta's VR Glasses ship with full-color passthrough (a live camera view of the real room). Brands can design for living rooms, showrooms and booths without shutting out the world.",
-      "evidence": "In your Pop Goes the Weasel game, an explosion blasts a virtual hole in the player's real floor on Quest 3. It also runs on Vision Pro, and went from start to launch in one week. RPR isn't on Treeview's best mixed reality companies 2026 list.",
-      "tags": ["mixed-reality", "owned-proof", "headsets"],
-      "sources": [
-        { "title": "Pop Goes The Weasel", "publisher": "Rock Paper Reality", "url": "https://rockpaperreality.com/our-work/pop-goes-the-weasel/" },
-        { "title": "Introducing Meta VR Glasses (Sep 23, 2026)", "publisher": "Meta", "url": "https://www.meta.com/blog/meta-vr-glasses-announcement-meta-connect/" },
-        { "title": "Best Mixed Reality Companies (Apr 12, 2026)", "publisher": "Treeview", "url": "https://treeview.studio/blog/best-mixed-reality-companies" }
+        {
+          "title": "Intel Innovation Event",
+          "publisher": "Rock Paper Reality",
+          "url": "https://rockpaperreality.com/our-work/intel-innovation-event/"
+        }
       ]
     },
     {
@@ -59,63 +42,27 @@
       "title": "Try Before You Buy: AR Versus the Returns Problem",
       "angle": "US shoppers were expected to send back nearly $850 billion in merchandise in 2025. Seeing a product in your own space before checkout helps people buy once, with confidence.",
       "evidence": "Your WebAR for Saatchi Art (2019 to 2020) let shoppers place any of 1.4 million original artworks on their own wall, one of the largest WebAR deployments for ecommerce. Saatchi found 70% of art buyers hesitated because they couldn't see the work first. In 2026, Shopify reported that Gunner Kennels cut its return rate by 5% with life-size AR crate previews.",
-      "tags": ["ecommerce", "webar", "retail"],
+      "tags": [
+        "ecommerce",
+        "webar",
+        "retail"
+      ],
       "sources": [
-        { "title": "Consumers Expected to Return Nearly $850 Billion in 2025", "publisher": "NRF", "url": "https://nrf.com/media-center/press-releases/consumers-expected-to-return-nearly-850-billion-in-merchandise-in-2025" },
-        { "title": "Augmented Reality in Ecommerce (Jul 22, 2026)", "publisher": "Shopify", "url": "https://www.shopify.com/blog/ar-shopping" },
-        { "title": "Saatchi Art", "publisher": "Rock Paper Reality", "url": "https://rockpaperreality.com/our-work/saatchi-art/" }
-      ]
-    },
-    {
-      "id": "rpr-05",
-      "format": "insight",
-      "title": "Show, Don't Claim: Sustainability Stories in AR",
-      "angle": "For brands selling in the EU, rules from September 27, 2026 ban vague labels like eco-friendly unless the brand can prove them. Letting people play through the process beats printing a claim on the pack.",
-      "evidence": "Your Farms of the Future game for McCain let players grow virtual potatoes with regenerative techniques, guided by two AI characters. At Outernet London it logged 17,612 plays with an average dwell time of 176 seconds. UK claims fall under the CMA's Green Claims Code, not the EU rule.",
-      "tags": ["sustainability", "ai", "webar"],
-      "sources": [
-        { "title": "Directive (EU) 2024/825", "publisher": "EUR-Lex", "url": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202400825" },
-        { "title": "FAQ on the directive", "publisher": "European Commission", "url": "https://commission.europa.eu/document/download/3c257883-bb2a-4dd9-a6dc-501d587bb34f_en?filename=faq-empowerting-consumers-gtd.pdf" },
-        { "title": "McCain Farms of the Future", "publisher": "Rock Paper Reality", "url": "https://rockpaperreality.com/our-work/mccain-farms-of-the-future/" }
-      ]
-    },
-    {
-      "id": "rpr-06",
-      "format": "insight",
-      "title": "WebAR Games That Move Event Attendees",
-      "angle": "At big events, most attendees stop at the first attraction they see. A phone-based AR quest gives them a reason to move between zones and engage with the product stories along the way.",
-      "evidence": "Your four-part WebAR game at the 2022 Intel Innovation event was played by 30% of attendees, and demo stands with the AR experience drew six times more visitors than stands without it.",
-      "tags": ["events", "webar", "gamification"],
-      "sources": [
-        { "title": "Intel Innovation Event", "publisher": "Rock Paper Reality", "url": "https://rockpaperreality.com/our-work/intel-innovation-event/" }
-      ]
-    },
-    {
-      "id": "rpr-07",
-      "format": "insight",
-      "title": "AR Fundraising: Turn Supporters Into Players",
-      "angle": "US giving hit a record $617 billion in 2025, but giving by individuals grew only 1.4% after inflation. More than half of donations now happen on a phone, so causes need mobile experiences that bring supporters in.",
-      "evidence": "Your AR Arcade for the American Heart Association's Kids Heart Challenge was used by 50% of registered students, and 30% of online donations came through the app. Your Promise Garden let Walk to End Alzheimer's supporters plant a flower from anywhere. Fundraise Up found more than 53% of Q1 2026 donations in the US, UK and Australia were made on mobile.",
-      "tags": ["nonprofit", "fundraising", "mobile-ar"],
-      "sources": [
-        { "title": "Giving USA 2026", "publisher": "Giving USA", "url": "https://givingusa.org/giving-usa-charitable-giving-rose-to-617-20-billion-in-2025-surpassing-the-600-billion-mark-for-the-first-time/" },
-        { "title": "Nonprofit Giving Trends Q1 2026", "publisher": "Fundraise Up", "url": "https://fundraiseup.com/reports/pulse-check-2026-q1/" },
-        { "title": "American Heart Association", "publisher": "Rock Paper Reality", "url": "https://rockpaperreality.com/our-work/american-heart-association/" },
-        { "title": "AR Promise Garden", "publisher": "Rock Paper Reality", "url": "https://rockpaperreality.com/our-work/ar-promise-garden-for-alzheimers-association/" }
-      ]
-    },
-    {
-      "id": "rpr-08",
-      "format": "insight",
-      "title": "AI World Models: Hype, Help or Both?",
-      "angle": "Google's Project Genie turns a text prompt into a world you can walk through, and since May 2026 it can build from real places via Street View. The honest answer for brands: a fast way to sketch and pitch ideas, not a campaign yet.",
-      "evidence": "Genie rolled out to eligible Google AI Ultra subscribers in 140+ countries on May 19, 2026. Your team already builds with AI: Pop Goes the Weasel shipped in a week using generative tools, and McCain's AI soil expert, Wormy, was trained on McCain's own knowledge.",
-      "tags": ["ai", "world-models", "prototyping"],
-      "sources": [
-        { "title": "Project Genie (Jan 29, 2026)", "publisher": "Google", "url": "https://blog.google/innovation-and-ai/models-and-research/google-deepmind/project-genie/" },
-        { "title": "Project Genie and Street View (May 19, 2026)", "publisher": "Google", "url": "https://blog.google/innovation-and-ai/models-and-research/google-deepmind/project-genie-expands/" },
-        { "title": "Pop Goes The Weasel", "publisher": "Rock Paper Reality", "url": "https://rockpaperreality.com/our-work/pop-goes-the-weasel/" },
-        { "title": "McCain Farms of the Future", "publisher": "Rock Paper Reality", "url": "https://rockpaperreality.com/our-work/mccain-farms-of-the-future/" }
+        {
+          "title": "Consumers Expected to Return Nearly $850 Billion in 2025",
+          "publisher": "NRF",
+          "url": "https://nrf.com/media-center/press-releases/consumers-expected-to-return-nearly-850-billion-in-merchandise-in-2025"
+        },
+        {
+          "title": "Augmented Reality in Ecommerce (Jul 22, 2026)",
+          "publisher": "Shopify",
+          "url": "https://www.shopify.com/blog/ar-shopping"
+        },
+        {
+          "title": "Saatchi Art",
+          "publisher": "Rock Paper Reality",
+          "url": "https://rockpaperreality.com/our-work/saatchi-art/"
+        }
       ]
     },
     {
@@ -124,25 +71,27 @@
       "title": "Booth Demos When Headsets Become Glasses",
       "angle": "Meta's announced VR Glasses weigh about 100 grams, with battery and compute in a tethered puck, and go on sale in spring 2027. Lighter gear changes how you run an activation: hygiene, fit, pucks and how fast the line moves.",
       "evidence": "Your VRX Speedway racing game ran in the F1 Paddock Club at Suzuka and Austin in 2023, where guests kept rejoining the line to beat their best score.",
-      "tags": ["events", "vr", "hardware"],
+      "tags": [
+        "events",
+        "vr",
+        "hardware"
+      ],
       "sources": [
-        { "title": "Introducing Meta VR Glasses (Sep 23, 2026)", "publisher": "Meta", "url": "https://www.meta.com/blog/meta-vr-glasses-announcement-meta-connect/" },
-        { "title": "Lenovo and F1 Team Up (Sep 21, 2023)", "publisher": "Lenovo", "url": "https://news.lenovo.com/f1-virtually-put-fans-in-the-drivers-seat-thinkreality-vrx/" },
-        { "title": "Lenovo Formula 1 VRX Experience", "publisher": "Rock Paper Reality", "url": "https://rockpaperreality.com/our-work/lenovo-formula-1-vrx-experience/" }
-      ]
-    },
-    {
-      "id": "rpr-10",
-      "format": "insight",
-      "title": "FOOH or Real AR: Which Billboard Wins?",
-      "angle": "CGI fake out-of-home videos keep going viral: Shell Malaysia's 2025 Lewis Hamilton billboards drew 1.65 million organic views in five days. Real AR puts the impossible where people can walk up to it. Each wins a different brief, and being upfront about what's CGI matters.",
-      "evidence": "Your T-Mobile holiday campaign took over Times Square's billboards and skyscrapers in AR, at far lower cost than buying the physical boards. Your 3D and VFX team can make the CGI version too. Digital out-of-home grew 18.5% in Q2 2026 year over year (OAAA).",
-      "tags": ["fooh", "ooh", "3d-vfx"],
-      "sources": [
-        { "title": "Shell MY fuels up FOOH stunt starring Lewis Hamilton (Jun 25, 2025)", "publisher": "Marketing-Interactive", "url": "https://www.marketing-interactive.com/shell-my-fuels-up-fooh-stunt-starring-lewis-hamilton" },
-        { "title": "Brands Are Betting Bigger on OOH (Aug 18, 2026)", "publisher": "OAAA", "url": "https://oaaa.org/news/from-coca-cola-to-openai-brands-are-betting-bigger-on-ooh/" },
-        { "title": "T-Mobile Geospatial Sweepstake", "publisher": "Rock Paper Reality", "url": "https://rockpaperreality.com/our-work/geospatial-sweepstake-campaign-for-t-mobile/" },
-        { "title": "Solutions (3D Animation and VFX)", "publisher": "Rock Paper Reality", "url": "https://rockpaperreality.com/solutions/" }
+        {
+          "title": "Introducing Meta VR Glasses (Sep 23, 2026)",
+          "publisher": "Meta",
+          "url": "https://www.meta.com/blog/meta-vr-glasses-announcement-meta-connect/"
+        },
+        {
+          "title": "Lenovo and F1 Team Up (Sep 21, 2023)",
+          "publisher": "Lenovo",
+          "url": "https://news.lenovo.com/f1-virtually-put-fans-in-the-drivers-seat-thinkreality-vrx/"
+        },
+        {
+          "title": "Lenovo Formula 1 VRX Experience",
+          "publisher": "Rock Paper Reality",
+          "url": "https://rockpaperreality.com/our-work/lenovo-formula-1-vrx-experience/"
+        }
       ]
     }
   ]

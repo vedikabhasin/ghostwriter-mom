@@ -4,9 +4,9 @@ Every slug config in `clients/<slug>.json` names its template:
 
 | Template | File | Preview route | Used by |
 |---|---|---|---|
-| `rpr` | `templates/rpr.html` | `/rprtemplate` | `rpr-k7m2qx` |
+| `rpr` | `templates/rpr.html` | `/rprtemplate` | nothing (preview only) |
 | `swipe1` | `templates/swipe1.html` | `/swipe1template` (`/swipetemplate` redirects here) | `genrobotics-d597f6`, `treeview-7dz5vn` |
-| `swipe2` | `templates/swipe2.html` | `/swipe2template` | `acrylic-kybls8`, `deeli-uj3qbi`, `groovejones-wlpwpq`, `augmodo-hx87pr` |
+| `swipe2` | `templates/swipe2.html` | `/swipe2template` | `rpr-k7m2qx`, `acrylic-kybls8`, `deeli-uj3qbi`, `groovejones-wlpwpq`, `augmodo-hx87pr` |
 
 ## Routing
 
@@ -24,9 +24,10 @@ stays for config-less slugs and for the portal tests that drive it.
 - `rpr` and `swipe1` are frozen copies of the page as it was live on
   2026-10-01 (RPR at 10 cards; General Robotics at 5 cards, intro and pick
   step). Change them only to fix a live bug.
-- RPR terminology stays RPR-only. An `rpr` config uses the pillar / insight /
-  post formats; every other template uses long_form / short_insight /
-  linkedin_post. The build fails otherwise.
+- RPR terminology stays RPR-only. An `rpr` config, and Rock Paper Reality's
+  swipe2 config (`rpr-k7m2qx`), use the pillar / insight / post formats; every
+  other config uses long_form / short_insight / linkedin_post. The build fails
+  otherwise.
 - No em dashes in page copy. The build fails on an em dash in a routed config.
 
 ## swipe2
@@ -81,7 +82,7 @@ swipe2 has its own shape:
 | `cards` | exactly 3, lead formats |
 | `vediReactions` | `{ "<cardId>": "like" \| "pass" }` for every card |
 | `writeOn` | every card id once, in writing order |
-| `lockedCount` | directions the call unlocks (integer) |
+| `lockedCount` | preview templates only. A real company's "N more directions" is counted at page load from its cards in the database (`get_feed`, read-only) that are not in the deck; the build rejects `lockedCount` on a real slug |
 | `deliveryChannel` | `LinkedIn` (shows "LinkedIn messages") or `email` (shows "inbox") |
 | `lead_type` | `warm` or `cold` |
 | `flow` | optional; default `live_reveal` |
@@ -92,7 +93,14 @@ the database columns.
 ## PostHog
 
 `/shared/track.js` registers on every page load, on every event:
-`template`, `slug`, `lead_type`, `cards_count`, `flow`.
+`template`, `slug`, `lead_type`, `cards_count`, `flow`. Each page also
+registers `template` at `posthog.init` and fills it in `before_send`, so
+PostHog's own events (`$pageview`, `$pageleave`) carry it too: `swipe1` for
+swipe.html and swipe1.html, `swipe2` for swipe2.html, `rpr` for rpr.html.
+
+`swipetemplate` and `swipe2template` send nothing (PostHog is never
+initialised there). `opt_in_capturing` (which sends `$opt_in`) runs only on
+`?gw_internal=0`; `?gw_internal=1` opts a device out.
 
 Shared event names on every template: `page_open`, `deal_me_in`,
 `first_swipe`, `swipe_complete`, `email_submitted`, `unlock_clicked`.

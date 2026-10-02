@@ -8,7 +8,10 @@
 //                     Everything else is ENHANCED.
 //   * Local capture   Suppressed on localhost / 127.0.0.1 unless ?ph_debug=1.
 //   * Personal device ?gw_internal=1 flips a localStorage flag that opts the
-//                     device out entirely; ?gw_internal=0 clears it.
+//                     device out entirely; ?gw_internal=0 clears it and opts
+//                     back in (the only time opt_in_capturing runs, so no
+//                     $opt_in event on ordinary loads).
+//   * Excluded        swipetemplate and swipe2template capture nothing.
 //   * Super props     Attached to every event. Every template registers
 //                     template, slug, lead_type, cards_count and flow (from
 //                     the slug config in clients/<slug>.json).
@@ -32,6 +35,8 @@ const APP           = 'sales_page';
 const PAGE_VERSION  = '2026-10-01-a';
 // The template routes are internal previews: BASIC, like swipetemplate.
 const BASIC_SLUGS   = new Set(['swipetemplate', 'swipe1template', 'rprtemplate', 'swipe2template']);
+// Preview slugs that never send anything (the pages also skip posthog.init).
+const EXCLUDED_SLUGS = new Set(['swipetemplate', 'swipe2template']);
 const LEAD_TYPES    = ['warm', 'cold', 'partner'];
 const OPT_OUT_KEY   = 'gw_internal';
 
@@ -162,15 +167,19 @@ export function initTracking(opts){
 
   // Localhost gate.
   if (isLocalHost() && q('ph_debug') !== '1') optedOut = true;
+  // Preview slugs: no capture at all.
+  if (EXCLUDED_SLUGS.has(slug)) optedOut = true;
 
   const p = ph();
   if (!p) return { enhanced, optedOut };
 
-  // Device-level opt-out is absolute.
+  // Device-level opt-out is absolute. opt_in_capturing() sends a $opt_in
+  // event, so it runs only when ?gw_internal=0 lifts an earlier opt-out,
+  // never on an ordinary page load.
   if (internalDevice){
     optedOut = true;
     try { p.opt_out_capturing && p.opt_out_capturing(); } catch (_) {}
-  } else {
+  } else if (gw === '0'){
     try { p.opt_in_capturing && p.opt_in_capturing(); } catch (_) {}
   }
 

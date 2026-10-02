@@ -28,7 +28,9 @@ const BUNDLE = fs.readFileSync(BUNDLE_PATH, 'utf8');
 // swipe2template config under another slug, removed at the end.
 const TEMP = path.join(ROOT, 'clients/beacon-swipe2-test.json');
 const tplConfig = JSON.parse(fs.readFileSync(path.join(ROOT, 'clients/swipe2template.json'), 'utf8'));
-fs.writeFileSync(TEMP, JSON.stringify({ ...tplConfig, slug: 'beacon-swipe2-test' }, null, 2) + '\n');
+// A real company carries no lockedCount: the page counts its other cards from get_feed.
+const { lockedCount: _tplLocked, ...tplRest } = tplConfig;
+fs.writeFileSync(TEMP, JSON.stringify({ ...tplRest, slug: 'beacon-swipe2-test' }, null, 2) + '\n');
 const cleanup = () => { try { fs.unlinkSync(TEMP); } catch (_) {} execFileSync('node', ['validate-feeds.js'], { cwd: ROOT, stdio: 'ignore' }); };
 process.on('exit', () => { try { fs.unlinkSync(TEMP); } catch (_) {} });
 execFileSync('node', ['validate-feeds.js'], { cwd: ROOT, stdio: 'ignore' });
@@ -64,10 +66,12 @@ const title = (id) => CONFIG.cards.find((c) => c.id === id).title;
 const db = {};
 const co = (slug) => (db[slug] = db[slug] || { decisions: {}, log: [], pick: null, approvals: [] });
 const rpcLog = [];
+let EXTRA_CARDS = 7; // cards the company has in the database beyond the deck
 function rpc(name, a) {
   rpcLog.push({ name, ...a });
   const c = co(a.p_slug);
   switch (name) {
+    case 'get_feed': return { slug: a.p_slug, cards: CONFIG.cards.map((x) => ({ card_key: x.id })).concat(Array.from({ length: EXTRA_CARDS }, (_, i) => ({ card_key: 'extra-' + i }))) };
     case 'log_swipe': c.log.push({ card_key: a.p_card_key, action: a.p_action, created_at: new Date().toISOString() }); c.decisions[a.p_card_key] = a.p_action; return null;
     case 'get_collab_state': return { decisions: CONFIG.cards.filter((x) => c.decisions[x.id]).map((x) => ({ card_key: x.id, action: c.decisions[x.id] })), log: c.log, pick: c.pick && { ...c.pick, created: undefined }, approval: c.approvals.at(-1) || null };
     case 'set_collab_pick': {
@@ -156,7 +160,7 @@ let deliverText = '';
   await page.screenshot({ path: OUT + '/s01-intro.jpg', type: 'jpeg', quality: 80 });
   await page.click('[data-action="show-info"]'); await wait(300);
   const infoIntro = await page.evaluate(() => ({ p: Array.from(document.querySelectorAll('#info-portal p')).map((x) => x.textContent), dl: document.querySelector('#info-scrim dl').hidden }));
-  check('"i" on the intro: the portal text', JSON.stringify(infoIntro.p) === JSON.stringify(['Turns search and AI-citation gaps into technical articles, written and edited by a human for your brand in 24 hours. Not an unreviewed AI draft. No brief, no prompt, no calls needed.',
+  check('"i" on the intro: the portal text', JSON.stringify(infoIntro.p) === JSON.stringify(['Turns search and AI-citation gaps into technical articles, written and edited by a human for your brand in 24 hours. Not an unreviewed AI draft. No brief, no prompt.',
     'A 15 min call unlocks your portal with 7 more directions. 5 new ones each week.']) && infoIntro.dl, infoIntro);
   await page.click('[data-action="close-info"]'); await wait(300);
 
@@ -299,7 +303,7 @@ let deliverText = '';
   const info = await page.evaluate(() => Array.from(document.querySelectorAll('#info-portal p')).map((p) => p.textContent));
   check('opening the "i" panel closes a locked-item tooltip', await page.locator('#gwk-bubble:not([hidden])').count() === 0);
   check('"i": "technical articles, written and edited by a human" in bold', await page.evaluate(() => Array.from(document.querySelectorAll('#info-portal strong')).map((b) => b.textContent).join('|')) === 'technical articles, written and edited by a human');
-  check('"i" on the final screen: the same portal text', JSON.stringify(info) === JSON.stringify(['Turns search and AI-citation gaps into technical articles, written and edited by a human for your brand in 24 hours. Not an unreviewed AI draft. No brief, no prompt, no calls needed.',
+  check('"i" on the final screen: the same portal text', JSON.stringify(info) === JSON.stringify(['Turns search and AI-citation gaps into technical articles, written and edited by a human for your brand in 24 hours. Not an unreviewed AI draft. No brief, no prompt.',
     'A 15 min call unlocks your portal with 7 more directions. 5 new ones each week.']) && await page.evaluate(() => document.querySelector('#info-scrim dl').hidden), info);
   await page.screenshot({ path: OUT + '/s07-info.jpg', type: 'jpeg', quality: 80 });
   await page.click('[data-action="close-info"]'); await wait(200);
@@ -426,11 +430,38 @@ console.log('\n=== Intro on a 120Hz phone with a slow screen transition');
   await ctx.close();
 }
 
+console.log('\n=== "N more directions" comes from the company\'s cards in the database');
+for (const [extra, want] of [[2, '2 more directions'], [1, '1 more direction']]) {
+  EXTRA_CARDS = extra; delete db[SLUG];
+  const { ctx, page } = await device();
+  await page.goto(BASE + '/' + SLUG);
+  await page.waitForSelector('[data-action="start"]', { state: 'visible' });
+  const muted = await page.textContent('#intro-offer .intro-muted');
+  check(`database has ${extra} more card(s): intro says "${want}"`, muted === 'A 15 min call unlocks your portal and ' + want + '. 5 new directions each week.', muted);
+  await ctx.close();
+}
+EXTRA_CARDS = 7;
+
+console.log('\n=== PostHog: template on every event, $opt_in only on ?gw_internal=0');
+for (const [q, wantOptIn] of [['', 0], ['?gw_internal=0', 1]]) {
+  delete db[SLUG];
+  const { ctx, page } = await device();
+  await page.goto(BASE + '/' + SLUG + (q ? q + '&' : '?') + 'ph_debug=1');
+  await page.waitForSelector('[data-action="start"]', { state: 'visible' }); await wait(400);
+  const calls = await page.evaluate(() => Array.from(window.posthog).map((x) => ({ m: x[0], a: x[1] })));
+  const optIns = calls.filter((c) => c.m === 'opt_in_capturing').length;
+  const reg = calls.filter((c) => c.m === 'register').map((c) => c.a && c.a.template);
+  const init = await page.evaluate(() => { const i = (window.posthog._i || [])[0]; return i ? typeof i[1].before_send : null; });
+  check(`load ${q || '(plain)'}: opt_in_capturing called ${wantOptIn}x`, optIns === wantOptIn, optIns);
+  if (!q) check('template registered as "swipe2" from init, before_send fills it on PostHog\'s own events', reg[0] === 'swipe2' && reg.every((t) => t === 'swipe2') && init === 'function', { reg, init });
+  await ctx.close();
+}
+
 console.log('\n=== The /swipe2template preview never notifies');
 {
-  const { ctx, page, errors } = await device();
+  const { ctx, page, errors, events } = await device();
   const before = forms.filter((f) => f['form-name'] === 'approvals').length;
-  await page.goto(BASE + '/swipe2template');
+  await page.goto(BASE + '/swipe2template?ph_debug=1');
   await page.waitForSelector('[data-action="start"]', { state: 'visible' });
   await page.click('[data-action="start"]');
   await page.waitForSelector('#card-stage .card[data-depth="0"]');
@@ -438,6 +469,8 @@ console.log('\n=== The /swipe2template preview never notifies');
   await page.waitForSelector('#screen-final.on', { timeout: 5000 });
   await wait(500);
   check('preview reaches the final screen, sends no approval and no Netlify approvals post', forms.filter((f) => f['form-name'] === 'approvals').length === before && !(db.swipe2template && db.swipe2template.approvals.length));
+  const phCalls = await page.evaluate(() => (Array.isArray(window.posthog) ? Array.from(window.posthog) : []).map((x) => x[0]).concat((window.posthog && window.posthog._i || []).map(() => 'init')));
+  check('preview: excluded from PostHog (never initialised, nothing captured)', !phCalls.includes('init') && !events.length, { phCalls: [...new Set(phCalls)], events: events.length });
   check('preview: no page errors', !errors.length, errors);
   await ctx.close();
 }

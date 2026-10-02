@@ -21,8 +21,9 @@
 // Every feed names its page template ("template": rpr | swipe1 | swipe2, see
 // templates/README.md). Optional analytics fields: leadType (warm | cold |
 // partner) and flow (a string; default swipe_pick_<unlock mode>).
-// RPR terminology stays RPR-only: an "rpr" feed uses pillar / insight / post,
-// every other template uses the lead formats.
+// RPR terminology stays RPR-only: an "rpr" feed, or Rock Paper Reality's own
+// swipe2 feed (RPR_SWIPE2_SLUGS), uses pillar / insight / post; every other
+// feed uses the lead formats.
 //
 // After validating, this script writes /_redirects: one rewrite per routed
 // slug to its template file, plus the old template aliases. Netlify reads
@@ -56,6 +57,7 @@ const TEMPLATE_SLUGS = new Set(['swipetemplate', 'rprtemplate', 'swipe1template'
 const TEMPLATES = { rpr: '/templates/rpr.html', swipe1: '/templates/swipe1.html', swipe2: '/templates/swipe2.html' };
 const RPR_FORMATS  = ['pillar', 'insight', 'post'];
 const LEAD_FORMATS = FORMATS.filter(f => RPR_FORMATS.indexOf(f) === -1);
+const RPR_SWIPE2_SLUGS = new Set(['rpr-k7m2qx']);
 const LEAD_TYPES   = ['warm', 'cold', 'partner'];
 // Old routes kept as permanent redirects. Their feed files stay (the database
 // company and the portal tests still use them) but they are never routed.
@@ -77,9 +79,11 @@ function stringifyDeep(v){
 
 // swipe2 configs have their own shape (see templates/README.md):
 //   slug, template "swipe2", company, contactFirstName, sourceLine, cards
-//   (exactly 3, lead formats), vediReactions (like | pass per card), writeOn
-//   (every card id once), lockedCount, deliveryChannel (LinkedIn | email),
-//   lead_type (warm | cold); flow optional.
+//   (exactly 3, lead formats; RPR formats for RPR_SWIPE2_SLUGS), vediReactions
+//   (like | pass per card), writeOn (every card id once), deliveryChannel
+//   (LinkedIn | email), lead_type (warm | cold); flow optional. lockedCount
+//   only on preview templates: a real company's "N more directions" is
+//   counted from its cards in the database at page load.
 function validateSwipe2(file, data){
   const isTemplate = TEMPLATE_SLUGS.has(data.slug);
   const str = (k) => { if(typeof data[k] !== 'string' || !data[k].trim()) fail(file + ': "' + k + '" must be a non-empty string'); };
@@ -89,7 +93,9 @@ function validateSwipe2(file, data){
   if(['LinkedIn', 'email'].indexOf(data.deliveryChannel) === -1) fail(file + ': deliveryChannel must be "LinkedIn" or "email"');
   if(['warm', 'cold'].indexOf(data.lead_type) === -1) fail(file + ': lead_type must be "warm" or "cold"');
   if('flow' in data && (typeof data.flow !== 'string' || !data.flow.trim())) fail(file + ': flow must be a non-empty string when present');
-  if(!Number.isInteger(data.lockedCount) || data.lockedCount < 0) fail(file + ': lockedCount must be a non-negative integer');
+  if(isTemplate && (!Number.isInteger(data.lockedCount) || data.lockedCount < 0)) fail(file + ': lockedCount must be a non-negative integer');
+  if(!isTemplate && 'lockedCount' in data) fail(file + ': lockedCount is counted from the database for a real company; remove it');
+  const formats = RPR_SWIPE2_SLUGS.has(data.slug) ? RPR_FORMATS : LEAD_FORMATS;
   if('email' in data) fail(file + ': client feeds must not contain an "email" field (files are publicly served)');
   if(!Array.isArray(data.cards) || data.cards.length !== 3) fail(file + ': swipe2 shows exactly 3 cards');
   const keys = [];
@@ -98,7 +104,7 @@ function validateSwipe2(file, data){
     CARD_REQUIRED.forEach(k => { if(!(k in c)) fail(label + ' missing "' + k + '"'); });
     if(keys.indexOf(String(c.id)) !== -1) fail(label + ' duplicate id ' + c.id);
     keys.push(String(c.id));
-    if(LEAD_FORMATS.indexOf(String(c.format).toLowerCase()) === -1) fail(label + ' format must be one of ' + LEAD_FORMATS.join(', '));
+    if(formats.indexOf(String(c.format).toLowerCase()) === -1) fail(label + ' format must be one of ' + formats.join(', '));
     ['title', 'angle', 'evidence'].forEach(k => { if(typeof c[k] !== 'string' || !c[k].trim()) fail(label + ' "' + k + '" must be a non-empty string'); });
     if(!Array.isArray(c.sources) || !c.sources.length) fail(label + ' sources must be a non-empty array');
     c.sources.forEach((src, si) => {

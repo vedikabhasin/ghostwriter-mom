@@ -1900,6 +1900,8 @@ body.dir-save  .ctl-save{
     return '';
   }
   var SLUG        = resolveSlug();
+  // Analytics name for this page: the config-less fallback runs the swipe1 flow.
+  var TEMPLATE    = 'swipe1';
   var FRESH       = new URLSearchParams(location.search).get('fresh') === '1';
 
   // -- Runtime config: Supabase + PostHog credentials, loaded from
@@ -1913,17 +1915,26 @@ body.dir-save  .ctl-save{
 
   // -- PostHog (only initialized once runtime.json loads).
   var ph = { capture: function(){}, register: function(){}, identify: function(){}, reset: function(){} };
+  // Preview slugs never send anything to PostHog.
+  var PH_EXCLUDED = /^(swipetemplate|swipe2template)$/.test(SLUG);
   function initPosthog(){
     if(!runtime.posthogKey || runtime.posthogKey === 'REPLACE_ME' || !window.posthog) return;
+    if(PH_EXCLUDED) return;
     try{
       window.posthog.init(runtime.posthogKey, {
         api_host: runtime.posthogHost || 'https://us.i.posthog.com',
         person_profiles: 'identified_only',
         disable_session_recording: true,
         capture_pageview: true,
-        autocapture: false
+        autocapture: false,
+        // template on every event, including the ones PostHog sends itself
+        // ($pageview, $pageleave) before register() below takes effect.
+        before_send: function(ev){
+          if(ev && ev.properties && !ev.properties.template) ev.properties.template = TEMPLATE;
+          return ev;
+        }
       });
-      window.posthog.register({ slug: SLUG });
+      window.posthog.register({ slug: SLUG, template: TEMPLATE });
       ph = window.posthog;
     }catch(e){ /* ignore init failure */ }
   }
@@ -2615,7 +2626,8 @@ body.dir-save  .ctl-save{
         window.gwmTrack.initTracking({
           slug:       SLUG,
           feed:       client,
-          isInternal: !!(client && client.isInternal)
+          isInternal: !!(client && client.isInternal),
+          template:   TEMPLATE
         });
         window.gwmTrack.setSummaryCollector(function(){ return collectSessionSummary(); });
       }

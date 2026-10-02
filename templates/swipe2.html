@@ -2113,17 +2113,26 @@ body:not(.on-intro) .gwk-deal{display:none;}
 
   // -- PostHog (only initialized once runtime.json loads).
   var ph = { capture: function(){}, register: function(){}, identify: function(){}, reset: function(){} };
+  // Preview slugs never send anything to PostHog.
+  var PH_EXCLUDED = /^(swipetemplate|swipe2template)$/.test(SLUG);
   function initPosthog(){
     if(!runtime.posthogKey || runtime.posthogKey === 'REPLACE_ME' || !window.posthog) return;
+    if(PH_EXCLUDED) return;
     try{
       window.posthog.init(runtime.posthogKey, {
         api_host: runtime.posthogHost || 'https://us.i.posthog.com',
         person_profiles: 'identified_only',
         disable_session_recording: true,
         capture_pageview: true,
-        autocapture: false
+        autocapture: false,
+        // template on every event, including the ones PostHog sends itself
+        // ($pageview, $pageleave) before register() below takes effect.
+        before_send: function(ev){
+          if(ev && ev.properties && !ev.properties.template) ev.properties.template = TEMPLATE;
+          return ev;
+        }
       });
-      window.posthog.register({ slug: SLUG });
+      window.posthog.register({ slug: SLUG, template: TEMPLATE });
       ph = window.posthog;
     }catch(e){ /* ignore init failure */ }
   }
@@ -2168,7 +2177,7 @@ body:not(.on-intro) .gwk-deal{display:none;}
   // until Resend replaces them.
   var dataAdapter = {
     getFeed: function(slug){
-      return getSwipe2Feed(slug);
+      return getSwipe2Feed(slug).then(withRemaining);
       if(supabase){
         return supabase.rpc('get_feed', { p_slug: slug }).then(function(res){
           if(res.error) throw res.error;
@@ -2806,7 +2815,7 @@ body:not(.on-intro) .gwk-deal{display:none;}
         bold('Written and edited by a human within 24 hours'), txt(', no unreviewed AI draft.')
       ].forEach(function(n){ introEl.appendChild(n); });
       var muted = document.createElement('span'); muted.className = 'intro-muted';
-      muted.textContent = 'A 15 min call unlocks your portal and ' + lockedCount() + ' more directions. 5 new directions each week.';
+      muted.textContent = lockedCount() === 0 ? 'A 15 min call unlocks your portal. 5 new directions each week.' : 'A 15 min call unlocks your portal and ' + moreDirections() + '. 5 new directions each week.';
       introEl.appendChild(muted);
     }
     var sig = client.signal || {};
@@ -3597,7 +3606,28 @@ body:not(.on-intro) .gwk-deal{display:none;}
       });
   }
   function channelLabel(){ return client && client.deliveryChannel === 'LinkedIn' ? 'LinkedIn messages' : 'inbox'; }
-  function lockedCount(){ var n = client && client.lockedCount; return (typeof n === 'number' && n >= 0) ? n : 0; }
+  // Directions the call unlocks: the company's real cards in the database
+  // that are not in this deck (read through get_feed, which writes nothing).
+  // Only a preview with no database company falls back to the config number.
+  // null when neither is known; the copy then leaves the number out.
+  function lockedCount(){
+    var n = client && typeof client.remainingCount === 'number' ? client.remainingCount : (client && client.lockedCount);
+    return (typeof n === 'number' && n >= 0) ? n : null;
+  }
+  function moreDirections(){
+    var n = lockedCount();
+    if(n === null) return 'more directions';
+    return n + ' more direction' + (n === 1 ? '' : 's');
+  }
+  function withRemaining(feed){
+    if(!supabase) return feed;
+    return supabase.rpc('get_feed', { p_slug: feed.slug }).then(function(res){
+      if(res.error || !res.data || !Array.isArray(res.data.cards)) throw (res.error || new Error('no cards'));
+      var deck = feed.cards.map(function(c){ return String(c.id); });
+      feed.remainingCount = res.data.cards.filter(function(c){ return deck.indexOf(String(c.card_key)) === -1; }).length;
+      return feed;
+    }).catch(function(err){ console.warn('[swipe] card count unavailable:', err && err.message); return feed; });
+  }
   function deckKeys(){ return (client && client.cards || []).map(function(c){ return String(c.id); }); }
   function configVedi(){
     var out = {}, vr = (client && client.vediReactions) || {};
@@ -4079,9 +4109,9 @@ body:not(.on-intro) .gwk-deal{display:none;}
     var b = document.createElement('strong'); b.textContent = 'technical articles, written and edited by a human';
     p1.appendChild(document.createTextNode('Turns search and AI-citation gaps into '));
     p1.appendChild(b);
-    p1.appendChild(document.createTextNode(' for your brand in 24 hours. Not an unreviewed AI draft. No brief, no prompt, no calls needed.'));
+    p1.appendChild(document.createTextNode(' for your brand in 24 hours. Not an unreviewed AI draft. No brief, no prompt.'));
     var p2 = document.createElement('p');
-    p2.textContent = 'A 15 min call unlocks your portal with ' + lockedCount() + ' more directions. 5 new ones each week.';
+    p2.textContent = lockedCount() === 0 ? 'A 15 min call unlocks your portal. 5 new directions each week.' : 'A 15 min call unlocks your portal with ' + moreDirections() + '. 5 new ones each week.';
     portal.appendChild(p1); portal.appendChild(p2);
   }
   function lockEl(){ var l = document.createElement('span'); l.className = 'gwk-lock'; l.setAttribute('aria-hidden', 'true'); l.innerHTML = LOCK_SVG; return l; }
@@ -4121,7 +4151,7 @@ body:not(.on-intro) .gwk-deal{display:none;}
     more.setAttribute('data-lock', 'more'); more.setAttribute('aria-label', LOCK_TIPS.more);
     var gw = document.createElement('div'); gw.className = 'gwk-lib-books'; more.appendChild(gw);
     for(var g = 0; g < 3; g++){ var gb = document.createElement('div'); gb.className = 'mini-book ghost'; gw.appendChild(gb); }
-    var lbl = document.createElement('span'); lbl.className = 'gwk-lib-label'; lbl.textContent = lockedCount() + ' more directions';
+    var lbl = document.createElement('span'); lbl.className = 'gwk-lib-label'; lbl.textContent = lockedCount() === 0 ? '5 new each week' : moreDirections();
     more.appendChild(lbl); more.appendChild(lockEl());
     lib.appendChild(stack); lib.appendChild(more);
 
