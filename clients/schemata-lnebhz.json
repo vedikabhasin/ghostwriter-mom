@@ -1,0 +1,110 @@
+{
+  "slug": "schemata-lnebhz",
+  "template": "swipe2",
+  "lead_type": "warm",
+  "deliveryChannel": "email",
+  "company": "Schemata",
+  "contactFirstName": "James",
+  "sourceLine": "your work at Whiteman and Altus, and the questions maintenance leads ask before they trust AI at the aircraft",
+  "directionShape": "1 long-form article + 2 short insights",
+  "emailKnown": true,
+  "vediReactions": {
+    "r2-13": "like",
+    "r2-14": "like",
+    "r2-15": "pass"
+  },
+  "writeOn": [
+    "r2-13",
+    "r2-14",
+    "r2-15"
+  ],
+  "cards": [
+    {
+      "id": "r2-13",
+      "format": "short_insight",
+      "title": "Cited Answers From Technical Orders",
+      "angle": "The Pentagon's January 2026 AI strategy put GenAI.mil in front of millions of personnel. A maintainer does not need a chat window; they need the right paragraph of the right TO, with the citation, at the aircraft.",
+      "evidence": "Your July 2026 release answers questions only from ingested Technical Orders, manuals, SOPs and videos, with citations, at Whiteman AFB. How retrieval behaves when the TO is silent or two documents conflict is the piece, and it needs your engineers in the room.",
+      "tags": [
+        "grounded-retrieval",
+        "short-insight",
+        "product-release"
+      ],
+      "sources": [
+        {
+          "title": "Schemata Answers Questions at the Point of Need",
+          "publisher": "Schemata",
+          "url": "https://www.schemata.com/news/the-schemata-drop-schemata-answers-questions-at-the-point-of-need"
+        },
+        {
+          "title": "AI Strategy (January 12 2026)",
+          "publisher": "Department of War",
+          "url": "https://media.defense.gov/2026/Jan/12/2003855671/-1/-1/0/ARTIFICIAL-INTELLIGENCE-STRATEGY-FOR-THE-DEPARTMENT-OF-WAR.PDF"
+        },
+        {
+          "title": "Pentagon rolls out major reforms of R&D, AI",
+          "publisher": "Breaking Defense",
+          "url": "https://breakingdefense.com/2026/01/pentagon-rolls-out-major-reforms-of-rd-ai/"
+        }
+      ]
+    },
+    {
+      "id": "r2-14",
+      "format": "long_form",
+      "title": "One Scan, Twice the Training Slots",
+      "angle": "Boeing's 2026 outlook calls for 728,000 technicians over 20 years, and units train on single physical assets that are also needed on the line. The ROI of a scan shows up in asset availability before it shows up in learning outcomes.",
+      "evidence": "Altus AFB reported a 20 percent increase in bus availability and doubled inspection opportunities after one bus was scanned into tablet-based training. The equipment-availability math is the argument your site states once as a quote and never works through.",
+      "tags": [
+        "training-digital-twin",
+        "long-form",
+        "customer-quote"
+      ],
+      "sources": [
+        {
+          "title": "AI-Native Training for the Next Generation of Airmen",
+          "publisher": "Schemata",
+          "url": "https://www.schemata.com/news/ai-native-training-for-the-next-generation-of-airmen"
+        },
+        {
+          "title": "The 2026 Boeing Technician Outlook",
+          "publisher": "ATEC",
+          "url": "https://www.atec-amt.org/news/the-2026-boeing-technician-outlook-a-closer-look"
+        },
+        {
+          "title": "The Manual, Rewritten",
+          "publisher": "Schemata",
+          "url": "https://www.schemata.com/news/the-schematic-the-manual-rewritten"
+        }
+      ]
+    },
+    {
+      "id": "r2-15",
+      "format": "short_insight",
+      "title": "Animating a Scan Is Harder Than Scanning It",
+      "angle": "Nvidia's Cosmos 3 (June 2026) generates plausible worlds; maintenance training needs the exact asset, with parts that move the way the real ones do. A photoreal capture has no part hierarchy, so motion is a second job.",
+      "evidence": "Your August 2026 release adds system motion, animation and exploded views to scanned assets, viewable on a personal device. What it takes to segment a capture into articulated parts and keep it rendering on a tablet is the engineering story, pending an interview.",
+      "tags": [
+        "reality-capture",
+        "short-insight",
+        "product-release"
+      ],
+      "sources": [
+        {
+          "title": "Simulating How Your Systems Work Together",
+          "publisher": "Schemata",
+          "url": "https://www.schemata.com/news/the-schemata-drop-simulating-how-your-systems-work-together"
+        },
+        {
+          "title": "Nvidia's Cosmos 3 open AI world model",
+          "publisher": "Axios",
+          "url": "https://www.axios.com/2026/06/01/nvidia-ai-push-cosmos-3-world-model"
+        },
+        {
+          "title": "The Next Frontier is Physical",
+          "publisher": "Schemata",
+          "url": "https://www.schemata.com/news/the-schematic-the-next-frontier-is-physical"
+        }
+      ]
+    }
+  ]
+}
