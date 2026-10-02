@@ -24,7 +24,7 @@
       "format": "long_form",
       "title": "VR Mesh to Class A: The Conversion Step",
       "angle": "Car programs are compressing toward two-year cycles, and the slowest handoff in exterior design is still getting a concept surface into a Class A tool. The problem is not that VR cannot export NURBS; it is that polygon data converted to NURBS patches is hard to edit afterward.",
-      "evidence": "Your Donkervoort F22 story shows a Gravity Sketch mesh going straight to CNC milling at quality matching scanned clay, and your own export guide warns about editing converted patches. No article on your site walks a surfacing lead through when to convert, when to rebuild and when to mill from mesh.",
+      "evidence": "Your Donkervoort F22 story shows two handoffs: a mesh milled directly for verification, then the final model taken into Alias for Class A surfacing. Your export guide confirms native NURBS exports like-for-like while converted patches get tricky. No article on your site tells a surfacing lead when to mill a mesh, preserve native NURBS or rebuild downstream.",
       "tags": [
         "class-a-surfacing",
         "long-form",
@@ -52,8 +52,8 @@
       "id": "r2-05",
       "format": "short_insight",
       "title": "Milling Budgets Under 24-Month Car Programs",
-      "angle": "Renault shipped Twingo E-Tech in 21 months and Chinese OEMs run two-year cycles. Each physical milling pass is a line item that program timing no longer tolerates.",
-      "evidence": "Donkervoort's public figure is up to 40,000 EUR per milling pass, reduced to one verification mill after 1:1 VR sign-off; Ford's Paul Wraith describes catching errors before milling. The piece is where clay still earns its cost and why.",
+      "angle": "Renault shipped Twingo E-Tech in 21 months and Chinese OEMs run two-year cycles. Each full-scale milling pass is a line item that program timing no longer tolerates easily.",
+      "evidence": "Donkervoort's designer puts a milling at up to 40,000 EUR and says he would probably use one before sign-off after 1:1 VR evaluation; the F22 went from sketch to production in under two years. Ford's Paul Wraith describes catching errors before milling. The piece is which decisions still deserve clay and which can be settled at full scale in VR.",
       "tags": [
         "automotive-design",
         "short-insight",
@@ -80,9 +80,9 @@
     {
       "id": "r2-06",
       "format": "short_insight",
-      "title": "Two-Hour VR Sessions for Non-Designers",
-      "angle": "Stakeholder reviews are moving into headsets, and the people in them are passengers, crew and executives, not designers. Your only comfort guidance dates from 2021 and caps continuous use at an hour.",
-      "evidence": "DLR ran 18 two-hour sessions with 65 passengers who had no XR experience to validate cabin concepts at 1:1 scale, with a short grab-duplicate-undo intro. What hardware, session design and fallback made that work is undocumented on your site.",
+      "title": "How DLR Brought First-Time VR Users Into Aircraft Design",
+      "angle": "Stakeholder reviews are moving into headsets, and the people in them are passengers, crew and executives, not designers. Your comfort guidance recommends a break after 45 to 60 minutes and dates from 2021.",
+      "evidence": "DLR ran 18 two-hour workshops involving 65 passengers with no XR experience to validate cabin concepts at 1:1 scale, after a short grab, duplicate and undo introduction. The case study covers the intro; the facilitation plan, headset rotation and how much of each session was actually spent in VR are the missing article.",
       "tags": [
         "vr-usability",
         "short-insight",
@@ -100,7 +100,7 @@
           "url": "https://gravitysketch.com/blog-post/articles/everything-you-need-to-know-to-work-in-vr-comfortably/"
         },
         {
-          "title": "Gravity Sketch 6.7 (Quest alignment support)",
+          "title": "Gravity Sketch 6.7",
           "publisher": "Gravity Sketch",
           "url": "https://gravitysketch.com/blog-post/updates/gravity-sketch-6-7/"
         }
