@@ -1,46 +1,55 @@
 {
   "slug": "acrylic-kybls8",
-  "template": "swipe1",
-  "companyName": "Acrylic Robotics",
+  "template": "swipe2",
+  "lead_type": "warm",
+  "deliveryChannel": "email",
+  "company": "Acrylic Robotics",
   "contactFirstName": "Chloë",
-  "greetingName": "Chloë",
-  "introBasis": "your Designer Portal, your press, and the hotel and design questions no page of yours answers yet",
-  "emailKnown": true,
-  "stripeLink19": "https://buy.stripe.com/7sY8wP0M833Rcx21YugnK09",
-  "directionShape": {
-    "long_form": 1,
-    "linkedin_post": 2
+  "sourceLine": "your Designer Portal, your press, and the hotel and design questions no page of yours answers yet",
+  "vediReactions": {
+    "acr-09": "pass",
+    "acr-07": "like",
+    "acr-08": "like"
   },
-  "offerText": "Your first article is on me.",
-  "signal": null,
+  "writeOn": [
+    "acr-07",
+    "acr-08",
+    "acr-09"
+  ],
+  "lockedCount": 7,
   "cards": [
     {
-      "id": "acr-01",
-      "format": "long_form",
-      "title": "AI Art vs Commissioned Painting: What Hangs Better",
-      "angle": "In Mattoboard's November 2025 survey, 82% of interior designers use AI regularly and 42% are unhappy with the tools they have. An AI image is a strong brief but a flat finish, and a painted piece costs more and takes longer than printing that image.",
-      "evidence": "Your Designer Portal turns a written brief into named directions. Your curators then turn those into real paintings, framed and delivered on one PO. You offer paper prints, embellished prints and paintings from 18 × 24 in to 36 × 48 in or custom, so the comparison can be honest about when a print is enough. No article on your site compares an AI-generated print with a commissioned painting.",
-      "formatNote": "Designers weighing \"print the AI image or commission it\" search this X vs Y at the point of purchase.",
+      "id": "acr-09",
+      "format": "short_insight",
+      "title": "Morrisseau Fakes: What Robot Copies Reveal",
+      "angle": "Police have identified just over 1,600 fake Morrisseau works, and prosecutors say thousands more exist. The Morrisseau estate and NORVAL AI reviewed the robot-painted copies and identified errors that Acrylic worked to correct (Tara Deschamps, The Canadian Press, July 20, 2025).",
+      "evidence": "Your robot has replicated five Morrisseau works with the estate. CBC reported in July 2025 that newer copies scored about 69% against Norval AI. Early copies were caught because the robot paused mid-stroke to reload paint. The Art Newspaper reported authorized copies priced from C$3,240 to C$45,000. Your store blog covered the launch in July 2025, so this piece should lead with the numbers, not recap the story.",
+      "formatNote": "It is built on the brand's own public figures: five works, a 69% score, the stroke-pause finding and the price range.",
       "tags": [
-        "ai-art-vs-painting",
-        "long-form",
-        "product-proof"
+        "art-fraud",
+        "short-insight",
+        "partnership-proof"
       ],
       "sources": [
         {
-          "title": "First State of AI & Interior Design Report",
-          "publisher": "Mattoboard via PR Newswire",
-          "url": "https://finance.yahoo.com/news/first-state-ai-interior-design-140000351.html"
+          "title": "How AI, robotics and Norval Morrisseau are helping fight art fraud",
+          "publisher": "CBC News",
+          "url": "https://www.cbc.ca/news/canada/british-columbia/morrisseau-art-fraud-1.7589690"
         },
         {
-          "title": "Designer Portal",
+          "title": "How AI-trained robots are helping to root out fake paintings",
+          "publisher": "The Art Newspaper",
+          "url": "https://www.theartnewspaper.com/2025/09/16/how-ai-trained-robots-are-helping-to-root-out-fake-paintings-tied-to-a-notorious-forgery-case"
+        },
+        {
+          "title": "Principal architect of Morrisseau forgeries sentenced",
+          "publisher": "Chronicle Journal (Canadian Press)",
+          "url": "https://www.chroniclejournal.com/news/national/quebec/principal-architect-of-morrisseau-mass-forgeries-sentenced-to-five-years-in-prison/article_dc125e46-3a56-5b53-8363-efa2a32cab1a.html"
+        },
+        {
+          "title": "A world first: authorized Morrisseau copies",
           "publisher": "Acrylic",
-          "url": "https://artbyacrylic.com/client-portal"
-        },
-        {
-          "title": "Survey Reveals Widespread Use of AI Among Designers",
-          "publisher": "Kitchen & Bath Design News",
-          "url": "https://www.kitchenbathdesign.com/survey-reveals-widespread-use-of-ai-among-designers/"
+          "url": "https://www.shopacrylic.ca/blog/a-world-first-acrylic-robotics-to-reproduce-authorized-high-fidelity-copies-of-norval-morrisseau-s-works-for-purchase"
         }
       ]
     },
@@ -101,81 +110,6 @@
           "title": "AI-backed robot painting aims to boost artist income",
           "publisher": "TechXplore (AFP)",
           "url": "https://techxplore.com/news/2025-09-ai-robot-aims-boost-artist.html"
-        }
-      ]
-    },
-    {
-      "id": "acr-09",
-      "format": "short_insight",
-      "title": "Morrisseau Fakes: What Robot Copies Reveal",
-      "angle": "Police have identified just over 1,600 fake Morrisseau works, and prosecutors say thousands more exist. The Morrisseau estate and NORVAL AI reviewed the robot-painted copies and identified errors that Acrylic worked to correct (Tara Deschamps, The Canadian Press, July 20, 2025).",
-      "evidence": "Your robot has replicated five Morrisseau works with the estate. CBC reported in July 2025 that newer copies scored about 69% against Norval AI. Early copies were caught because the robot paused mid-stroke to reload paint. The Art Newspaper reported authorized copies priced from C$3,240 to C$45,000. Your store blog covered the launch in July 2025, so this piece should lead with the numbers, not recap the story.",
-      "formatNote": "It is built on the brand's own public figures: five works, a 69% score, the stroke-pause finding and the price range.",
-      "tags": [
-        "art-fraud",
-        "short-insight",
-        "partnership-proof"
-      ],
-      "sources": [
-        {
-          "title": "How AI, robotics and Norval Morrisseau are helping fight art fraud",
-          "publisher": "CBC News",
-          "url": "https://www.cbc.ca/news/canada/british-columbia/morrisseau-art-fraud-1.7589690"
-        },
-        {
-          "title": "How AI-trained robots are helping to root out fake paintings",
-          "publisher": "The Art Newspaper",
-          "url": "https://www.theartnewspaper.com/2025/09/16/how-ai-trained-robots-are-helping-to-root-out-fake-paintings-tied-to-a-notorious-forgery-case"
-        },
-        {
-          "title": "Principal architect of Morrisseau forgeries sentenced",
-          "publisher": "Chronicle Journal (Canadian Press)",
-          "url": "https://www.chroniclejournal.com/news/national/quebec/principal-architect-of-morrisseau-mass-forgeries-sentenced-to-five-years-in-prison/article_dc125e46-3a56-5b53-8363-efa2a32cab1a.html"
-        },
-        {
-          "title": "A world first: authorized Morrisseau copies",
-          "publisher": "Acrylic",
-          "url": "https://www.shopacrylic.ca/blog/a-world-first-acrylic-robotics-to-reproduce-authorized-high-fidelity-copies-of-norval-morrisseau-s-works-for-purchase"
-        }
-      ]
-    },
-    {
-      "id": "acr-10",
-      "format": "linkedin_post",
-      "title": "AI in Interior Design: Taste Isn't Enough",
-      "angle": "In 1stDibs' November 2025 survey of 468 design professionals, 24% are strongly against using AI in their practices. Chloë's point: AI makes choosing cheap, so a designer's edge is authorship, and the job is protecting judgment while using the tools. The limit is that the tools only help designers who want to direct the art.",
-      "evidence": "Your homepage promises designers creation, not just selection. Chloë has publicly shared commentary on taste and AI. A Lotus Park Design designer quoted on your portal page says control matters because their reputation is on the line.",
-      "formatNote": "It is one founder claim about keeping judgment, not an adoption stat, and Chloë already comments publicly on taste and AI.",
-      "tags": [
-        "designer-judgment",
-        "linkedin-post",
-        "founder-proof"
-      ],
-      "sources": [
-        {
-          "title": "2026 Interior Design Trends survey",
-          "publisher": "1stDibs Investor Relations",
-          "url": "https://investors.1stdibs.com/news/news-details/2025/2026-Interior-Design-Trends-1stDibs-Survey-Identifies-Maximalism-Chocolate-Brown-and-Vintage-Antiques-as-Top-Designer-Choices/"
-        },
-        {
-          "title": "The Study, Interior Design Trends 2026",
-          "publisher": "1stDibs",
-          "url": "https://www.1stdibs.com/blogs/the-study/interior-design-trends-2026/"
-        },
-        {
-          "title": "X (July 29 post on taste)",
-          "publisher": "Chloë Ryan",
-          "url": "https://x.com/ChloeRyxn"
-        },
-        {
-          "title": "Home",
-          "publisher": "Acrylic Robotics",
-          "url": "https://acrylicrobotics.ca/"
-        },
-        {
-          "title": "Designer Portal",
-          "publisher": "Acrylic",
-          "url": "https://artbyacrylic.com/client-portal"
         }
       ]
     }

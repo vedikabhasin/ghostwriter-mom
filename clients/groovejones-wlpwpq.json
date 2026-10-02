@@ -1,18 +1,22 @@
 {
   "slug": "groovejones-wlpwpq",
-  "template": "swipe1",
-  "companyName": "Groove Jones",
+  "template": "swipe2",
+  "lead_type": "warm",
+  "deliveryChannel": "email",
+  "company": "Groove Jones",
   "contactFirstName": "Dale",
-  "greetingName": "Dale",
-  "introBasis": "your Vision Pro, AI and immersive video work, and the questions brand teams ask before they commission a build",
-  "emailKnown": true,
-  "stripeLink19": "https://buy.stripe.com/7sY8wP0M833Rcx21YugnK09",
-  "directionShape": {
-    "long_form": 1,
-    "short_insight": 2
+  "sourceLine": "your Vision Pro, AI and immersive video work, and the questions brand teams ask before they commission a build",
+  "vediReactions": {
+    "grv-01": "pass",
+    "grv-02": "like",
+    "grv-03": "like"
   },
-  "offerText": "Your first article is on me.",
-  "signal": null,
+  "writeOn": [
+    "grv-02",
+    "grv-03",
+    "grv-01"
+  ],
+  "lockedCount": 7,
   "cards": [
     {
       "id": "grv-01",
@@ -106,61 +110,6 @@
           "title": "AR tools 2026",
           "publisher": "BuildMVPFast",
           "url": "https://www.buildmvpfast.com/blog/best-ar-spatial-computing-tools-2026"
-        }
-      ]
-    },
-    {
-      "id": "grv-04",
-      "format": "short_insight",
-      "title": "Immersive Video Shoots: What Production Requires",
-      "angle": "Blackmagic's $26,495 URSA Cine Immersive 100G, announced April 2026, made live Apple Immersive Video practical after Lakers games used it in 2025-26. The real decisions are camera placement, proximity, movement, audio and delivery, not the spec sheet.",
-      "evidence": "Your pickleball shoot filled three 8TB modules with no stitching or tripod cleanup. Your Texas Ballet Theater shoot put the camera at standing height in the seating area for a 180-degree view, used a single card and battery, and added audio afterward.",
-      "formatNote": "Two shoots and one hardware shift, written for producers scoping their first immersive capture.",
-      "tags": [
-        "immersive-video",
-        "short-insight",
-        "production-guide"
-      ],
-      "sources": [
-        {
-          "title": "Moneyball match",
-          "publisher": "Groove Jones",
-          "url": "https://www.groovejones.com/inside-the-moneyball-match-how-groove-jones-filmed-pickleball-for_apple_vision_pro"
-        },
-        {
-          "title": "Gazes",
-          "publisher": "Groove Jones",
-          "url": "https://www.groovejones.com/blackmagic-ursa-cine-immersive-gazes"
-        },
-        {
-          "title": "Blackmagic 100G",
-          "publisher": "SVG/NAB",
-          "url": "https://www.sportsvideo.org/2026/04/21/nab-2026-blackmagic-design-announces-ursa-cine-immersive-100g-and-ursa-cine-live-encoder/"
-        }
-      ]
-    },
-    {
-      "id": "grv-07",
-      "format": "linkedin_post",
-      "title": "Computer Vision or Touchscreen? Choose for the Crowd",
-      "angle": "Experiential spend hit $128.35B in 2024, up 10.5%, so booth attention is contested. Hands-free tracking draws spectators, but lighting, calibration, accessibility and queues decide whether it works on the day.",
-      "evidence": "Your Southwest Getaways game, built with The Infinite Agency, let guests raise a hand to choose an avatar, lean to move and catch icons in a 60-second round. It ran in Denver, Baltimore and Chicago and won a Silver ADDY and a Horizon Gold.",
-      "formatNote": "One claim, one award-winning case.",
-      "tags": [
-        "computer-vision",
-        "linkedin-post",
-        "event-games"
-      ],
-      "sources": [
-        {
-          "title": "Southwest Getaways",
-          "publisher": "Groove Jones",
-          "url": "https://www.groovejones.com/southwest-airlines-getaway-vacations-activation-computer-vision-powered-game"
-        },
-        {
-          "title": "experiential statistics",
-          "publisher": "Snapbar",
-          "url": "https://snapbar.com/blog/experiential-marketing-statistics"
         }
       ]
     }

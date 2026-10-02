@@ -93,7 +93,7 @@ async function device(opts = {}) {
     const name = new URL(r.request().url()).pathname.split('/').pop();
     return r.fulfill({ status: 200, contentType: 'application/json', headers: cors, body: JSON.stringify(rpc(name, JSON.parse(r.request().postData() || '{}'))) });
   });
-  if (opts.local) await ctx.addInitScript(([k, v]) => { if (!sessionStorage.getItem('seeded')) { localStorage.setItem(k, v); sessionStorage.setItem('seeded', '1'); } }, ['gwm-swipe-' + SLUG, JSON.stringify(opts.local)]);
+  if (opts.local) await ctx.addInitScript(([k, v]) => { if (!sessionStorage.getItem('seeded')) { localStorage.setItem(k, v); sessionStorage.setItem('seeded', '1'); } }, ['gwm-swipe2-' + SLUG, JSON.stringify(opts.local)]);
   const page = await ctx.newPage();
   const errors = []; page.on('pageerror', (e) => errors.push(e.message));
   const events = [];
@@ -183,8 +183,8 @@ let deliverText = '';
   await page.waitForSelector('#reveal:not([hidden])', { timeout: 1500 });
   await wait(1250);
   const m = await reveal(page);
-  check('match: YOU (ghost) LIKED + VEDIKABHASIN LIKED, tilted card, headline, rays + 12 hearts, no buttons', m && /rv-agree/.test(m.cls) && m.line === 'You both want this one.' &&
-    m.names.join() === 'YOU,VEDIKABHASIN' && m.stamps.join() === 'LIKED,LIKED' && m.ghost && m.floaters === 12 && m.buttons === 0 && m.card === title('c1') && m.rays !== 'none', m);
+  check('match: YOU (ghost) LIKED + VEDIKA LIKED, tilted card, headline, rays + 12 hearts, no buttons', m && /rv-agree/.test(m.cls) && m.line === 'You both want this one.' &&
+    m.names.join() === 'YOU,VEDIKA' && m.stamps.join() === 'LIKED,LIKED' && m.ghost && m.floaters === 12 && m.buttons === 0 && m.card === title('c1') && m.rays !== 'none', m);
   await page.screenshot({ path: OUT + '/s03-match.jpg', type: 'jpeg', quality: 80 });
   // A swipe while the moment plays does nothing.
   await page.waitForSelector('#reveal', { state: 'hidden', timeout: 3000 });
@@ -198,7 +198,7 @@ let deliverText = '';
   await page.waitForSelector('#screen-history.on');
   const hl = await page.evaluate(() => ({ count: document.getElementById('hist-log-count').textContent, rows: Array.from(document.querySelectorAll('#history-log .log-row')).map((r) =>
     (r.querySelector('.result-chip') || {}).innerText + '|' + Array.from(r.querySelectorAll('.hist-row')).map((x) => x.querySelector('.who').innerText.trim() + ':' + x.querySelector('.pill').innerText).join(',')) }));
-  check('feed Log after the first swipe: "1 call logged.", MATCH, both seats', hl.count === '1 call logged.' && JSON.stringify(hl.rows) === JSON.stringify(['MATCH|Sam:LIKED,vedikabhasin:LIKED']), hl);
+  check('feed Log after the first swipe: "1 call logged.", MATCH, both seats', hl.count === '1 call logged.' && JSON.stringify(hl.rows) === JSON.stringify(['MATCH|Sam:LIKED,Vedika:LIKED']), hl);
   await wait(900);
   await page.screenshot({ path: OUT + '/s03b-feed-log.jpg', type: 'jpeg', quality: 80 });
   await page.click('[data-action="close-history"]');
@@ -264,7 +264,7 @@ let deliverText = '';
   check('PORTAL frame order: Log, Signals NEW, then Library and Hub in one frame; no Feed', f.sections.join(' / ').toUpperCase() === 'LOG 3 CALLS LOGGED / SIGNALS NEW / LIBRARY NEW', f.sections);
   check('Log: time on the meta line, nothing overflows the row at 390px', f.metaTime && !f.over, f);
   check('Log (portal style): newest first, MATCH / SPLIT / PASS, sources', f.log.length === 3 && f.log[0].startsWith(title('c3') + '|PASS|') && f.log[1].includes('|SPLIT|') && f.log[2].startsWith(title('c1') + '|MATCH|') && f.log.every((r) => +r.split('|')[2] > 0), f.log);
-  check('Log seats: the visitor and vedikabhasin on every row, each with an avatar and a pill', f.log[2].endsWith('|Sam:LIKED:true,vedikabhasin:LIKED:true') && f.log[1].endsWith('|Sam:PASSED:true,vedikabhasin:LIKED:true') && f.log[0].endsWith('|Sam:PASSED:true,vedikabhasin:PASSED:true'), f.log);
+  check('Log seats: the visitor and Vedika on every row, each with an avatar and a pill', f.log[2].endsWith('|Sam:LIKED:true,Vedika:LIKED:true') && f.log[1].endsWith('|Sam:PASSED:true,Vedika:LIKED:true') && f.log[0].endsWith('|Sam:PASSED:true,Vedika:PASSED:true'), f.log);
   check('captions: Signals, and Library / Hub "Your team\'s collections and drafting board."', JSON.stringify(f.captions) === JSON.stringify(['Where you rank, and who AI cites instead.', "Your team's collections and drafting board."]), f.captions);
   check('Signals: no text at all, blurred skeleton, redaction bars, lock', f.signalsText === '' && /blur/.test(f.signalsBlur) && f.redaction === 2 && f.signalsLock, f);
   check('Library: locked stack at 0.5 + "7 more directions"', f.libOpacity === '0.5' && f.more === '7 more directions', f);

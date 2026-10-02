@@ -1,46 +1,50 @@
 {
   "slug": "augmodo-hx87pr",
-  "template": "swipe1",
-  "companyName": "Augmodo",
+  "template": "swipe2",
+  "lead_type": "warm",
+  "deliveryChannel": "email",
+  "company": "Augmodo",
   "contactFirstName": "Ross",
-  "greetingName": "Ross",
-  "introBasis": "your Owl hardware, your Chemist Warehouse results, and the questions retailers ask before a pilot",
-  "emailKnown": true,
-  "stripeLink19": "https://buy.stripe.com/7sY8wP0M833Rcx21YugnK09",
-  "directionShape": {
-    "long_form": 1,
-    "short_insight": 2
+  "sourceLine": "your Owl hardware, your Chemist Warehouse results, and the questions retailers ask before a pilot",
+  "vediReactions": {
+    "aug-04": "like",
+    "aug-02": "like",
+    "aug-05": "pass"
   },
-  "offerText": "Your first article is on me.",
-  "signal": null,
+  "writeOn": [
+    "aug-04",
+    "aug-02",
+    "aug-05"
+  ],
+  "lockedCount": 7,
   "cards": [
     {
-      "id": "aug-01",
-      "format": "short_insight",
-      "title": "Six Hardware Generations: Keeping Shelf Data Comparable",
-      "angle": "Owl Mini and Owl Pro, announced September 16 2026, are your sixth badge generation in 24 months, with weight cut by two thirds and battery life up 3x to 5x, rolling out from Q1 2027. Every camera change risks breaking the week-over-week comparison a category manager pays for.",
-      "evidence": "Your Chemist Warehouse agreement (March 2025) covers expansion to more than 550 stores over two years, so mixed badge generations in one fleet is the operating reality. Nothing on your site explains how realogram accuracy holds when the optics underneath it change.",
-      "formatNote": "One product release and one operating consequence.",
+      "id": "aug-04",
+      "format": "long_form",
+      "title": "Badge or Robot: Who Sees the Shelf",
+      "angle": "Simbe passed 3,000 Tally robots under contract on September 22 2026, with Tally 4.0 scanning on a 12-hour schedule. A robot covers every aisle on a timetable; a badge covers wherever a person walks, whenever they walk there.",
+      "evidence": "Your 120 g Owl Mini runs 8 to 10 hours with an on-device NPU and you claim roughly 1/100th the hardware cost of alternatives, but you have never published a coverage comparison. The article that names the gap honestly (aisle coverage per shift, staleness by zone) is the one a VP of store ops forwards.",
+      "formatNote": "A buyer's comparison of two capture models across coverage, freshness and cost.",
       "tags": [
-        "wearable-hardware",
-        "short-insight",
-        "product-release"
+        "shelf-analytics",
+        "long-form",
+        "hardware-proof"
       ],
       "sources": [
         {
-          "title": "Augmodo Unveils Wearable Owl Mini and Owl Pro",
+          "title": "Simbe Tops 3,000 Contracted Retail Robots",
+          "publisher": "TechRepublic",
+          "url": "https://www.techrepublic.com/article/news-simbe-3000-contracted-retail-robots/"
+        },
+        {
+          "title": "Tally 4.0 announcement",
+          "publisher": "Simbe",
+          "url": "https://www.simberobotics.com/about/newsroom/simbe-unveils-tally-4-0-the-next-generation-of-autonomous-retail-robot-powering-store-intelligence-via-physical-ai"
+        },
+        {
+          "title": "Owl Mini and Owl Pro release",
           "publisher": "Business Wire via FinancialContent",
           "url": "https://www.financialcontent.com/article/bizwire-2026-9-16-augmodo-unveils-wearable-owl-mini-and-owl-pro-shrinking-physical-ai-into-smallest-smartest-smartbadge-ever-built"
-        },
-        {
-          "title": "Chemist Warehouse Launches Partnership with Augmodo",
-          "publisher": "Business Wire",
-          "url": "https://www.businesswire.com/news/home/20250331350926/en/Chemist-Warehouse-Launches-Partnership-with-Augmodo-Modernizing-Tech-to-Give-Store-Associates-Spatial-AI-Assistants"
-        },
-        {
-          "title": "Owl Mini and Owl Pro announcement",
-          "publisher": "Augmodo",
-          "url": "https://www.augmodo.com/news-and-announcements/augmodo-unveils-owl-mini-owl-pro"
         }
       ]
     },
@@ -66,36 +70,6 @@
           "title": "Midyear Employment Law Horizon Report (July 2026)",
           "publisher": "Seyfarth",
           "url": "https://www.seyfarth.com/employment-law-horizon-report.html"
-        },
-        {
-          "title": "Owl Mini and Owl Pro release",
-          "publisher": "Business Wire via FinancialContent",
-          "url": "https://www.financialcontent.com/article/bizwire-2026-9-16-augmodo-unveils-wearable-owl-mini-and-owl-pro-shrinking-physical-ai-into-smallest-smartest-smartbadge-ever-built"
-        }
-      ]
-    },
-    {
-      "id": "aug-04",
-      "format": "long_form",
-      "title": "Badge or Robot: Who Sees the Shelf",
-      "angle": "Simbe passed 3,000 Tally robots under contract on September 22 2026, with Tally 4.0 scanning on a 12-hour schedule. A robot covers every aisle on a timetable; a badge covers wherever a person walks, whenever they walk there.",
-      "evidence": "Your 120 g Owl Mini runs 8 to 10 hours with an on-device NPU and you claim roughly 1/100th the hardware cost of alternatives, but you have never published a coverage comparison. The article that names the gap honestly (aisle coverage per shift, staleness by zone) is the one a VP of store ops forwards.",
-      "formatNote": "A buyer's comparison of two capture models across coverage, freshness and cost.",
-      "tags": [
-        "shelf-analytics",
-        "long-form",
-        "hardware-proof"
-      ],
-      "sources": [
-        {
-          "title": "Simbe Tops 3,000 Contracted Retail Robots",
-          "publisher": "TechRepublic",
-          "url": "https://www.techrepublic.com/article/news-simbe-3000-contracted-retail-robots/"
-        },
-        {
-          "title": "Tally 4.0 announcement",
-          "publisher": "Simbe",
-          "url": "https://www.simberobotics.com/about/newsroom/simbe-unveils-tally-4-0-the-next-generation-of-autonomous-retail-robot-powering-store-intelligence-via-physical-ai"
         },
         {
           "title": "Owl Mini and Owl Pro release",
@@ -131,36 +105,6 @@
           "title": "homepage",
           "publisher": "Augmodo",
           "url": "https://augmodo.com"
-        }
-      ]
-    },
-    {
-      "id": "aug-07",
-      "format": "linkedin_post",
-      "title": "From Cheerios to Wrenches: What Transfers Beyond Retail",
-      "angle": "Your July 2026 round was framed around the physical workforce beyond retail: automotive plants, warehouses, hospitals, facility maintenance. Your CEO's line that grabbing a wrench is not that different from grabbing a Cheerios box is a claim, and the article should test it.",
-      "evidence": "Your proof is entirely retail: 186M square feet a month, 50 to 100 new stores a month, Chemist Warehouse and L'Oreal ANZ as the only named partners. A piece that states plainly which parts of the model (object recognition, 3D mapping, passive capture) carry over and which retrain from zero earns trust with the next vertical before the first pilot.",
-      "formatNote": "One founder claim, tested in public.",
-      "tags": [
-        "vertical-expansion",
-        "linkedin-post",
-        "funding-context"
-      ],
-      "sources": [
-        {
-          "title": "Augmodo raises $21M",
-          "publisher": "GeekWire",
-          "url": "https://www.geekwire.com/2026/augmodo-raises-21m-to-push-its-spatial-ai-beyond-just-retail-toward-the-broader-physical-workforce/"
-        },
-        {
-          "title": "$21M announcement",
-          "publisher": "Augmodo",
-          "url": "https://www.augmodo.com/augmodo-secures-21m-to-scale-ai-assistants-for-the-physical-workforce-beyond-retail-at-a-350m-valuation"
-        },
-        {
-          "title": "Our Story",
-          "publisher": "Augmodo",
-          "url": "https://www.augmodo.com/our-story"
         }
       ]
     }

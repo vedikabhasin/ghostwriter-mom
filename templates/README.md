@@ -5,8 +5,8 @@ Every slug config in `clients/<slug>.json` names its template:
 | Template | File | Preview route | Used by |
 |---|---|---|---|
 | `rpr` | `templates/rpr.html` | `/rprtemplate` | `rpr-k7m2qx` |
-| `swipe1` | `templates/swipe1.html` | `/swipe1template` (`/swipetemplate` redirects here) | every lead slug |
-| `swipe2` | `templates/swipe2.html` | `/swipe2template` | nothing yet |
+| `swipe1` | `templates/swipe1.html` | `/swipe1template` (`/swipetemplate` redirects here) | `genrobotics-d597f6`, `treeview-7dz5vn` |
+| `swipe2` | `templates/swipe2.html` | `/swipe2template` | `acrylic-kybls8`, `deeli-uj3qbi`, `groovejones-wlpwpq`, `augmodo-hx87pr` |
 
 ## Routing
 
@@ -55,7 +55,8 @@ State lives in Supabase, keyed by slug (migration 20261001000015): swipes and
 the log through log_swipe, the pick through set_collab_pick (first write
 wins), all read back by get_collab_state. A new device or a colleague sees the
 same swipes, pick and log; a finished deck opens on the final screen.
-localStorage is a cache; swipes found only there are written to the database
+localStorage (key `gwm-swipe2-<slug>`, separate from swipe1's, so a browser
+that saw a slug on swipe1 starts the swipe2 deck fresh) is a cache; swipes found only there are written to the database
 on first load.
 
 Tests: `tests/sales/swipe2.test.mjs` (browser, five devices) and

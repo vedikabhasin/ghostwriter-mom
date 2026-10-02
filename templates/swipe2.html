@@ -2019,7 +2019,7 @@ body:not(.on-intro) .gwk-deal{display:none;}
   'use strict';
 
   // -- Config ----------------------------------------------------------------
-  var STORAGE_PREFIX  = 'gwm-swipe-';
+  var STORAGE_PREFIX  = 'gwm-swipe2-';
   var LEGACY_PAID_SLUG_KEY = 'gwm-swipe-pending-slug'; // cleared on load; obsolete
   var SWIPE_THRESHOLD = 90;
   var SUPER_THRESHOLD = 100;
@@ -3918,7 +3918,7 @@ body:not(.on-intro) .gwk-deal{display:none;}
     var nSrc = Array.isArray(card.sources) ? card.sources.length : 0;
     if(nSrc){ var src = document.createElement('span'); src.className = 'rv-card-src gwm-mono-tag'; src.textContent = nSrc === 1 ? '1 source' : nSrc + ' sources'; c.appendChild(src); }
     stage.appendChild(c);
-    stage.appendChild(seat('right', 'worm', wAct, 'vedikabhasin'));
+    stage.appendChild(seat('right', 'worm', wAct, 'Vedika'));
     root.appendChild(stage);
     var h2 = document.createElement('h2'); h2.className = 'rv-line'; h2.textContent = line; root.appendChild(h2);
     root.hidden = false;
@@ -4157,7 +4157,7 @@ body:not(.on-intro) .gwk-deal{display:none;}
       head.appendChild(meta);
       box.appendChild(head);
       box.appendChild(seatRow('ghost', visitorName, visitorReaction(k), last[k]));
-      if(shown && vediReaction(k)) box.appendChild(seatRow('worm', 'vedikabhasin', vediReaction(k), last[k]));
+      if(shown && vediReaction(k)) box.appendChild(seatRow('worm', 'Vedika', vediReaction(k), last[k]));
       var srcs = Array.isArray(c.sources) ? c.sources : [];
       if(srcs.length){
         var srow = document.createElement('div'); srow.className = 'history-src-row';

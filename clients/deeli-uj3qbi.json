@@ -1,69 +1,23 @@
 {
   "slug": "deeli-uj3qbi",
-  "template": "swipe1",
-  "companyName": "Deeli AI",
+  "template": "swipe2",
+  "lead_type": "warm",
+  "deliveryChannel": "email",
+  "company": "Deeli AI",
   "contactFirstName": "Hanson",
-  "greetingName": "Hanson",
-  "introBasis": "your own patent research and the questions R&D and corporate VC buyers ask before they commit",
-  "emailKnown": true,
-  "stripeLink19": "https://buy.stripe.com/7sY8wP0M833Rcx21YugnK09",
-  "directionShape": {
-    "long_form": 1,
-    "short_insight": 1
+  "sourceLine": "your own patent research and the questions R&D and corporate VC buyers ask before they commit",
+  "vediReactions": {
+    "dee-03": "pass",
+    "dee-02": "like",
+    "dee-06": "like"
   },
-  "offerText": "Your first article is on me.",
-  "signal": null,
+  "writeOn": [
+    "dee-02",
+    "dee-06",
+    "dee-03"
+  ],
+  "lockedCount": 7,
   "cards": [
-    {
-      "id": "dee-01",
-      "format": "long_form",
-      "title": "AI Tech Scouting: What It Does and Doesn't",
-      "angle": "Semiconductor international patent filings grew 6.1% in 2025, tied for the fastest growth among the top 10 fields, per WIPO. AI scouting turns that volume into a cited, scored report in minutes, but it narrows the search. It does not replace the expert who makes the call.",
-      "evidence": "Your homepage shows the full flow: a plain-language question, a read of patents, papers, funding and Chinese-language sources, then a report with every claim cited and contradictions flagged. No article on your site explains what AI technology scouting is or where its limits sit.",
-      "formatNote": "It owns \"AI technology scouting\" and gives every later piece a page to link back to.",
-      "tags": [
-        "ai-technology-scouting",
-        "long-form",
-        "product-method"
-      ],
-      "sources": [
-        {
-          "title": "PCT filings 2025 press release",
-          "publisher": "WIPO",
-          "url": "https://www.wipo.int/pressroom/en/articles/2026/article_0003.html"
-        },
-        {
-          "title": "Deeli homepage",
-          "publisher": "Deeli",
-          "url": "https://deeli.ai/"
-        }
-      ]
-    },
-    {
-      "id": "dee-02",
-      "format": "long_form",
-      "title": "LLM vs Tech Scouting Platform: Which Holds Up?",
-      "angle": "Only 12% of organizations call their AI governance mature, per Cisco's January 2026 benchmark of 5,200 professionals. A general model is fine for brainstorming. A build or buy decision needs live sources, data that stays in-house, and a structured output, and no tool removes the need to check sources.",
-      "evidence": "Your homepage compares a typical LLM with Deeli on five points: sources, where prompts go, output format, workflow, and language coverage. No page on your site expands that table for buyers searching this question.",
-      "formatNote": "It answers the first objection a buyer raises and builds on a table you already publish.",
-      "tags": [
-        "llm-vs-scouting-platform",
-        "long-form",
-        "product-comparison"
-      ],
-      "sources": [
-        {
-          "title": "Deeli homepage, comparison section",
-          "publisher": "Deeli",
-          "url": "https://deeli.ai/#why-llm"
-        },
-        {
-          "title": "2026 Data and Privacy Benchmark",
-          "publisher": "Cisco",
-          "url": "https://newsroom.cisco.com/c/r/newsroom/en/us/a/y2026/m01/ai-data-privacy-investments-governance-cisco-report.html"
-        }
-      ]
-    },
     {
       "id": "dee-03",
       "format": "short_insight",
@@ -90,27 +44,27 @@
       ]
     },
     {
-      "id": "dee-04",
-      "format": "linkedin_post",
-      "title": "Backtesting Tech Scouting: Would We Have Called It?",
-      "angle": "The largest R&D investors raised spending about 6% in 2025, double the 2024 pace, per the OECD. More budget now rides on early picks, and a backtest is the cleanest way to test a scouting tool, but one backtest is a signal, not a track record.",
-      "evidence": "Your founders tested Deeli on an emerging semiconductor technology using only data from two years before MediaTek's investment decision. It flagged the technology's growth potential and the companies later shipping products. No post walks through the method.",
-      "formatNote": "It's a first-person founder story from the MediaTek years.",
+      "id": "dee-02",
+      "format": "long_form",
+      "title": "LLM vs Tech Scouting Platform: Which Holds Up?",
+      "angle": "Only 12% of organizations call their AI governance mature, per Cisco's January 2026 benchmark of 5,200 professionals. A general model is fine for brainstorming. A build or buy decision needs live sources, data that stays in-house, and a structured output, and no tool removes the need to check sources.",
+      "evidence": "Your homepage compares a typical LLM with Deeli on five points: sources, where prompts go, output format, workflow, and language coverage. No page on your site expands that table for buyers searching this question.",
+      "formatNote": "It answers the first objection a buyer raises and builds on a table you already publish.",
       "tags": [
-        "backtesting",
-        "linkedin-post",
-        "founder-story"
+        "llm-vs-scouting-platform",
+        "long-form",
+        "product-comparison"
       ],
       "sources": [
         {
-          "title": "Deeli AI profile (Jun 24, 2025)",
-          "publisher": "TechSoda",
-          "url": "https://techsoda.substack.com/p/deeli-ai-revolutionizing-tech-scouting"
+          "title": "Deeli homepage, comparison section",
+          "publisher": "Deeli",
+          "url": "https://deeli.ai/#why-llm"
         },
         {
-          "title": "business R&D tracker (Jun 2026)",
-          "publisher": "OECD",
-          "url": "https://www.oecd.org/en/data/insights/data-explainers/2026/06/tracking-business-rd-in-real-time-the-largest-investors-raised-rd-spending-by-6-in-2025.html"
+          "title": "2026 Data and Privacy Benchmark",
+          "publisher": "Cisco",
+          "url": "https://newsroom.cisco.com/c/r/newsroom/en/us/a/y2026/m01/ai-data-privacy-investments-governance-cisco-report.html"
         }
       ]
     },
