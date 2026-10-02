@@ -1607,6 +1607,10 @@ body.dir-save  .ctl-save{
    after 3s at the latest). */
 body.gwk-scatter-pending .gwm-desk-frag{opacity:0;}
 .rv-card-title, .gwk-deal-card .dl-title, .ghost-hint > div{text-wrap:balance;}
+/* Proof box: the 2-line clamp clipped at the padding edge, so a sliver of
+   line 3 showed in the bottom padding. The bottom spacing is a transparent
+   border instead (outside the clip), so only two whole lines show. */
+.card-evidence{padding-bottom:0; border-bottom:12px solid transparent;}
 /* Match / split under Reduce Motion: a gentle version instead of a still
    frame. Fades with a small scale or a short slide, eased; no big travel,
    no spinning rays, no endless drift. !important beats the page-wide
