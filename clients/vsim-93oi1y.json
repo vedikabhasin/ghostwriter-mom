@@ -1,0 +1,110 @@
+{
+  "slug": "vsim-93oi1y",
+  "template": "swipe2",
+  "lead_type": "warm",
+  "deliveryChannel": "email",
+  "company": "Vsim",
+  "contactFirstName": "Michelle",
+  "sourceLine": "your founders' simulation work and the questions robotics teams ask before they trust a faster simulator",
+  "directionShape": "1 long-form article + 2 short insights",
+  "emailKnown": true,
+  "vediReactions": {
+    "r2-19": "pass",
+    "r2-20": "like",
+    "r2-21": "like"
+  },
+  "writeOn": [
+    "r2-20",
+    "r2-21",
+    "r2-19"
+  ],
+  "cards": [
+    {
+      "id": "r2-19",
+      "format": "short_insight",
+      "title": "Why Simulation Speed Matters on the Robot Itself",
+      "angle": "Nvidia's Newton 1.0 (March 2026) sells thousands of parallel environments on datacenter GPUs. A robot in the field has one embedded GPU and a deadline measured in milliseconds, and that is a different engineering problem.",
+      "evidence": "The BBC's September 2026 feature reports Vsim running its simulator on compute carried by the robot, with Storey describing it looking about one second ahead across 20,000 possible combinations. No Vsim-authored piece explains the memory and latency budget that makes that possible.",
+      "tags": [
+        "on-robot-simulation",
+        "short-insight",
+        "press-proof"
+      ],
+      "sources": [
+        {
+          "title": "Robotics: Firms race to improve robot training systems",
+          "publisher": "BBC",
+          "url": "https://www.bbc.co.uk/news/articles/c79g0j3d4q9o"
+        },
+        {
+          "title": "Newton adds contact-rich manipulation and locomotion capabilities",
+          "publisher": "NVIDIA Developer Blog",
+          "url": "https://developer.nvidia.com/blog/newton-adds-contact-rich-manipulation-and-locomotion-capabilities-for-industrial-robotics"
+        },
+        {
+          "title": "Isaac Sim 6.0 Early Developer Release",
+          "publisher": "NVIDIA Forums",
+          "url": "https://forums.developer.nvidia.com/t/announcement-isaac-sim-6-0-early-developer-release-for-gtc26/363709"
+        }
+      ]
+    },
+    {
+      "id": "r2-20",
+      "format": "linkedin_post",
+      "title": "What Legacy Contact Solvers Cost on GPUs",
+      "angle": "Isaac Sim 6.0 ships two physics backends and moved its core to Warp, a sign that solver architecture is now a live question. Storey's public position is that contact algorithms from the 1970s and 80s were not designed for GPU parallelism.",
+      "evidence": "Your founders spent a decade each on PhysX and Isaac Sim at Nvidia, and your 2024 round was raised on an up to 100x RL training speedup claim that has never been benchmarked in public. A piece that shows one concrete solver bottleneck and your alternative would be your first published content.",
+      "tags": [
+        "physics-simulation",
+        "linkedin-post",
+        "founder-credibility"
+      ],
+      "sources": [
+        {
+          "title": "Isaac Sim 6.0 Early Developer Release",
+          "publisher": "NVIDIA Forums",
+          "url": "https://forums.developer.nvidia.com/t/announcement-isaac-sim-6-0-early-developer-release-for-gtc26/363709"
+        },
+        {
+          "title": "Robotics: Firms race to improve robot training systems",
+          "publisher": "BBC",
+          "url": "https://www.bbc.co.uk/news/articles/c79g0j3d4q9o"
+        },
+        {
+          "title": "Vsim, founded by Nvidia alums, raises $21.5M",
+          "publisher": "TechCrunch",
+          "url": "https://techcrunch.com/2024/09/25/vsim-founded-by-nvidia-alums-raises-21-5m-for-robotics-simulation-tech/"
+        }
+      ]
+    },
+    {
+      "id": "r2-21",
+      "format": "short_insight",
+      "title": "Speed Versus Realism in Sim-to-Real",
+      "angle": "Physical AI took $8.73B across 32 rounds in the year to July 2026, and NEURA partnered with Dassault specifically on the sim-to-real gap. Faster simulation only helps if the physics it runs holds up on the real robot.",
+      "evidence": "Lu describes Vsim's approach as reduced approximation, accuracy first, then speed, and the BBC piece quotes Cambridge's Rika Antonova on the same tension. Your bottle-grasp demo is the only public evidence; the article makes the argument the demo implies.",
+      "tags": [
+        "sim-to-real",
+        "short-insight",
+        "market-data"
+      ],
+      "sources": [
+        {
+          "title": "Robotics: Firms race to improve robot training systems",
+          "publisher": "BBC",
+          "url": "https://www.bbc.co.uk/news/articles/c79g0j3d4q9o"
+        },
+        {
+          "title": "NEURA Robotics to raise up to $1.4B in Series C",
+          "publisher": "The Robot Report",
+          "url": "https://www.therobotreport.com/neura-robotics-raise-up-1-4b-in-series-c-funding-physical-ai/"
+        },
+        {
+          "title": "Physical AI Startup Funding 2026",
+          "publisher": "NewMarketPitch",
+          "url": "https://newmarketpitch.com/blogs/news/physical-ai-funding-analysis"
+        }
+      ]
+    }
+  ]
+}
