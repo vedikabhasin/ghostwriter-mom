@@ -1,0 +1,110 @@
+{
+  "slug": "mentra-s6jur0",
+  "template": "swipe2",
+  "lead_type": "warm",
+  "deliveryChannel": "email",
+  "company": "Mentra",
+  "contactFirstName": "Cayden",
+  "sourceLine": "your MentraOS work and the questions developers ask before they build for smart glasses",
+  "directionShape": "1 long-form article + 2 short insights",
+  "emailKnown": true,
+  "vediReactions": {
+    "r2-01": "pass",
+    "r2-02": "like",
+    "r2-03": "like"
+  },
+  "writeOn": [
+    "r2-02",
+    "r2-03",
+    "r2-01"
+  ],
+  "cards": [
+    {
+      "id": "r2-01",
+      "format": "short_insight",
+      "title": "Why the App Runtime Moved to the Phone",
+      "angle": "Meta opened Ray-Ban Display to third-party apps in May 2026 but runs them on the phone, not the glasses. Mentra reached the same architecture from the open-source side, and the reason is latency and ownership, not fashion.",
+      "evidence": "Your June 2026 roadmap post describes the old path (glasses to phone to cloud relay to developer app and back) and the control, privacy and OEM concerns it raised; Mentra 3.0 moved every miniapp onto the phone with offline STT and TTS. Confirm the round-trip figure with your engineers before it goes in a headline.",
+      "tags": [
+        "smart-glasses-architecture",
+        "short-insight",
+        "roadmap-proof"
+      ],
+      "sources": [
+        {
+          "title": "Mentra Roadmap Update: Moving to Miniapps on the Phone",
+          "publisher": "Mentra",
+          "url": "https://mentraglass.com/blogs/blog/mentra-roadmap-update-moving-to-miniapps-on-the-phone"
+        },
+        {
+          "title": "Mentra 3.0",
+          "publisher": "Mentra",
+          "url": "https://mentraglass.com/blogs/blog/mentra-3-0-local-miniapps-full-user-control-and-enterprise-smart-glasses"
+        },
+        {
+          "title": "Meta Opens Ray-Ban Display Glasses to Third-Party Developers",
+          "publisher": "gHacks",
+          "url": "https://www.ghacks.net/2026/05/18/meta-opens-ray-ban-display-glasses-to-third-party-developers-through-wearables-toolkit/"
+        }
+      ]
+    },
+    {
+      "id": "r2-02",
+      "format": "short_insight",
+      "title": "Streaming Heat Is the Real Battery Ceiling",
+      "angle": "Meta says third-party apps cannot run on its glasses because of compute, thermal and battery limits. Your build log is the only public account of what that limit looks like on a bench.",
+      "evidence": "Your Making Mentra Live post describes the first chip overheating after extended high-quality streaming and the board redesign that separated WiFi from the processor; the product page rates 40+ minutes of livestreaming against 10+ hours mixed use. The ratio between those two numbers is the article.",
+      "tags": [
+        "wearable-thermals",
+        "short-insight",
+        "hardware-proof"
+      ],
+      "sources": [
+        {
+          "title": "Making Mentra Live",
+          "publisher": "Mentra",
+          "url": "https://mentraglass.com/blogs/blog/making-mentra-live"
+        },
+        {
+          "title": "Mentra Live product page",
+          "publisher": "Mentra",
+          "url": "https://mentraglass.com/live"
+        },
+        {
+          "title": "New Meta Developer Tool Enables Third-parties to Bring Apps to its Smart Glasses",
+          "publisher": "Road to VR",
+          "url": "https://roadtovr.com/meta-ray-ban-smart-glasses-third-party-app-sdk-device-access-toolkit/"
+        }
+      ]
+    },
+    {
+      "id": "r2-03",
+      "format": "linkedin_post",
+      "title": "One Vendor Ships Two Thirds of Smart Glasses",
+      "angle": "IDC put Meta at 68.7 percent of Q2 2026 smart glasses shipments, and its developer program is a preview with no stated review process. An open OS is only an argument if it runs on hardware people can buy.",
+      "evidence": "MentraOS is Apache 2.0 with 2.3k GitHub stars and supports Mentra Live, Even Realities G1 and G2 and Vuzix Z100, and your first 1,000-unit batch sold out in under a month. No post on your site makes the platform-risk case to an enterprise buyer in those terms.",
+      "tags": [
+        "open-source-hardware",
+        "linkedin-post",
+        "developer-proof"
+      ],
+      "sources": [
+        {
+          "title": "Smart Glasses Growth Cools to 35% as Meta Doubles Down on Distribution",
+          "publisher": "IDC",
+          "url": "https://www.idc.com/resource-center/blog/smart-glasses-growth-cools-to-35-as-meta-doubles-down-on-distribution/"
+        },
+        {
+          "title": "MentraOS on GitHub",
+          "publisher": "Mentra-Community",
+          "url": "https://github.com/Mentra-Community/MentraOS"
+        },
+        {
+          "title": "Batch 1 Sold Out",
+          "publisher": "Mentra",
+          "url": "https://mentraglass.com/blogs/blog/mentra-live-featured-in-engadget-gizmodo-new-york-post-and-more"
+        }
+      ]
+    }
+  ]
+}
