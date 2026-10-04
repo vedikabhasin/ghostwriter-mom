@@ -1,0 +1,100 @@
+{
+  "slug": "ossovr-6rsei5",
+  "template": "swipe2",
+  "lead_type": "warm",
+  "deliveryChannel": "email",
+  "company": "Osso VR",
+  "contactFirstName": "Justin",
+  "sourceLine": "your nursing platform and research record, and the questions educators ask before a VR score counts",
+  "directionShape": "1 long-form article + 2 short insights",
+  "emailKnown": true,
+  "vediReactions": {
+    "osso-01": "like",
+    "osso-02": "pass",
+    "osso-03": "like"
+  },
+  "writeOn": [
+    "osso-01",
+    "osso-03",
+    "osso-02"
+  ],
+  "cards": [
+    {
+      "id": "osso-01",
+      "format": "long_form",
+      "title": "What Makes a Nursing VR Score Valid",
+      "angle": "Osso describes a Test mode in Osso Nurse Training that removes workflow guidance and evaluates independent performance in real time. No page we opened shows those scores mapped to competency sign-off, and the peer-reviewed results Osso lists are surgical studies from 2020 to 2022, not nursing scenarios.",
+      "evidence": "Your Bergen New Bridge release reports a June 4, 2026 launch for IV insertion and central line dressing change, with no competency outcomes. Your April 7, 2026 HealthStream post cites a nurse checklist anecdote with no sample or method. No article on your site explains how a Test mode score is defined for a nursing step and what it maps to in competency sign-off.",
+      "tags": [
+        "assessment-validity",
+        "long-form",
+        "company-reported"
+      ],
+      "sources": [
+        {
+          "title": "Health systems",
+          "publisher": "Osso VR",
+          "url": "https://www.ossovr.com/health-systems"
+        },
+        {
+          "title": "VR surgical training research",
+          "publisher": "Osso VR",
+          "url": "https://www.ossovr.com/vr-surgical-training-research"
+        },
+        {
+          "title": "HealthStream x Osso VR takeaways, April 7, 2026",
+          "publisher": "Osso VR",
+          "url": "https://www.ossovr.com/post/vr-nurse-training-5-key-takeaways-from-healthstream-x-osso-vr"
+        }
+      ]
+    },
+    {
+      "id": "osso-02",
+      "format": "short_insight",
+      "title": "Keeping Nursing Scenarios Current With Evidence",
+      "angle": "Osso announced its nursing procedural skills platform on October 2, 2025, and a separate release dated November 10, 2025 describes EBSCO Dynamic Health evidence-based skills content in nursing scenarios. Neither page explains how a revised procedure triggers review and redeployment of the matching scenario.",
+      "evidence": "Your release gives no numbers beyond the 100,000 professionals claim, which also appears in a 2021 release. No article on your site explains who decides a scenario must change when evidence changes and how educators know which version a nurse completed.",
+      "tags": [
+        "content-governance",
+        "short-insight",
+        "company-reported"
+      ],
+      "sources": [
+        {
+          "title": "Osso VR introduces nursing procedural skills platform, October 2, 2025",
+          "publisher": "Osso VR",
+          "url": "https://www.ossovr.com/press-releases/osso-vr-introduces-new-nursing-procedural-skills-training-platform-opens-early-access-for-healthcare-systems"
+        },
+        {
+          "title": "HealthStream x Osso VR takeaways, April 7, 2026",
+          "publisher": "Osso VR",
+          "url": "https://www.ossovr.com/post/vr-nurse-training-5-key-takeaways-from-healthstream-x-osso-vr"
+        }
+      ]
+    },
+    {
+      "id": "osso-03",
+      "format": "short_insight",
+      "title": "How a Member Hospital Adopts Nursing VR",
+      "angle": "Bergen New Bridge Medical Center, a 1,070-bed hospital in Paramus, launched Osso Nurse Training on June 4, 2026 and is described as among the first America's Essential Hospitals members to use it. The association has over 400 members, and no contract terms are public.",
+      "evidence": "Your health systems page mentions select LMS integrations, centralized access and support. Your October 2, 2025 release announced early access for members, and your Founders Circle offers early 2026 pricing and curriculum input. No article on your site explains the onboarding sequence at Bergen, from fleet setup to LMS integration to the first nurse practicing.",
+      "tags": [
+        "hospital-adoption",
+        "short-insight",
+        "announcement"
+      ],
+      "sources": [
+        {
+          "title": "Nursing platform early access, October 2, 2025",
+          "publisher": "Osso VR",
+          "url": "https://www.ossovr.com/press-releases/osso-vr-introduces-new-nursing-procedural-skills-training-platform-opens-early-access-for-healthcare-systems"
+        },
+        {
+          "title": "Health systems",
+          "publisher": "Osso VR",
+          "url": "https://www.ossovr.com/health-systems"
+        }
+      ]
+    }
+  ]
+}
