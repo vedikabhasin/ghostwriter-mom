@@ -1,0 +1,110 @@
+{
+  "slug": "epicore-8wqf7e",
+  "template": "swipe2",
+  "lead_type": "warm",
+  "deliveryChannel": "email",
+  "company": "Epicore Biosystems",
+  "contactFirstName": "Roozbeh",
+  "sourceLine": "your hydration score and field notes, and the questions safety teams ask before they act on sweat data",
+  "directionShape": "1 long-form article + 2 short insights",
+  "emailKnown": true,
+  "vediReactions": {
+    "epi-01": "like",
+    "epi-02": "pass",
+    "epi-03": "like"
+  },
+  "writeOn": [
+    "epi-01",
+    "epi-03",
+    "epi-02"
+  ],
+  "cards": [
+    {
+      "id": "epi-01",
+      "format": "short_insight",
+      "title": "What a Hydration Score Says About One Worker",
+      "angle": "Epicore launched a daily hydration score on June 9, 2026 built from sweat loss, sweating rate, sodium, skin temperature and motion data on a reusable armband. The release calls Epicore's biowearable solutions clinically validated and gives no validation result, accuracy figure or user count for the new score.",
+      "evidence": "Your release uses two names for the score, Hydration Readiness Score in the headline and Hydration Edge Score in the body. Its 28,000 injuries and $100 billion figures are market claims, not Epicore results. No article on your site explains which parts of the score come from one worker's own measurements and which rely on comparisons or built-in assumptions.",
+      "tags": [
+        "hydration-scoring",
+        "short-insight",
+        "company-reported"
+      ],
+      "sources": [
+        {
+          "title": "Epicore launches hydration readiness score, June 9, 2026",
+          "publisher": "PR Newswire",
+          "url": "https://www.prnewswire.com/news-releases/epicore-biosystems-launches-first-hydration-readiness-score-for-proactive-health-insights-302795047.html"
+        },
+        {
+          "title": "Field notes",
+          "publisher": "Epicore Biosystems",
+          "url": "https://epicorebiosystems.com/field-notes/"
+        },
+        {
+          "title": "About",
+          "publisher": "Epicore Biosystems",
+          "url": "https://epicorebiosystems.com/about/"
+        }
+      ]
+    },
+    {
+      "id": "epi-02",
+      "format": "short_insight",
+      "title": "Collecting Sweat Across a Twelve-Hour Shift",
+      "angle": "Epicore's September 9, 2026 field note by Dr. Ghaffari says access to sweat is the bottleneck, not its chemistry, and cites 12-hour wear, a claim we did not independently confirm. The post gives no accuracy data, and the June 9 release describes a reusable armband without single-use adhesive. The article covers sensor contact and measurement consistency across a shift.",
+      "evidence": "Your seven most recent field notes cover personalized hydration, sweat as a biofluid, cognition and the World Cup, and none covers how the sweat-rate and sodium channel is calibrated. No article on your site explains what keeps measurements consistent when the same armband is worn, removed, cleaned and worn again.",
+      "tags": [
+        "sweat-sensing",
+        "short-insight",
+        "company-reported"
+      ],
+      "sources": [
+        {
+          "title": "Field notes",
+          "publisher": "Epicore Biosystems",
+          "url": "https://epicorebiosystems.com/field-notes/"
+        },
+        {
+          "title": "Epicore hydration score release",
+          "publisher": "PR Newswire",
+          "url": "https://www.prnewswire.com/news-releases/epicore-biosystems-launches-first-hydration-readiness-score-for-proactive-health-insights-302795047.html"
+        },
+        {
+          "title": "About",
+          "publisher": "Epicore Biosystems",
+          "url": "https://epicorebiosystems.com/about/"
+        }
+      ]
+    },
+    {
+      "id": "epi-03",
+      "format": "long_form",
+      "title": "Mapping a Daily Hydration Score to Heat Rules",
+      "angle": "OSHA renewed its heat National Emphasis Program on April 10, 2026 for five years, per OSHA's release. The release does not address the federal heat rule, and we did not confirm its current status. The article states the enforcement program first and the rule second.",
+      "evidence": "Your June 9, 2026 release frames a daily score for proactive health insights, and your September 10, 2026 field note applies sport-science protocols to heat stress. We found no 2026 measured armband result or customer deployment count. A hydration score does not by itself show compliance with an employer's heat-safety duties, which may also depend on state rules. No article on your site explains where a daily score informs a safety team's decisions and where other controls and records must carry the duty.",
+      "tags": [
+        "heat-regulation",
+        "long-form",
+        "primary-source"
+      ],
+      "sources": [
+        {
+          "title": "National Emphasis Program on heat renewed, April 10, 2026",
+          "publisher": "OSHA",
+          "url": "https://www.osha.gov/news/newsreleases/osha-national-news-release/20260410"
+        },
+        {
+          "title": "Epicore hydration score release",
+          "publisher": "PR Newswire",
+          "url": "https://www.prnewswire.com/news-releases/epicore-biosystems-launches-first-hydration-readiness-score-for-proactive-health-insights-302795047.html"
+        },
+        {
+          "title": "Field notes",
+          "publisher": "Epicore Biosystems",
+          "url": "https://epicorebiosystems.com/field-notes/"
+        }
+      ]
+    }
+  ]
+}
