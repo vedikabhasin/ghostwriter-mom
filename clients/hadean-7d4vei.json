@@ -1,0 +1,110 @@
+{
+  "slug": "hadean-7d4vei",
+  "template": "swipe2",
+  "lead_type": "warm",
+  "deliveryChannel": "email",
+  "company": "Hadean",
+  "contactFirstName": "Craig",
+  "sourceLine": "your dominAI, DIANA and Palantir work, and the questions defence teams ask before AI informs command",
+  "directionShape": "1 long-form article + 2 short insights",
+  "emailKnown": true,
+  "vediReactions": {
+    "had-01": "like",
+    "had-02": "like",
+    "had-03": "pass"
+  },
+  "writeOn": [
+    "had-01",
+    "had-02",
+    "had-03"
+  ],
+  "cards": [
+    {
+      "id": "had-01",
+      "format": "short_insight",
+      "title": "How Multi-Vendor Sensor Data Gets Fused",
+      "angle": "The UK Defence Investment Plan published June 30, 2026 allocates nearly £7.3 billion over four years to the digital targeting web, per the Commons Library briefing. That is a budget line, not a Hadean contract. Hadean's May 6, 2026 SCEPTRE event was a demonstration where dominAI ingested live feeds and generated courses of action within minutes, not an operational deployment.",
+      "evidence": "Your news post describes the Trident Sprint 2 demonstration at the April 30 distinguished visitor day. The 50-day uncrewed endurance figure belongs to partner ACUA Ocean's vessel and is not a Hadean result. No article on your site explains how tracks from several vendors are normalized before dominAI fuses them.",
+      "tags": [
+        "command-and-control",
+        "short-insight",
+        "demonstration"
+      ],
+      "sources": [
+        {
+          "title": "Defence Investment Plan briefing",
+          "publisher": "House of Commons Library",
+          "url": "https://commonslibrary.parliament.uk/research-briefings/cbp-10935/"
+        },
+        {
+          "title": "News",
+          "publisher": "Hadean",
+          "url": "https://hadean.com/news"
+        },
+        {
+          "title": "Hadean x Palantir",
+          "publisher": "Hadean",
+          "url": "https://hadean.com/hadean-x-palantir/"
+        }
+      ]
+    },
+    {
+      "id": "had-02",
+      "format": "long_form",
+      "title": "Validating AI Wargaming Before It Informs Command",
+      "angle": "NATO named Hadean one of ten DIANA innovators on July 13, 2026, each receiving EUR 100,000 in contractual funding for integration and demonstration, with assessment expected by December 2026. Selection is a development pathway, not NATO-wide adoption or an operational result.",
+      "evidence": "Your July 14, 2026 news post announces the selection. Your blog covers sovereignty, alliances and command and control strategy, and its listing shows nothing after February 27, 2026. No article on your site explains how an AI-assisted wargame is validated or what makes its outputs checkable.",
+      "tags": [
+        "wargame-validation",
+        "long-form",
+        "announcement"
+      ],
+      "sources": [
+        {
+          "title": "DIANA selects innovators, July 13, 2026",
+          "publisher": "NATO",
+          "url": "https://www.nato.int/en/news-and-events/articles/news/2026/07/13/natos-diana-selects-innovators-to-drive-decision-superiority-for-the-alliance"
+        },
+        {
+          "title": "News",
+          "publisher": "Hadean",
+          "url": "https://hadean.com/news"
+        }
+      ]
+    },
+    {
+      "id": "had-03",
+      "format": "short_insight",
+      "title": "A Classified Pathway Is Not a Deployment",
+      "angle": "Hadean and Palantir announced on September 10, 2025 that wargaming, command and control and training products would run on Foundry, with availability in classified MoD environments expected within months. Hadean's Palantir page, last modified February 20, 2026, describes a pathway into those environments. We found no public confirmation of deployment, which is not proof that none occurred.",
+      "evidence": "Your March 11, 2026 bridge round post cites the £20m enterprise agreement as past execution, and the December 4, 2024 announcement calls it an agreement worth up to £20 million, a ceiling and not booked revenue. No article on your site explains what changes in security, validation and data distribution when a training simulation informs a live decision.",
+      "tags": [
+        "secure-deployment",
+        "short-insight",
+        "announcement"
+      ],
+      "sources": [
+        {
+          "title": "Palantir and Hadean partner",
+          "publisher": "Hadean",
+          "url": "https://hadean.com/news/palantir-and-hadean-partner-to-bring-a-suite-of-simulation-and-ai-products-across-the-uk-armed-forces/"
+        },
+        {
+          "title": "Hadean x Palantir",
+          "publisher": "Hadean",
+          "url": "https://hadean.com/hadean-x-palantir/"
+        },
+        {
+          "title": "Acceleration funding, March 11, 2026",
+          "publisher": "Hadean",
+          "url": "https://hadean.com/news/hadean-secures-acceleration-funding-to-fuel-ambitions-as-the-uks-next-defence-dual-use-tech-unicorn/"
+        },
+        {
+          "title": "Enterprise Lite agreement with the UK MoD",
+          "publisher": "Hadean",
+          "url": "https://hadean.com/news/hadean-signs-enterprise-lite-agreement-with-the-uk-ministry-of-defence/"
+        }
+      ]
+    }
+  ]
+}
