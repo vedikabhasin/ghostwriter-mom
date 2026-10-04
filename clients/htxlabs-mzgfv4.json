@@ -1,0 +1,110 @@
+{
+  "slug": "htxlabs-mzgfv4",
+  "template": "swipe2",
+  "lead_type": "warm",
+  "deliveryChannel": "email",
+  "company": "HTX Labs",
+  "contactFirstName": "Scott",
+  "sourceLine": "your EMPACT work and the questions training commands ask before they trust readiness data",
+  "directionShape": "1 long-form article + 2 short insights",
+  "emailKnown": true,
+  "vediReactions": {
+    "htx-01": "like",
+    "htx-02": "like",
+    "htx-03": "pass"
+  },
+  "writeOn": [
+    "htx-01",
+    "htx-02",
+    "htx-03"
+  ],
+  "cards": [
+    {
+      "id": "htx-01",
+      "format": "short_insight",
+      "title": "Disconnected Training Needs a Sync Contract",
+      "angle": "HTX Labs described EMPACT on July 6, 2026 as a Cloud-to-Edge system for disconnected, low-bandwidth, contested environments that syncs content updates and performance uploads when connectivity allows. The release does not say what happens when a transfer stops mid-sync, so the article is built from an interview.",
+      "evidence": "Your July 6, 2026 release says the system is device and content agnostic and describes no conflict handling. Your March 25, 2026 post on fragmented content covers discovery and sharing, not synchronization. No article on your site explains how the edge resolves conflicting changes or a failed transfer after a disconnect.",
+      "tags": [
+        "edge-sync",
+        "short-insight",
+        "company-reported"
+      ],
+      "sources": [
+        {
+          "title": "HTX Labs establishes EMPACT as a mission readiness system",
+          "publisher": "EIN Presswire",
+          "url": "https://www.einpresswire.com/article/923307261/htx-labs-establishes-empact-as-a-mission-readiness-system"
+        },
+        {
+          "title": "News",
+          "publisher": "HTX Labs",
+          "url": "https://www.htxlabs.com/news"
+        },
+        {
+          "title": "Company",
+          "publisher": "HTX Labs",
+          "url": "https://www.htxlabs.com/company"
+        }
+      ]
+    },
+    {
+      "id": "htx-02",
+      "format": "long_form",
+      "title": "Contract Vehicles Do Not Measure Readiness",
+      "angle": "HTX Labs announced a May 2026 extension of its DoD-wide IDIQ through September 2028. An IDIQ is a contracting route, not a count of orders or evidence of training outcomes. Readiness only means something if the performance data under each order is comparable.",
+      "evidence": "Your extension post describes onboarding within 48 hours through a Contracting Officer, which is a company claim. Your May 16, 2025 Yet Analytics partnership integrates xAPI performance tracking for USAF immersive training, with no numbers. No article on your site explains which performance records an xAPI feed must carry before a commander can compare units.",
+      "tags": [
+        "readiness-data",
+        "long-form",
+        "company-reported"
+      ],
+      "sources": [
+        {
+          "title": "News",
+          "publisher": "HTX Labs",
+          "url": "https://www.htxlabs.com/news"
+        },
+        {
+          "title": "EMPACT release",
+          "publisher": "EIN Presswire",
+          "url": "https://www.einpresswire.com/article/923307261/htx-labs-establishes-empact-as-a-mission-readiness-system"
+        },
+        {
+          "title": "Company",
+          "publisher": "HTX Labs",
+          "url": "https://www.htxlabs.com/company"
+        }
+      ]
+    },
+    {
+      "id": "htx-03",
+      "format": "short_insight",
+      "title": "Accreditation Is a Ladder, Not a Badge",
+      "angle": "HTX Labs said on July 6, 2026 that EMPACT holds an IL4 ATO on NIPRNet and that IL5 is in progress. Both are company claims, and no authorization record was opened. The article is built from an interview with HTX's security and accreditation team.",
+      "evidence": "Your homepage also claims an IL-4 ATO on AFNET and CMMC compliance, undated, which may describe a different boundary. Your May 28, 2025 cybersecurity post names no standards. No article on your site explains the accreditation path HTX has followed for EMPACT or what changes between IL4 and IL5.",
+      "tags": [
+        "accreditation",
+        "short-insight",
+        "company-reported"
+      ],
+      "sources": [
+        {
+          "title": "EMPACT release",
+          "publisher": "EIN Presswire",
+          "url": "https://www.einpresswire.com/article/923307261/htx-labs-establishes-empact-as-a-mission-readiness-system"
+        },
+        {
+          "title": "Home",
+          "publisher": "HTX Labs",
+          "url": "https://www.htxlabs.com"
+        },
+        {
+          "title": "News",
+          "publisher": "HTX Labs",
+          "url": "https://www.htxlabs.com/news"
+        }
+      ]
+    }
+  ]
+}
