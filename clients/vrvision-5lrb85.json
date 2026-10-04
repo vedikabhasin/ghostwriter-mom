@@ -1,0 +1,100 @@
+{
+  "slug": "vrvision-5lrb85",
+  "template": "swipe2",
+  "lead_type": "warm",
+  "deliveryChannel": "email",
+  "company": "VR Vision Group",
+  "contactFirstName": "Roni",
+  "sourceLine": "your Avangrid, Toronto Hydro and wind turbine work, and the questions utilities ask before they trust VR competency",
+  "directionShape": "1 long-form article + 2 short insights",
+  "emailKnown": true,
+  "vediReactions": {
+    "vrv-01": "like",
+    "vrv-02": "like",
+    "vrv-03": "pass"
+  },
+  "writeOn": [
+    "vrv-01",
+    "vrv-02",
+    "vrv-03"
+  ],
+  "cards": [
+    {
+      "id": "vrv-01",
+      "format": "long_form",
+      "title": "What Competency Means in Utility VR Training",
+      "angle": "VR Vision reports that Avangrid maintenance technicians reached competency 65% faster than with traditional training, with hundreds of Quest headsets, from 2019 to 2024. The case study states no baseline, sample or measurer. The 24 states describe Avangrid's operating footprint, not an evaluation across them.",
+      "evidence": "Your Avangrid case study was published October 3, 2023 and updated September 28, 2026, and it is vendor-reported. No article on your site explains how competency was defined, who assessed it and what the comparison group did.",
+      "tags": [
+        "competency-metrics",
+        "long-form",
+        "company-reported"
+      ],
+      "sources": [
+        {
+          "title": "Avangrid case study",
+          "publisher": "VR Vision Group",
+          "url": "https://www.vrvisiongroup.com/case-study/avangrid/"
+        },
+        {
+          "title": "Ultimate guide to VR training",
+          "publisher": "VR Vision Group",
+          "url": "https://www.vrvisiongroup.com/ultimate-guide-vr-training/"
+        }
+      ]
+    },
+    {
+      "id": "vrv-02",
+      "format": "short_insight",
+      "title": "SCADA Fault Codes Drive Wind Turbine Scenarios",
+      "angle": "VR Vision's June 27, 2025 wind turbine post describes six modules built with Avangrid on real SCADA scenarios. It names fault codes such as 5212, a thermal relay failure, and walks the trainee through schematics, hot-cold-hot voltage testing, lockout tagout and contactor replacement with HMI verification. The post cites 49.9% projected wind technician job growth from 2024 to 2034 from BLS, a figure we could verify only second hand.",
+      "evidence": "Your post is by Roni Cerga and mentions real-time performance tracking in Vision Portal. It does not explain how scenarios are authored or how a trainee's response is scored. No article on your site explains how the team chooses which fault-code decisions to rehearse and how it scores the response.",
+      "tags": [
+        "scenario-design",
+        "short-insight",
+        "company-reported"
+      ],
+      "sources": [
+        {
+          "title": "VR training for wind turbine technicians, June 27, 2025",
+          "publisher": "VR Vision Group",
+          "url": "https://www.vrvisiongroup.com/vr-training-wind-turbine-technicians/"
+        },
+        {
+          "title": "Avangrid case study",
+          "publisher": "VR Vision Group",
+          "url": "https://www.vrvisiongroup.com/case-study/avangrid/"
+        }
+      ]
+    },
+    {
+      "id": "vrv-03",
+      "format": "short_insight",
+      "title": "Simulating Switchgear Hazards You Cannot Rehearse",
+      "angle": "VR Vision's Toronto Hydro case study describes digital twins of switchgear and underground vaults, multiplayer fuse replacement and isolate-and-ground procedures on SF6 switchgear, with guided and real-time evaluation modes on 40 headsets. The case study reports a vendor-reported 30% reduction in technician time-to-train, with no baseline.",
+      "evidence": "Your February 18, 2026 data center post gives a different Toronto Hydro result, 2,000+ technicians and a 30% error reduction within 90 days. That is a different outcome and denominator, so the article uses one metric and names it. No article on your site explains how the evaluation mode scores an isolate-and-ground step.",
+      "tags": [
+        "hazard-simulation",
+        "short-insight",
+        "company-reported"
+      ],
+      "sources": [
+        {
+          "title": "Toronto Hydro case study",
+          "publisher": "VR Vision Group",
+          "url": "https://www.vrvisiongroup.com/case-study/toronto-hydro/"
+        },
+        {
+          "title": "Hydro One case study",
+          "publisher": "VR Vision Group",
+          "url": "https://www.vrvisiongroup.com/case-study/hydro-one/"
+        },
+        {
+          "title": "Ultimate guide to VR training",
+          "publisher": "VR Vision Group",
+          "url": "https://www.vrvisiongroup.com/ultimate-guide-vr-training/"
+        }
+      ]
+    }
+  ]
+}
