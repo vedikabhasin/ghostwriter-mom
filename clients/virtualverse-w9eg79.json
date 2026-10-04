@@ -1,0 +1,105 @@
+{
+  "slug": "virtualverse-w9eg79",
+  "template": "swipe2",
+  "lead_type": "warm",
+  "deliveryChannel": "email",
+  "company": "Virtual Verse Studio",
+  "contactFirstName": "Mazen",
+  "sourceLine": "your NBK Virtugate and museum work, and the questions clients ask before they build in 3D",
+  "directionShape": "1 long-form article + 2 short insights",
+  "emailKnown": true,
+  "vediReactions": {
+    "vvs-01": "like",
+    "vvs-02": "pass",
+    "vvs-03": "like"
+  },
+  "writeOn": [
+    "vvs-01",
+    "vvs-03",
+    "vvs-02"
+  ],
+  "cards": [
+    {
+      "id": "vvs-01",
+      "format": "short_insight",
+      "title": "Bank Onboarding in 3D: Measure Retention",
+      "angle": "One 2026 roundup puts VR training use at 22% of large enterprises against 7% of organizations overall. Completion is easy to count, but retention was the actual problem in the brief.",
+      "evidence": "Your NBK Virtugate build runs in a browser with a sub-15-second load target, 60 FPS on desktop and 30 to 45 on low-end hardware. Your post says NBK's retention was weak, but reports no retention results after launch. That is the gap.",
+      "tags": [
+        "onboarding",
+        "short-insight",
+        "browser-3d"
+      ],
+      "sources": [
+        {
+          "title": "NBK Virtugate",
+          "publisher": "Virtual Verse Studio",
+          "url": "https://virtualverse.studio/blogs/inside-nbk-virtugate-unity-webgl-development"
+        },
+        {
+          "title": "industry statistics report",
+          "publisher": "Treeview",
+          "url": "https://treeview.studio/blog/ar-vr-mr-xr-metaverse-spatial-computing-industry-stats"
+        }
+      ]
+    },
+    {
+      "id": "vvs-02",
+      "format": "short_insight",
+      "title": "Museum AI Avatars: Design for Disclosure",
+      "angle": "The EU AI Act's Article 50 has applied since Aug 2, 2026. It requires disclosure when people interact with AI, and notice when emotion recognition or biometric categorisation is used. Real-time visitor tracking in a public gallery needs a disclosure plan before launch.",
+      "evidence": "Your blog lists a Meet Eva Here installation that tracked and responded to museum visitors in real time (April 8, 2026). Confirm what it tracked and whether any biometric categorisation was involved before writing.",
+      "tags": [
+        "ai-avatars",
+        "short-insight",
+        "museum-installations"
+      ],
+      "sources": [
+        {
+          "title": "blog index",
+          "publisher": "Virtual Verse Studio",
+          "url": "https://virtualverse.studio/blogs"
+        },
+        {
+          "title": "Article 50",
+          "publisher": "Morgan Lewis",
+          "url": "https://www.morganlewis.com/blogs/sourcingatmorganlewis/2026/08/eu-ai-acts-transparency-rules-what-went-into-effect-on-2-august"
+        },
+        {
+          "title": "what applies from Aug 2",
+          "publisher": "Legalithm",
+          "url": "https://www.legalithm.com/en/blog/eu-ai-act-what-applies-2-august-2026"
+        }
+      ]
+    },
+    {
+      "id": "vvs-03",
+      "format": "long_form",
+      "title": "Meta VR Glasses: Port or Rebuild?",
+      "angle": "Meta announced VR Glasses on Sept 23, 2026 at $1,299 for spring 2027, with the Quest OS and app store. One trade summary says Quest training content should run, but controller-based or peripheral-vision modules may need rework.",
+      "evidence": "Your blog already covers Meta Quest onboarding (Immersive Exposure), hazard recognition architecture and Android XR versus Vision Pro versus Quest. A post-Connect port checklist extends that coverage. The summary is a vendor blog, so verify against Meta's developer documentation.",
+      "tags": [
+        "meta-vr-glasses",
+        "long-form",
+        "porting"
+      ],
+      "sources": [
+        {
+          "title": "Meta VR Glasses",
+          "publisher": "Road to VR",
+          "url": "https://roadtovr.com/meta-vr-glasses-unveiled-price-release-date/"
+        },
+        {
+          "title": "enterprise training",
+          "publisher": "VR Vision Group",
+          "url": "https://www.vrvisiongroup.com/meta-vr-glasses-enterprise-training/"
+        },
+        {
+          "title": "blog index",
+          "publisher": "Virtual Verse Studio",
+          "url": "https://virtualverse.studio/blogs"
+        }
+      ]
+    }
+  ]
+}
