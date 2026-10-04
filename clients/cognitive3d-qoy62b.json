@@ -1,0 +1,110 @@
+{
+  "slug": "cognitive3d-qoy62b",
+  "template": "swipe2",
+  "lead_type": "warm",
+  "deliveryChannel": "email",
+  "company": "Cognitive3D",
+  "contactFirstName": "Tony",
+  "sourceLine": "your eye tracking and analytics work, and the questions research teams ask before they trust XR session data",
+  "directionShape": "1 long-form article + 2 short insights",
+  "emailKnown": true,
+  "vediReactions": {
+    "c3d-01": "like",
+    "c3d-02": "pass",
+    "c3d-03": "like"
+  },
+  "writeOn": [
+    "c3d-01",
+    "c3d-03",
+    "c3d-02"
+  ],
+  "cards": [
+    {
+      "id": "c3d-01",
+      "format": "long_form",
+      "title": "One Fixation Layer, Many Permission Models",
+      "angle": "Cognitive3D's unified fixations system abstracts fixations across Vive Pro Eye, Tobii, Pupil Labs, AdHawk, FOVE and Qualcomm reference designs. Android XR is a separate example of the problem: it splits eye tracking into coarse and fine runtime permissions and calls the data sensitive personal information.",
+      "evidence": "Your visionOS page says you use headset direction as a gaze proxy because Apple does not expose eye tracking to third-party developers. No page we opened says the fixations system runs on Android XR, so the article treats Android XR only as a permission model. No article on your site explains what a cross-device fixation layer preserves when one platform exposes eye data and another does not.",
+      "tags": [
+        "eye-tracking",
+        "long-form",
+        "company-reported"
+      ],
+      "sources": [
+        {
+          "title": "Unified fixations system",
+          "publisher": "Cognitive3D",
+          "url": "https://cognitive3d.com/blog/blog/cognitive3d-launches-unified-fixations-system/"
+        },
+        {
+          "title": "Apple Vision Pro",
+          "publisher": "Cognitive3D",
+          "url": "https://cognitive3d.com/blog/applevisionpro/"
+        },
+        {
+          "title": "Android XR eye tracking permissions",
+          "publisher": "Android Developers",
+          "url": "https://developer.android.com/develop/xr/openxr/extensions/XR_ANDROID_eye_tracking"
+        }
+      ]
+    },
+    {
+      "id": "c3d-02",
+      "format": "short_insight",
+      "title": "Raw Eye Data Stays Local, Outputs Do Not",
+      "angle": "Cognitive3D's HarmonEyes integration adds four outputs: Mental Workload, Fatigue, Mental Readiness and Attention. The company says eye-tracking data stays on-device while model outputs enter the Cognitive3D session record, and initial availability is through the Unity SDK.",
+      "evidence": "Your post gives no numbers or validation method and announces a demo at AWE USA, booth 929. No article on your site explains how the inferred states are computed, what leaves the headset and what an instructor should infer from the four outputs.",
+      "tags": [
+        "privacy-architecture",
+        "short-insight",
+        "company-reported"
+      ],
+      "sources": [
+        {
+          "title": "HarmonEyes partnership",
+          "publisher": "Cognitive3D",
+          "url": "https://cognitive3d.com/blog/harmoneyes-partner/"
+        },
+        {
+          "title": "Unified fixations system",
+          "publisher": "Cognitive3D",
+          "url": "https://cognitive3d.com/blog/blog/cognitive3d-launches-unified-fixations-system/"
+        },
+        {
+          "title": "About",
+          "publisher": "Cognitive3D",
+          "url": "https://cognitive3d.com/about/"
+        }
+      ]
+    },
+    {
+      "id": "c3d-03",
+      "format": "short_insight",
+      "title": "What 290 Million XR Minutes Cannot Show",
+      "angle": "Cognitive3D reports more than 290 million minutes of recorded XR sessions in an undated post that references its AWE USA 2026 talk, held June 15 to 18, 2026. Minute totals on its other pages cover different periods, so the article sets one definition.",
+      "evidence": "Your post reports nearly 75% of users ending sessions within five minutes in one social VR app and an onboarding completion gain from 40% to 60% in an A/B test, with no client named. These are examples from individual applications, not rates across 290 million minutes. The post describes the test design only at a high level. No article on your site gives the sample, assignment, uncertainty or session-counting rules.",
+      "tags": [
+        "analytics-methods",
+        "short-insight",
+        "company-reported"
+      ],
+      "sources": [
+        {
+          "title": "290 Million Minutes",
+          "publisher": "Cognitive3D",
+          "url": "https://cognitive3d.com/blog/290-million-minutes/"
+        },
+        {
+          "title": "AWE USA 2026",
+          "publisher": "AWE",
+          "url": "https://www.awexr.com/usa-2026"
+        },
+        {
+          "title": "About",
+          "publisher": "Cognitive3D",
+          "url": "https://cognitive3d.com/about/"
+        }
+      ]
+    }
+  ]
+}
