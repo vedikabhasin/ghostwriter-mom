@@ -1,0 +1,110 @@
+{
+  "slug": "jigspace-v8fwd2",
+  "template": "swipe2",
+  "lead_type": "warm",
+  "deliveryChannel": "email",
+  "company": "JigSpace",
+  "contactFirstName": "Zac",
+  "sourceLine": "your Vision Pro, iPad and web releases, and the questions sales and service teams ask before they put a product in a headset",
+  "directionShape": "1 long-form article + 2 short insights",
+  "emailKnown": true,
+  "vediReactions": {
+    "jig-01": "like",
+    "jig-02": "pass",
+    "jig-03": "like"
+  },
+  "writeOn": [
+    "jig-01",
+    "jig-03",
+    "jig-02"
+  ],
+  "cards": [
+    {
+      "id": "jig-01",
+      "format": "short_insight",
+      "title": "Demo Throughput Is a Presenter Problem",
+      "angle": "Provisur ran over 400 demos at IFFA 2025 on Vision Pro and iPad, per JigSpace's June 2, 2025 case study. JigSpace's September 18, 2025 post, written after the show, names the constraint as a presenter who cannot see what the viewer sees.",
+      "evidence": "Your Provisur case study describes the work as a pilot with expansion planned. Your remote-app post models 3 to 6 demos per hour for two devices over an 8-hour event, which is your own modeled estimate and not customer data. The 400 demos predate the remote app and are not its result. No article on your site explains how a presenter team plans and runs an event day end to end when the guest is inside the headset.",
+      "tags": [
+        "demo-throughput",
+        "short-insight",
+        "company-reported"
+      ],
+      "sources": [
+        {
+          "title": "Provisur at IFFA 2025",
+          "publisher": "JigSpace",
+          "url": "https://www.jig.com/case-studies/provisur-jigspace-leading-with-innovation-at-iffa-2025"
+        },
+        {
+          "title": "Why we built a remote control for Apple Vision Pro",
+          "publisher": "JigSpace",
+          "url": "https://www.jig.com/blog/why-we-built-a-remote-control-for-apple-vision-pro"
+        },
+        {
+          "title": "What's new",
+          "publisher": "JigSpace",
+          "url": "https://www.jig.com/whats-new"
+        }
+      ]
+    },
+    {
+      "id": "jig-02",
+      "format": "short_insight",
+      "title": "What a Spatial Vendor Does After Vision Pro",
+      "angle": "MacRumors reported on April 29, 2026, citing no named source, that Apple stopped Vision Pro development. That is an unconfirmed report, and we did not open an Apple statement. JigSpace reported 100,000 Vision Pro users in December 2025 and kept shipping Vision releases through 1.18 on August 10, 2026.",
+      "evidence": "Your 2025 year in review says the 100,000 are users, not downloads or signups, with over 25,000 hours logged. Your what's-new page lists a web browser performance gain of over 3x in version 3.45 on August 17, 2026. These are company claims. No article on your site explains what stays portable across Vision Pro, iPad and web when a headset target changes.",
+      "tags": [
+        "platform-risk",
+        "short-insight",
+        "company-reported"
+      ],
+      "sources": [
+        {
+          "title": "Apple Vision Pro report, April 29, 2026",
+          "publisher": "MacRumors",
+          "url": "https://www.macrumors.com/2026/04/29/apple-vision-pro-m5-flop/"
+        },
+        {
+          "title": "2025 Year in Review",
+          "publisher": "JigSpace",
+          "url": "https://www.jig.com/blog/2025-year-in-review"
+        },
+        {
+          "title": "What's new",
+          "publisher": "JigSpace",
+          "url": "https://www.jig.com/whats-new"
+        }
+      ]
+    },
+    {
+      "id": "jig-03",
+      "format": "long_form",
+      "title": "CAD Files Are Not Render Ready",
+      "angle": "JigSpace shipped CAD optimization with model merging and optional geometry decimation in version 3.46 on September 16, 2026. The article explains why manufacturing geometry needs reduction before it presents well on a headset.",
+      "evidence": "Your IKN case study describes a live spare-parts workflow built from CAD-derived 3D models, with IKN's own quote on fewer part identification errors and faster quoting, and no measured reduction. Your what's-new page lists Vision 1.17 loading Jigs approximately 25 to 50 percent faster, a separate earlier release and not a result of the CAD controls. No article on your site explains how decimation and merging choices change what a technician can still identify on a part.",
+      "tags": [
+        "cad-pipeline",
+        "long-form",
+        "published-result"
+      ],
+      "sources": [
+        {
+          "title": "What's new",
+          "publisher": "JigSpace",
+          "url": "https://www.jig.com/whats-new"
+        },
+        {
+          "title": "IKN spare part selection",
+          "publisher": "JigSpace",
+          "url": "https://www.jig.com/case-studies/how-ikn-is-transforming-spare-part-selection-with-spatial-computing"
+        },
+        {
+          "title": "2025 Year in Review",
+          "publisher": "JigSpace",
+          "url": "https://www.jig.com/blog/2025-year-in-review"
+        }
+      ]
+    }
+  ]
+}
