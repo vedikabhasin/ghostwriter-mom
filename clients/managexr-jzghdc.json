@@ -1,0 +1,95 @@
+{
+  "slug": "managexr-jzghdc",
+  "template": "swipe2",
+  "lead_type": "warm",
+  "deliveryChannel": "email",
+  "company": "ManageXR",
+  "contactFirstName": "Luke",
+  "sourceLine": "your Rooms and fleet work, and the questions IT teams ask before they run headsets at scale",
+  "directionShape": "1 long-form article + 2 short insights",
+  "emailKnown": true,
+  "vediReactions": {
+    "mxr-01": "like",
+    "mxr-02": "pass",
+    "mxr-03": "like"
+  },
+  "writeOn": [
+    "mxr-01",
+    "mxr-03",
+    "mxr-02"
+  ],
+  "cards": [
+    {
+      "id": "mxr-01",
+      "format": "long_form",
+      "title": "Why Headset Streaming Fails at the Firewall",
+      "angle": "ManageXR's July 10, 2026 post reports Rooms private beta streaming uptime rising from about 40% to 81.6% on average, across 55 organizations, 400+ Rooms and 1,300+ headsets. A K-12 facilitator quoted in the same post described a school firewall problem affecting 1 in 50 devices.",
+      "evidence": "Your post names blocked endpoints, firmware bugs, casting restrictions and reconnect failures as causes and describes a network test. Its headline claims a 3x usage increase, and the body shows no calculation. Your network guide recommends 200 Mbps minimum and 5GHz. No article on your site walks an IT team through telling a blocked endpoint from a firmware, casting or reconnection fault.",
+      "tags": [
+        "network-reliability",
+        "long-form",
+        "company-reported"
+      ],
+      "sources": [
+        {
+          "title": "How we created a tool that increased VR usage by 3x",
+          "publisher": "ManageXR",
+          "url": "https://www.managexr.com/blog/how-we-created-a-tool-that-increased-vr-usage-by-3x"
+        },
+        {
+          "title": "How MDI uses Rooms",
+          "publisher": "ManageXR",
+          "url": "https://www.managexr.com/customer-stories/how-mdi-uses-rooms-to-run-vr-career-training-for-people-with-disabilities"
+        }
+      ]
+    },
+    {
+      "id": "mxr-02",
+      "format": "short_insight",
+      "title": "What a Legacy Quest Fleet Loses",
+      "angle": "Meta's support page says Horizon managed services stopped being available for purchase on February 20, 2026. UploadVR reports commercial Quest SKU sales ended the same day and that support for existing customers runs to January 4, 2030. The article tells a fleet owner what to check before choosing the next device-management path.",
+      "evidence": "Your January 28, 2026 post on Meta HMS explains enrollment and predates the February 20 cutoff, so it does not show that purchasing is open. Your March 2025 firmware post covers update policy. No article on your site defines what a specific legacy headset model loses on a named feature.",
+      "tags": [
+        "fleet-lifecycle",
+        "short-insight",
+        "primary-source"
+      ],
+      "sources": [
+        {
+          "title": "Update to Meta Horizon managed services",
+          "publisher": "Meta",
+          "url": "https://work.meta.com/help/1964851097790493"
+        },
+        {
+          "title": "Meta is shutting down its Quest for Business program",
+          "publisher": "UploadVR",
+          "url": "https://www.uploadvr.com/meta-is-shutting-down-its-quest-for-business-program/"
+        }
+      ]
+    },
+    {
+      "id": "mxr-03",
+      "format": "short_insight",
+      "title": "Rooms Replaces Per-Headset Casting in Job Training",
+      "angle": "MDI runs VR career training for people with disabilities, manages 46 active headsets and reported saving time by no longer casting each headset individually. Rooms supports up to 30 headsets per Room, and the facilitator adds the headsets she brings to each event.",
+      "evidence": "Your MDI story reports 640+ Unified Work participants since 2023 and 50+ career simulations, as reported by ManageXR. The time saving is the facilitator's qualitative report with no measured figure. Your beta post separately reports 400+ Rooms started. No article on your site explains how a facilitator decides which headsets to bring and how an event day runs in Rooms.",
+      "tags": [
+        "fleet-management",
+        "short-insight",
+        "published-result"
+      ],
+      "sources": [
+        {
+          "title": "How MDI uses Rooms",
+          "publisher": "ManageXR",
+          "url": "https://www.managexr.com/customer-stories/how-mdi-uses-rooms-to-run-vr-career-training-for-people-with-disabilities"
+        },
+        {
+          "title": "How we created a tool that increased VR usage by 3x",
+          "publisher": "ManageXR",
+          "url": "https://www.managexr.com/blog/how-we-created-a-tool-that-increased-vr-usage-by-3x"
+        }
+      ]
+    }
+  ]
+}
