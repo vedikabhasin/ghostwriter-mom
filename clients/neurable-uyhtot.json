@@ -1,0 +1,110 @@
+{
+  "slug": "neurable-uyhtot",
+  "template": "swipe2",
+  "lead_type": "warm",
+  "deliveryChannel": "email",
+  "company": "Neurable",
+  "contactFirstName": "Adam",
+  "sourceLine": "your Neurable One launch and OEM platform, and the questions buyers ask before they wear EEG",
+  "directionShape": "1 long-form article + 2 short insights",
+  "emailKnown": true,
+  "vediReactions": {
+    "neu-01": "like",
+    "neu-02": "pass",
+    "neu-03": "like"
+  },
+  "writeOn": [
+    "neu-01",
+    "neu-03",
+    "neu-02"
+  ],
+  "cards": [
+    {
+      "id": "neu-01",
+      "format": "long_form",
+      "title": "What Signal Quality Takes in Ear Pad EEG",
+      "angle": "Neurable announced Neurable One on October 1, 2026 at $499, available in the United States, with 12 EEG sensors in the ear pads. Engadget reports battery life falls from 22 hours of audio to 12 hours with EEG active, and an independent researcher told IEEE Spectrum that dry EEG is typically noisy.",
+      "evidence": "Your explainer on EEG in headphones says the signal is less comprehensive than a clinical cap and gives no accuracy or latency numbers. Your release cites Air Force and Mayo Clinic validation of the broader platform, with no study details for Neurable One's scores. No article on your site explains how hair, skin contact, fit and movement change the signal and what supports the score a wearer sees.",
+      "tags": [
+        "eeg-signal-quality",
+        "long-form",
+        "company-reported"
+      ],
+      "sources": [
+        {
+          "title": "Neurable launches Neurable One, October 1, 2026",
+          "publisher": "Business Wire",
+          "url": "https://www.businesswire.com/news/home/20261001624775/en/"
+        },
+        {
+          "title": "Neurable One",
+          "publisher": "Engadget",
+          "url": "https://www.engadget.com/2271652/neurable-one-eeg-headphones/"
+        },
+        {
+          "title": "EEG headphones",
+          "publisher": "IEEE Spectrum",
+          "url": "https://spectrum.ieee.org/eeg-headphones-neurable-one"
+        }
+      ]
+    },
+    {
+      "id": "neu-02",
+      "format": "short_insight",
+      "title": "Brain Data Banking Meets Neural Data Law",
+      "angle": "Neurable's release says Brain Data Banking records and stores brain activity whenever Neurable One is worn with the app open, creating a continuous history. Connecticut amended its data privacy act to add neural data to sensitive data. Whether it applies to Neurable, and which dates apply, are open, so the article cites statute text and not a summary.",
+      "evidence": "Your launch release lists Brain Data Banking as a feature and states no retention or deletion terms. No article on your site explains what you store, for how long, how a user deletes it and how consent works across states that treat neural data as sensitive.",
+      "tags": [
+        "neural-data-privacy",
+        "short-insight",
+        "secondary-source"
+      ],
+      "sources": [
+        {
+          "title": "Neurable launches Neurable One, October 1, 2026",
+          "publisher": "Business Wire",
+          "url": "https://www.businesswire.com/news/home/20261001624775/en/"
+        },
+        {
+          "title": "Connecticut amends the Connecticut Data Privacy Act",
+          "publisher": "National Law Review",
+          "url": "https://natlawreview.com/article/connecticut-amends-connecticut-data-privacy-act"
+        },
+        {
+          "title": "US states build patchwork of neural data privacy laws",
+          "publisher": "Inside BCI",
+          "url": "https://insidebci.com/policy/2026-04-03-us-states-build-patchwork-of-neural-data-privacy-laws-as-bci-market-accelerates/"
+        }
+      ]
+    },
+    {
+      "id": "neu-03",
+      "format": "short_insight",
+      "title": "One Brain Signal Pipeline, Many Form Factors",
+      "angle": "Neurable announced its OEM licensing platform on April 28, 2026, naming HP's HyperX, MeSpace, iMotions and the U.S. Air Force Research Laboratory in different collaborative roles. The HyperX gaming headset was a concept-stage collaboration announced January 5, 2026, not a shipping product. Neurable One, announced October 1, 2026, is Neurable's own consumer product.",
+      "evidence": "Your April 27, 2026 OEM post sizes the market with unsourced figures and names no partners. No article on your site explains how one signal pipeline is tuned across earbuds, headphones and a gaming headset.",
+      "tags": [
+        "oem-licensing",
+        "short-insight",
+        "announcement"
+      ],
+      "sources": [
+        {
+          "title": "Neurable open for business, April 28, 2026",
+          "publisher": "Business Wire",
+          "url": "https://www.businesswire.com/news/home/20260428101416/en/Neurable-Open-for-Business-Scaling-Neurotechnology-Adoption-Through-Global-OEM-Integration"
+        },
+        {
+          "title": "HyperX collaboration",
+          "publisher": "Neurable",
+          "url": "https://www.neurable.com/news/neurable-introduces-neurotechnology-powered-gaming-wearable-headset-with-hyperx"
+        },
+        {
+          "title": "Neurable launches Neurable One, October 1, 2026",
+          "publisher": "Business Wire",
+          "url": "https://www.businesswire.com/news/home/20261001624775/en/"
+        }
+      ]
+    }
+  ]
+}
