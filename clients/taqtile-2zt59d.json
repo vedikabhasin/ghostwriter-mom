@@ -1,0 +1,85 @@
+{
+  "slug": "taqtile-2zt59d",
+  "template": "swipe2",
+  "lead_type": "warm",
+  "deliveryChannel": "email",
+  "company": "Taqtile",
+  "contactFirstName": "Dirck",
+  "sourceLine": "your Manifest releases and Paks pilot, and the questions frontline leaders ask before they change devices",
+  "directionShape": "1 long-form article + 2 short insights",
+  "emailKnown": true,
+  "vediReactions": {
+    "taq-01": "like",
+    "taq-02": "like",
+    "taq-03": "pass"
+  },
+  "writeOn": [
+    "taq-01",
+    "taq-02",
+    "taq-03"
+  ],
+  "cards": [
+    {
+      "id": "taq-01",
+      "format": "long_form",
+      "title": "The Step Record Outlives the Headset",
+      "angle": "The Register reported in October 2024 that Microsoft said HoloLens 2 support, including security updates, ends December 31, 2027. Taqtile's January 14, 2026 blog describes a step-level record with step IDs, prerequisites, timestamps and pass or fail with variance reasons. The article asks which parts of a procedure record survive a device change.",
+      "evidence": "Your January 14, 2026 post lists those fields and gives no numbers. Your Guides Migration page says HoloLens support ends in 2026, a separate event from the December 31, 2027 device date, so the article states each date separately. No article on your site explains how a step record is stored and reused across a phone, a tablet and a headset.",
+      "tags": [
+        "work-instruction-data",
+        "long-form",
+        "company-reported"
+      ],
+      "sources": [
+        {
+          "title": "Manifest Everywhere, December 18, 2025",
+          "publisher": "Taqtile",
+          "url": "https://www.taqtile.com/insights/posts/manifest-mobile-work-instructions/"
+        },
+        {
+          "title": "AI video and digital work instructions, January 14, 2026",
+          "publisher": "Taqtile",
+          "url": "https://www.taqtile.com/blog/ai-video-digital-work-instructions-frontline-training/"
+        }
+      ]
+    },
+    {
+      "id": "taq-02",
+      "format": "short_insight",
+      "title": "When a Procedure Moves to a Phone",
+      "angle": "Taqtile's Manifest 4.3 update of December 18, 2025 runs Work, Faults, Connect and Review on Android phones and tablets and on Chrome-capable devices. The page does not mention offline operation, so the article answers it with the engineers.",
+      "evidence": "Your separate Manifest Maker 3.0 release adds cloud accounts, cross-device authoring sync and two-way sync with Manifest once a procedure is linked to an Asset Class. Maker's release notes list its App Store publication on December 19, and the blog post is dated December 22. Neither announcement says what happens to a procedure edit made on a phone while offline. No article on your site explains what is saved locally and what waits for a connection.",
+      "tags": [
+        "mobile-authoring",
+        "short-insight",
+        "shipped-feature"
+      ],
+      "sources": [
+        {
+          "title": "Manifest Everywhere, December 18, 2025",
+          "publisher": "Taqtile",
+          "url": "https://www.taqtile.com/insights/posts/manifest-mobile-work-instructions/"
+        }
+      ]
+    },
+    {
+      "id": "taq-03",
+      "format": "short_insight",
+      "title": "From Training Center Pilot to Plant Floor",
+      "angle": "A Taqtile case study dated August 21, 2025 describes a Manifest pilot at the Paks Nuclear Power Plant training center in Hungary on HoloLens 2 and iPad, with a broader rollout planned. The only figure is customer context: it takes at least two years for a repairer to work independently.",
+      "evidence": "Your case study reports no pilot result and quotes Béla Sitkei. The Delta Black Aerospace alliance of October 29, 2025 is a separate strategic alliance with undisclosed terms and says nothing about Paks. No article on your site explains what a nuclear training center needs to see before a pilot becomes a rollout.",
+      "tags": [
+        "pilot-to-rollout",
+        "short-insight",
+        "pilot-stage"
+      ],
+      "sources": [
+        {
+          "title": "Delta Black and Taqtile partner",
+          "publisher": "Taqtile",
+          "url": "https://www.taqtile.com/news/delta-black-and-taqtile-partner-to-modernize-military-drone-operations/"
+        }
+      ]
+    }
+  ]
+}
