@@ -1,0 +1,120 @@
+{
+  "slug": "yord-y6ea9x",
+  "template": "swipe2",
+  "lead_type": "warm",
+  "deliveryChannel": "email",
+  "company": "YORD",
+  "contactFirstName": null,
+  "sourceLine": "your Škoda, Bentley and Sparta work, and the questions brands ask before they commission an experience",
+  "directionShape": "1 long-form article + 2 short insights",
+  "emailKnown": true,
+  "vediReactions": {
+    "yord-01": "pass",
+    "yord-02": "like",
+    "yord-03": "like"
+  },
+  "writeOn": [
+    "yord-02",
+    "yord-03",
+    "yord-01"
+  ],
+  "cards": [
+    {
+      "id": "yord-01",
+      "format": "short_insight",
+      "title": "Vision Pro Showrooms: What Škoda Teaches",
+      "angle": "Vision Pro has reportedly sold about 600,000 units in total, and a lighter successor is not expected before late 2028. A premium brand can still justify it when the headset serves a small, high-intent audience.",
+      "evidence": "Your Škoda Elroq and Epiq experience offers VR exploration or life-size mixed reality placement. Your Bentley app adds a haptic panel with real material samples and 3600 x 3200 per eye video. No audience numbers are published. Your Sept 4, 2026 configurator cost guide exists, so keep this on Vision Pro, not web configurators.",
+      "tags": [
+        "vision-pro",
+        "short-insight",
+        "mixed-reality"
+      ],
+      "sources": [
+        {
+          "title": "Škoda Vision Pro",
+          "publisher": "YORD",
+          "url": "https://yordstudio.com/project/apple-vision-pro-skoda/"
+        },
+        {
+          "title": "Bentley",
+          "publisher": "YORD",
+          "url": "https://yordstudio.com/project/vr-xr-experience-bentley/"
+        },
+        {
+          "title": "Vision Pro sales",
+          "publisher": "MacRumors",
+          "url": "https://www.macrumors.com/2026/04/29/apple-vision-pro-m5-flop/"
+        },
+        {
+          "title": "successor report",
+          "publisher": "The Apple Post",
+          "url": "https://www.theapplepost.com/2026/09/27/72741/work-continues-on-lighter-apple-vision-pro-successor-report-says/"
+        }
+      ]
+    },
+    {
+      "id": "yord-02",
+      "format": "short_insight",
+      "title": "AI Try-On Mirrors: Disclose the AI",
+      "angle": "The EU AI Act's Article 50 has applied since Aug 2, 2026, requiring disclosure when people interact with AI, with fines up to €15 million or 3% of turnover. AI-generated try-on images also need marking, with a Dec 2, 2026 grace period for systems already live.",
+      "evidence": "Your Sparta AI Mirror with Footballmania, ČSOB and Mastercard lets account holders try on merchandise through AI-generated images. It has an interactive quiz and QR sharing. No sales lift is published, and you are Prague-based, so EU rules apply directly.",
+      "tags": [
+        "ai-try-on",
+        "short-insight",
+        "retail-experience"
+      ],
+      "sources": [
+        {
+          "title": "Sparta AI Mirror",
+          "publisher": "YORD",
+          "url": "https://yordstudio.com/project/ai-try-on-booth-sparta/"
+        },
+        {
+          "title": "Article 50",
+          "publisher": "Morgan Lewis",
+          "url": "https://www.morganlewis.com/blogs/sourcingatmorganlewis/2026/08/eu-ai-acts-transparency-rules-what-went-into-effect-on-2-august"
+        },
+        {
+          "title": "what applies from Aug 2",
+          "publisher": "Legalithm",
+          "url": "https://www.legalithm.com/en/blog/eu-ai-act-what-applies-2-august-2026"
+        }
+      ]
+    },
+    {
+      "id": "yord-03",
+      "format": "long_form",
+      "title": "Luxury XR After Vision Pro: Design to Port",
+      "angle": "Meta announced VR Glasses on Sept 23, 2026 at $1,300 for spring 2027, while Apple's lighter successor is not expected before late 2028. Luxury brands should build experience logic that moves across headsets.",
+      "evidence": "Your Škoda, Bentley and ASAHI projects are all Vision Pro builds, and Bentley blends image target recognition with life-size configuration. The article asks which pieces are device-specific and which would port.",
+      "tags": [
+        "luxury-xr",
+        "long-form",
+        "portability"
+      ],
+      "sources": [
+        {
+          "title": "Meta VR Glasses",
+          "publisher": "Road to VR",
+          "url": "https://roadtovr.com/meta-vr-glasses-unveiled-price-release-date/"
+        },
+        {
+          "title": "successor report",
+          "publisher": "The Apple Post",
+          "url": "https://www.theapplepost.com/2026/09/27/72741/work-continues-on-lighter-apple-vision-pro-successor-report-says/"
+        },
+        {
+          "title": "Bentley",
+          "publisher": "YORD",
+          "url": "https://yordstudio.com/project/vr-xr-experience-bentley/"
+        },
+        {
+          "title": "Škoda Vision Pro",
+          "publisher": "YORD",
+          "url": "https://yordstudio.com/project/apple-vision-pro-skoda/"
+        }
+      ]
+    }
+  ]
+}
