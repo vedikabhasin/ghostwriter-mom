@@ -1,0 +1,110 @@
+{
+  "slug": "rendever-autm5m",
+  "template": "swipe2",
+  "lead_type": "warm",
+  "deliveryChannel": "email",
+  "company": "Rendever",
+  "contactFirstName": "Kyle",
+  "sourceLine": "your caregiver training and research work, and the questions care teams ask before they bring VR to older adults",
+  "directionShape": "1 long-form article + 2 short insights",
+  "emailKnown": true,
+  "vediReactions": {
+    "ren-01": "like",
+    "ren-02": "pass",
+    "ren-03": "like"
+  },
+  "writeOn": [
+    "ren-01",
+    "ren-03",
+    "ren-02"
+  ],
+  "cards": [
+    {
+      "id": "ren-01",
+      "format": "long_form",
+      "title": "Simulating Dementia in VR Needs Guardrails",
+      "angle": "Rendever launched a family caregiver mode on September 22, 2026 that simulates tasks like brushing teeth and organizing medication with sensory disruptions and hallucinations. The article explains what a short simulation can teach a caregiver and what it should never be taken to mean about every person with dementia.",
+      "evidence": "Your release reports 20,000+ caregivers reached since the August 2025 launch and estimates 26,000 older adults and 78,000 family members affected. These are reach counts and estimates, not measured changes in caregiver behavior or patient outcomes. Your release says Dr. Francesca Falzarano speaks after each module. No article on your site explains what that guidance covers or how the modules were designed with her.",
+      "tags": [
+        "dementia-training",
+        "long-form",
+        "company-reported"
+      ],
+      "sources": [
+        {
+          "title": "Rendever family caregiving mode, September 22, 2026",
+          "publisher": "GlobeNewswire",
+          "url": "https://www.globenewswire.com/news-release/2026/09/22/3366560/0/en/rendever-expands-dementia-empathy-training-with-a-new-mode-for-family-caregivers.html"
+        },
+        {
+          "title": "Rendever dementia training launch",
+          "publisher": "Auganix",
+          "url": "https://www.auganix.org/vr-news-rendever-vr-dementia-training/"
+        },
+        {
+          "title": "Press",
+          "publisher": "Rendever",
+          "url": "https://www.rendever.com/press"
+        }
+      ]
+    },
+    {
+      "id": "ren-02",
+      "format": "short_insight",
+      "title": "What a Shared VR Trial Can Prove",
+      "angle": "Rendever's study page describes an NIA-funded Phase I study comparing shared VR with video calls, using self-reported relationship and well-being measures. The page says the study is still being analyzed for scientific publication and gives no sample size or protocol, so the article treats the findings as initial and unverified.",
+      "evidence": "Your research page names the National Institute on Aging as sponsor and UCSB as partner. We could not verify its \"largest clinical trial\" title. No article on your site explains the sample, how self-reported scales were collected from people with MCI or mild to moderate dementia, or why distant family members were paired.",
+      "tags": [
+        "study-design",
+        "short-insight",
+        "company-reported"
+      ],
+      "sources": [
+        {
+          "title": "Largest clinical trial on VR for dementia",
+          "publisher": "Rendever",
+          "url": "https://www.rendever.com/research/largest-clinical-trial-on-vr-for-dementia"
+        },
+        {
+          "title": "Press",
+          "publisher": "Rendever",
+          "url": "https://www.rendever.com/press"
+        },
+        {
+          "title": "Team",
+          "publisher": "Rendever",
+          "url": "https://www.rendever.com/team"
+        }
+      ]
+    },
+    {
+      "id": "ren-03",
+      "format": "short_insight",
+      "title": "What NIH Funds in Shared VR Care",
+      "angle": "Rendever announced nearly $4.5 million in NIH funding in November 2025, including $3.8 million for the Thrive At Home Program, with UCSB, RAND and Right at Home as partners, per a republished release. A grant is not revenue and an award is not a demonstrated outcome. The article explains what each funded project tests.",
+      "evidence": "The Age In Place Tech release describes Thrive At Home. The Forbes wording on your press page names a MultiBrush VR studio that the release does not mention. No article on your site explains what Thrive At Home tests, what MultiBrush is and what evidence would count as success.",
+      "tags": [
+        "nih-funding",
+        "short-insight",
+        "non-revenue"
+      ],
+      "sources": [
+        {
+          "title": "Rendever receives nearly $4.5 million NIH funding",
+          "publisher": "Age In Place Tech",
+          "url": "https://www.ageinplacetech.com/pressrelease/rendever-receives-nearly-45-million-nih-funding-overcome-social-isolation-older-adults"
+        },
+        {
+          "title": "Press",
+          "publisher": "Rendever",
+          "url": "https://www.rendever.com/press"
+        },
+        {
+          "title": "Team",
+          "publisher": "Rendever",
+          "url": "https://www.rendever.com/team"
+        }
+      ]
+    }
+  ]
+}
