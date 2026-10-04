@@ -1,0 +1,100 @@
+{
+  "slug": "simbe-f2jstz",
+  "template": "swipe2",
+  "lead_type": "warm",
+  "deliveryChannel": "email",
+  "company": "Simbe Robotics",
+  "contactFirstName": "Brad",
+  "sourceLine": "your Tally fleet and UL 3300 certification, and the questions retailers ask before a robot shares the aisle",
+  "directionShape": "1 long-form article + 2 short insights",
+  "emailKnown": true,
+  "vediReactions": {
+    "simbe-01": "like",
+    "simbe-02": "pass",
+    "simbe-03": "like"
+  },
+  "writeOn": [
+    "simbe-01",
+    "simbe-03",
+    "simbe-02"
+  ],
+  "cards": [
+    {
+      "id": "simbe-01",
+      "format": "short_insight",
+      "title": "From Pilot to Chainwide in Under Three Months",
+      "angle": "HomeBase USA, a nine-location retailer, expanded Simbe to all locations in less than three months after a pilot, per a July 30, 2026 release. The release reports 92% fewer pricing errors and 58% fewer controllable out-of-stocks from the pilot, with no baseline or measurement period.",
+      "evidence": "Your release names Tally, fixed sensors and RFID and does not state how many stores the pilot covered. Your September 21, 2026 release counts 3,000+ units under contract, which is not a deployed count. No article on your site explains which data quality signals decided the pilot-to-chainwide conversion.",
+      "tags": [
+        "pilot-conversion",
+        "short-insight",
+        "company-reported"
+      ],
+      "sources": [
+        {
+          "title": "HomeBase USA deploys Simbe chainwide",
+          "publisher": "Simbe",
+          "url": "https://www.simberobotics.com/about/newsroom/homebase-usa-deploys-simbe-chainwide-following-rapid-pilot-success"
+        },
+        {
+          "title": "Simbe surpasses 3,000 units",
+          "publisher": "PR Newswire",
+          "url": "https://www.prnewswire.com/news-releases/simbe-surpasses-3-000-units-marking-the-largest-autonomous-shelf-intelligence-fleet-in-retail-302884117.html"
+        },
+        {
+          "title": "Tally 4.0",
+          "publisher": "Simbe",
+          "url": "https://www.simberobotics.com/about/newsroom/simbe-unveils-tally-4-0-the-next-generation-of-autonomous-retail-robot-powering-store-intelligence-via-physical-ai"
+        }
+      ]
+    },
+    {
+      "id": "simbe-02",
+      "format": "short_insight",
+      "title": "Shelf Accuracy Claims Need Their Denominators",
+      "angle": "Simbe's May 2025 release reports 98.7% SKU-level identification accuracy and over 99.3% shelf-condition recall, with no test population or evaluation protocol on the page. The two figures measure different things, and the article asks what was counted for each.",
+      "evidence": "Your Simbe Vision release cites 60 billion shelf images analyzed, 18 million SKUs and 5,400 items scanned per hour, all vendor-reported. No article on your site explains how recall is measured on a shelf, what counts as a miss and which shelf conditions were hardest to detect.",
+      "tags": [
+        "accuracy-metrics",
+        "short-insight",
+        "company-reported"
+      ],
+      "sources": [
+        {
+          "title": "Simbe expands next-generation computer vision",
+          "publisher": "Simbe",
+          "url": "https://www.simberobotics.com/about/newsroom/simbe-expands-next-generation-computer-vision-technology-to-transform-retail-execution"
+        }
+      ]
+    },
+    {
+      "id": "simbe-03",
+      "format": "long_form",
+      "title": "Certifying a Robot That Shares the Aisle",
+      "angle": "UL Solutions certified Simbe's Tally and its charging dock under UL 3300 on March 11, 2026, and calls it UL Solutions' first global certification of a public-facing robot. Testing covered fire and shock hazards and safe autonomous mobility in public environments.",
+      "evidence": "UL says OSHA added UL 3300 to a recognized standards list and gives no effective date. Certification does not replace a retailer's site-specific safety assessment. No article on your site explains what UL 3300 tests and what a retailer's safety team still has to assess before the robot goes into a busy aisle.",
+      "tags": [
+        "robot-safety",
+        "long-form",
+        "published-result"
+      ],
+      "sources": [
+        {
+          "title": "first global certification for a public-facing robot",
+          "publisher": "UL Solutions",
+          "url": "https://www.ul.com/news/ul-solutions-grants-its-first-global-certification-public-facing-robot-simbes-tally-autonomous"
+        },
+        {
+          "title": "Simbe surpasses 3,000 units",
+          "publisher": "PR Newswire",
+          "url": "https://www.prnewswire.com/news-releases/simbe-surpasses-3-000-units-marking-the-largest-autonomous-shelf-intelligence-fleet-in-retail-302884117.html"
+        },
+        {
+          "title": "Tally 4.0",
+          "publisher": "Simbe",
+          "url": "https://www.simberobotics.com/about/newsroom/simbe-unveils-tally-4-0-the-next-generation-of-autonomous-retail-robot-powering-store-intelligence-via-physical-ai"
+        }
+      ]
+    }
+  ]
+}
