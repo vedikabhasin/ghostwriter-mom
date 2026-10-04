@@ -1,0 +1,100 @@
+{
+  "slug": "anotherreality-5nu2ok",
+  "template": "swipe2",
+  "lead_type": "warm",
+  "deliveryChannel": "email",
+  "company": "Another Reality Studio",
+  "contactFirstName": "Brad",
+  "sourceLine": "your Celestial Park twin and AR work, and the questions venue teams ask before they fund a twin",
+  "directionShape": "1 long-form article + 2 short insights",
+  "emailKnown": true,
+  "vediReactions": {
+    "ars-01": "like",
+    "ars-02": "like",
+    "ars-03": "pass"
+  },
+  "writeOn": [
+    "ars-01",
+    "ars-02",
+    "ars-03"
+  ],
+  "cards": [
+    {
+      "id": "ars-01",
+      "format": "long_form",
+      "title": "Venue Digital Twins: Validate Before Opening",
+      "angle": "Large enterprises hold 66.41% of the 2026 digital twin market, per Fortune Business Insights. A twin earns its cost when teams can test lighting, safety and show programming before construction ends.",
+      "evidence": "Your Celestial Park twin for Universal Epic Universe ran in Unreal Engine 5, with DMX control through Art-Net and sACN, so lighting could be pre-programmed on grandMA3 consoles. It measured candela, lumen and lux before the 2025 opening. Your \"up to 60% faster\" claim is self-reported, so confirm the basis.",
+      "tags": [
+        "digital-twins",
+        "long-form",
+        "venue-design"
+      ],
+      "sources": [
+        {
+          "title": "Celestial Park",
+          "publisher": "Another Reality Studio",
+          "url": "https://anotherreality.studio/universal-celestial-park/"
+        },
+        {
+          "title": "digital twin market",
+          "publisher": "Fortune Business Insights",
+          "url": "https://www.fortunebusinessinsights.com/digital-twin-market-106246"
+        }
+      ]
+    },
+    {
+      "id": "ars-02",
+      "format": "short_insight",
+      "title": "Synthetic Training Data From a Digital Twin",
+      "angle": "A Sept 2026 market note says twins are shifting from visualization tools to an operational backbone. Generating synthetic images for computer vision is one concrete operational use.",
+      "evidence": "Your Celestial Park page lists synthetic datasets for object detection, segmentation, defect detection and autonomous navigation. It frames these as covering edge cases, such as rare weather or lighting, that are impractical to capture physically.",
+      "tags": [
+        "synthetic-data",
+        "short-insight",
+        "digital-twins"
+      ],
+      "sources": [
+        {
+          "title": "Celestial Park",
+          "publisher": "Another Reality Studio",
+          "url": "https://anotherreality.studio/universal-celestial-park/"
+        },
+        {
+          "title": "digital twin market",
+          "publisher": "GlobeNewswire",
+          "url": "https://www.globenewswire.com/news-release/2026/09/08/3357954/0/en/digital-twin-market-demand-innovation-market-size.html"
+        }
+      ]
+    },
+    {
+      "id": "ars-03",
+      "format": "short_insight",
+      "title": "WebAR After 8th Wall: Plan the Migration",
+      "angle": "8th Wall access ended Feb 28, 2026, and hosted content goes dark Feb 28, 2027. Teams running WebAR campaigns need a migration plan, and platform risk now belongs in the scoping conversation.",
+      "evidence": "Your AR Everywhere case study covers geolocated, cross-platform AR with guided narratives and branded activations. Your blog already has a WebAR versus app article, so this is a platform-risk update. Confirm what AR Everywhere runs on before claiming independence.",
+      "tags": [
+        "webar",
+        "short-insight",
+        "geolocated-ar"
+      ],
+      "sources": [
+        {
+          "title": "case studies",
+          "publisher": "Another Reality Studio",
+          "url": "https://anotherreality.studio/case-studies/"
+        },
+        {
+          "title": "WebAR vs app AR",
+          "publisher": "Another Reality Studio",
+          "url": "https://anotherreality.studio/webar-appar/"
+        },
+        {
+          "title": "WebAR landscape 2026",
+          "publisher": "Blippar",
+          "url": "https://www.blippar.com/best-webar-platforms-for-agencies-2026/"
+        }
+      ]
+    }
+  ]
+}
