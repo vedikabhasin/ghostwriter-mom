@@ -1,0 +1,95 @@
+{
+  "slug": "transfr-rfppux",
+  "template": "swipe2",
+  "lead_type": "warm",
+  "deliveryChannel": "email",
+  "company": "Transfr",
+  "contactFirstName": "Bharanidharan",
+  "sourceLine": "your San Luis Valley, San Antonio and reentry programs, and the questions educators ask before they scale VR career training",
+  "directionShape": "1 long-form article + 2 short insights",
+  "emailKnown": true,
+  "vediReactions": {
+    "tfr-01": "like",
+    "tfr-02": "pass",
+    "tfr-03": "like"
+  },
+  "writeOn": [
+    "tfr-01",
+    "tfr-03",
+    "tfr-02"
+  ],
+  "cards": [
+    {
+      "id": "tfr-01",
+      "format": "short_insight",
+      "title": "Three Headsets, Six Counties, 260 Students",
+      "angle": "Transfr's March 2, 2026 San Luis Valley story reports three headsets reaching 260+ students across six counties and 8,000 square miles. Reach and hours logged are usage counts. The page says the headsets rotate among Monte Vista High School, Delta Center and a Boys & Girls Club.",
+      "evidence": "Your story reports 200+ sessions and 105 hours logged in total, and a 300+ student figure that is a projection. No article on your site explains the schedule, transport, maintenance and staffing behind that rotation.",
+      "tags": [
+        "shared-headsets",
+        "short-insight",
+        "company-reported"
+      ],
+      "sources": [
+        {
+          "title": "San Luis Valley Career-Connected Pathways Partnership",
+          "publisher": "Transfr",
+          "url": "https://transfrinc.com/resources/customer-stories/san-luis-valley-career-connected-pathways-partnership"
+        },
+        {
+          "title": "Blog",
+          "publisher": "Transfr",
+          "url": "https://transfrinc.com/resources/blog"
+        }
+      ]
+    },
+    {
+      "id": "tfr-02",
+      "format": "short_insight",
+      "title": "Designing a Four-Day VR Career Lesson",
+      "angle": "San Antonio ISD reported 1,100+ students participating in Transfr sims, with 30 goggle sets bought this year after 8 earlier sets, per an April 29, 2026 republication of the district's story. The four-day sequence includes a 23-question interest inventory, and the stated goal is at least two sims per student.",
+      "evidence": "These are district-reported usage figures, not outcomes, and the page does not confirm that every student completed two sims. Your January 27, 2026 post covers how to start a career exploration program with VR. No article on your site explains how a teacher moves a class from an initial career choice to a useful discussion after the headset comes off.",
+      "tags": [
+        "career-exploration",
+        "short-insight",
+        "district-reported"
+      ],
+      "sources": [
+        {
+          "title": "San Antonio ISD VR goggles",
+          "publisher": "Transfr",
+          "url": "https://transfrinc.com/resources/news/san-antonio-isd-vr-goggles-bring-career-possibilities-to-life"
+        },
+        {
+          "title": "Blog",
+          "publisher": "Transfr",
+          "url": "https://transfrinc.com/resources/blog"
+        }
+      ]
+    },
+    {
+      "id": "tfr-03",
+      "format": "long_form",
+      "title": "VR Reentry Training Needs Cohort Data",
+      "angle": "Transfr's August 19, 2026 post reports 17 graduates across two Leon County Detention Facility cohorts, 11 since released, after a 120-hour blended training program. That is not 120 hours of VR per learner. The 18 union recruits at Scott County Jail within six months are a separate facility-level result.",
+      "evidence": "Your post cites RAND recidivism figures second hand, says VR-specific longitudinal data is limited and calls the gap a research agenda, not a marketing problem. No article on your site specifies a follow-up design: which outcomes each partner tracks after release and for how long.",
+      "tags": [
+        "reentry-training",
+        "long-form",
+        "company-reported"
+      ],
+      "sources": [
+        {
+          "title": "Can VR job training reduce recidivism",
+          "publisher": "Transfr",
+          "url": "https://transfrinc.com/resources/blog/vr-training-reduce-recidivism"
+        },
+        {
+          "title": "Back to school, back to evidence",
+          "publisher": "Transfr",
+          "url": "https://transfrinc.com/resources/blog/vr-in-education-edtech-evidence-standards"
+        }
+      ]
+    }
+  ]
+}
