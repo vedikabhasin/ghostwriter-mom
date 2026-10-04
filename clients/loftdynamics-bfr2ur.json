@@ -1,0 +1,105 @@
+{
+  "slug": "loftdynamics-bfr2ur",
+  "template": "swipe2",
+  "lead_type": "warm",
+  "deliveryChannel": "email",
+  "company": "Loft Dynamics",
+  "contactFirstName": "Sebastien",
+  "sourceLine": "your JCAB and EASA qualifications, and the questions operators ask before VR time counts toward training",
+  "directionShape": "1 long-form article + 2 short insights",
+  "emailKnown": true,
+  "vediReactions": {
+    "loft-01": "like",
+    "loft-02": "like",
+    "loft-03": "pass"
+  },
+  "writeOn": [
+    "loft-01",
+    "loft-02",
+    "loft-03"
+  ],
+  "cards": [
+    {
+      "id": "loft-01",
+      "format": "long_form",
+      "title": "What FTD Level 7 Demands of a Simulator",
+      "angle": "Loft Dynamics announced on May 27, 2026 that its Airbus H125 TXi VR simulator at Nakanihon Air in Nagoya achieved JCAB FTD Level 7 qualification, which the company calls a first for a VR helicopter simulator in Japan. The qualification covers one device and the Japan Civil Aviation Bureau only. Earlier Loft milestones used EASA levels, so the article does not treat the numbers as a progression.",
+      "evidence": "Your release states JCAB authority only, and your homepage lists FSTD levels for the R22, H125 and H145 devices, including Level 3 for the H125. Your founder's retrospective cites an EASA FTD Level 3 qualification. No article on your site explains what separates the JCAB Level 7 test from the EASA Level 3 test and what an operator may count toward training.",
+      "tags": [
+        "simulator-qualification",
+        "long-form",
+        "company-reported"
+      ],
+      "sources": [
+        {
+          "title": "JCAB FTD Level 7 qualification",
+          "publisher": "Loft Dynamics",
+          "url": "https://www.loftdynamics.com/loft-dynamics-vr-simulator-achieves-ftd-level-7-qualification-in-japan-expanding-access-to-high-fidelity-pilot-training/"
+        },
+        {
+          "title": "Home",
+          "publisher": "Loft Dynamics",
+          "url": "https://www.loftdynamics.com"
+        },
+        {
+          "title": "Ten years ago we built our first simulator in a living room",
+          "publisher": "Loft Dynamics",
+          "url": "https://www.loftdynamics.com/ten-years-ago-we-built-our-first-simulator-in-a-living-room/"
+        }
+      ]
+    },
+    {
+      "id": "loft-02",
+      "format": "short_insight",
+      "title": "Rare Helicopter Emergencies Need Repetition",
+      "angle": "Loft Dynamics' April 22, 2026 ten-year post reports 500+ high-risk maneuvers flown last year and emergency maneuvers in VR up 57-fold since 2021. These are company-reported use counts. They do not show that incidents fell or that each repetition transferred to flight.",
+      "evidence": "Your May 27, 2026 Nakanihon release names engine failures, autorotations, tail-rotor failures and hydraulic malfunctions as scenarios. RotorHub reported on September 17, 2026 that Pathfinder Aviation will operate a Loft H125 in Anchorage and plans to pursue FAA Level 7, so it is planned and not qualified. No article on your site explains which of those maneuvers are safest to rehearse repeatedly and how repetition is logged.",
+      "tags": [
+        "emergency-training",
+        "short-insight",
+        "company-reported"
+      ],
+      "sources": [
+        {
+          "title": "Ten years ago we built our first simulator in a living room",
+          "publisher": "Loft Dynamics",
+          "url": "https://www.loftdynamics.com/ten-years-ago-we-built-our-first-simulator-in-a-living-room/"
+        },
+        {
+          "title": "Pathfinder Aviation to operate Loft Dynamics",
+          "publisher": "RotorHub",
+          "url": "https://www.rotorhub.com/pathfinder-aviation-to-operate-loft-dynamics/"
+        },
+        {
+          "title": "JCAB FTD Level 7 qualification",
+          "publisher": "Loft Dynamics",
+          "url": "https://www.loftdynamics.com/loft-dynamics-vr-simulator-achieves-ftd-level-7-qualification-in-japan-expanding-access-to-high-fidelity-pilot-training/"
+        }
+      ]
+    },
+    {
+      "id": "loft-03",
+      "format": "short_insight",
+      "title": "Pricing a Simulator Session Against a Flight Hour",
+      "angle": "Loft Dynamics' ten-year post compares $100 per simulator session with $1,200 per flight hour, around 12 times lower, with no session length, utilization or accounting method stated. A session and a flight hour are different units, and the article sets a fair comparison per training objective.",
+      "evidence": "Your post also claims 5,000 tons of CO2 avoided since 2021, a company estimate with no displayed calculation. No article on your site explains the assumptions behind the $100 and $1,200 figures or how the comparison changes with session length and travel included.",
+      "tags": [
+        "training-economics",
+        "short-insight",
+        "company-estimate"
+      ],
+      "sources": [
+        {
+          "title": "Ten years ago we built our first simulator in a living room",
+          "publisher": "Loft Dynamics",
+          "url": "https://www.loftdynamics.com/ten-years-ago-we-built-our-first-simulator-in-a-living-room/"
+        },
+        {
+          "title": "Airbus DGAC approval, May 8, 2025",
+          "publisher": "Loft Dynamics",
+          "url": "https://www.loftdynamics.com/airbus-becomes-first-oem-to-receive-regulatory-approval-for-vr-based-type-rating-training-powered-by-loft-dynamics/"
+        }
+      ]
+    }
+  ]
+}
