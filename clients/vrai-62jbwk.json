@@ -1,0 +1,85 @@
+{
+  "slug": "vrai-62jbwk",
+  "template": "swipe2",
+  "lead_type": "warm",
+  "deliveryChannel": "email",
+  "company": "VRAI",
+  "contactFirstName": "Pat",
+  "sourceLine": "your Varjo and Rheinmetall work, and the questions instructors ask before they trust trainee data",
+  "directionShape": "1 long-form article + 2 short insights",
+  "emailKnown": true,
+  "vediReactions": {
+    "vrai-01": "like",
+    "vrai-02": "like",
+    "vrai-03": "pass"
+  },
+  "writeOn": [
+    "vrai-01",
+    "vrai-02",
+    "vrai-03"
+  ],
+  "cards": [
+    {
+      "id": "vrai-01",
+      "format": "long_form",
+      "title": "What a 1:12 Instructor Ratio Must Show",
+      "angle": "Varjo and VRAI jointly reported on April 14, 2026 that first joint deployments moved the instructor-to-trainee ratio from approximately 1:3 to 1:12 without added instructor workload. This is joint company reporting, with no named deployment, sample, period or workload measure.",
+      "evidence": "Your April 15, 2026 post names Rheinmetall and the Irish Defence Forces as customers in the first joint deployments but does not tie the ratio to either. It has not been independently validated. No article on your site explains how an instructor assessment dataset must be built before a staffing ratio claim holds.",
+      "tags": [
+        "training-metrics",
+        "long-form",
+        "company-reported"
+      ],
+      "sources": [
+        {
+          "title": "Varjo and VRAI announce strategic partnership",
+          "publisher": "Varjo",
+          "url": "https://www.varjo.com/news/varjo-and-vrai-announce-strategic-partnership-to-bring-data-driven-insights-to-military-training"
+        },
+        {
+          "title": "VRAI and Varjo announce strategic partnership",
+          "publisher": "VRAI",
+          "url": "https://www.vraisimulation.com/post/vrai-and-varjo-announce-strategic-partnership-to-bring-data-driven-insights-to-military-training"
+        }
+      ]
+    },
+    {
+      "id": "vrai-02",
+      "format": "short_insight",
+      "title": "What Eye Tracking Measures in a Trainee",
+      "angle": "VRAI's About page describes a 2018 UN Mine Action Service project in Somalia whose after action review used gaze data to tell users how many IEDs they identified and how many they missed. Eye tracking and heart rate variability supply signals to an instructor, and the article explains what each can support and where each stops.",
+      "evidence": "Your December 3, 2024 cognitive load post combines eye tracking and heart rate variability in a near real-time instructor dashboard, shown at I/ITSEC on a VBS4 driving simulator, with no numbers. Neither signal alone shows a trainee's cognitive load or readiness. No article on your site explains what near real-time means for that dashboard or what validation sits behind it.",
+      "tags": [
+        "biometric-sensing",
+        "short-insight",
+        "company-reported"
+      ],
+      "sources": [
+        {
+          "title": "About",
+          "publisher": "VRAI",
+          "url": "https://www.vraisimulation.com/about"
+        }
+      ]
+    },
+    {
+      "id": "vrai-03",
+      "format": "short_insight",
+      "title": "A Signed Partnership Is Not Qualified Training",
+      "angle": "VRAI and Rheinmetall announced a strategic partnership on December 3, 2025 at I/ITSEC, with an initial XR driving simulator for armor crews and possible expansion, per the release as our researcher read it. The post does not call it a contract and reports no delivery.",
+      "evidence": "Your post is an announcement without delivery dates. Its silence on delivery does not show that nothing was delivered. No article on your site explains what separates a partnership from a trainer a defense customer accepts into service.",
+      "tags": [
+        "defense-procurement",
+        "short-insight",
+        "announcement"
+      ],
+      "sources": [
+        {
+          "title": "Home",
+          "publisher": "VRAI",
+          "url": "https://www.vraisimulation.com"
+        }
+      ]
+    }
+  ]
+}
