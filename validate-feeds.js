@@ -78,7 +78,8 @@ function stringifyDeep(v){
 }
 
 // swipe2 configs have their own shape (see templates/README.md):
-//   slug, template "swipe2", company, contactFirstName, sourceLine, cards
+//   slug, template "swipe2", company, contactFirstName (string, or null for
+//   "Hi there."), sourceLine, cards
 //   (exactly 3, lead formats; RPR formats for RPR_SWIPE2_SLUGS), vediReactions
 //   (like | pass per card), writeOn (every card id once), deliveryChannel
 //   (LinkedIn | email), lead_type (warm | cold); flow optional. lockedCount
@@ -87,7 +88,9 @@ function stringifyDeep(v){
 function validateSwipe2(file, data){
   const isTemplate = TEMPLATE_SLUGS.has(data.slug);
   const str = (k) => { if(typeof data[k] !== 'string' || !data[k].trim()) fail(file + ': "' + k + '" must be a non-empty string'); };
-  ['slug', 'company', 'contactFirstName', 'sourceLine'].forEach(str);
+  ['slug', 'company', 'sourceLine'].forEach(str);
+  // contactFirstName null means no known contact: the page greets "Hi there."
+  if(data.contactFirstName !== null) str('contactFirstName');
   if(!SLUG_RE.test(data.slug)) fail(file + ': slug must match ' + SLUG_RE);
   if(file !== data.slug + '.json') fail(file + ': filename must match slug (expected ' + data.slug + '.json)');
   if(['LinkedIn', 'email'].indexOf(data.deliveryChannel) === -1) fail(file + ': deliveryChannel must be "LinkedIn" or "email"');
